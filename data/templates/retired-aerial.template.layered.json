@@ -1,558 +1,520 @@
 {
-  "id": "retired-aerial",
-  "version": 1,
-  "title": "Retired No More - Aerial Age",
-  "subtitle": "Aging Veteran Heroes",
-  "game": "Retired No More",
-  "variant": "Aerial Age",
-  "pages": 1,
-  "genre": "Dieselpunk / Aviation Adventure",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
-    "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
-    "genre": "Pulp adventure",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
-  },
-  "character": {
-    "id": "template-retired-aerial",
-    "isTemplate": true,
-    "name": "",
-    "game": "Retired No More",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Retired No More",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Values": {
-        "id": "values",
-        "description": "The aviator's code and sky ethics",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 7,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Value",
-        "plural": "Values",
-        "traits": {
-          "Allegiance": {},
-          "Glory": {},
-          "Integrity": {},
-          "Knowledge": {},
-          "Novelty": {},
-          "Power": {},
-          "Riches": {}
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Aerial legend and grounded retirement",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 2,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Archetype:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Retirement:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Resources": {
-        "id": "vintage-plane-signature-assets",
-        "description": "Custom aircraft and aviator resources (5d6 each)",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6
-          ],
-          "multiDie": true,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Resource",
-        "plural": "Resources",
-        "traits": {},
-        "slots": {
-          "0": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "1": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "2": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          }
-        }
-      },
-      "Signature Asset": {
-        "id": "signature-asset",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Asset",
-        "plural": "Assets",
-        "traits": {}
-      },
-      "Skills & Specialties": {
-        "id": "subtrait-columns",
-        "description": "Flight and tactical skills (d4-d6) with veteran specialties (d8-d12)",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "subtrait-columns"
-          },
-          "ratingLadder": [
-            4,
-            6
-          ],
-          "subtraitRatingLadder": [
-            8,
-            10,
-            12
-          ],
-          "labels": {
-            "left": "Skills",
-            "right": "Specialties"
-          },
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 9,
-          "place": {
-            "left": "28%",
-            "top": 1,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {}
-      },
-      "Session Record": {
-        "id": "session-record",
-        "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "reservedSlots": 20,
-          "pips": {
-            "labels": true,
-            "perRow": 20
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {
-          "Training": {
-            "description": "Training"
-          },
-          "Adventuring Triumph": {
-            "description": "Adventuring Triumph"
-          },
-          "Retirement": {
-            "description": "Retirement"
-          }
-        }
-      }
-    }
-  }
+	"id": "retired-aerial",
+	"version": 1,
+	"character": {
+		"id": "template-retired-aerial",
+		"isTemplate": true,
+		"name": "",
+		"game": "Retired No More",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Retired No More",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Retired No More - Aerial Age",
+				"subtitle": "Aging Veteran Heroes",
+				"genre": "Pulp adventure",
+				"variant": "Aerial Age",
+				"url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg",
+				"quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Values": {
+				"id": "values",
+				"description": "The aviator's code and sky ethics",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 7,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Value",
+				"plural": "Values",
+				"traits": {
+					"Allegiance": {},
+					"Glory": {},
+					"Integrity": {},
+					"Knowledge": {},
+					"Novelty": {},
+					"Power": {},
+					"Riches": {}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Aerial legend and grounded retirement",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 2,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Archetype:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Retirement:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Resources": {
+				"id": "vintage-plane-signature-assets",
+				"description": "Custom aircraft and aviator resources (5d6 each)",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6
+					],
+					"multiDie": true,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Resource",
+				"plural": "Resources",
+				"traits": {},
+				"slots": {
+					"0": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"1": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"2": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					}
+				},
+				"rating": {
+					"type": "Dice",
+					"value": []
+				}
+			},
+			"Signature Asset": {
+				"id": "signature-asset",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Asset",
+				"plural": "Assets",
+				"traits": {}
+			},
+			"Skills & Specialties": {
+				"id": "subtrait-columns",
+				"description": "Flight and tactical skills (d4-d6) with veteran specialties (d8-d12)",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "subtrait-columns"
+					},
+					"ratingLadder": [
+						4,
+						6
+					],
+					"subtraitRatingLadder": [
+						8,
+						10,
+						12
+					],
+					"labels": {
+						"left": "Skills",
+						"right": "Specialties"
+					},
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 9,
+					"place": {
+						"left": "28%",
+						"top": 1,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {}
+			},
+			"Session Record": {
+				"id": "session-record",
+				"description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"reservedSlots": 20,
+					"pips": {
+						"labels": true,
+						"perRow": 20
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {
+					"Training": {
+						"description": "Training"
+					},
+					"Adventuring Triumph": {
+						"description": "Adventuring Triumph"
+					},
+					"Retirement": {
+						"description": "Retirement"
+					}
+				}
+			}
+		}
+	}
 }

@@ -1,1473 +1,1225 @@
 {
-  "id": "safe-zone-colony",
-  "version": 1,
-  "title": "Safe Zone - Colony File",
-  "subtitle": "Post-Apocalyptic Survival & Colony",
-  "game": "Safe Zone",
-  "variant": "Colony File",
-  "pages": 2,
-  "genre": "Post-Apocalyptic / Base Building",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
-    "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
-    "genre": "Post-apocalyptic zombie survival | Base-building",
-    "setting": "d8",
-    "prep": "d8",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
-  },
-  "character": {
-    "id": "template-safe-zone-colony",
-    "isTemplate": true,
-    "name": "",
-    "game": "Safe Zone",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 2,
-      "template": "Safe Zone",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Essential Stockpiles": {
-        "id": "essential-stockpiles",
-        "description": "Building Benefits:",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 3,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6
-          ],
-          "multiDie": true,
-          "notes": "",
-          "reservedSlots": 3,
-          "pillar": "plus"
-        },
-        "noun": "Essential Stockpile",
-        "plural": "Essential Stockpiles",
-        "traits": {
-          "Food": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true
-          },
-          "Water": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true
-          },
-          "Shelter": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true
-          }
-        }
-      },
-      "Non-Essential Stockpiles": {
-        "id": "non-essential-stockpiles",
-        "description": "Building Benefits:",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 3,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6
-          ],
-          "multiDie": true,
-          "notes": "",
-          "reservedSlots": 3,
-          "pillar": "plus"
-        },
-        "noun": "Non-Essential Stockpile",
-        "plural": "Non-Essential Stockpiles",
-        "traits": {
-          "Medicine": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true
-          },
-          "Protection": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true
-          },
-          "Tools": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true
-          }
-        }
-      },
-      "Building 1": {
-        "id": "building-1",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Building",
-        "plural": "Buildings",
-        "traits": {
-          "Name:": {
-            "traits": {
-              "d6 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d8 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d10 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d12 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    12
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Building 2": {
-        "id": "building-2",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "50%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Building",
-        "plural": "Buildings",
-        "traits": {
-          "Name:": {
-            "traits": {
-              "d6 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d8 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d10 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d12 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    12
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Building 3": {
-        "id": "building-3",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "0%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Building",
-        "plural": "Buildings",
-        "traits": {
-          "Name:": {
-            "traits": {
-              "d6 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d8 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d10 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d12 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    12
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Building 4": {
-        "id": "building-4",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "50%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Building",
-        "plural": "Buildings",
-        "traits": {
-          "Name:": {
-            "traits": {
-              "d6 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d8 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d10 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d12 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    12
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Building 5": {
-        "id": "building-5",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "0%",
-            "top": 4,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Building",
-        "plural": "Buildings",
-        "traits": {
-          "Name:": {
-            "traits": {
-              "d6 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d8 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d10 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d12 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    12
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Building 6": {
-        "id": "building-6",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "50%",
-            "top": 4,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Building",
-        "plural": "Buildings",
-        "traits": {
-          "Name:": {
-            "traits": {
-              "d6 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d8 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d10 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "d12 Benefit:": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    12
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Survivor 1": {
-        "id": "survivor-1",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 2": {
-        "id": "survivor-2",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "33.333%",
-            "top": 0,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 3": {
-        "id": "survivor-3",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "66.666%",
-            "top": 0,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 4": {
-        "id": "survivor-4",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 5": {
-        "id": "survivor-5",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "33.333%",
-            "top": 1,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 6": {
-        "id": "survivor-6",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "66.666%",
-            "top": 1,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 7": {
-        "id": "survivor-7",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 8": {
-        "id": "survivor-8",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "33.333%",
-            "top": 2,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Survivor 9": {
-        "id": "survivor-9",
-        "hasQuestionedPip": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "66.666%",
-            "top": 2,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Survivor",
-        "plural": "Survivors",
-        "traits": {
-          "Morale": {}
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Notes": {
-        "id": "colony-projects",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "pillar": "play"
-        },
-        "noun": "Note",
-        "plural": "Notes",
-        "traits": {}
-      }
-    }
-  }
+	"id": "safe-zone-colony",
+	"version": 1,
+	"character": {
+		"id": "template-safe-zone-colony",
+		"isTemplate": true,
+		"name": "",
+		"game": "Safe Zone",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 2,
+			"template": "Safe Zone",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Safe Zone - Colony File",
+				"subtitle": "Post-Apocalyptic Survival & Colony",
+				"genre": "Post-apocalyptic zombie survival | Base-building",
+				"variant": "Colony File",
+				"url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg",
+				"quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+				"setting": "d8",
+				"prep": "d8",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Essential Stockpiles": {
+				"id": "essential-stockpiles",
+				"description": "Building Benefits:",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 3,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6
+					],
+					"multiDie": true,
+					"notes": "",
+					"reservedSlots": 3,
+					"pillar": "plus"
+				},
+				"noun": "Essential Stockpile",
+				"plural": "Essential Stockpiles",
+				"traits": {
+					"Food": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true
+					},
+					"Water": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true
+					},
+					"Shelter": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true
+					}
+				},
+				"rating": {
+					"type": "Dice",
+					"value": []
+				}
+			},
+			"Non-Essential Stockpiles": {
+				"id": "non-essential-stockpiles",
+				"description": "Building Benefits:",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 3,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6
+					],
+					"multiDie": true,
+					"notes": "",
+					"reservedSlots": 3,
+					"pillar": "plus"
+				},
+				"noun": "Non-Essential Stockpile",
+				"plural": "Non-Essential Stockpiles",
+				"traits": {
+					"Medicine": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true
+					},
+					"Protection": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true
+					},
+					"Tools": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true
+					}
+				},
+				"rating": {
+					"type": "Dice",
+					"value": []
+				}
+			},
+			"Building 1": {
+				"id": "building-1",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Building",
+				"plural": "Buildings",
+				"traits": {
+					"Name:": {
+						"traits": {
+							"d6 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									]
+								}
+							},
+							"d8 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"d10 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"d12 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Building 2": {
+				"id": "building-2",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "50%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Building",
+				"plural": "Buildings",
+				"traits": {
+					"Name:": {
+						"traits": {
+							"d6 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									]
+								}
+							},
+							"d8 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"d10 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"d12 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Building 3": {
+				"id": "building-3",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "0%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Building",
+				"plural": "Buildings",
+				"traits": {
+					"Name:": {
+						"traits": {
+							"d6 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									]
+								}
+							},
+							"d8 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"d10 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"d12 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Building 4": {
+				"id": "building-4",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "50%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Building",
+				"plural": "Buildings",
+				"traits": {
+					"Name:": {
+						"traits": {
+							"d6 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									]
+								}
+							},
+							"d8 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"d10 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"d12 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Building 5": {
+				"id": "building-5",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "0%",
+						"top": 4,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Building",
+				"plural": "Buildings",
+				"traits": {
+					"Name:": {
+						"traits": {
+							"d6 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									]
+								}
+							},
+							"d8 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"d10 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"d12 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Building 6": {
+				"id": "building-6",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "50%",
+						"top": 4,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Building",
+				"plural": "Buildings",
+				"traits": {
+					"Name:": {
+						"traits": {
+							"d6 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									]
+								}
+							},
+							"d8 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"d10 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"d12 Benefit:": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Survivor 1": {
+				"id": "survivor-1",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 2": {
+				"id": "survivor-2",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "33.333%",
+						"top": 0,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 3": {
+				"id": "survivor-3",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "66.666%",
+						"top": 0,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 4": {
+				"id": "survivor-4",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 5": {
+				"id": "survivor-5",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "33.333%",
+						"top": 1,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 6": {
+				"id": "survivor-6",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "66.666%",
+						"top": 1,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 7": {
+				"id": "survivor-7",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 8": {
+				"id": "survivor-8",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "33.333%",
+						"top": 2,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Survivor 9": {
+				"id": "survivor-9",
+				"hasQuestionedPip": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "66.666%",
+						"top": 2,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Survivor",
+				"plural": "Survivors",
+				"traits": {
+					"Morale": {}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Notes": {
+				"id": "colony-projects",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"pillar": "play"
+				},
+				"noun": "Note",
+				"plural": "Notes",
+				"traits": {}
+			}
+		}
+	}
 }

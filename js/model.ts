@@ -103,9 +103,95 @@ export function getRating(node: unknown): Rating | undefined {
 	return undefined;
 }
 
-/** A node is rated iff it carries a rating. */
-export function isRated(node: unknown): boolean {
-	return getRating(node) !== undefined;
+/**
+ * Resolve the effective rating type for a node: own rating.type if present,
+ * else the nearest fallback's rating.type. Explicit `rating: null` on the
+ * node itself stops inheritance and returns undefined.
+ */
+export function resolveType(node: unknown, fallbacks?: Array<unknown>): RatingType | undefined {
+	const chain: Array<unknown> = [node, ...(Array.isArray(fallbacks) ? fallbacks : [])];
+	for (let i = 0; i < chain.length; i++) {
+		const link = chain[i];
+		const n = (link && typeof link === 'object' ? link : undefined) as RatedNode;
+		if (!n || typeof n !== 'object') continue;
+		const r = n.rating;
+		if (i === 0 && r === null) return undefined;
+		if (r && typeof r === 'object' && !Array.isArray(r)) {
+			const t = (r as Record<string, unknown>).type;
+			if (t === 'Counter' || t === 'Die' || t === 'Dice' || t === 'Pip') return t;
+			if (i === 0 && t !== undefined && t !== null) return undefined;
+		}
+	}
+	return undefined;
+}
+
+/**
+ * Read the rating off a node, letting an omitted `rating.type` fall through
+ * to `fallbacks` (nearest first, typically `[parentTrait, traitSet]`). A node
+ * with no `rating` object (or `rating: null`) remains unrated (undefined).
+ */
+export function resolveRating(node: unknown, fallbacks?: Array<unknown>): Rating | undefined {
+	const n = (node && typeof node === 'object' ? node : undefined) as RatedNode;
+	if (!n || typeof n !== 'object') return undefined;
+	const r = n.rating;
+	if (!r || typeof r !== 'object' || Array.isArray(r)) return undefined;
+	const rec = r as Record<string, unknown>;
+	const rawType = rec.type;
+	let type: RatingType | undefined;
+	if (rawType === 'Counter' || rawType === 'Die' || rawType === 'Dice' || rawType === 'Pip') {
+		type = rawType;
+	} else if (rawType === undefined || rawType === null) {
+		type = resolveType(undefined, fallbacks);
+	}
+	if (!type) return undefined;
+	return {
+		type,
+		value: asRatingValue(rec.value),
+		range: asNumberList(rec.range),
+		...(typeof rec.out === 'boolean' ? { out: rec.out } : {}),
+	};
+}
+
+/**
+ * Stamp a set's own `rating.type` onto any descendant trait whose `rating`
+ * omitted `type` before removing or clearing the set rating.
+ */
+export function preserveInheritedTraitTypes(traitSet: unknown): void {
+	const setType = getRating(traitSet)?.type;
+	if (!setType || !traitSet || typeof traitSet !== 'object') return;
+	const stampNode = (node: unknown) => {
+		if (!node || typeof node !== 'object') return;
+		const rec = node as Record<string, unknown>;
+		const r = rec.rating;
+		if (r && typeof r === 'object' && !Array.isArray(r)) {
+			const rr = r as Record<string, unknown>;
+			if (rr.type === undefined || rr.type === null) {
+				rr.type = setType;
+			}
+		}
+		if (Array.isArray(rec.traits)) {
+			rec.traits.forEach(stampNode);
+		} else if (rec.traits && typeof rec.traits === 'object') {
+			Object.values(rec.traits as Record<string, unknown>).forEach(stampNode);
+		}
+		if (rec.slots && typeof rec.slots === 'object' && !Array.isArray(rec.slots)) {
+			Object.values(rec.slots as Record<string, unknown>).forEach(stampNode);
+		}
+	};
+	const ts = traitSet as Record<string, unknown>;
+	if (Array.isArray(ts.traits)) {
+		ts.traits.forEach(stampNode);
+	} else if (ts.traits && typeof ts.traits === 'object') {
+		Object.values(ts.traits as Record<string, unknown>).forEach(stampNode);
+	}
+	if (ts.slots && typeof ts.slots === 'object' && !Array.isArray(ts.slots)) {
+		Object.values(ts.slots as Record<string, unknown>).forEach(stampNode);
+	}
+}
+
+/** A node is rated iff it carries a rating (optionally inheriting type from fallbacks). */
+export function isRated(node: unknown, fallbacks?: Array<unknown>): boolean {
+	return resolveRating(node, fallbacks) !== undefined;
 }
 
 /** Dice staged to the roller from a rating (Die/Dice values only; Counter/Pip stage nothing). */
@@ -166,8 +252,8 @@ export function getSpentIndices(node: unknown): number[] {
 }
 
 /** Dice available for staging: rating dice minus spent. Value is never mutated. */
-export function availableDice(node: unknown): number[] {
-	const dice = ratingDice(getRating(node));
+export function availableDice(node: unknown, fallbacks?: Array<unknown>): number[] {
+	const dice = ratingDice(resolveRating(node, fallbacks));
 	const spent = new Set(getSpentIndices(node));
 	return dice.filter((_d, i) => !spent.has(i));
 }
@@ -213,8 +299,9 @@ export function keepsExtraDice(node: unknown): number {
  */
 export function resolveRange(node: unknown, fallbacks?: Array<unknown>): number[] {
 	const chain: Array<unknown> = [node, ...(Array.isArray(fallbacks) ? fallbacks : [])];
-	for (const link of chain) {
-		const r = getRating(link);
+	for (let i = 0; i < chain.length; i++) {
+		const link = chain[i];
+		const r = resolveRating(link, chain.slice(i + 1));
 		if ((r?.type === 'Die' || r?.type === 'Dice') && Array.isArray(r.range) && r.range.length > 0) {
 			return [...r.range].sort((a, b) => a - b);
 		}
@@ -236,7 +323,7 @@ export function resolveRange(node: unknown, fallbacks?: Array<unknown>): number[
  * for the set's dice.
  */
 export function hasOutRange(node: unknown, fallbacks?: Array<unknown>): boolean {
-	const r = getRating(node);
+	const r = resolveRating(node, fallbacks);
 	if ((r?.type === 'Die' || r?.type === 'Dice') && (r as RatedNode & { out?: unknown }).out === true) return true;
 	for (const fb of Array.isArray(fallbacks) ? fallbacks : []) {
 		const v = getView(fb);
@@ -256,7 +343,7 @@ export function rangeTop(node: unknown, fallbacks?: Array<unknown>): number {
 /** Out state: out in range, and the die stepped past the top or flagged out. */
 export function isOutDie(node: unknown, fallbacks?: Array<unknown>): boolean {
 	if (!hasOutRange(node, fallbacks)) return false;
-	const first = ratingDice(getRating(node))[0] || 0;
+	const first = ratingDice(resolveRating(node, fallbacks))[0] || 0;
 	if (first > rangeTop(node, fallbacks)) return true;
 	const n = (node && typeof node === 'object' ? node : undefined) as { isOut?: unknown } | undefined;
 	return n?.isOut === true;
@@ -274,16 +361,16 @@ export function isOutDie(node: unknown, fallbacks?: Array<unknown>): boolean {
  */
 export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 	if (!traitSet || !sourceTrait) return;
-	const sourceRating = getRating(sourceTrait);
+	const sourceRating = resolveRating(sourceTrait, [traitSet]);
 	if (!sourceRating || !sourceRating.type) return;
 	const sourceType = sourceRating.type;
 	const sourceRange = Array.isArray(sourceRating.range) ? sourceRating.range.filter((x) => typeof x === 'number') : [];
 
 	if (sourceType === 'Counter') {
 		const bounds = sourceRange.length >= 2 ? [...sourceRange] : [0, 20];
-		function walk(targetTrait: any) {
+		function walk(targetTrait: any, parents: Array<unknown>) {
 			if (!targetTrait || typeof targetTrait !== 'object') return;
-			const targetRating = getRating(targetTrait);
+			const targetRating = resolveRating(targetTrait, parents);
 			if (targetRating && targetRating.type === 'Counter') {
 				targetTrait.rating = {
 					type: 'Counter',
@@ -293,13 +380,13 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 			}
 			if (Array.isArray(targetTrait.traits)) {
 				for (const child of targetTrait.traits) {
-					walk(child);
+					walk(child, [targetTrait, ...parents]);
 				}
 			}
 		}
 		if (Array.isArray(traitSet.traits)) {
 			for (const rootTrait of traitSet.traits) {
-				walk(rootTrait);
+				walk(rootTrait, [traitSet]);
 			}
 		}
 		return;
@@ -513,6 +600,21 @@ export interface PartCell {
 	height: number;
 }
 
+/** Library catalog metadata carried under `character.view.listing`. */
+export interface TemplateListing {
+	id?: string;
+	title?: string;
+	subtitle?: string;
+	genre?: string;
+	variant?: string;
+	url?: string;
+	image?: string;
+	quote?: string;
+	setting?: string;
+	prep?: string;
+	complexity?: string;
+}
+
 /** Dice-render styling (`view.diceConfig`). */
 export interface DiceConfig {
 	[k: string]: unknown;
@@ -615,8 +717,6 @@ export interface CharacterCurioCustom {
 
 	// app-only trait-level flags that live under `trait.view`
 	spentDice?: number[];
-	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
-	isResource?: boolean;
 	/** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
 	visibility?: Visibility;
 	/** Badge part data (trait-level). */
@@ -658,6 +758,7 @@ export interface CharacterCurioCustom {
 	editableOnSheet?: boolean;
 	noun?: string;
 	plural?: string;
+	listing?: TemplateListing;
 }
 
 export type ViewBag = CharacterCurioCustom;
@@ -709,8 +810,6 @@ export interface TraitCustom {
 	linkTo?: number;
 	branchRole?: 'skill' | 'specialty';
 	branchSide?: 'left' | 'right';
-	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
-	isResource?: boolean;
 	xp?: number | string;
 	counter?: number | string;
 }
@@ -739,8 +838,6 @@ export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits'> & {
 	isOut?: boolean;
 	/** App-only: attached-stress value (mirrors `custom.stress`). */
 	stress?: number;
-	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
-	isResource?: boolean;
 	/** App-only: template trait names removed from this trait (D19 restore). */
 	removedTraits?: string[];
 	/** App-only: stable internal key for Vue :key / ordering. */
@@ -772,7 +869,126 @@ export type Character = Omit<GeneratedCharacter, 'custom' | 'view' | 'traitSets'
 
 export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
 	character: Character;
+	userSaved?: boolean;
 };
 
 // Convenience aliases used across the app.
 export type CharacterCurio = CharacterCurioCustom;
+
+function trimmedString(val: unknown): string {
+	return typeof val === 'string' ? val.trim() : '';
+}
+
+function resolveTemplateRecords(tmplOrChar: unknown): {
+	entry?: Record<string, unknown>;
+	character?: Record<string, unknown>;
+} {
+	if (!tmplOrChar || typeof tmplOrChar !== 'object' || Array.isArray(tmplOrChar)) {
+		return {};
+	}
+	const entry = tmplOrChar as Record<string, unknown>;
+	const character =
+		entry.character && typeof entry.character === 'object' && !Array.isArray(entry.character)
+			? (entry.character as Record<string, unknown>)
+			: entry;
+	return { entry, character };
+}
+
+function firstFramedSetImageUrl(character: Record<string, unknown> | undefined): string {
+	const sets = character && Array.isArray(character.traitSets) ? character.traitSets : [];
+	for (const ts of sets) {
+		const frame = getView(ts)?.frame;
+		if (!frame || typeof frame !== 'object' || Array.isArray(frame)) continue;
+		const img = (frame as Record<string, unknown>).image;
+		if (!img || typeof img !== 'object' || Array.isArray(img)) continue;
+		const url = trimmedString((img as Record<string, unknown>).url);
+		if (url) return url;
+	}
+	return '';
+}
+
+/** Read Library listing metadata from `character.view.listing` (with legacy entry fallback). */
+export function getTemplateListing(tmplOrChar: unknown): TemplateListing | undefined {
+	const { entry, character } = resolveTemplateRecords(tmplOrChar);
+	if (!entry) return undefined;
+	const viewListing = getView(character)?.listing;
+	if (viewListing && typeof viewListing === 'object' && !Array.isArray(viewListing)) {
+		return viewListing as TemplateListing;
+	}
+	const legacyListing = entry.listing;
+	if (legacyListing && typeof legacyListing === 'object' && !Array.isArray(legacyListing)) {
+		return legacyListing as TemplateListing;
+	}
+	return undefined;
+}
+
+/** Return true iff `listing` contains at least one non-empty trimmed string value. */
+export function hasTemplateListing(listing: unknown): boolean {
+	if (!listing || typeof listing !== 'object' || Array.isArray(listing)) return false;
+	return Object.values(listing as Record<string, unknown>).some(
+		(val) => typeof val === 'string' && val.trim().length > 0,
+	);
+}
+
+/** Resolve the display title for a Library card or template picker entry. */
+export function getTemplateTitle(tmpl: unknown): string {
+	const { entry, character } = resolveTemplateRecords(tmpl);
+	const listing = getTemplateListing(tmpl);
+	return (
+		trimmedString(listing?.title) ||
+		trimmedString(entry?.title) ||
+		trimmedString(character?.game) ||
+		trimmedString(character?.name) ||
+		trimmedString(entry?.name) ||
+		trimmedString(entry?.id)
+	);
+}
+
+/** Resolve the subtitle for a Library card. */
+export function getTemplateSubtitle(tmpl: unknown): string {
+	const { entry } = resolveTemplateRecords(tmpl);
+	const listing = getTemplateListing(tmpl);
+	return trimmedString(listing?.subtitle) || trimmedString(entry?.subtitle);
+}
+
+/** Resolve the genre badge label for a Library card. */
+export function getTemplateGenre(tmpl: unknown): string {
+	const { entry } = resolveTemplateRecords(tmpl);
+	const listing = getTemplateListing(tmpl);
+	return trimmedString(listing?.genre) || trimmedString(entry?.genre);
+}
+
+/** Resolve the sheet variant badge label for a Library card. */
+export function getTemplateVariant(tmpl: unknown): string {
+	const { entry } = resolveTemplateRecords(tmpl);
+	const listing = getTemplateListing(tmpl);
+	return trimmedString(listing?.variant) || trimmedString(entry?.variant);
+}
+
+/** Resolve the Library card description from `view.listing.quote` or `character.description`. */
+export function getTemplateDescription(tmpl: unknown): string {
+	const { character } = resolveTemplateRecords(tmpl);
+	const listing = getTemplateListing(tmpl);
+	return trimmedString(listing?.quote) || trimmedString(character?.description);
+}
+
+/** Resolve the hero portrait/cover image URL for a Library card. */
+export function getTemplateHeroImage(tmpl: unknown): string {
+	const { character } = resolveTemplateRecords(tmpl);
+	const listing = getTemplateListing(tmpl);
+	const portrait =
+		character?.portrait && typeof character.portrait === 'object'
+			? (character.portrait as Record<string, unknown>)
+			: undefined;
+	return trimmedString(listing?.image) || trimmedString(portrait?.url) || firstFramedSetImageUrl(character);
+}
+
+/** Wrap a `.curio.json` Character in a canonical `SheetTemplate` envelope. */
+export function characterToSheetTemplate(character: Character, fallbackId?: string): SheetTemplate {
+	const id = trimmedString(getView(character)?.listing?.id) || trimmedString(fallbackId) || character.id;
+	return {
+		id,
+		version: 1,
+		character,
+	};
+}

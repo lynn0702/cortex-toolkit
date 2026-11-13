@@ -1,566 +1,591 @@
 {
-  "id": "brighter-stars",
-  "version": 1,
-  "title": "Brighter Stars",
-  "subtitle": "Hopepunk Starship Exploration",
-  "game": "Brighter Stars",
-  "variant": "Character File",
-  "pages": 1,
-  "genre": "Sci-Fi / Space Exploration",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866",
-    "quote": "The mission was supposed to last ten years. There were supposed to be answers at the end of it.",
-    "genre": "Aspirational space opera",
-    "setting": "d6",
-    "prep": "d6",
-    "complexity": "d6",
-    "image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg"
-  },
-  "character": {
-    "id": "template-brighter-stars",
-    "isTemplate": true,
-    "name": "",
-    "game": "BrighterStars",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "BrighterStars",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Crew role, quality, and personal drive",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "multiDie": false,
-          "ratingLadder": [
-            8
-          ],
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "64%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Purpose:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Quality:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "slots": {
-          "2": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Values": {
-        "id": "values",
-        "description": "Guiding philosophies paired with personal statements",
-        "statement": true,
-        "hasQuestionedPip": true,
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "notes": "",
-          "reservedSlots": 5,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "64%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Value",
-        "plural": "Values",
-        "traits": {
-          "Courage": {},
-          "Curiosity": {},
-          "Hope": {},
-          "Logic": {},
-          "Peace": {}
-        }
-      },
-      "Relationships": {
-        "id": "relationships",
-        "description": "Crew connections and ties to shipmates",
-        "statement": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "notes": "",
-          "reservedSlots": 8,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "64%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Relationship",
-        "plural": "Relationships",
-        "traits": {}
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Specialized starship equipment and personal gear",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "64%",
-            "top": 0,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Personal Milestones": {
-        "id": "personal-milestones",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [],
-          "reservedSlots": 3,
-          "place": {
-            "left": "64%",
-            "top": 1,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Milestone",
-        "plural": "Milestones",
-        "traits": {
-          "1 XP": {},
-          "3 XP": {},
-          "10 XP": {}
-        }
-      },
-      "Group Milestones": {
-        "id": "group-milestones",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [],
-          "reservedSlots": 3,
-          "place": {
-            "left": "64%",
-            "top": 2,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Milestone",
-        "plural": "Milestones",
-        "traits": {
-          "1 XP": {},
-          "3 XP": {},
-          "10 XP": {}
-        }
-      },
-      "XP": {
-        "id": "xp",
-        "description": "Experience points bubble track",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 5,
-            "connected": true
-          },
-          "reservedSlots": 0,
-          "place": {
-            "left": "64%",
-            "top": 3,
-            "width": "36%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "XP",
-        "plural": "XP",
-        "traits": {}
-      }
-    }
-  }
+	"id": "brighter-stars",
+	"version": 1,
+	"character": {
+		"id": "template-brighter-stars",
+		"isTemplate": true,
+		"name": "",
+		"game": "Brighter Stars",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Brighter Stars",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Hopepunk Starship Exploration",
+				"genre": "Aspirational space opera",
+				"url": "https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg",
+				"quote": "The mission was supposed to last ten years. There were supposed to be answers at the end of it.",
+				"setting": "d6",
+				"prep": "d6",
+				"complexity": "d6"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Crew role, quality, and personal drive",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"multiDie": false,
+					"ratingLadder": [
+						8
+					],
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "64%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Purpose:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Quality:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"slots": {
+					"2": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Values": {
+				"id": "values",
+				"description": "Guiding philosophies paired with personal statements",
+				"statement": true,
+				"hasQuestionedPip": true,
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"notes": "",
+					"reservedSlots": 5,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "64%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Value",
+				"plural": "Values",
+				"traits": {
+					"Courage": {},
+					"Curiosity": {},
+					"Hope": {},
+					"Logic": {},
+					"Peace": {}
+				}
+			},
+			"Relationships": {
+				"id": "relationships",
+				"description": "Crew connections and ties to shipmates",
+				"statement": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"notes": "",
+					"reservedSlots": 8,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "64%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Relationship",
+				"plural": "Relationships",
+				"traits": {}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Specialized starship equipment and personal gear",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "64%",
+						"top": 0,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Personal Milestones": {
+				"id": "personal-milestones",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [],
+					"reservedSlots": 3,
+					"place": {
+						"left": "64%",
+						"top": 1,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "10%",
+							"height": 1
+						},
+						"name": {
+							"left": "10%",
+							"top": 0,
+							"width": "90%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Milestone",
+				"plural": "Milestones",
+				"traits": {
+					"1 XP": {
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"3 XP": {
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"10 XP": {
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					}
+				}
+			},
+			"Group Milestones": {
+				"id": "group-milestones",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [],
+					"reservedSlots": 3,
+					"place": {
+						"left": "64%",
+						"top": 2,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "10%",
+							"height": 1
+						},
+						"name": {
+							"left": "10%",
+							"top": 0,
+							"width": "90%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Milestone",
+				"plural": "Milestones",
+				"traits": {
+					"1 XP": {
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"3 XP": {
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"10 XP": {
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					}
+				}
+			},
+			"XP": {
+				"id": "xp",
+				"description": "Experience points bubble track",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 5,
+						"connected": true
+					},
+					"reservedSlots": 0,
+					"place": {
+						"left": "64%",
+						"top": 3,
+						"width": "36%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "XP",
+				"plural": "XP",
+				"traits": {}
+			}
+		}
+	}
 }

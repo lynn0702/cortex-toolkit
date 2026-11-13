@@ -1,435 +1,411 @@
 {
-  "id": "titans-titan",
-  "version": 1,
-  "title": "Titans vs Leviathans - Titan Mech",
-  "subtitle": "Giant Mech vs Kaiju Combat",
-  "game": "Titans vs Leviathans",
-  "variant": "Titan Mech File",
-  "pages": 1,
-  "genre": "Mecha / Kaiju / Military",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
-    "quote": "The city shakes. The bay churns.",
-    "genre": "Kaiju / mech action",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d6",
-    "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
-  },
-  "character": {
-    "id": "template-titans-titan",
-    "isTemplate": true,
-    "name": "",
-    "game": "Titans vs Leviathans",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Titans vs Leviathans",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "titan-attributes-stress",
-        "description": "Heavy mechanized systems with stress tracks",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "labels": {
-            "stress": "STRESS"
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "trackLabel": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            },
-            "track": {
-              "left": "0%",
-              "top": 3,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Prowess": {
-            "traits": {
-              "STRESS": {
-                "rating": {
-                  "type": "Die",
-                  "value": [],
-                  "range": [
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Control": {
-            "traits": {
-              "STRESS": {
-                "rating": {
-                  "type": "Die",
-                  "value": [],
-                  "range": [
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Renown": {
-            "traits": {
-              "STRESS": {
-                "rating": {
-                  "type": "Die",
-                  "value": [],
-                  "range": [
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "titan-distinctions",
-        "description": "Chassis type, operational history, and battle stance",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "ratingLadder": [
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Type:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "History:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Underscore": {
-                    "description": "Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history."
-                  },
-                  "Overcompensate": {
-                    "description": "Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history."
-                  }
-                }
-              }
-            }
-          },
-          "Battle:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Power Set": {
-        "id": "power-set",
-        "description": "Colossal kaiju-annihilation weaponry",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {}
-      },
-      "Power Set~2": {
-        "id": "power-set-2",
-        "description": "Secondary titan systems and ordnance",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "50%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {},
-        "label": "Power Set"
-      },
-      "Session Record": {
-        "id": "session-record",
-        "view": {
-          "header": "top",
-          "headerAlign": "right",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 15,
-            "connected": true
-          },
-          "reservedSlots": 0,
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {}
-      }
-    }
-  }
+	"id": "titans-titan",
+	"version": 1,
+	"character": {
+		"id": "template-titans-titan",
+		"isTemplate": true,
+		"name": "",
+		"game": "Titans vs Leviathans",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Titans vs Leviathans",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Titans vs Leviathans - Titan Mech",
+				"subtitle": "Giant Mech vs Kaiju Combat",
+				"genre": "Kaiju / mech action",
+				"variant": "Titan Mech File",
+				"url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg",
+				"quote": "The city shakes. The bay churns.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d6"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "titan-attributes-stress",
+				"description": "Heavy mechanized systems with stress tracks",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"labels": {
+						"stress": "STRESS"
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"trackLabel": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						},
+						"track": {
+							"left": "0%",
+							"top": 3,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Prowess": {
+						"traits": {
+							"STRESS": {
+								"rating": {
+									"type": "Die",
+									"value": [],
+									"range": [
+										6,
+										8,
+										10,
+										12
+									]
+								}
+							}
+						}
+					},
+					"Control": {
+						"traits": {
+							"STRESS": {
+								"rating": {
+									"type": "Die",
+									"value": [],
+									"range": [
+										6,
+										8,
+										10,
+										12
+									]
+								}
+							}
+						}
+					},
+					"Renown": {
+						"traits": {
+							"STRESS": {
+								"rating": {
+									"type": "Die",
+									"value": [],
+									"range": [
+										6,
+										8,
+										10,
+										12
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "titan-distinctions",
+				"description": "Chassis type, operational history, and battle stance",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"ratingLadder": [
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Type:": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"History:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Underscore": {
+										"description": "Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history."
+									},
+									"Overcompensate": {
+										"description": "Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history."
+									}
+								}
+							}
+						}
+					},
+					"Battle:": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Power Set": {
+				"id": "power-set",
+				"description": "Colossal kaiju-annihilation weaponry",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {}
+			},
+			"Power Set~2": {
+				"id": "power-set-2",
+				"description": "Secondary titan systems and ordnance",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "50%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {},
+				"label": "Power Set"
+			},
+			"Session Record": {
+				"id": "session-record",
+				"view": {
+					"header": "top",
+					"headerAlign": "right",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 15,
+						"connected": true
+					},
+					"reservedSlots": 0,
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {}
+			}
+		}
+	}
 }

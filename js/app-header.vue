@@ -309,6 +309,17 @@ onUnmounted(() => {
 							<i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
 							<span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
 						</button>
+
+						<a
+							class="mobile-sheet-action-btn"
+							href="https://github.com/lynn0702/cortex-toolkit"
+							target="_blank"
+							rel="noopener noreferrer"
+							@click="closeSheetPopover"
+						>
+							<i class="fab fa-github" aria-hidden="true"></i>
+							<span>GitHub</span>
+						</a>
 					</div>
 				</div>
 			</div>

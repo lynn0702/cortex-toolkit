@@ -6,9 +6,11 @@ import {
 	getView,
 	hasOutRange,
 	isOutDie,
+	preserveInheritedTraitTypes,
 	rangeTop,
 	ratingDice,
 	resolveRange,
+	resolveRating,
 	setRatingDie,
 } from './model.ts';
 
@@ -62,7 +64,9 @@ function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	if (cur?.type === type) return;
 	const hasChildValues =
 		Array.isArray(ts.traits) &&
-		ts.traits.some((ct: any) => getRating(ct) !== undefined || (Array.isArray(ct?.traits) && ct.traits.length > 0));
+		ts.traits.some(
+			(ct: any) => resolveRating(ct, [ts]) !== undefined || (Array.isArray(ct?.traits) && ct.traits.length > 0),
+		);
 	if (hasChildValues) {
 		confirmRatingChange.value = type;
 	} else {
@@ -112,6 +116,7 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 function clearSetRating() {
 	const ts = traitSet.value as unknown as Record<string, any> | null;
 	if (!ts) return;
+	preserveInheritedTraitTypes(ts);
 	delete ts.rating;
 	commitCharacter();
 }
@@ -128,6 +133,7 @@ function toggleSetOutValue() {
 	const ts = traitSet.value as unknown as Record<string, any> | null;
 	if (!ts) return;
 	if (isSetOut.value) {
+		preserveInheritedTraitTypes(ts);
 		delete ts.rating;
 	} else {
 		setRatingDie(ts, rangeTop(ts, [ts]) + 2);
@@ -377,8 +383,8 @@ function commitPipBubbleCount(event: Event) {
 				<button
 					type="button"
 					class="rating-scale-chip set-rating-die-none"
-					:class="{ active: ratingType === null }"
-					:aria-pressed="ratingType === null"
+					:class="{ active: ratingType === null || (ratingType === 'Die' && setRating === null && !isSetOut) }"
+					:aria-pressed="ratingType === null || (ratingType === 'Die' && setRating === null && !isSetOut)"
 					@click.stop="toggleSetRating(null)"
 					title="No rating"
 				>

@@ -1,6 +1,6 @@
 {
 	"$schema": "../../schema/0.1/character.schema.json",
-	"description": "Two minds, one sheet — a tarot-card display. The Architect builds the form; the Dreamer finds the beauty. An example of the Character Curio builder: a portrait ring, distinctions, and a single shared set of Values.",
+	"description": "The Dreamer finds the beauty, the Architect builds the form, a Character Curio example.",
 	"game": "Character Curio",
 	"id": "d6b1030e-c194-4556-958a-3e6f91c538a2",
 	"name": "The Dreamer & the Architect",
@@ -12,6 +12,15 @@
 	"pronouns": "they/them",
 	"view": {
 		"accentColor": "#f59e0b",
+		"listing": {
+			"id": "dreamer-architect",
+			"title": "The Dreamer & the Architect",
+			"subtitle": "A Character Curio showcase",
+			"genre": "Reference / Showcase",
+			"image": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
+			"quote": "Two minds, one sheet — a tarot-card display with dual circular portraits, leader lines, and shared values."
+		},
+		"pageCount": 1,
 		"diceConfig": {
 			"style": "custom",
 			"backgroundType": "gradient",
@@ -53,7 +62,6 @@
 					10
 				]
 			},
-			"traits": [],
 			"view": {
 				"border": "none",
 				"frame": {
@@ -114,7 +122,6 @@
 				"ringNoun": "Boss Die"
 			},
 			"id": "the-architect",
-			"description": "",
 			"plural": "Boss Dice",
 			"tags": []
 		},
@@ -125,37 +132,28 @@
 				{
 					"name": "Function Before Form",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
-					"description": "",
 					"tags": []
 				},
 				{
 					"name": "Less is More",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
-					"description": "",
 					"tags": []
 				},
 				{
 					"name": "All My Darlings are Dead",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
-					"description": "",
 					"tags": []
 				}
 			],
@@ -181,9 +179,12 @@
 				"verticalAlign": "center"
 			},
 			"id": "architect-distinctions",
-			"description": "",
 			"plural": "Distinctions",
-			"tags": []
+			"tags": [],
+			"rating": {
+				"type": "Die",
+				"value": []
+			}
 		},
 		{
 			"name": "Values",
@@ -192,36 +193,30 @@
 				{
 					"name": "Data",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
 					"description": "belongs to the people, not the builders",
 					"tags": []
 				},
 				{
 					"name": "Design",
 					"rating": {
-						"type": "Die",
 						"value": [
 							6
 						]
 					},
-					"traits": [],
 					"description": "what is built is but inspiration",
 					"tags": []
 				},
 				{
 					"name": "Service",
 					"rating": {
-						"type": "Die",
 						"value": [
 							10
 						]
 					},
-					"traits": [],
 					"description": "your fee is yours to set, mine is free",
 					"tags": []
 				}
@@ -272,9 +267,12 @@
 				]
 			},
 			"id": "values",
-			"description": "",
 			"plural": "Values",
-			"tags": []
+			"tags": [],
+			"rating": {
+				"type": "Die",
+				"value": []
+			}
 		},
 		{
 			"name": "The Dreamer",
@@ -283,37 +281,28 @@
 				{
 					"name": "Beauty is all around us",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
-					"description": "",
 					"tags": []
 				},
 				{
 					"name": "I'll have another slice",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
-					"description": "",
 					"tags": []
 				},
 				{
 					"name": "Darling, let's have tea",
 					"rating": {
-						"type": "Die",
 						"value": [
 							8
 						]
 					},
-					"traits": [],
-					"description": "",
 					"tags": []
 				}
 			],
@@ -357,9 +346,12 @@
 				]
 			},
 			"id": "the-dreamer",
-			"description": "",
 			"plural": "Distinctions",
-			"tags": []
+			"tags": [],
+			"rating": {
+				"type": "Die",
+				"value": []
+			}
 		}
 	],
 	"version": "0.1",

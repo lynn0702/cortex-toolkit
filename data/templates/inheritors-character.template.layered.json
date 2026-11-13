@@ -1,706 +1,725 @@
 {
-  "id": "inheritors-character",
-  "version": 1,
-  "title": "Inheritors",
-  "subtitle": "Superpowered Dynasty Heritage",
-  "game": "Inheritors",
-  "variant": "Character File",
-  "pages": 1,
-  "genre": "Superhero / Dynastic Drama",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
-    "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
-    "genre": "Modern Pulp Action-Adventure",
-    "setting": "d6",
-    "prep": "d10",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
-  },
-  "character": {
-    "id": "template-inheritors-char",
-    "isTemplate": true,
-    "name": "",
-    "game": "Inheritors",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Inheritors",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "attributes",
-        "description": "Gain a PP when you include your d4 attribute in your dice pool.",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Action": {},
-          "Heritage": {},
-          "Science": {},
-          "Weird": {}
-        }
-      },
-      "Stress": {
-        "id": "stress",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "die-track",
-            "body": "die-track"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "play"
-        },
-        "noun": "Stress",
-        "plural": "Stress",
-        "traits": {}
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Bloodline heritage, archetype, and personal stance",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "ratingLadder": [
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Family Tree": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  },
-                  "Family Ties": {
-                    "description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset."
-                  }
-                }
-              }
-            }
-          },
-          "Approach to Conflict": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Personality/Quirk": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Abilities": {
-        "id": "inherited-abilities",
-        "description": "Powers granted by bloodline and relics",
-        "view": {
-          "traitColumns": 3,
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            },
-            "block": {
-              "left": "0%",
-              "top": 3,
-              "width": "100%",
-              "height": 1
-            },
-            "subtraits": {
-              "left": "0%",
-              "top": 4,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Ability",
-        "plural": "Abilities",
-        "traits": {},
-        "slots": {
-          "0": {
-            "traits": {
-              "Effect Tags:": {},
-              "Limit:": {}
-            }
-          },
-          "1": {
-            "traits": {
-              "Effect Tags:": {},
-              "Limit:": {}
-            }
-          },
-          "2": {
-            "traits": {
-              "Effect Tags:": {},
-              "Limit:": {}
-            }
-          }
-        }
-      },
-      "Skills": {
-        "id": "skills",
-        "description": "Training and mundane competencies",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 14,
-          "place": {
-            "left": "0%",
-            "top": 3,
-            "width": "25%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {
-          "Acquire": {},
-          "Build": {},
-          "Charm": {},
-          "Fight": {},
-          "Investigate": {},
-          "Move": {},
-          "Perform": {},
-          "Pilot": {},
-          "Shoot": {},
-          "Sneak": {},
-          "Study": {},
-          "Survive": {},
-          "Treat": {},
-          "Trick": {}
-        }
-      },
-      "Heirlooms": {
-        "id": "heirlooms-milestones",
-        "description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "25%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Heirloom",
-        "plural": "Heirlooms",
-        "traits": {}
-      },
-      "Personal Milestones": {
-        "id": "personal-milestones",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [],
-          "reservedSlots": 3,
-          "place": {
-            "left": "75%",
-            "top": 3,
-            "width": "25%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Milestone",
-        "plural": "Milestones",
-        "traits": {
-          "1 XP": {
-            "description": "when "
-          },
-          "3 XP": {
-            "description": "when "
-          },
-          "10 XP": {
-            "description": "when "
-          }
-        }
-      },
-      "Group Milestones": {
-        "id": "group-milestones",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [],
-          "reservedSlots": 3,
-          "place": {
-            "left": "75%",
-            "top": 4,
-            "width": "25%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Milestone",
-        "plural": "Milestones",
-        "traits": {
-          "1 XP": {
-            "description": "when "
-          },
-          "3 XP": {
-            "description": "when "
-          },
-          "10 XP": {
-            "description": "when "
-          }
-        }
-      },
-      "XP": {
-        "id": "xp",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 5,
-            "connected": true
-          },
-          "place": {
-            "left": "75%",
-            "top": 5,
-            "width": "25%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Pip",
-        "plural": "Pips",
-        "traits": {}
-      }
-    }
-  }
+	"id": "inheritors-character",
+	"version": 1,
+	"character": {
+		"id": "template-inheritors-char",
+		"isTemplate": true,
+		"name": "",
+		"game": "Inheritors",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Inheritors",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Superpowered Dynasty Heritage",
+				"genre": "Modern Pulp Action-Adventure",
+				"url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg",
+				"quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+				"setting": "d6",
+				"prep": "d10",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "attributes",
+				"description": "Gain a PP when you include your d4 attribute in your dice pool.",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Action": {},
+					"Heritage": {},
+					"Science": {},
+					"Weird": {}
+				}
+			},
+			"Stress": {
+				"id": "stress",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "die-track",
+						"body": "die-track"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "play"
+				},
+				"noun": "Stress",
+				"plural": "Stress",
+				"traits": {}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Bloodline heritage, archetype, and personal stance",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"ratingLadder": [
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Family Tree": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									},
+									"Family Ties": {
+										"description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset."
+									}
+								}
+							}
+						}
+					},
+					"Approach to Conflict": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Personality/Quirk": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Abilities": {
+				"id": "inherited-abilities",
+				"description": "Powers granted by bloodline and relics",
+				"view": {
+					"traitColumns": 3,
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						},
+						"block": {
+							"left": "0%",
+							"top": 3,
+							"width": "100%",
+							"height": 1
+						},
+						"subtraits": {
+							"left": "0%",
+							"top": 4,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Ability",
+				"plural": "Abilities",
+				"traits": {},
+				"slots": {
+					"0": {
+						"traits": {
+							"Effect Tags:": {},
+							"Limit:": {}
+						}
+					},
+					"1": {
+						"traits": {
+							"Effect Tags:": {},
+							"Limit:": {}
+						}
+					},
+					"2": {
+						"traits": {
+							"Effect Tags:": {},
+							"Limit:": {}
+						}
+					}
+				}
+			},
+			"Skills": {
+				"id": "skills",
+				"description": "Training and mundane competencies",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 14,
+					"place": {
+						"left": "0%",
+						"top": 3,
+						"width": "25%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {
+					"Acquire": {},
+					"Build": {},
+					"Charm": {},
+					"Fight": {},
+					"Investigate": {},
+					"Move": {},
+					"Perform": {},
+					"Pilot": {},
+					"Shoot": {},
+					"Sneak": {},
+					"Study": {},
+					"Survive": {},
+					"Treat": {},
+					"Trick": {}
+				}
+			},
+			"Heirlooms": {
+				"id": "heirlooms-milestones",
+				"description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "25%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Heirloom",
+				"plural": "Heirlooms",
+				"traits": {}
+			},
+			"Personal Milestones": {
+				"id": "personal-milestones",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [],
+					"reservedSlots": 3,
+					"place": {
+						"left": "75%",
+						"top": 3,
+						"width": "25%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "10%",
+							"height": 1
+						},
+						"name": {
+							"left": "10%",
+							"top": 0,
+							"width": "90%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Milestone",
+				"plural": "Milestones",
+				"traits": {
+					"1 XP": {
+						"description": "when ",
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"3 XP": {
+						"description": "when ",
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"10 XP": {
+						"description": "when ",
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					}
+				}
+			},
+			"Group Milestones": {
+				"id": "group-milestones",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [],
+					"reservedSlots": 3,
+					"place": {
+						"left": "75%",
+						"top": 4,
+						"width": "25%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "10%",
+							"height": 1
+						},
+						"name": {
+							"left": "10%",
+							"top": 0,
+							"width": "90%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Milestone",
+				"plural": "Milestones",
+				"traits": {
+					"1 XP": {
+						"description": "when ",
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"3 XP": {
+						"description": "when ",
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					},
+					"10 XP": {
+						"description": "when ",
+						"rating": {
+							"type": "Pip",
+							"value": [
+								false
+							]
+						}
+					}
+				}
+			},
+			"XP": {
+				"id": "xp",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 5,
+						"connected": true
+					},
+					"place": {
+						"left": "75%",
+						"top": 5,
+						"width": "25%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Pip",
+				"plural": "Pips",
+				"traits": {}
+			}
+		}
+	}
 }

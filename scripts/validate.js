@@ -43,23 +43,115 @@ for (const need of ['id', 'name']) {
 if (schema.$defs.trait.properties.id) err('schema trait: trait-level id must be forbidden');
 if (schema.additionalProperties !== false) warn('schema character: additionalProperties not false');
 
-// ---- 1b. Library card copy (2026-10-20): human copy from the publishers'
-// DriveThruRPG listings. Generated entry descriptions are gone; published
-// settings carry a listing block, core-book settings a URL-only one, and
-// the Toolkit Reference showcases none.
+// ---- 1b. Library card copy (2026-10-20, moved to character.view.listing 2026-11-13):
+// Metadata lives inside character.view.listing on every template/showcase entry;
+// outer wrapper catalog keys and duplicate blurbs are retired.
 const HANDBOOK_SETTINGS = ['Eidolon Alpha', 'Hammerheads', 'TRACE 2.0'];
-function checkListing(where, entry) {
-	if (entry.description !== undefined) {
-		err(`${where}: generated entry description removed — cards use listing copy`);
+const RETIRED_TEMPLATE_WRAPPER_KEYS = [
+	'title',
+	'subtitle',
+	'game',
+	'variant',
+	'pages',
+	'genre',
+	'description',
+	'blurb',
+	'listing',
+];
+const ALLOWED_LISTING_KEYS = new Set([
+	'id',
+	'title',
+	'subtitle',
+	'genre',
+	'variant',
+	'url',
+	'image',
+	'quote',
+	'setting',
+	'prep',
+	'complexity',
+]);
+
+function checkCharacterViewListing(where, ch) {
+	if (!ch || typeof ch !== 'object' || Array.isArray(ch)) return;
+	if (ch.blurb !== undefined) {
+		err(`${where}: retired blurb field — use view.listing.quote or character.description`);
 	}
-	const sp = entry.game || entry.title;
-	const listing = entry.listing;
-	if (sp === 'Toolkit Reference') {
-		if (listing !== undefined) err(`${where}: showcase entries carry no listing`);
+	const cv = ch.view;
+	if (cv && typeof cv === 'object' && !Array.isArray(cv) && cv.blurb !== undefined) {
+		err(`${where}.view: retired blurb field — use view.listing.quote`);
+	}
+	const listing = cv && typeof cv === 'object' && !Array.isArray(cv) ? cv.listing : undefined;
+	if (listing === undefined) return;
+	if (!listing || typeof listing !== 'object' || Array.isArray(listing)) {
+		err(`${where}.view.listing: must be an object`);
 		return;
 	}
+	for (const k of Object.keys(listing)) {
+		if (!ALLOWED_LISTING_KEYS.has(k)) {
+			err(`${where}.view.listing: unknown key ${JSON.stringify(k)}`);
+			continue;
+		}
+		if (typeof listing[k] !== 'string') {
+			err(`${where}.view.listing.${k}: must be a string`);
+		}
+	}
+	if (typeof listing.url === 'string' && listing.url.trim().length && !/^https?:\/\//i.test(listing.url.trim())) {
+		err(`${where}.view.listing.url: must start with http:// or https://`);
+	}
+	if (typeof listing.image === 'string' && listing.image.trim().length) {
+		const imgClean = listing.image.trim();
+		if (/[\s'"()\\<>`]/.test(imgClean)) {
+			err(`${where}.view.listing.image: contains unsafe characters`);
+		}
+		const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(imgClean);
+		if (scheme) {
+			const s = scheme[1].toLowerCase();
+			if (
+				s !== 'http' &&
+				s !== 'https' &&
+				!(s === 'data' && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp|avif);base64,/i.test(imgClean))
+			) {
+				err(`${where}.view.listing.image: unsupported URL scheme`);
+			}
+		}
+	}
+	for (const k of ['setting', 'prep', 'complexity']) {
+		if (typeof listing[k] === 'string' && listing[k].trim().length && !isDiceString(listing[k].trim())) {
+			err(`${where}.view.listing.${k}: must be a dice string (${JSON.stringify(listing[k])})`);
+		}
+	}
+}
+
+function checkListing(where, entry) {
+	for (const k of RETIRED_TEMPLATE_WRAPPER_KEYS) {
+		if (entry[k] !== undefined) {
+			err(`${where}: retired wrapper key ${JSON.stringify(k)} — move into character.view.listing`);
+		}
+	}
+	const ch = entry.character;
+	if (!ch || typeof ch !== 'object' || Array.isArray(ch)) return;
+	checkCharacterViewListing(`${where}.character`, ch);
+	const sp = ch.game;
+	const listing = ch.view && typeof ch.view === 'object' && !Array.isArray(ch.view) ? ch.view.listing : undefined;
 	if (!listing || typeof listing !== 'object' || Array.isArray(listing)) {
-		err(`${where}: published setting needs a listing block`);
+		err(`${where}: character.view.listing block is required`);
+		return;
+	}
+	for (const reqKey of ['subtitle', 'genre']) {
+		if (typeof listing[reqKey] !== 'string' || !listing[reqKey].trim().length) {
+			err(`${where}: character.view.listing.${reqKey} is required`);
+		}
+	}
+	if (sp === 'Toolkit Reference') {
+		if (typeof listing.title !== 'string' || !listing.title.trim().length) {
+			err(`${where}: showcase character.view.listing.title is required`);
+		}
+		for (const forbidden of ['url', 'image', 'quote', 'setting', 'prep', 'complexity']) {
+			if (listing[forbidden] !== undefined) {
+				err(`${where}: showcase entries must not carry view.listing.${forbidden}`);
+			}
+		}
 		return;
 	}
 	if (
@@ -67,31 +159,26 @@ function checkListing(where, entry) {
 		listing.url.indexOf('https://legacy.drivethrurpg.com/product/') !== 0 ||
 		listing.url.indexOf('manufacturers_id=') === -1
 	) {
-		err(`${where}: listing.url must be the live DriveThruRPG product URL`);
+		err(`${where}: character.view.listing.url must be the live DriveThruRPG product URL`);
 	}
-	const textKeys = ['quote', 'genre', 'setting', 'prep', 'complexity'];
 	if (HANDBOOK_SETTINGS.indexOf(sp) !== -1) {
-		for (const k of textKeys) {
-			if (listing[k] !== undefined) err(`${where}: core-book setting carries only the Handbook URL (no ${k})`);
+		for (const k of ['quote', 'image', 'setting', 'prep', 'complexity']) {
+			if (listing[k] !== undefined) {
+				err(`${where}: core-book setting carries only the Handbook URL (no view.listing.${k})`);
+			}
 		}
-		if (listing.image !== undefined) err(`${where}: core-book setting has no cover image`);
 		return;
 	}
-	for (const k of textKeys) {
+	for (const k of ['quote', 'setting', 'prep', 'complexity']) {
 		if (typeof listing[k] !== 'string' || !listing[k].length) {
-			err(`${where}: listing.${k} is required verbatim text`);
-		}
-	}
-	for (const k of ['setting', 'prep', 'complexity']) {
-		if (typeof listing[k] === 'string' && listing[k].length && !isDiceString(listing[k])) {
-			err(`${where}: listing.${k} must be a dice string (${JSON.stringify(listing[k])})`);
+			err(`${where}: character.view.listing.${k} is required verbatim text`);
 		}
 	}
 	// Cover image: publisher id + the product id from the entry's own url.
 	const m = /\/product\/(\d+)\//.exec(listing.url || '');
 	const wantImage = m ? 'https://legacy.drivethrurpg.com/images/31866/' + m[1] + '.jpg' : null;
 	if (listing.image !== wantImage) {
-		err(`${where}: listing.image must be the DriveThruRPG cover for the stored url`);
+		err(`${where}: character.view.listing.image must be the DriveThruRPG cover for the stored url`);
 	}
 }
 
@@ -207,10 +294,11 @@ templates.forEach((tpl, ti) => {
 				);
 			if (!ok) err(`${where}.traitSets[${si}]: view.branch must be {left,center,right} finite numbers >= 0`);
 		}
+		const setType = effectiveRatingType(ts);
 		(ts.traits || []).forEach((tr, ti) => {
 			if (!tr || typeof tr !== 'object') return;
 			checkRetiredTraitKeys(tr, `${where}.traitSets[${si}].traits[${ti}]`);
-			checkNodeOptions(tr, `${where}.traitSets[${si}].traits[${ti}]`);
+			checkNodeOptions(tr, `${where}.traitSets[${si}].traits[${ti}]`, setType);
 		});
 	});
 });
@@ -248,8 +336,44 @@ if (fs.existsSync(dataDir)) {
 			const isChar = data && typeof data.id === 'string' && Array.isArray(data.traitSets);
 			const isEntry = data && typeof data.id === 'string' && data.character && Array.isArray(data.character.traitSets);
 			const isBundle = data && Array.isArray(data.characters);
-			if (!isChar && !isEntry && !isBundle)
+			if (!isChar && !isEntry && !isBundle) {
 				err(`data/templates/${f}: unrecognized shape (not character, template entry, or bundle)`);
+			} else {
+				const checkArrayTrait = (tr, tw, inheritedType) => {
+					if (!tr || typeof tr !== 'object') return;
+					checkNodeOptions(tr, tw, inheritedType);
+					const nextType = effectiveRatingType(tr, inheritedType);
+					if (Array.isArray(tr.traits)) {
+						tr.traits.forEach((sub, ti) => checkArrayTrait(sub, `${tw}.traits[${ti}]`, nextType));
+					}
+				};
+				const checkCharRatings = (ch, cw) => {
+					if (!ch || !Array.isArray(ch.traitSets)) return;
+					ch.traitSets.forEach((ts, si) => {
+						if (!ts || typeof ts !== 'object') return;
+						const sw = `${cw}.traitSets[${si}]`;
+						checkNodeOptions(ts, sw);
+						const setType = effectiveRatingType(ts);
+						if (Array.isArray(ts.traits)) {
+							ts.traits.forEach((tr, ti) => checkArrayTrait(tr, `${sw}.traits[${ti}]`, setType));
+						}
+					});
+				};
+				if (isChar) {
+					checkCharacterViewListing(`data/templates/${f}`, data);
+					checkCharRatings(data, `data/templates/${f}`);
+				}
+				if (isEntry) {
+					checkCharacterViewListing(`data/templates/${f}.character`, data.character);
+					checkCharRatings(data.character, `data/templates/${f}.character`);
+				}
+				if (isBundle) {
+					data.characters.forEach((c, ci) => {
+						checkCharacterViewListing(`data/templates/${f}.characters[${ci}]`, c);
+						checkCharRatings(c, `data/templates/${f}.characters[${ci}]`);
+					});
+				}
+			}
 		} catch (e) {
 			err(`data/templates/${f}: invalid JSON (${e.message})`);
 		}
@@ -272,16 +396,23 @@ function isDiceString(s) {
 }
 
 // Ratings have one shape (2026-10-23): { type, value: [], range: [] }.
-// Range is optional with inheritance (2026-11-11): an omitted Die/Dice
-// range inherits the set's ladder. When present it must be a non-empty
-// list of numbers; a lone Pip bubble still carries no ladder.
-function checkRatingObject(rating, where) {
+function effectiveRatingType(node, inheritedType) {
+	const t = node && node.rating && typeof node.rating === 'object' ? node.rating.type : undefined;
+	if (typeof t === 'string' && ['Counter', 'Die', 'Dice', 'Pip'].indexOf(t) !== -1) return t;
+	return inheritedType;
+}
+
+// Range and type are optional with inheritance: omitted Die/Dice range
+// inherits the set's ladder, and omitted/null rating.type inherits from
+// an enclosing trait/set. Root sets still require an explicit rating.type.
+function checkRatingObject(rating, where, inheritedType) {
 	if (rating === undefined || rating === null) return;
 	if (!rating || typeof rating !== 'object' || Array.isArray(rating)) {
 		err(`${where}: rating must be { type, value: [], range: [] }`);
 		return;
 	}
-	if (['Counter', 'Die', 'Dice', 'Pip'].indexOf(rating.type) === -1) {
+	const effectiveType = rating.type === undefined || rating.type === null ? inheritedType : rating.type;
+	if (['Counter', 'Die', 'Dice', 'Pip'].indexOf(effectiveType) === -1) {
 		err(`${where}: rating.type must be Counter|Die|Dice|Pip`);
 	}
 	if (!Array.isArray(rating.value) || rating.value.some((x) => typeof x !== 'number' && typeof x !== 'boolean')) {
@@ -297,14 +428,14 @@ function checkRatingObject(rating, where) {
 	}
 }
 
-function checkNodeOptions(node, where) {
+function checkNodeOptions(node, where, inheritedType) {
 	if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
 	if (node.spendable !== undefined && typeof node.spendable !== 'boolean') err(`${where}: spendable must be boolean`);
 	if (node.hitches !== undefined && !(Number.isInteger(node.hitches) && node.hitches >= 0))
 		err(`${where}: hitches must be an integer >= 0`);
 	if (node.keepsExtra !== undefined && !(Number.isInteger(node.keepsExtra) && node.keepsExtra >= 1))
 		err(`${where}: keepsExtra must be an integer >= 1`);
-	checkRatingObject(node.rating, `${where}.rating`);
+	checkRatingObject(node.rating, `${where}.rating`, inheritedType);
 }
 
 function checkViewRetired(bag, where) {
@@ -380,7 +511,7 @@ function checkRetiredTraitKeys(node, where) {
 	}
 }
 
-function checkLayeredTrait(node, where, depth) {
+function checkLayeredTrait(node, where, depth, inheritedType) {
 	if (node === null) return; // local clear, governed by the null-emit rule
 	if (typeof node === 'string') {
 		err(`${where}: dice-string shorthand retired (rating object supersedes it)`);
@@ -403,7 +534,8 @@ function checkLayeredTrait(node, where, depth) {
 		if (node[k] !== undefined) err(`${where}: presentation key ${k} lives in the type layer`);
 	}
 	checkRetiredTraitKeys(node, where);
-	checkNodeOptions(node, where);
+	checkNodeOptions(node, where, inheritedType);
+	const childType = effectiveRatingType(node, inheritedType);
 	if (node.usableBy !== undefined) {
 		err(`${where}: usableBy is retired (trait ownership is not tracked)`);
 	}
@@ -427,7 +559,7 @@ function checkLayeredTrait(node, where, depth) {
 		} else {
 			for (const name of Object.keys(node.traits)) {
 				if (!name.length) err(`${where}.traits: blank names have no map form`);
-				else if (depth < 8) checkLayeredTrait(node.traits[name], `${where}/${name}`, depth + 1);
+				else if (depth < 8) checkLayeredTrait(node.traits[name], `${where}/${name}`, depth + 1, childType);
 			}
 		}
 	}
@@ -491,7 +623,7 @@ function checkLayeredFile(where, data) {
 			} else {
 				for (const tname of Object.keys(set.traits)) {
 					if (!tname.length) err(`${where}/${name}: blank trait names have no map form`);
-					else checkLayeredTrait(set.traits[tname], `${where}/${name}/${tname}`, 0);
+					else checkLayeredTrait(set.traits[tname], `${where}/${name}/${tname}`, 0, effectiveRatingType(set));
 				}
 			}
 		}
@@ -499,7 +631,7 @@ function checkLayeredFile(where, data) {
 }
 
 // ---- 5. Layered template validation (presentation layers are complete).
-function checkTemplateTrait(node, where, depth, inSlot) {
+function checkTemplateTrait(node, where, depth, inSlot, inheritedType) {
 	if (node === null) return; // removal record against the wrapped base
 	if (typeof node === 'string') {
 		err(`${where}: dice-string shorthand retired (rating object supersedes it)`);
@@ -517,7 +649,8 @@ function checkTemplateTrait(node, where, depth, inSlot) {
 	if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
 	if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
 	checkRetiredTraitKeys(node, where);
-	checkNodeOptions(node, where);
+	checkNodeOptions(node, where, inheritedType);
+	const childType = effectiveRatingType(node, inheritedType);
 	if (node.usableBy !== undefined) {
 		err(`${where}: usableBy is retired (trait ownership is not tracked)`);
 	}
@@ -541,11 +674,11 @@ function checkTemplateTrait(node, where, depth, inSlot) {
 		}
 		for (const name of Object.keys(map)) {
 			if (!name.length) err(`${where}.${label}: blank names live in slots, not traits`);
-			else if (depth < 8) checkTemplateTrait(map[name], `${where}/${name}`, depth + 1, false);
+			else if (depth < 8) checkTemplateTrait(map[name], `${where}/${name}`, depth + 1, false, childType);
 		}
 	};
 	kids(node.traits, 'traits');
-	checkSlots(node, where, depth, (s, i) => checkTemplateTrait(s, `${where}/slot${i}`, depth + 1, true));
+	checkSlots(node, where, depth, (s, i) => checkTemplateTrait(s, `${where}/slot${i}`, depth + 1, true, childType));
 }
 
 function checkSlots(node, where, depth, check) {
@@ -668,13 +801,16 @@ function checkTemplateFile(where, data) {
 			if (typeof set.traits !== 'object' || Array.isArray(set.traits)) {
 				err(`${where}/${name}: traits must be a name-keyed map`);
 			} else {
+				const setType = effectiveRatingType(set);
 				for (const tname of Object.keys(set.traits)) {
 					if (!tname.length) err(`${where}/${name}: blank trait names live in slots, not traits`);
-					else checkTemplateTrait(set.traits[tname], `${where}/${name}/${tname}`, 0, false);
+					else checkTemplateTrait(set.traits[tname], `${where}/${name}/${tname}`, 0, false, setType);
 				}
 			}
 		}
-		checkSlots(set, `${where}/${name}`, 0, (s, i) => checkTemplateTrait(s, `${where}/${name}/slot${i}`, 0, true));
+		checkSlots(set, `${where}/${name}`, 0, (s, i) =>
+			checkTemplateTrait(s, `${where}/${name}/slot${i}`, 0, true, effectiveRatingType(set)),
+		);
 	}
 }
 

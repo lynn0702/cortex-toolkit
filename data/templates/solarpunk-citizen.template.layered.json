@@ -1,483 +1,455 @@
 {
-  "id": "solarpunk-citizen",
-  "version": 1,
-  "title": "Solarpunk",
-  "subtitle": "Ecological Hope & Community Technology",
-  "game": "Solarpunk",
-  "variant": "Citizen File",
-  "pages": 1,
-  "genre": "SolarPunk / Sci-Fi / Community",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
-    "quote": "The corporations took everything. The land, the water, the air.",
-    "genre": "Near-future eco-punk / hopepunk",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
-  },
-  "character": {
-    "id": "template-solarpunk-citizen",
-    "isTemplate": true,
-    "name": "",
-    "game": "SolarPunk",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "SolarPunk",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "attributes",
-        "description": "SolarPunk holistic community attributes",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Mind": {},
-          "Body": {},
-          "Connection": {}
-        }
-      },
-      "Session Record": {
-        "id": "session-record",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 5,
-            "connected": true
-          },
-          "reservedSlots": 0,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "28%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {}
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Ecological calling, community role, and personal purpose",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Identity:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Community:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Purpose:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Sustainable tech, tools, and eco-craft",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 2,
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "76%",
-              "height": 1
-            },
-            "rating": {
-              "left": "76%",
-              "top": 0,
-              "width": "24%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "block": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Skills & Specialties": {
-        "id": "subtrait-columns",
-        "description": "Ecological competencies (d4-d12) and d6 craft specialties",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "traitColumns": 2,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "subtrait-columns"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 19,
-          "labels": {
-            "left": "SKILL",
-            "right": "SPECIALTIES"
-          },
-          "pillar": "prime"
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {
-          "Craft": {},
-          "Drive": {},
-          "Fight": {},
-          "Fix": {},
-          "Fly": {},
-          "Focus": {},
-          "Influence": {},
-          "Know": {},
-          "Labor": {},
-          "Move": {},
-          "Notice": {},
-          "Operate": {},
-          "Perform": {},
-          "Shoot": {},
-          "Sneak": {},
-          "Survive": {},
-          "Throw": {},
-          "Treat": {},
-          "Trick": {}
-        }
-      }
-    }
-  }
+	"id": "solarpunk-citizen",
+	"version": 1,
+	"character": {
+		"id": "template-solarpunk-citizen",
+		"isTemplate": true,
+		"name": "",
+		"game": "Solarpunk",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Solarpunk",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Ecological Hope & Community Technology",
+				"genre": "Near-future eco-punk / hopepunk",
+				"variant": "Citizen File",
+				"url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg",
+				"quote": "The corporations took everything. The land, the water, the air.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "attributes",
+				"description": "SolarPunk holistic community attributes",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Mind": {},
+					"Body": {},
+					"Connection": {}
+				}
+			},
+			"Session Record": {
+				"id": "session-record",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 5,
+						"connected": true
+					},
+					"reservedSlots": 0,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "28%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Ecological calling, community role, and personal purpose",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Identity:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Community:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Purpose:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Sustainable tech, tools, and eco-craft",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 2,
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "76%",
+							"height": 1
+						},
+						"rating": {
+							"left": "76%",
+							"top": 0,
+							"width": "24%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"block": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Skills & Specialties": {
+				"id": "subtrait-columns",
+				"description": "Ecological competencies (d4-d12) and d6 craft specialties",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"traitColumns": 2,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "subtrait-columns"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 19,
+					"labels": {
+						"left": "SKILL",
+						"right": "SPECIALTIES"
+					},
+					"pillar": "prime"
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {
+					"Craft": {},
+					"Drive": {},
+					"Fight": {},
+					"Fix": {},
+					"Fly": {},
+					"Focus": {},
+					"Influence": {},
+					"Know": {},
+					"Labor": {},
+					"Move": {},
+					"Notice": {},
+					"Operate": {},
+					"Perform": {},
+					"Shoot": {},
+					"Sneak": {},
+					"Survive": {},
+					"Throw": {},
+					"Treat": {},
+					"Trick": {}
+				}
+			}
+		}
+	}
 }

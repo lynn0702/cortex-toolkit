@@ -5,8 +5,10 @@ import {
 	VIEW_KEY,
 	getView,
 	ensureView,
+	hasTemplateListing,
 	isNameSet as isNameSetModel,
 	getRating,
+	resolveRating,
 	ratingDice,
 	setRatingDice,
 	resolveSetPillar,
@@ -18,7 +20,15 @@ import {
 import { buildParts } from './sheet-grid.ts';
 import { customFontDomId, parseExternalFontUrl, sanitizeFontFamilyName } from './font-url.ts';
 import { DREAMER_ARCHITECT_SHOWCASE, SHOWCASE_TEMPLATES } from './showcase-templates.ts';
-import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
+import type {
+	Character,
+	TraitSet,
+	Trait,
+	DiceConfig,
+	SheetTemplate,
+	CharacterPrefs,
+	TemplateListing,
+} from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
 
@@ -333,7 +343,7 @@ export const characterCurioFunctions = {
 			if (Array.isArray(rawSubs)) {
 				for (const st of rawSubs) {
 					if (!st || typeof st !== 'object') continue;
-					if (this.isSfxContainer(st) || getRating(st)?.type === 'Pip') continue;
+					if (this.isSfxContainer(st) || resolveRating(st, [tr, traitSetArg])?.type === 'Pip') continue;
 					const r = st.rating;
 					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
 						if (!firstAnyRange) firstAnyRange = r.range.slice();
@@ -346,7 +356,7 @@ export const characterCurioFunctions = {
 				for (const [key, st] of Object.entries(rawSubs)) {
 					if (!st || typeof st !== 'object') continue;
 					const name = (st as any).name || key;
-					if (name === 'SFX' || getRating(st as any)?.type === 'Pip') continue;
+					if (name === 'SFX' || resolveRating(st as any, [tr, traitSetArg])?.type === 'Pip') continue;
 					const r = (st as any).rating;
 					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
 						if (!firstAnyRange) firstAnyRange = r.range.slice();
@@ -463,9 +473,9 @@ export const characterCurioFunctions = {
 		return trait;
 	},
 
-	getTraitDice: function (trait: Trait) {
+	getTraitDice: function (trait: Trait, fallbacks?: Array<unknown>) {
 		if (!trait) return [];
-		const rating = getRating(trait);
+		const rating = resolveRating(trait, fallbacks);
 		if (rating) return ratingDice(rating);
 		return [];
 	},
@@ -522,6 +532,13 @@ export const characterCurioFunctions = {
 		const clean = url.trim();
 		if (!clean.length || /[\s'"()\\<>`]/.test(clean)) return '';
 		return this.isSafeUrl(clean, true) ? clean : '';
+	},
+
+	// Returns a URL safe for external <a :href> links (http/https/mailto), else ''.
+	safeLinkUrl: function (url: unknown) {
+		if (!url || typeof url !== 'string') return '';
+		const clean = url.replace(/[\t\n\r]/g, '').trim();
+		return clean.length && this.isSafeUrl(clean, false) ? clean : '';
 	},
 
 	// Downscales an uploaded image to a data URL (caps localStorage/IDB bloat).
@@ -1244,6 +1261,16 @@ export const characterCurioFunctions = {
 		const base = this.findTemplateCharacter(templateEntry);
 		if (!base) return cloneDeep(charData);
 		const out = this.applyOverrides(cloneDeep(base), charData || {});
+		const charHasListing = Boolean(
+			charData &&
+			charData.view &&
+			typeof charData.view === 'object' &&
+			!Array.isArray(charData.view) &&
+			charData.view.listing !== undefined,
+		);
+		if (!out.isTemplate && !charHasListing && out.view && typeof out.view === 'object' && !Array.isArray(out.view)) {
+			delete out.view.listing;
+		}
 		if (templateEntry.id) {
 			out.sheet = { template: { id: templateEntry.id, version: templateEntry.version || 1 } };
 		}
@@ -1267,6 +1294,29 @@ export const characterCurioFunctions = {
 		if (snapshot.custom && snapshot.custom.characterCurio) {
 			delete snapshot.custom.characterCurio.nickname;
 		}
+		if (snapshot.view && typeof snapshot.view === 'object' && !Array.isArray(snapshot.view)) {
+			const rawListing = snapshot.view.listing;
+			if (rawListing && typeof rawListing === 'object' && !Array.isArray(rawListing)) {
+				const cleanListing: Record<string, string> = {};
+				for (const [k, v] of Object.entries(rawListing)) {
+					if (typeof v !== 'string') continue;
+					const trimmed = v.trim();
+					if (trimmed.length) cleanListing[k] = trimmed;
+				}
+				snapshot.view.listing = cleanListing as TemplateListing;
+			}
+		}
+		if (meta && typeof meta.title === 'string' && meta.title.trim().length) {
+			const metaTitle = meta.title.trim();
+			const existingTitle = typeof snapshot.view?.listing?.title === 'string' ? snapshot.view.listing.title.trim() : '';
+			if (!existingTitle && metaTitle !== String(snapshot.game || '').trim()) {
+				const snapView = ensureView(snapshot);
+				snapView.listing = { ...(snapView.listing || {}), title: metaTitle };
+			}
+		}
+		if (snapshot.view?.listing && !hasTemplateListing(snapshot.view.listing)) {
+			delete snapshot.view.listing;
+		}
 		// Templates must never carry removals or internal ids: removals are
 		// character-local (they would otherwise infect every character) and
 		// _lid is app-local bookkeeping. Blank slots (reserved print rows)
@@ -1284,10 +1334,10 @@ export const characterCurioFunctions = {
 			if (Array.isArray(node.traits)) node.traits.forEach(cleanNode);
 		};
 		cleanNode(snapshot);
+		this.pruneEmptyScaffolding(snapshot);
 		return {
 			$schema: this.TEMPLATE_SCHEMA_URL,
 			id: id,
-			title: (meta && meta.title) || character?.game || 'Custom Layout',
 			version: meta && typeof meta.version === 'number' ? meta.version : this.TEMPLATE_FORMAT_VERSION,
 			updatedAt: new Date().toISOString(),
 			character: snapshot,
@@ -1451,10 +1501,10 @@ export const characterCurioFunctions = {
 		return r.drop ? {} : r.keep;
 	},
 
-	// Canonical file emit: drop empty custom/tags everywhere in a delta
-	// tree. description "" is KEPT: in a delta it is an explicit clear of
-	// an inherited description. Explicit nulls, join keys, and name stubs
-	// are kept.
+	// Canonical file emit: drop empty custom/tags/traits/description
+	// everywhere in a tree. Absence means no children / no description
+	// (or inherit in a delta); explicit nulls clear inherited values and
+	// are kept alongside join keys and name stubs.
 	pruneEmptyScaffolding: function (node: any) {
 		if (!node || typeof node !== 'object') return node;
 		if (Array.isArray(node)) {
@@ -1470,8 +1520,13 @@ export const characterCurioFunctions = {
 			delete node.custom;
 		}
 		if (Array.isArray(node.tags) && !node.tags.length) delete node.tags;
+		if (node.description === '') delete node.description;
+		if (Array.isArray(node.traits)) {
+			this.pruneEmptyScaffolding(node.traits);
+			if (!node.traits.length) delete node.traits;
+		}
 		Object.keys(node).forEach((k: string) => {
-			if (node[k] && typeof node[k] === 'object') this.pruneEmptyScaffolding(node[k]);
+			if (k !== 'traits' && node[k] && typeof node[k] === 'object') this.pruneEmptyScaffolding(node[k]);
 		});
 		return node;
 	},

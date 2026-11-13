@@ -5,8 +5,9 @@ import { characterCurioStorage } from '../js/storage.ts';
 import AppFooter from '../js/app-footer.vue';
 import Roster from '../js/roster.vue';
 import App from '../js/app.vue';
+import NameEditor from '../js/name-editor.vue';
 import { DREAMER_ARCHITECT_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
-import type { Character, SheetTemplate } from '../js/model.ts';
+import { getTemplateListing, getTemplateTitle, getView, type Character, type SheetTemplate } from '../js/model.ts';
 
 describe('Character Curio Branding & Resolution Suite', () => {
 	const mockLibrary: SheetTemplate[] = [
@@ -79,7 +80,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(characterCurioStorage.RECORD_KEY).toBe('app');
 	});
 
-	it('renders the tarot World mark (favicon.ico) in the footer colophon', () => {
+	it('renders the World mark (favicon.ico) in the footer colophon', () => {
 		const wrapper = mount(AppFooter, {
 			props: {
 				mode: 'roster',
@@ -110,7 +111,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		document.body.removeChild(el);
 	});
 
-	it('imports The Dreamer & the Architect from .curio.json with 4 trait sets, Boss Dice ring, and tarot-card layout', async () => {
+	it('imports The Dreamer & the Architect from .curio.json with 4 trait sets, Boss Dice ring, and layout', async () => {
 		const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
 		const imported = characterCurioFunctions.sanitizeImportedCharacter(raw);
 		expect(imported).not.toBeNull();
@@ -121,7 +122,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(architect.name).toBe('The Architect');
 		expect(architect.rating.type).toBe('Dice');
 		expect(architect.rating.value).toEqual([10, 10, 10]);
-		expect(architect.traits).toHaveLength(0);
+		expect(architect.traits ?? []).toHaveLength(0);
 		expect(architect.view.ringNoun).toBe('Boss Die');
 		expect(architect.view.border).toBe('none');
 
@@ -129,11 +130,11 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(archDistinctions.name).toBe('Architect Distinctions');
 		expect(archDistinctions.traits).toHaveLength(3);
 		expect(archDistinctions.traits[0].name).toBe('Function Before Form');
-		expect(archDistinctions.traits[0].traits).toHaveLength(0);
+		expect(archDistinctions.traits[0].traits ?? []).toHaveLength(0);
 		expect(archDistinctions.traits[1].name).toBe('Less is More');
-		expect(archDistinctions.traits[1].traits).toHaveLength(0);
+		expect(archDistinctions.traits[1].traits ?? []).toHaveLength(0);
 		expect(archDistinctions.traits[2].name).toBe('All My Darlings are Dead');
-		expect(archDistinctions.traits[2].traits).toHaveLength(0);
+		expect(archDistinctions.traits[2].traits ?? []).toHaveLength(0);
 
 		// Values have descriptions
 		expect(values.name).toBe('Values');
@@ -141,7 +142,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(values.view.border?.shape ?? values.view.border).toBe('line');
 		expect(values.traits[0].name).toBe('Data');
 		expect(values.traits[0].description).toBe('belongs to the people, not the builders');
-		expect(values.traits[0].traits).toHaveLength(0);
+		expect(values.traits[0].traits ?? []).toHaveLength(0);
 
 		// Dreamer distinctions are also simple label traits
 		expect(dreamer.name).toBe('The Dreamer');
@@ -149,11 +150,11 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(dreamer.view.border).toBe('none');
 		expect(dreamer.view.header).toBe('bottom');
 		expect(dreamer.traits[0].name).toBe('Beauty is all around us');
-		expect(dreamer.traits[0].traits).toHaveLength(0);
+		expect(dreamer.traits[0].traits ?? []).toHaveLength(0);
 		expect(dreamer.traits[1].name).toBe("I'll have another slice");
-		expect(dreamer.traits[1].traits).toHaveLength(0);
+		expect(dreamer.traits[1].traits ?? []).toHaveLength(0);
 		expect(dreamer.traits[2].name).toBe("Darling, let's have tea");
-		expect(dreamer.traits[2].traits).toHaveLength(0);
+		expect(dreamer.traits[2].traits ?? []).toHaveLength(0);
 
 		// place
 		expect(architect.view.place).toEqual({ height: 3, left: '0%', top: 0, width: '50%' });
@@ -178,17 +179,25 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(values.view.header).toBe('top');
 	});
 
-	it('surfaces Dreamer & Architect as showcase template with tarot-card layout details', () => {
+	it('surfaces Dreamer & Architect as showcase template without invented Setting/Prep/Complexity ratings', () => {
 		expect(DREAMER_ARCHITECT_SHOWCASE.id).toBe('dreamer-architect');
-		expect(DREAMER_ARCHITECT_SHOWCASE.title).toBe('The Dreamer & the Architect');
-		expect(DREAMER_ARCHITECT_SHOWCASE.listing.image).toBe(
+		expect(getTemplateTitle(DREAMER_ARCHITECT_SHOWCASE)).toBe('The Dreamer & the Architect');
+		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.image).toBe(
 			'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
 		);
+		expect((DREAMER_ARCHITECT_SHOWCASE as any).blurb).toBeUndefined();
+		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.setting).toBeUndefined();
+		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.prep).toBeUndefined();
+		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.complexity).toBeUndefined();
 		expect(characterCurioFunctions.findLibraryTemplate('dreamer-architect')?.id).toBe('dreamer-architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.character.name).toBe('The Dreamer & the Architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.character.traitSets).toHaveLength(4);
-		// Vanguard remains index 0 of SHOWCASE_TEMPLATES
+		// Vanguard remains index 0 of SHOWCASE_TEMPLATES and also omits invented ratings
 		expect(SHOWCASE_TEMPLATES[0].id).toBe('vanguard-frame-showcase');
+		expect((SHOWCASE_TEMPLATES[0] as any).blurb).toBeUndefined();
+		expect(getTemplateListing(SHOWCASE_TEMPLATES[0])?.setting).toBeUndefined();
+		expect(getTemplateListing(SHOWCASE_TEMPLATES[0])?.prep).toBeUndefined();
+		expect(getTemplateListing(SHOWCASE_TEMPLATES[0])?.complexity).toBeUndefined();
 	});
 
 	it('roster prepends Dreamer & Architect when characters is empty (splash/first run)', () => {
@@ -247,7 +256,72 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(dreamerCard).toBeDefined();
 		const portraitStyle = dreamerCard!.find('.library-card-hero .portrait-circle').attributes('style') || '';
 		expect(portraitStyle).toContain('images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg');
-		expect(dreamerCard!.findAll('.library-card-hero .ring-trait')).toHaveLength(3);
+		expect(dreamerCard!.find('.library-card-hero .portrait').classes()).toContain('portrait-shape-circle');
+		expect(dreamerCard!.find('.library-card-hero .trait-set-frame-svg').exists()).toBe(true);
+		expect(dreamerCard!.find('.library-card-hero .trait-set-frame-svg').attributes('style')).toContain(
+			'--frame-stroke-width: 4px',
+		);
+		expect(dreamerCard!.find('.library-card-hero').classes()).toContain('is-portrait-only');
+		expect(dreamerCard!.findAll('.library-card-hero .ring-trait')).toHaveLength(0);
+		expect(dreamerCard!.text()).not.toMatch(/\b(Setting|Prep|Complexity)\b/i);
+		wrapper.unmount();
+	});
+
+	it('renders rating ring on published listings with real dice ratings, schematic for imageless sheets, and unclipped action controls', async () => {
+		const publishedWithRatings = {
+			id: 'alien-us-ratings',
+			character: {
+				game: 'Alien, Us',
+				view: {
+					pageCount: 2,
+					listing: {
+						title: 'Alien, Us',
+						subtitle: 'Sci-Fi Infiltration & Paranoia',
+						url: 'https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866',
+						image: 'https://legacy.drivethrurpg.com/images/31866/572304.jpg',
+						genre: 'Cold War Sci-Fi Drama',
+						quote: 'You crashed here forty years ago.',
+						setting: 'd6',
+						prep: 'd6',
+						complexity: 'd8',
+					},
+				},
+				traitSets: [
+					{ id: 'name', name: 'Name', traits: [] },
+					{ id: 'distinctions', name: 'Distinctions', traits: [] },
+				],
+			},
+		} as unknown as SheetTemplate;
+		(window as any).characterCurioLibraryTemplates = [publishedWithRatings];
+		(globalThis as any).characterCurioLibraryTemplates = [publishedWithRatings];
+
+		const wrapper = mount(Roster, {
+			props: { characters: [] },
+		});
+		await wrapper.find('.roster-button-library').trigger('click');
+
+		const cards = wrapper.findAll('article.library-card');
+		const alienCard = cards.find((c) => c.text().includes('Alien, Us'));
+		expect(alienCard).toBeDefined();
+		expect(alienCard!.find('.library-card-hero .trait-set-frame-svg').exists()).toBe(true);
+		expect(alienCard!.find('.library-card-hero .trait-set-frame-svg').attributes('style')).toContain(
+			'--frame-stroke-width: 4px',
+		);
+		expect(alienCard!.findAll('.library-card-hero .ring-trait')).toHaveLength(3);
+		expect(alienCard!.find('.library-card-hero').text()).toContain('Setting');
+		expect(alienCard!.find('.library-card-hero').text()).toContain('Prep');
+		expect(alienCard!.find('.library-card-hero').text()).toContain('Complexity');
+		// Internal "Name" traitSet is excluded from trait tags
+		const tagTexts = alienCard!.findAll('.library-card-traits .trait-tag').map((el) => el.text());
+		expect(tagTexts).not.toContain('Name');
+		expect(tagTexts).toContain('Distinctions');
+
+		// Imageless showcase card renders schematic wireframe and primary/utility action buttons
+		const vanguardCard = cards.find((c) => c.text().includes('Vanguard Frame Showcase'));
+		expect(vanguardCard).toBeDefined();
+		expect(vanguardCard!.find('.library-card-schematic').exists()).toBe(true);
+		const actionLabels = vanguardCard!.findAll('.library-card-actions .btn-library').map((b) => b.text().trim());
+		expect(actionLabels).toEqual(['Preview', 'Character', 'Template', 'Print']);
 		wrapper.unmount();
 	});
 
@@ -289,6 +363,153 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		vm.openPreview(null);
 		expect(vm.isPreview).toBe(false);
 		expect(vm.characters).toHaveLength(0);
+		wrapper.unmount();
+	});
+
+	it('discovers community .curio.json view.listing under Saved, sanitizes unsafe URLs, and keeps view.listing off player characters', async () => {
+		const communityDemo = {
+			id: 'comm-starlight-1',
+			name: 'Solstice',
+			game: 'Starlight Courier',
+			dateCreated: '2026-11-13T00:00:00Z',
+			dateModified: '2026-11-13T00:00:00Z',
+			dateTouched: '2026-11-13T00:00:00Z',
+			view: {
+				listing: {
+					id: 'starlight-courier',
+					title: 'Starlight Courier',
+					subtitle: 'Solo Epistolary Sci-Fi',
+					genre: 'Cozy Sci-Fi',
+					url: 'https://itch.io/starlight',
+					image: 'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
+					quote: 'Deliver letters across the drift.',
+					setting: 'd8',
+				},
+			},
+			traitSets: [{ id: 'roles', name: 'Roles', traits: [] }],
+		};
+		const unsafeLinkDemo = {
+			id: 'comm-unsafe-2',
+			name: 'Unsafe',
+			isTemplate: true,
+			dateCreated: '2026-11-13T00:00:00Z',
+			dateModified: '2026-11-13T00:00:00Z',
+			dateTouched: '2026-11-13T00:00:00Z',
+			view: {
+				listing: {
+					id: 'unsafe-link-demo',
+					title: 'Unsafe Link Demo',
+					url: 'javascript:alert(1)',
+				},
+			},
+			traitSets: [],
+		};
+
+		const wrapper = mount(Roster, {
+			props: { characters: [communityDemo, unsafeLinkDemo] },
+		});
+		await wrapper.find('.roster-button-library').trigger('click');
+
+		const filterButtons = wrapper.findAll('.library-filter-pill');
+		const savedPill = filterButtons.find((b) => b.text().includes('Saved'));
+		const officialPill = filterButtons.find((b) => b.text().includes('Official'));
+		expect(savedPill).toBeDefined();
+		expect(officialPill).toBeDefined();
+		expect(savedPill!.text()).toContain('2');
+		expect(officialPill!.text()).toContain('0');
+
+		await savedPill!.trigger('click');
+		const cards = wrapper.findAll('article.library-card');
+		expect(cards).toHaveLength(2);
+
+		const starlightCard = cards.find((c) => c.text().includes('Starlight Courier'));
+		expect(starlightCard).toBeDefined();
+		expect(starlightCard!.find('.library-card-title a').attributes('href')).toBe('https://itch.io/starlight');
+		expect(starlightCard!.find('.library-card-subtitle').text()).toBe('Solo Epistolary Sci-Fi');
+		expect(starlightCard!.find('.badge-genre').text()).toBe('Cozy Sci-Fi');
+		expect(starlightCard!.findAll('.library-card-hero .ring-trait')).toHaveLength(1);
+		expect(starlightCard!.find('.library-card-hero').text()).toContain('Setting');
+		// Community entries backed by roster characters do not render broken Remove buttons
+		expect(starlightCard!.find('.btn-library.danger').exists()).toBe(false);
+
+		const unsafeCard = cards.find((c) => c.text().includes('Unsafe Link Demo'));
+		expect(unsafeCard).toBeDefined();
+		expect(unsafeCard!.find('.library-card-title a').exists()).toBe(false);
+
+		// Materializing a player character from DREAMER_ARCHITECT_SHOWCASE strips template view.listing
+		const playerEntity = {
+			id: 'player-1',
+			isTemplate: false,
+			name: 'Traveler',
+			sets: {},
+			template: { id: 'dreamer-architect', version: 1 },
+		};
+		const materialized = characterCurioFunctions.materializeCharacter(
+			playerEntity,
+			DREAMER_ARCHITECT_SHOWCASE.character,
+		);
+		expect(getView(materialized)?.listing).toBeUndefined();
+
+		wrapper.unmount();
+	});
+
+	it('authors sparse character.view.listing in NameEditor, preserves it in extractSheetTemplate, and removes empty view.listing', async () => {
+		const ch = structuredClone(characterCurioFunctions.defaultCharacter) as unknown as Character;
+		ch.id = 'author-char-1';
+		ch.game = 'Drift Runner';
+		const updates: any[] = [];
+		const wrapper = mount(NameEditor, {
+			props: {
+				character: ch,
+				open: true,
+				tab: 'sheet',
+			},
+			attrs: {
+				onUpdateCharacter: (c: any) => updates.push(c),
+			},
+		});
+
+		await wrapper.find('#char-listing-title').setValue('  Drift Runner Deluxe  ');
+		await wrapper.find('#char-listing-genre').setValue('Space Opera');
+		await wrapper.find('#char-listing-url').setValue('https://example.com/drift');
+
+		// Typing without blur/change (including mid-phrase trailing space) must survive sibling <select> updates
+		const quoteEl = wrapper.find('#char-listing-quote').element as HTMLTextAreaElement;
+		quoteEl.value = 'Fly fast, ';
+		await wrapper.find('#char-listing-quote').trigger('input');
+		await wrapper.find('#char-listing-setting').setValue('d10');
+		expect(getView(ch)?.listing?.quote).toBe('Fly fast, ');
+		expect((wrapper.find('#char-listing-quote').element as HTMLTextAreaElement).value).toBe('Fly fast, ');
+
+		// Committing via change trims leading/trailing whitespace
+		await wrapper.find('#char-listing-quote').setValue('  Fly fast, owe everyone.  ');
+
+		expect(updates.length).toBeGreaterThanOrEqual(5);
+		expect(getView(ch)?.listing).toEqual({
+			title: 'Drift Runner Deluxe',
+			genre: 'Space Opera',
+			url: 'https://example.com/drift',
+			quote: 'Fly fast, owe everyone.',
+			setting: 'd10',
+		});
+
+		const extracted = characterCurioFunctions.extractSheetTemplate(ch, {}) as any;
+		expect(extracted.title).toBeUndefined();
+		expect(extracted.character.view.listing).toEqual({
+			title: 'Drift Runner Deluxe',
+			genre: 'Space Opera',
+			url: 'https://example.com/drift',
+			quote: 'Fly fast, owe everyone.',
+			setting: 'd10',
+		});
+
+		await wrapper.find('#char-listing-title').setValue('');
+		await wrapper.find('#char-listing-genre').setValue('');
+		await wrapper.find('#char-listing-url').setValue('');
+		await wrapper.find('#char-listing-quote').setValue('');
+		await wrapper.find('#char-listing-setting').setValue('');
+		expect(getView(ch)?.listing).toBeUndefined();
+
 		wrapper.unmount();
 	});
 });

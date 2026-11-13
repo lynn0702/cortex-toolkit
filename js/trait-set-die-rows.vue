@@ -21,7 +21,7 @@ const {
 	getParts,
 	renderDieValueForPrint,
 	handleSingleDieClick,
-	getRating,
+	resolveTraitRating,
 	getTraitCounter,
 	firstDie,
 	isDieActive,
@@ -119,8 +119,8 @@ const {
 					<span
 						class="die-row-counter"
 						v-if="
-							getRating(item.trait)?.type === 'Counter' ||
-							traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')
+							resolveTraitRating(item.trait)?.type === 'Counter' ||
+							traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter')
 						"
 					>
 						{{ !printBlank && !item.isPlaceholder ? getTraitCounter(item.trait) : '' }}

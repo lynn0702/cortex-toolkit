@@ -511,7 +511,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			vanguardWrapper.unmount();
 		});
 
-		it('Item 6: verifies The Dreamer & the Architect tarot card composition across all 4 sets', async () => {
+		it('Item 6: verifies The Dreamer & the Architect composition across all 4 sets', async () => {
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
 			const character = structuredClone(raw);
 

@@ -38,12 +38,10 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(e: 'close'): void;
 	(e: 'addDie', die: any): void;
 	(e: 'removeDie', index: number): void;
 	(e: 'clearPool'): void;
 	(e: 'clearOppositionPool'): void;
-	(e: 'togglePosition'): void;
 	(e: 'settlePP', delta: number): void;
 	(e: 'update:activePoolSide', side: 'player' | 'opposition'): void;
 }>();
@@ -1340,30 +1338,6 @@ defineExpose({
 		class="dice-roller-sidebar dice-roller-sheet"
 		:class="{ open: open, 'is-opposition': currentSide === 'opposition' }"
 	>
-		<div class="roller-header">
-			<div class="roller-title"><i class="fas fa-dice" aria-hidden="true"></i> <span>Dice Roller</span></div>
-			<div class="roller-header-actions">
-				<button
-					type="button"
-					class="roller-btn-icon"
-					@click="emit('togglePosition')"
-					:title="position === 'left' ? 'Move panel right' : 'Move panel left'"
-					:aria-label="position === 'left' ? 'Move panel right' : 'Move panel left'"
-				>
-					<i class="fas fa-arrows-left-right" aria-hidden="true"></i>
-				</button>
-				<button
-					type="button"
-					class="roller-btn-icon"
-					@click="emit('close')"
-					title="Close Roller"
-					aria-label="Close Roller"
-				>
-					<i class="fas fa-times" aria-hidden="true"></i>
-				</button>
-			</div>
-		</div>
-
 		<div class="roller-body">
 			<!-- DUAL-POOL TABS + PP TRACKER -->
 			<div class="roller-top-bar">

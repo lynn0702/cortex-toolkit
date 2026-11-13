@@ -14,6 +14,7 @@ import {
 	getView,
 	ensureView,
 	getRating,
+	resolveRating,
 	ratingDice,
 	setRatingDice,
 	setRatingDie,
@@ -59,6 +60,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	const editing = computed(() => props.editing);
 	const printBlank = computed(() => props.printBlank);
 	const viewY = computed(() => props.viewY);
+
+	function resolveTraitRating(node: unknown, extra?: Array<unknown>) {
+		return resolveRating(node, extra ? [...extra, traitSet.value] : [traitSet.value]);
+	}
 
 	// Orthogonal Border, Portrait Frame & Radial Array
 	const resolvedBorder = computed(() => resolveBorder(traitSet.value));
@@ -266,7 +271,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 
 		const hasCounter = (Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : []).some(
-			(t: any) => getRating(t)?.type === 'Counter',
+			(t: any) => resolveRating(t, [traitSetArg])?.type === 'Counter',
 		);
 		if (hasCounter) {
 			classes['trait-set-has-counter'] = true;
@@ -389,11 +394,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 		const hasStatementPip =
 			Array.isArray(traitSetArg?.traits) &&
-			traitSetArg.traits.some((t: any) => {
-				const r = getRating(t);
-				if (r?.type === 'Pip') return true;
-				return Array.isArray(t?.traits) && t.traits.some((sub: any) => getRating(sub)?.type === 'Pip');
-			});
+			traitSetArg.traits.some(
+				(t: any) =>
+					Array.isArray(t?.traits) && t.traits.some((sub: any) => resolveRating(sub, [t, traitSetArg])?.type === 'Pip'),
+			);
 
 		if (
 			hasStatementPip &&
@@ -440,10 +444,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!node || !Array.isArray(node.traits)) return undefined;
 		for (const ch of node.traits) {
 			if (!ch || typeof ch !== 'object') continue;
-			const r = getRating(ch);
+			const r = resolveTraitRating(ch, [node]);
 			if (r && r.type === 'Pip') return ch;
 			if (Array.isArray(ch.traits)) {
-				const nested = ch.traits.find((sub: any) => getRating(sub)?.type === 'Pip');
+				const nested = ch.traits.find((sub: any) => resolveTraitRating(sub, [ch, node])?.type === 'Pip');
 				if (nested) return nested;
 			}
 		}
@@ -452,7 +456,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function isChildPipFilled(node: any): boolean {
 		const child = getPipChild(node);
-		return Boolean(child?.rating?.type === 'Pip' && child.rating.value?.[0] === true);
+		const r = child ? resolveTraitRating(child, [node]) : undefined;
+		return Boolean(r?.type === 'Pip' && r.value?.[0] === true);
 	}
 
 	function togglePip(sArg: any, t: any, traitArg?: Trait) {
@@ -620,7 +625,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function fillPlaceholder(sArg: any) {
 		const set = props.character.traitSets[sArg];
-		if (!set || !Array.isArray(set.traits)) return;
+		if (!set) return;
+		if (!Array.isArray(set.traits)) set.traits = [];
 		set.traits.push(createBlankSlotTrait(set));
 		updateCharacter(props.character);
 		selectElement(['trait', sArg, set.traits.length - 1]);
@@ -638,7 +644,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				: t?.traits && typeof t.traits === 'object'
 					? Object.values(t.traits)
 					: [];
-			return subs.some((s: any) => !characterCurioFunctions.isSfxContainer(s) && getRating(s)?.type !== 'Pip');
+			return subs.some(
+				(s: any) => !characterCurioFunctions.isSfxContainer(s) && resolveTraitRating(s, [t])?.type !== 'Pip',
+			);
 		});
 		return {
 			name: '',
@@ -718,7 +726,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getTraitDice(trait: Trait) {
-		return characterCurioFunctions.getTraitDice(trait);
+		return characterCurioFunctions.getTraitDice(trait, [traitSet.value]);
 	}
 
 	// Positional subtrait access: paired slots keep complication at 0
@@ -728,7 +736,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function nonSfxSubtraits(trait: Trait) {
 		const subs = (trait as any)?.traits;
 		return (Array.isArray(subs) ? subs : []).filter(
-			(st: any) => !characterCurioFunctions.isSfxContainer(st) && getRating(st)?.type !== 'Pip',
+			(st: any) => !characterCurioFunctions.isSfxContainer(st) && resolveTraitRating(st, [trait])?.type !== 'Pip',
 		);
 	}
 
@@ -785,7 +793,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// Stage entries carry hitches (resolved with inheritance) and keepsExtra
 	// so the roller never re-resolves trait data from a source name.
 	function stageTraitDice(trait: Trait, traitSetArg: TraitSet) {
-		const dice = availableDice(trait);
+		const dice = availableDice(trait, [traitSetArg]);
 		if (!dice.length) return [];
 		const hitches = resolveHitches(trait, [traitSetArg]);
 		const keep = keepsExtraDice(trait);
@@ -831,7 +839,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		t: any,
 	) {
 		if (props.submode === 'play') {
-			const first = ratingDice(getRating(trait))[0];
+			const first = ratingDice(resolveRating(trait, [traitSetArg]))[0];
 			const targetVal = value || first;
 			if (value !== undefined && value !== null) {
 				if (!first || first !== value) {
@@ -868,14 +876,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function hinderDie(trait: Trait): number {
 		const children = characterCurioFunctions.sfxChildren(trait);
 		const hinder = children.find((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-		return ratingDice(getRating(hinder))[0] || 0;
+		return ratingDice(resolveTraitRating(hinder, [trait]))[0] || 0;
 	}
 
 	function handleHinderDieClick(trait: Trait, traitSetArg: TraitSet, sArg: any, t: any) {
 		if (props.submode === 'play') {
 			const children = characterCurioFunctions.sfxChildren(trait);
 			const hinder = children.find((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-			const size = ratingDice(getRating(hinder))[0] || 4;
+			const size = ratingDice(resolveRating(hinder, [trait, traitSetArg]))[0] || 4;
 			emit('addDieToRoller', {
 				size: size,
 				qty: 1,
@@ -901,8 +909,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function handleSteppedDieClick(sArg: any, t: any, value: number) {
 		if (props.submode === 'play') {
-			const trait = props.character.traitSets[sArg].traits[t];
-			const cur = ratingDice(getRating(trait))[0];
+			const traitSetArg = props.character.traitSets[sArg];
+			const trait = traitSetArg.traits[t];
+			const cur = ratingDice(resolveRating(trait, [traitSetArg]))[0];
 			if (cur === value && !trait.isOut) {
 				setRatingDie(trait as unknown as Record<string, any>, null);
 			} else {
@@ -1161,7 +1170,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function pipRowFilled(t: any, index: number, filledCount: number): boolean {
 		if (t && typeof t === 'object') {
-			const rating = getRating(t);
+			const rating = resolveTraitRating(t);
 			if (rating && rating.type === 'Pip' && Array.isArray(rating.value) && rating.value.length) {
 				return rating.value[0] === true;
 			}
@@ -1189,7 +1198,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getTraitPipBubbles(trait: Trait | undefined): boolean[] {
-		const r = getRating(trait);
+		const r = resolveTraitRating(trait);
 		if (r && r.type === 'Pip' && Array.isArray(r.value)) {
 			const count = Array.isArray(r.range) && r.range[0] ? r.range[0] : r.value.length || 5;
 			const bubbles: boolean[] = [];
@@ -1201,7 +1210,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function toggleTraitPipBubble(trait: Trait | undefined, pipIndex: number) {
 		if (props.submode === 'print' || !trait) return;
-		const r = getRating(trait);
+		const r = resolveTraitRating(trait);
 		if (!r || r.type !== 'Pip') return;
 		const count = r.value.length || 5;
 		const bubbles: boolean[] = [];
@@ -1363,7 +1372,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const groups: any[] = parents.map((traitItem: any) => {
 			const tIdx = traitItem.originalIndex;
 			const nested = (traitItem.trait?.traits || [])
-				.filter((sub: any) => getRating(sub)?.type !== 'Pip')
+				.filter((sub: any) => resolveRating(sub, [traitItem.trait, traitSetArg])?.type !== 'Pip')
 				.map((sub: any, u: number) => ({ kind: 'sub', sub, u }));
 			const linked = flats
 				.filter((f: any) => getView(f.trait)?.linkTo === tIdx)
@@ -1445,9 +1454,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function handleBranchFlatClick(sArg: any, t: any, trait: Trait) {
 		if (props.submode === 'play') {
-			const first = ratingDice(getRating(trait))[0];
+			const traitSetArg = props.character.traitSets[sArg];
+			const first = ratingDice(resolveRating(trait, [traitSetArg]))[0];
 			if (first) {
-				const traitSetArg = props.character.traitSets[sArg];
 				handleSingleDieClick(trait, first, traitSetArg, sArg, t);
 			}
 		} else {
@@ -1516,7 +1525,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!trait) return;
 		const clamped = Math.max(1, Math.min(5, Number(count) || 1));
 		const ratings = getTraitSetRatings(traitSetArg);
-		const size = ratingDice(getRating(trait))[0] || ratings[0] || 6;
+		const size = ratingDice(resolveRating(trait, [traitSetArg]))[0] || ratings[0] || 6;
 		const dice = [];
 		for (let i = 0; i < clamped; i++) dice.push(size);
 		characterCurioFunctions.setTraitDice(trait, dice);
@@ -1529,7 +1538,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const diceToAdd: any[] = [];
 		const poolName = traitSetArg.name || props.character.name || 'Challenge Pool';
 		for (const tr of traitSetArg.traits || []) {
-			const dice = availableDice(tr);
+			const dice = availableDice(tr, [traitSetArg]);
 			const hitches = resolveHitches(tr, [traitSetArg]);
 			const keep = keepsExtraDice(tr);
 			for (const d of dice) {
@@ -1543,7 +1552,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	// Template-facing rating reads (one shape; no value/dice in templates).
 	function firstDie(trait: Trait) {
-		return ratingDice(getRating(trait))[0] || 0;
+		return ratingDice(resolveTraitRating(trait))[0] || 0;
 	}
 
 	function isDieActive(trait: Trait, size: number) {
@@ -1551,7 +1560,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function isTraitRated(trait: Trait) {
-		return isRated(trait);
+		return isRated(trait, [traitSet.value]);
 	}
 
 	// Spendable drives the spend control (trait wins, set inherits).
@@ -1707,6 +1716,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		firstDie,
 		isDieActive,
 		isTraitRated,
+		resolveTraitRating,
 		getRating,
 		ratingDice,
 		isRated,

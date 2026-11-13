@@ -17,9 +17,9 @@
 
 	width: var(--studio-panel-width);
 
-	background: #0f172a;
+	background: var(--studio-bg);
 
-	color: #f8fafc;
+	color: var(--studio-text);
 
 	z-index: var(--z-frame);
 
@@ -29,7 +29,7 @@
 
 	overflow: hidden;
 
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+	box-shadow: 0 0 20px color-mix(in oklab, var(--text-main) 25%, transparent);
 
 	transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -38,7 +38,7 @@
 
 		left: auto;
 
-		border-left: 1px solid rgba(255, 255, 255, 0.1);
+		border-left: 1px solid var(--studio-border);
 
 		transform: translateX(0);
 
@@ -54,7 +54,7 @@
 
 		right: auto;
 
-		border-right: 1px solid rgba(255, 255, 255, 0.1);
+		border-right: 1px solid var(--studio-border);
 
 		transform: translateX(0);
 
@@ -66,9 +66,9 @@
 	}
 }
 
-/* Push sheet column when space allows (>= 1400px) */
+/* Push sheet column when space allows (>= 87.5rem) */
 
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 87.5rem) {
 	.play-shell.panel-open.panel-right .sheet-column {
 		margin-right: var(--studio-panel-width);
 
@@ -82,9 +82,9 @@
 	}
 }
 
-/* Below 1400px: Overlay drawer, sheet stays centered without margin shift */
+/* Below 87.5rem: Overlay drawer, sheet stays centered without margin shift */
 
-@media screen and (max-width: 1399px) {
+@media screen and (max-width: 87.4375rem) {
 	.play-shell .sheet-column {
 		margin-left: 0;
 
@@ -92,7 +92,7 @@
 	}
 
 	.studio-panel {
-		box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
+		box-shadow: 0 0 35px color-mix(in oklab, var(--text-main) 40%, transparent);
 	}
 }
 
@@ -100,7 +100,7 @@
 
 /* titles carry the names). Matches the JS narrow-viewport line in app.vue. */
 
-@media screen and (max-width: 1399px) {
+@media screen and (max-width: 87.4375rem) {
 	.studio-panel-actions .studio-tab-label {
 		display: none;
 	}
@@ -276,9 +276,9 @@
 
 	padding: 0.45rem 0.5rem;
 
-	background: #1e293b;
+	background: var(--studio-header-bg);
 
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid var(--studio-border);
 
 	flex-shrink: 0;
 }
@@ -314,7 +314,7 @@
 
 	border-radius: 4px;
 
-	color: #94a3b8;
+	color: var(--studio-text-muted);
 
 	font-size: 0.75rem;
 
@@ -335,23 +335,23 @@
 	transition: all 0.15s ease;
 
 	&:hover {
-		color: #ffffff;
+		color: var(--studio-text);
 
-		background: rgba(255, 255, 255, 0.05);
+		background: color-mix(in oklab, var(--studio-text) 6%, transparent);
 	}
 
 	&.active {
-		color: #ffffff;
+		color: var(--studio-text);
 
-		background: rgba(255, 255, 255, 0.12);
+		background: color-mix(in oklab, var(--studio-text) 12%, transparent);
 
-		border-color: rgba(255, 255, 255, 0.2);
+		border-color: color-mix(in oklab, var(--studio-text) 20%, transparent);
 	}
 
 	.studio-tab-badge {
-		background: var(--color-interactive, #0284c7);
+		background: var(--color-interactive);
 
-		color: #ffffff;
+		color: var(--die-active-text);
 
 		font-size: 0.7rem;
 
@@ -369,7 +369,7 @@
 	font-weight: 800;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	color: var(--roller-scale-text-light, var(--die-active-text));
+	color: var(--roller-scale-text-light, var(--studio-text));
 }
 
 .studio-mobile-drawer-controls {
@@ -392,7 +392,7 @@
 
 		border: none;
 
-		color: #94a3b8;
+		color: var(--studio-text-muted);
 
 		padding: 0.35rem 0.45rem;
 
@@ -405,15 +405,15 @@
 		font-size: 0.85rem;
 
 		&:hover {
-			color: #ffffff;
+			color: var(--studio-text);
 
-			background: rgba(255, 255, 255, 0.1);
+			background: color-mix(in oklab, var(--studio-text) 10%, transparent);
 		}
 
 		&.active {
-			color: #ffffff;
+			color: var(--studio-text);
 
-			background: rgba(255, 255, 255, 0.12);
+			background: color-mix(in oklab, var(--studio-text) 12%, transparent);
 		}
 	}
 }
@@ -427,7 +427,7 @@
 
 	min-width: 0;
 
-	color: #cbd5e1;
+	color: var(--studio-text-secondary);
 
 	font-size: 0.75rem;
 
@@ -459,7 +459,7 @@
 
 		font: inherit;
 
-		color: #94a3b8;
+		color: var(--studio-text-muted);
 
 		cursor: pointer;
 
@@ -470,7 +470,7 @@
 		}
 
 		&:hover {
-			color: #38bdf8;
+			color: color-mix(in oklab, var(--color-interactive) 65%, white);
 
 			text-decoration: underline;
 		}
@@ -481,11 +481,11 @@
 
 		font-size: 0.65rem;
 
-		color: #64748b;
+		color: var(--studio-text-muted);
 	}
 
 	.crumb-current {
-		color: #ffffff;
+		color: var(--studio-text);
 	}
 }
 
@@ -501,7 +501,7 @@
 	min-height: 0;
 
 	scrollbar-width: thin;
-	scrollbar-color: var(--border-strong, #64748b) transparent;
+	scrollbar-color: var(--border-strong) transparent;
 
 	@supports not (scrollbar-color: auto) {
 		&::-webkit-scrollbar {
@@ -509,7 +509,7 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background: var(--border-strong, #64748b);
+			background: var(--border-strong);
 
 			border-radius: 3px;
 		}
@@ -562,10 +562,6 @@
 
 		border: none;
 
-		.editor-arrow {
-			display: none;
-		}
-
 		.editor-controls {
 			position: static;
 			display: flex;
@@ -576,15 +572,6 @@
 			margin-bottom: 0.65rem;
 			padding-bottom: 0.55rem;
 			border-bottom: 1px solid color-mix(in oklch, currentColor 12%, transparent);
-
-			&:not(:has(> :not(.editor-close))) {
-				display: none;
-			}
-
-			/* The 'X' close button is redundant with the Sheet crumb link */
-			button.editor-close {
-				display: none;
-			}
 
 			.editor-control-label {
 				display: inline;
@@ -646,25 +633,6 @@
 
 		padding: 0;
 
-		/* The floating editor's scroll-position chevrons describe an inner */
-
-		/* scroll region that never scrolls while docked (the panel body */
-
-		/* owns scrolling) — without this they float mid-content, looking */
-
-		/* like a broken expander. */
-
-		&::before,
-		&::after {
-			display: none;
-		}
-
-		/* The floating editor's scroll region (absolute stretch +2rem with */
-
-		/* hidden scrollbars) must not leak into the docked panel: there it */
-
-		/* is a normal static block and the panel body owns scrolling. */
-
 		> div {
 			position: static;
 
@@ -684,10 +652,6 @@
 		width: 100%;
 
 		height: 100%;
-
-		.roller-header {
-			display: none;
-		}
 
 		.roller-body {
 			background: var(--roller-surface, var(--bg-surface-card));

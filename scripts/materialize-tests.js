@@ -46,7 +46,7 @@ function compareRender(render, label) {
 		ok(!!(rs.view || (rs.custom && rs.custom.characterCurio)), label + ': presentation kept ' + os.name);
 		ok((rs.noun || rs.nounSingular) === (os.noun || os.nounSingular), label + ': noun kept ' + os.name);
 		// every original named trait survives with the same dice
-		for (const ot of os.traits) {
+		for (const ot of os.traits || []) {
 			if (!ot || typeof ot.name !== 'string' || !ot.name.length) continue;
 			const rt = byName(rs.traits, ot.name);
 			ok(!!rt, label + ': trait present ' + os.name + '/' + ot.name);
@@ -200,6 +200,132 @@ function compareRender(render, label) {
 		'place untouched by unrelated edit',
 	);
 	ok(JSON.stringify(back2Dis.view.parts) === JSON.stringify(dis.view.parts), 'parts untouched by unrelated edit');
+}
+
+// ---- 8. Explicit nulls clear inherited description and traits across merge.
+{
+	const { characterCurioFunctions: F } = require('../js/functions.ts');
+	const cleared = materializeCharacter(
+		{
+			sets: {
+				Values: {
+					id: 'values',
+					traits: {
+						Data: { description: null, traits: null },
+					},
+				},
+			},
+		},
+		curio,
+	);
+	const valSet = byName(cleared.traitSets, 'Values');
+	const data = byName(valSet.traits, 'Data');
+	ok(data && data.description === null, 'layered materialize: description: null clears inherited description');
+	ok(data && data.traits === null, 'layered materialize: traits: null clears inherited traits');
+
+	const deltaMerged = F.mergeTemplateIntoCharacter(
+		{
+			id: 'c-null-clear',
+			traitSets: [
+				{
+					id: 'values',
+					traits: [{ name: 'Data', description: null, traits: null }],
+				},
+			],
+		},
+		{ id: 'dreamer', version: 1, character: curio },
+	);
+	const mergedData = byName(byName(deltaMerged.traitSets, 'Values').traits, 'Data');
+	ok(mergedData && mergedData.description === null, 'mergeTemplateIntoCharacter: description: null clears inherited');
+	ok(mergedData && mergedData.traits === null, 'mergeTemplateIntoCharacter: traits: null clears inherited');
+}
+
+// ---- 9. Partial rating deltas preserve inherited type/range without leaking across type changes.
+{
+	const { characterCurioFunctions: F } = require('../js/functions.ts');
+	const tmpl = {
+		id: 'partial-rating-tmpl',
+		version: 1,
+		character: {
+			name: '',
+			traitSets: [
+				{
+					id: 'milestones',
+					name: 'Milestones',
+					traits: [{ name: '1 XP', rating: { type: 'Pip', value: [false] } }],
+				},
+				{
+					id: 'powers',
+					name: 'Powers',
+					rating: { type: 'Die', value: [] },
+					traits: [{ name: 'Flight', rating: { range: [6, 8, 10], value: [8] } }],
+				},
+			],
+		},
+	};
+	const live = JSON.parse(JSON.stringify(tmpl.character));
+	live.traitSets[0].traits[0].rating = { type: 'Pip', value: [true] };
+	live.traitSets[1].traits[0].rating = { range: [6, 8, 10], value: [10] };
+
+	const delta = F.stripCharacterToDeltas(live, tmpl);
+	const entity = toLayeredEntity(delta);
+	ok(
+		entity.sets.Milestones.traits['1 XP'].rating && entity.sets.Milestones.traits['1 XP'].rating.type === undefined,
+		'stripCharacterToDeltas prunes matching Pip rating type in sparse delta',
+	);
+	const restored = materializeCharacter(entity, tmpl.character);
+	const pipRating = byName(byName(restored.traitSets, 'Milestones').traits, '1 XP').rating;
+	ok(
+		pipRating && pipRating.type === 'Pip' && JSON.stringify(pipRating.value) === JSON.stringify([true]),
+		'materializeCharacter preserves Pip type when partial rating delta toggles value',
+	);
+	const dieRating = byName(byName(restored.traitSets, 'Powers').traits, 'Flight').rating;
+	ok(
+		dieRating &&
+			dieRating.type === undefined &&
+			JSON.stringify(dieRating.range) === JSON.stringify([6, 8, 10]) &&
+			JSON.stringify(dieRating.value) === JSON.stringify([10]),
+		'materializeCharacter preserves inherited range when partial Die delta updates value',
+	);
+
+	// Also when an override restates the inherited set type, inherited trait range survives without resetting
+	const restated = materializeCharacter(
+		{
+			sets: {
+				Powers: {
+					id: 'powers',
+					traits: {
+						Flight: { rating: { type: 'Die', value: [10] } },
+					},
+				},
+			},
+		},
+		tmpl.character,
+	);
+	const restatedRating = byName(byName(restated.traitSets, 'Powers').traits, 'Flight').rating;
+	ok(
+		restatedRating &&
+			restatedRating.type === 'Die' &&
+			JSON.stringify(restatedRating.range) === JSON.stringify([6, 8, 10]) &&
+			JSON.stringify(restatedRating.value) === JSON.stringify([10]),
+		'materializeCharacter preserves inherited range when override restates inherited Die type',
+	);
+
+	// Switching type explicitly must not leak the prior type's range
+	const switched = JSON.parse(JSON.stringify(tmpl.character));
+	switched.traitSets[1].traits[0].rating = { type: 'Pip', value: [true] };
+	const switchedRestored = materializeCharacter(
+		toLayeredEntity(F.stripCharacterToDeltas(switched, tmpl)),
+		tmpl.character,
+	);
+	const switchedRating = byName(byName(switchedRestored.traitSets, 'Powers').traits, 'Flight').rating;
+	ok(
+		switchedRating &&
+			switchedRating.type === 'Pip' &&
+			switchedRating.range === undefined &&
+			JSON.stringify(switchedRating.value) === JSON.stringify([true]),
+		'materializeCharacter replaces cleanly when rating type changes explicitly',
+	);
 }
 
 console.log(`materialize-tests: ${pass} passed, ${fail} failed`);

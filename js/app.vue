@@ -6,7 +6,6 @@ import { cloneDeep } from './clone-deep.ts';
 import { dicePool as dicePoolModel } from './dice-pool.ts';
 import Roster from './roster.vue';
 import Character from './character.vue';
-import DiceRoller from './dice-roller.vue';
 import StudioPanel from './studio-panel.vue';
 import AppHeader from './app-header.vue';
 import AppFooter from './app-footer.vue';
@@ -17,6 +16,7 @@ import CommandPalette from './command-palette.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
+import { getView, getTemplateTitle } from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
 
@@ -990,7 +990,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 			const entry = characterCurioFunctions.extractSheetTemplate(template, {
 				id: reuse,
 				version: 1,
-				title: template.game || template.name || 'Template',
+				title: getView(template)?.listing?.title || (!template.game ? template.name || 'Template' : undefined),
 			});
 			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
 				...cloneDeep(entry),
@@ -1071,14 +1071,15 @@ function createFromTemplate(templateId: string) {
 function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = false) {
 	if (!libraryItem || !libraryItem.character) return;
 
+	const itemTitle = getTemplateTitle(libraryItem);
 	// New character = an empty layered entity folded onto the
 	// template at the seam; nothing is cloned from the array form.
 	const now = new Date().toISOString();
 	const entity = {
 		id: characterCurioFunctions.generateUUID(),
 		isTemplate: asTemplate,
-		name: asTemplate ? (libraryItem.title ? libraryItem.title.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '',
-		game: libraryItem.game || libraryItem.title || '',
+		name: asTemplate ? (itemTitle ? itemTitle.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '',
+		game: libraryItem.character?.game || libraryItem.game || itemTitle || '',
 		dateCreated: now,
 		dateModified: now,
 		dateTouched: now,
@@ -1108,7 +1109,7 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 	}
 
 	saveLocalData();
-	showToast(asTemplate ? `Added "${libraryItem.title}" to templates` : `Created character from "${libraryItem.title}"`);
+	showToast(asTemplate ? `Added "${itemTitle}" to templates` : `Created character from "${itemTitle}"`);
 }
 
 function toggleTemplate(characterId: string) {
@@ -1200,7 +1201,7 @@ function importSheetTemplate(entry: any) {
 		userSaved: true,
 	});
 	saveLocalData();
-	showToast(`Saved layout template “${entry.title || entry.id}”`);
+	showToast(`Saved layout template “${getTemplateTitle(entry) || entry.id}”`);
 }
 
 function deleteSheetTemplate(id: string) {
@@ -1350,7 +1351,7 @@ async function exportCharacter(id: string) {
 
 	await ensureLibraryTemplates();
 	const entry = sheetTemplateForExport(characterData);
-	const out = entry ? characterCurioFunctions.stripCharacterForExport(characterData, entry) : cloneDeep(characterData);
+	const out = characterCurioFunctions.stripCharacterForExport(characterData, entry);
 	// Arrangement travels name-keyed (D18 same-user-new-device).
 	const filePrefs = characterCurioFunctions.prefsForExport(
 		prefs.value && prefs.value.characters ? prefs.value.characters[characterData.id] : null,
@@ -1364,6 +1365,13 @@ async function exportCharacter(id: string) {
 	const filename = `${name}_${timestamp}.curio.json`;
 
 	downloadJson(filename, out);
+}
+
+function fallbackTemplateTitle(characterData: any) {
+	return (
+		getView(characterData)?.listing?.title ||
+		(characterData.game ? undefined : characterData.name ? `${characterData.name} Layout` : 'Custom Layout')
+	);
 }
 
 function saveSheetTemplate() {
@@ -1382,7 +1390,7 @@ function saveSheetTemplate() {
 	const entry = characterCurioFunctions.extractSheetTemplate(characterData, {
 		id: reuse || undefined,
 		version: reuse ? ((prev && prev.version) || 1) + 1 : 1,
-		title: (characterData.game || characterData.name || 'Custom') + ' Layout',
+		title: fallbackTemplateTitle(characterData),
 	});
 	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
 		...cloneDeep(entry),
@@ -1405,9 +1413,9 @@ function exportSheetTemplate() {
 	let entry = ref ? resolveTemplateEntry(ref) : null;
 	if (!entry)
 		entry = characterCurioFunctions.extractSheetTemplate(characterData, {
-			title: (characterData.game || characterData.name || 'Custom') + ' Layout',
+			title: fallbackTemplateTitle(characterData),
 		});
-	const slug = String(entry.title || entry.id || 'template').replace(/\s+/g, '_');
+	const slug = String(getTemplateTitle(entry) || entry.id || 'template').replace(/\s+/g, '_');
 	downloadJson(`${slug}.curio-template.json`, entry);
 }
 
@@ -1415,7 +1423,7 @@ async function exportAllCharacters() {
 	await ensureLibraryTemplates();
 	const out = (characters.value || []).map((c: any) => {
 		const entry = sheetTemplateForExport(c);
-		const o = entry ? characterCurioFunctions.stripCharacterForExport(c, entry) : cloneDeep(c);
+		const o = characterCurioFunctions.stripCharacterForExport(c, entry);
 		const filePrefs = characterCurioFunctions.prefsForExport(
 			prefs.value && prefs.value.characters ? prefs.value.characters[c.id] : null,
 			c,
@@ -1614,7 +1622,7 @@ function handleGlobalPointerDown(event: Event) {
 		event.target &&
 		(event.target as any).closest &&
 		(event.target as any).closest(
-			'.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
+			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
 		),
 	);
 }
@@ -1628,7 +1636,7 @@ function handleMainClick(event: Event) {
 		event.target &&
 		(event.target as any).closest &&
 		(event.target as any).closest(
-			'.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
+			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
 		)
 	) {
 		return;
@@ -2228,6 +2236,12 @@ defineExpose({
 					<p>
 						If you wish to publish or sell what you make using this tool, it is your responsibility to ensure you have
 						the proper license or right for any resources used. No rights are granted through the use of this tool.
+					</p>
+
+					<p>
+						<a href="https://github.com/lynn0702/cortex-toolkit" target="_blank" rel="noopener noreferrer">
+							<i class="fab fa-github" aria-hidden="true"></i> Source on GitHub
+						</a>
 					</p>
 				</article>
 			</main>

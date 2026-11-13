@@ -5,22 +5,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'alien-us',
 		version: 1,
-		title: 'Alien, Us',
-		subtitle: 'Sci-Fi Infiltration & Paranoia',
-		game: 'Alien, Us',
-		variant: 'Character File',
-		pages: 2,
-		genre: 'Sci-Fi / Espionage',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866',
-			quote:
-				'You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.',
-			genre: 'Cold War Sci-Fi Drama',
-			setting: 'd6',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/572304.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -54,6 +38,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Sci-Fi Infiltration & Paranoia',
+					genre: 'Cold War Sci-Fi Drama',
+					url: 'https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/572304.jpg',
+					quote:
+						'You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.',
+					setting: 'd6',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -684,28 +679,13 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'brighter-stars',
 		version: 1,
-		title: 'Brighter Stars',
-		subtitle: 'Hopepunk Starship Exploration',
-		game: 'Brighter Stars',
-		variant: 'Character File',
-		pages: 1,
-		genre: 'Sci-Fi / Space Exploration',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866',
-			quote: 'The mission was supposed to last ten years. There were supposed to be answers at the end of it.',
-			genre: 'Aspirational space opera',
-			setting: 'd6',
-			prep: 'd6',
-			complexity: 'd6',
-			image: 'https://legacy.drivethrurpg.com/images/31866/568411.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-brighter-stars',
 			isTemplate: true,
 			name: '',
-			game: 'BrighterStars',
+			game: 'Brighter Stars',
 			description: '',
 			pronouns: '',
 			plotPoints: 1,
@@ -719,7 +699,7 @@ const characterCurioLibraryTemplates = [
 			},
 			view: {
 				pageCount: 1,
-				template: 'BrighterStars',
+				template: 'Brighter Stars',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -732,6 +712,16 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Hopepunk Starship Exploration',
+					genre: 'Aspirational space opera',
+					url: 'https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/568411.jpg',
+					quote: 'The mission was supposed to last ten years. There were supposed to be answers at the end of it.',
+					setting: 'd6',
+					prep: 'd6',
+					complexity: 'd6',
 				},
 			},
 			traitSets: [
@@ -1106,10 +1096,16 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						parts: {
-							name: {
+							rating: {
 								left: '0%',
 								top: 0,
-								width: '100%',
+								width: '10%',
+								height: 1,
+							},
+							name: {
+								left: '10%',
+								top: 0,
+								width: '90%',
 								height: 1,
 							},
 							description: {
@@ -1126,14 +1122,26 @@ const characterCurioLibraryTemplates = [
 					traits: [
 						{
 							name: '1 XP',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '3 XP',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '10 XP',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 					],
@@ -1164,10 +1172,16 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						parts: {
-							name: {
+							rating: {
 								left: '0%',
 								top: 0,
-								width: '100%',
+								width: '10%',
+								height: 1,
+							},
+							name: {
+								left: '10%',
+								top: 0,
+								width: '90%',
 								height: 1,
 							},
 							description: {
@@ -1184,14 +1198,26 @@ const characterCurioLibraryTemplates = [
 					traits: [
 						{
 							name: '1 XP',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '3 XP',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '10 XP',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 					],
@@ -1264,21 +1290,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'camp-bewilderwood',
 		version: 1,
-		title: 'Camp Bewilderwood',
-		subtitle: 'Cryptid Summer Camp Mystery',
-		game: 'Camp Bewilderwood',
-		variant: 'Camper File',
-		pages: 1,
-		genre: 'Supernatural / Youth Mystery',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866',
-			quote: 'Someone has decided you’re destined for great things. You’re twelve.',
-			genre: 'Supernatural summer camp / YA adventure',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/574554.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -1312,6 +1323,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Cryptid Summer Camp Mystery',
+					genre: 'Supernatural summer camp / YA adventure',
+					variant: 'Camper File',
+					url: 'https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/574554.jpg',
+					quote: 'Someone has decided you’re destined for great things. You’re twelve.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -1914,21 +1936,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'cosa-nostra',
 		version: 1,
-		title: 'Cosa Nostra',
-		subtitle: 'Historical Crime Syndicate Drama',
-		game: 'Cosa Nostra',
-		variant: 'Mobster File',
-		pages: 1,
-		genre: 'Crime / Drama / Noir',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/572308/Cosa-Nostra?manufacturers_id=31866',
-			quote: 'The Castellammarese War is coming. Everyone in the Five Families knows it.',
-			genre: 'Historical Crime Drama',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/572308.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -1963,6 +1970,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Historical Crime Syndicate Drama',
+					genre: 'Historical Crime Drama',
+					variant: 'Mobster File',
+					url: 'https://legacy.drivethrurpg.com/product/572308/Cosa-Nostra?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/572308.jpg',
+					quote: 'The Castellammarese War is coming. Everyone in the Five Families knows it.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -2410,15 +2428,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'eidolon-alpha',
 		version: 1,
-		title: 'Eidolon Alpha',
-		subtitle: 'Mythic Summoners & Living Eidolons',
-		game: 'Eidolon Alpha',
-		variant: 'Character File',
-		pages: 1,
-		genre: 'Fantasy / Summoning / Mythic',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -2445,6 +2454,11 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Mythic Summoners & Living Eidolons',
+					genre: 'Fantasy / Summoning / Mythic',
+					url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 				},
 			},
 			traitSets: [
@@ -3017,15 +3031,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'hammerheads-character',
 		version: 1,
-		title: 'Hammerheads',
-		subtitle: 'Disaster Response & Rescue Pilots',
-		game: 'Hammerheads',
-		variant: 'Character File',
-		pages: 2,
-		genre: 'Action / Rescue / Drama',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -3059,6 +3064,11 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Disaster Response & Rescue Pilots',
+					genre: 'Action / Rescue / Drama',
+					url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 				},
 			},
 			traitSets: [
@@ -3759,15 +3769,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'hammerheads-vehicle',
 		version: 1,
-		title: 'Hammerheads - Vehicle File',
-		subtitle: 'Rescue Craft & Fleet Support',
-		game: 'Hammerheads',
-		variant: 'Vehicle File',
-		pages: 1,
-		genre: 'Action / Rescue / Vehicles',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -3794,6 +3795,13 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Hammerheads - Vehicle File',
+					subtitle: 'Rescue Craft & Fleet Support',
+					genre: 'Action / Rescue / Vehicles',
+					variant: 'Vehicle File',
+					url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 				},
 			},
 			traitSets: [
@@ -4170,22 +4178,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'inheritors-character',
 		version: 1,
-		title: 'Inheritors',
-		subtitle: 'Superpowered Dynasty Heritage',
-		game: 'Inheritors',
-		variant: 'Character File',
-		pages: 1,
-		genre: 'Superhero / Dynastic Drama',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866',
-			quote:
-				'Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.',
-			genre: 'Modern Pulp Action-Adventure',
-			setting: 'd6',
-			prep: 'd10',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/572309.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -4219,6 +4211,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Superpowered Dynasty Heritage',
+					genre: 'Modern Pulp Action-Adventure',
+					url: 'https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/572309.jpg',
+					quote:
+						'Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.',
+					setting: 'd6',
+					prep: 'd10',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -4780,10 +4783,16 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						parts: {
-							name: {
+							rating: {
 								left: '0%',
 								top: 0,
-								width: '100%',
+								width: '10%',
+								height: 1,
+							},
+							name: {
+								left: '10%',
+								top: 0,
+								width: '90%',
 								height: 1,
 							},
 							description: {
@@ -4801,16 +4810,28 @@ const characterCurioLibraryTemplates = [
 						{
 							name: '1 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '3 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '10 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 					],
@@ -4841,10 +4862,16 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						parts: {
-							name: {
+							rating: {
 								left: '0%',
 								top: 0,
-								width: '100%',
+								width: '10%',
+								height: 1,
+							},
+							name: {
+								left: '10%',
+								top: 0,
+								width: '90%',
 								height: 1,
 							},
 							description: {
@@ -4862,16 +4889,28 @@ const characterCurioLibraryTemplates = [
 						{
 							name: '1 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '3 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '10 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 					],
@@ -4942,22 +4981,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'inheritors-family',
 		version: 1,
-		title: 'Inheritors - Family & GMCs',
-		subtitle: 'Superpowered Dynasty Heritage',
-		game: 'Inheritors',
-		variant: 'Family Tree File',
-		pages: 2,
-		genre: 'Superhero / Dynastic Drama',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866',
-			quote:
-				'Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.',
-			genre: 'Modern Pulp Action-Adventure',
-			setting: 'd6',
-			prep: 'd10',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/572309.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -4991,6 +5014,19 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Inheritors - Family & GMCs',
+					subtitle: 'Superpowered Dynasty Heritage',
+					genre: 'Modern Pulp Action-Adventure',
+					variant: 'Family Tree File',
+					url: 'https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/572309.jpg',
+					quote:
+						'Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.',
+					setting: 'd6',
+					prep: 'd10',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -6119,29 +6155,13 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'kitbash-hero',
 		version: 1,
-		title: 'Kit Bash!',
-		subtitle: 'Modular Comic Book Superheroes',
-		game: 'Kit Bash!',
-		variant: 'Hero File',
-		pages: 1,
-		genre: 'Comic Book / Superhero',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866',
-			quote:
-				'You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?',
-			genre: 'Superhero',
-			setting: 'd6',
-			prep: 'd12',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/568416.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-kitbash-hero',
 			isTemplate: true,
 			name: '',
-			game: 'KitBash',
+			game: 'Kit Bash!',
 			description: '',
 			pronouns: '',
 			plotPoints: 1,
@@ -6155,7 +6175,7 @@ const characterCurioLibraryTemplates = [
 			},
 			view: {
 				pageCount: 1,
-				template: 'KitBash',
+				template: 'Kit Bash!',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -6168,6 +6188,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Modular Comic Book Superheroes',
+					genre: 'Superhero',
+					variant: 'Hero File',
+					url: 'https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/568416.jpg',
+					quote:
+						'You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?',
+					setting: 'd6',
+					prep: 'd12',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -6797,29 +6829,13 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'kitbash-team',
 		version: 1,
-		title: 'Kit Bash! - Team File',
-		subtitle: 'Modular Comic Book Superheroes',
-		game: 'Kit Bash!',
-		variant: 'Team Roster File',
-		pages: 1,
-		genre: 'Comic Book / Superhero',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866',
-			quote:
-				'You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?',
-			genre: 'Superhero',
-			setting: 'd6',
-			prep: 'd12',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/568416.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-kitbash-team',
 			isTemplate: true,
 			name: '',
-			game: 'KitBash',
+			game: 'Kit Bash!',
 			description: '',
 			pronouns: '',
 			plotPoints: 1,
@@ -6833,7 +6849,7 @@ const characterCurioLibraryTemplates = [
 			},
 			view: {
 				pageCount: 1,
-				template: 'KitBash',
+				template: 'Kit Bash!',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -6846,6 +6862,19 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Kit Bash! - Team File',
+					subtitle: 'Modular Comic Book Superheroes',
+					genre: 'Superhero',
+					variant: 'Team Roster File',
+					url: 'https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/568416.jpg',
+					quote:
+						'You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?',
+					setting: 'd6',
+					prep: 'd12',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -7014,21 +7043,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'misty-cove',
 		version: 1,
-		title: 'Misty Cove',
-		subtitle: 'Emotional Gothic Mystery',
-		game: 'Misty Cove',
-		variant: 'Character File',
-		pages: 1,
-		genre: 'Mystery / Drama / Supernatural',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866',
-			quote: 'The town knows you’re different. They always have.',
-			genre: 'Small-town supernatural drama',
-			setting: 'd6',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/568414.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -7062,6 +7076,16 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Emotional Gothic Mystery',
+					genre: 'Small-town supernatural drama',
+					url: 'https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/568414.jpg',
+					quote: 'The town knows you’re different. They always have.',
+					setting: 'd6',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -7534,21 +7558,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'necromancer',
 		version: 1,
-		title: 'Necromancer',
-		subtitle: 'Dark Fantasy Grimoire & Undead Arts',
-		game: 'Necromancer',
-		variant: 'Caster File',
-		pages: 1,
-		genre: 'Dark Fantasy / Occult',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866',
-			quote: 'You didn’t ask for this. You were just trying to live your life.',
-			genre: 'Urban fantasy',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/574557.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -7582,6 +7591,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Dark Fantasy Grimoire & Undead Arts',
+					genre: 'Urban fantasy',
+					variant: 'Caster File',
+					url: 'https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/574557.jpg',
+					quote: 'You didn’t ask for this. You were just trying to live your life.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -8102,21 +8122,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'retired-crystalline',
 		version: 1,
-		title: 'Retired No More - Crystalline Age',
-		subtitle: 'Aging Veteran Heroes',
-		game: 'Retired No More',
-		variant: 'Crystalline Age',
-		pages: 1,
-		genre: 'Superhero / Silver Age Nostalgia',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866',
-			quote: 'You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.',
-			genre: 'Pulp adventure',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/567044.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -8150,6 +8155,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Retired No More - Crystalline Age',
+					subtitle: 'Aging Veteran Heroes',
+					genre: 'Pulp adventure',
+					variant: 'Crystalline Age',
+					url: 'https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/567044.jpg',
+					quote: 'You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -8744,21 +8761,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'retired-aerial',
 		version: 1,
-		title: 'Retired No More - Aerial Age',
-		subtitle: 'Aging Veteran Heroes',
-		game: 'Retired No More',
-		variant: 'Aerial Age',
-		pages: 1,
-		genre: 'Dieselpunk / Aviation Adventure',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866',
-			quote: 'You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.',
-			genre: 'Pulp adventure',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/567044.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -8792,6 +8794,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Retired No More - Aerial Age',
+					subtitle: 'Aging Veteran Heroes',
+					genre: 'Pulp adventure',
+					variant: 'Aerial Age',
+					url: 'https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/567044.jpg',
+					quote: 'You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -9286,21 +9300,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'safe-zone-survivor',
 		version: 1,
-		title: 'Safe Zone',
-		subtitle: 'Post-Apocalyptic Survival & Colony',
-		game: 'Safe Zone',
-		variant: 'Survivor File',
-		pages: 1,
-		genre: 'Post-Apocalyptic / Survival',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866',
-			quote: 'The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.',
-			genre: 'Post-apocalyptic zombie survival | Base-building',
-			setting: 'd8',
-			prep: 'd8',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/574559.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -9334,6 +9333,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Post-Apocalyptic Survival & Colony',
+					genre: 'Post-apocalyptic zombie survival | Base-building',
+					variant: 'Survivor File',
+					url: 'https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/574559.jpg',
+					quote: 'The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.',
+					setting: 'd8',
+					prep: 'd8',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -9946,21 +9956,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'safe-zone-colony',
 		version: 1,
-		title: 'Safe Zone - Colony File',
-		subtitle: 'Post-Apocalyptic Survival & Colony',
-		game: 'Safe Zone',
-		variant: 'Colony File',
-		pages: 2,
-		genre: 'Post-Apocalyptic / Base Building',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866',
-			quote: 'The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.',
-			genre: 'Post-apocalyptic zombie survival | Base-building',
-			setting: 'd8',
-			prep: 'd8',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/574559.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -9994,6 +9989,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Safe Zone - Colony File',
+					subtitle: 'Post-Apocalyptic Survival & Colony',
+					genre: 'Post-apocalyptic zombie survival | Base-building',
+					variant: 'Colony File',
+					url: 'https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/574559.jpg',
+					quote: 'The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.',
+					setting: 'd8',
+					prep: 'd8',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -11057,22 +11064,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'snowfall-initiative',
 		version: 1,
-		title: 'Snowfall Initiative',
-		subtitle: 'Cold War Espionage & Super-Spies',
-		game: 'Snowfall Initiative',
-		variant: 'Agent File',
-		pages: 1,
-		genre: 'Spy / Cold War / High-Tech',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/574560/Snowfall-Initiative?manufacturers_id=31866',
-			quote:
-				'Earth is freezing. Not metaphorically—glaciers are advancing on major cities, temperatures are dropping, and a new ice age has begun.',
-			genre: 'Military sci-fi / Norse portal fantasy',
-			setting: 'd10',
-			prep: 'd8',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/574560.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -11106,6 +11097,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Cold War Espionage & Super-Spies',
+					genre: 'Military sci-fi / Norse portal fantasy',
+					variant: 'Agent File',
+					url: 'https://legacy.drivethrurpg.com/product/574560/Snowfall-Initiative?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/574560.jpg',
+					quote:
+						'Earth is freezing. Not metaphorically—glaciers are advancing on major cities, temperatures are dropping, and a new ice age has begun.',
+					setting: 'd10',
+					prep: 'd8',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -11791,10 +11794,16 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						parts: {
-							name: {
+							rating: {
 								left: '0%',
 								top: 0,
-								width: '100%',
+								width: '10%',
+								height: 1,
+							},
+							name: {
+								left: '10%',
+								top: 0,
+								width: '90%',
 								height: 1,
 							},
 							description: {
@@ -11812,16 +11821,28 @@ const characterCurioLibraryTemplates = [
 						{
 							name: '1 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '3 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '10 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 					],
@@ -11852,10 +11873,16 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						parts: {
-							name: {
+							rating: {
 								left: '0%',
 								top: 0,
-								width: '100%',
+								width: '10%',
+								height: 1,
+							},
+							name: {
+								left: '10%',
+								top: 0,
+								width: '90%',
 								height: 1,
 							},
 							description: {
@@ -11873,16 +11900,28 @@ const characterCurioLibraryTemplates = [
 						{
 							name: '1 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '3 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 						{
 							name: '10 XP',
 							description: 'when ',
+							rating: {
+								type: 'Pip',
+								value: [false],
+							},
 							traits: [],
 						},
 					],
@@ -11948,28 +11987,13 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'solarpunk-citizen',
 		version: 1,
-		title: 'Solarpunk',
-		subtitle: 'Ecological Hope & Community Technology',
-		game: 'Solarpunk',
-		variant: 'Citizen File',
-		pages: 1,
-		genre: 'SolarPunk / Sci-Fi / Community',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866',
-			quote: 'The corporations took everything. The land, the water, the air.',
-			genre: 'Near-future eco-punk / hopepunk',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/568415.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-solarpunk-citizen',
 			isTemplate: true,
 			name: '',
-			game: 'SolarPunk',
+			game: 'Solarpunk',
 			description: '',
 			pronouns: '',
 			plotPoints: 1,
@@ -11983,7 +12007,7 @@ const characterCurioLibraryTemplates = [
 			},
 			view: {
 				pageCount: 1,
-				template: 'SolarPunk',
+				template: 'Solarpunk',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -11996,6 +12020,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Ecological Hope & Community Technology',
+					genre: 'Near-future eco-punk / hopepunk',
+					variant: 'Citizen File',
+					url: 'https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/568415.jpg',
+					quote: 'The corporations took everything. The land, the water, the air.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -12476,28 +12511,13 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'solarpunk-commune',
 		version: 1,
-		title: 'Solarpunk - Commune File',
-		subtitle: 'Ecological Hope & Community Technology',
-		game: 'Solarpunk',
-		variant: 'Commune File',
-		pages: 1,
-		genre: 'SolarPunk / Settlement',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866',
-			quote: 'The corporations took everything. The land, the water, the air.',
-			genre: 'Near-future eco-punk / hopepunk',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/568415.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-solarpunk-commune',
 			isTemplate: true,
 			name: '',
-			game: 'SolarPunk',
+			game: 'Solarpunk',
 			description: '',
 			pronouns: '',
 			plotPoints: 1,
@@ -12511,7 +12531,7 @@ const characterCurioLibraryTemplates = [
 			},
 			view: {
 				pageCount: 1,
-				template: 'SolarPunk',
+				template: 'Solarpunk',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -12524,6 +12544,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Solarpunk - Commune File',
+					subtitle: 'Ecological Hope & Community Technology',
+					genre: 'Near-future eco-punk / hopepunk',
+					variant: 'Commune File',
+					url: 'https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/568415.jpg',
+					quote: 'The corporations took everything. The land, the water, the air.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -12900,21 +12932,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'spellcaught',
 		version: 1,
-		title: 'Spellcaught',
-		subtitle: 'Arcane Curses & Eldritch Magic',
-		game: 'Spellcaught',
-		variant: 'Character File',
-		pages: 1,
-		genre: 'Fantasy / Eldritch / Arcane',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/572310/Spellcaught?manufacturers_id=31866',
-			quote: 'High school is already a crucible. Add magic, and someone’s going to get burned.',
-			genre: 'Teenage witches / high school drama',
-			setting: 'd6',
-			prep: 'd6',
-			complexity: 'd8',
-			image: 'https://legacy.drivethrurpg.com/images/31866/572310.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -12948,6 +12965,16 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Arcane Curses & Eldritch Magic',
+					genre: 'Teenage witches / high school drama',
+					url: 'https://legacy.drivethrurpg.com/product/572310/Spellcaught?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/572310.jpg',
+					quote: 'High school is already a crucible. Add magic, and someone’s going to get burned.',
+					setting: 'd6',
+					prep: 'd6',
+					complexity: 'd8',
 				},
 			},
 			traitSets: [
@@ -13605,21 +13632,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'strange-towns',
 		version: 1,
-		title: 'Strange Towns',
-		subtitle: 'Small Town Supernatural Weirdness',
-		game: 'Strange Towns',
-		variant: 'Townsperson File',
-		pages: 1,
-		genre: 'Horror / Small Town / Weird Fiction',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866',
-			quote: 'There’s something wrong with this town. Maybe it’s the sheriff who never blinks.',
-			genre: 'Weird horror / small-town mystery',
-			setting: 'd6',
-			prep: 'd6',
-			complexity: 'd6',
-			image: 'https://legacy.drivethrurpg.com/images/31866/567043.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -13653,6 +13665,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Small Town Supernatural Weirdness',
+					genre: 'Weird horror / small-town mystery',
+					variant: 'Townsperson File',
+					url: 'https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/567043.jpg',
+					quote: 'There’s something wrong with this town. Maybe it’s the sheriff who never blinks.',
+					setting: 'd6',
+					prep: 'd6',
+					complexity: 'd6',
 				},
 			},
 			traitSets: [
@@ -14068,21 +14091,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'terraverse',
 		version: 1,
-		title: 'Terraverse',
-		subtitle: 'Epic Science-Fantasy Multiverse',
-		game: 'Terraverse',
-		variant: 'Character File',
-		pages: 2,
-		genre: 'Sci-Fi / Superhero / Multiverse',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866',
-			quote: 'Every world is a version of this one. Some are close — a step to the left, a slightly different history.',
-			genre: 'Science fantasy / multiverse adventure',
-			setting: 'd10',
-			prep: 'd10',
-			complexity: 'd10',
-			image: 'https://legacy.drivethrurpg.com/images/31866/567047.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -14116,6 +14124,17 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Epic Science-Fantasy Multiverse',
+					genre: 'Science fantasy / multiverse adventure',
+					url: 'https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/567047.jpg',
+					quote:
+						'Every world is a version of this one. Some are close — a step to the left, a slightly different history.',
+					setting: 'd10',
+					prep: 'd10',
+					complexity: 'd10',
 				},
 			},
 			traitSets: [
@@ -14967,21 +14986,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'titans-handler',
 		version: 1,
-		title: 'Titans vs Leviathans - Handler',
-		subtitle: 'Giant Mech vs Kaiju Combat',
-		game: 'Titans vs Leviathans',
-		variant: 'Handler File',
-		pages: 1,
-		genre: 'Mecha / Kaiju / Military',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866',
-			quote: 'The city shakes. The bay churns.',
-			genre: 'Kaiju / mech action',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd6',
-			image: 'https://legacy.drivethrurpg.com/images/31866/567042.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -15015,6 +15019,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Titans vs Leviathans - Handler',
+					subtitle: 'Giant Mech vs Kaiju Combat',
+					genre: 'Kaiju / mech action',
+					variant: 'Handler File',
+					url: 'https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/567042.jpg',
+					quote: 'The city shakes. The bay churns.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd6',
 				},
 			},
 			traitSets: [
@@ -15440,21 +15456,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'titans-titan',
 		version: 1,
-		title: 'Titans vs Leviathans - Titan Mech',
-		subtitle: 'Giant Mech vs Kaiju Combat',
-		game: 'Titans vs Leviathans',
-		variant: 'Titan Mech File',
-		pages: 1,
-		genre: 'Mecha / Kaiju / Military',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866',
-			quote: 'The city shakes. The bay churns.',
-			genre: 'Kaiju / mech action',
-			setting: 'd8',
-			prep: 'd6',
-			complexity: 'd6',
-			image: 'https://legacy.drivethrurpg.com/images/31866/567042.jpg',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -15488,6 +15489,18 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Titans vs Leviathans - Titan Mech',
+					subtitle: 'Giant Mech vs Kaiju Combat',
+					genre: 'Kaiju / mech action',
+					variant: 'Titan Mech File',
+					url: 'https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866',
+					image: 'https://legacy.drivethrurpg.com/images/31866/567042.jpg',
+					quote: 'The city shakes. The bay churns.',
+					setting: 'd8',
+					prep: 'd6',
+					complexity: 'd6',
 				},
 			},
 			traitSets: [
@@ -15864,15 +15877,6 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'trace-20',
 		version: 1,
-		title: 'TRACE 2.0',
-		subtitle: 'Civic Paranormal Investigation',
-		game: 'TRACE 2.0',
-		variant: 'Character File',
-		pages: 1,
-		genre: 'Mystery / Procedural / Urban Fantasy',
-		listing: {
-			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
-		},
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
@@ -15906,6 +15910,11 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					subtitle: 'Civic Paranormal Investigation',
+					genre: 'Mystery / Procedural / Urban Fantasy',
+					url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 				},
 			},
 			traitSets: [
@@ -16536,12 +16545,6 @@ const characterCurioLibraryTemplates = [
 	},
 	{
 		id: 'kitchen-sink',
-		title: 'Kitchen Sink Style Showcase',
-		subtitle: 'All 17 Trait Set Styles & Features',
-		game: 'Toolkit Reference',
-		variant: 'Showcase',
-		pages: 3,
-		genre: 'Reference',
 		version: 1,
 		updatedAt: '2026-10-14T12:00:00.000Z',
 		character: {
@@ -16554,7 +16557,7 @@ const characterCurioLibraryTemplates = [
 			dateTouched: '2026-10-14T12:00:00.000Z',
 			name: 'Kitchen Sink Showcase',
 			player: 'Style Audit',
-			game: 'Cortex Prime Style Catalog',
+			game: 'Toolkit Reference',
 			pronouns: 'They / Them',
 			description:
 				'Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.',
@@ -16577,6 +16580,11 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Kitchen Sink Style Showcase',
+					subtitle: 'All 17 Trait Set Styles & Features',
+					genre: 'Reference',
 				},
 			},
 			traitSets: [
@@ -17875,19 +17883,13 @@ const characterCurioLibraryTemplates = [
 	{
 		id: 'landscape-showcase',
 		version: 1,
-		title: 'Landscape Style Showcase',
-		subtitle: '3-Column Landscape Layout & Spanning Showcase',
-		game: 'Toolkit Reference',
-		variant: 'Showcase',
-		pages: 2,
-		genre: 'Reference',
 		character: {
 			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-landscape-showcase',
 			isTemplate: true,
 			name: 'Landscape Showcase',
-			game: 'Landscape Style Showcase',
+			game: 'Toolkit Reference',
 			description:
 				'Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.',
 			pronouns: '',
@@ -17910,6 +17912,11 @@ const characterCurioLibraryTemplates = [
 					left: 0,
 					center: 0,
 					right: 0,
+				},
+				listing: {
+					title: 'Landscape Style Showcase',
+					subtitle: '3-Column Landscape Layout & Spanning Showcase',
+					genre: 'Reference',
 				},
 			},
 			traitSets: [

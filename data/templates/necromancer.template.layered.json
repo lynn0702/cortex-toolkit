@@ -1,565 +1,537 @@
 {
-  "id": "necromancer",
-  "version": 1,
-  "title": "Necromancer",
-  "subtitle": "Dark Fantasy Grimoire & Undead Arts",
-  "game": "Necromancer",
-  "variant": "Caster File",
-  "pages": 1,
-  "genre": "Dark Fantasy / Occult",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866",
-    "quote": "You didn’t ask for this. You were just trying to live your life.",
-    "genre": "Urban fantasy",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg"
-  },
-  "character": {
-    "id": "template-necromancer",
-    "isTemplate": true,
-    "name": "",
-    "game": "Necromancer",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Necromancer",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Occult lineage, taboo practice, and philosophical motivation",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Job:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Necromancy:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Desire:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Affiliations": {
-        "id": "affiliations",
-        "description": "Operating configuration dice and statements",
-        "statement": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "70%",
-              "height": 1
-            },
-            "rating": {
-              "left": "70%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Affiliation",
-        "plural": "Affiliations",
-        "traits": {
-          "My Life": {},
-          "The World": {},
-          "The Demi-Monde": {}
-        }
-      },
-      "Roles": {
-        "id": "roles-specialties",
-        "description": "Dark magical callings and practices",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 6,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "38%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Role",
-        "plural": "Roles",
-        "traits": {
-          "Diplomat": {},
-          "Fighter": {},
-          "Guardian": {},
-          "Healer": {},
-          "Sneak": {},
-          "Transporter": {}
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Occult relics, grimoires, and dark instruments",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 3,
-            "width": "38%",
-            "height": 1
-          },
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Ability": {
-        "id": "necromantic-arts",
-        "description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 1,
-          "place": {
-            "left": "38%",
-            "top": 2,
-            "width": "62%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Ability",
-        "plural": "Abilities",
-        "traits": {
-          "Necromancy": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "Descriptor Tags:": {},
-              "SFX": {
-                "traits": {
-                  "Been There": {
-                    "description": "When you are resurrecting a ______________, double your Necromancy."
-                  },
-                  "Done That": {
-                    "description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP."
-                  },
-                  "Limit — Dammit": {
-                    "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Session Record": {
-        "id": "session-record",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "reservedSlots": 10,
-          "place": {
-            "left": "0%",
-            "top": 4,
-            "width": "62%",
-            "height": 1
-          },
-          "pips": {
-            "labels": true,
-            "perRow": 10
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {}
-      },
-      "Complications": {
-        "id": "complications",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 3,
-          "place": {
-            "left": "62%",
-            "top": 4,
-            "width": "38%",
-            "height": 1
-          },
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "playMutable": true,
-          "pillar": "play"
-        },
-        "noun": "Complication",
-        "plural": "Complications",
-        "traits": {
-          "Deathmark": {
-            "description": "Deathmark"
-          }
-        }
-      }
-    }
-  }
+	"id": "necromancer",
+	"version": 1,
+	"character": {
+		"id": "template-necromancer",
+		"isTemplate": true,
+		"name": "",
+		"game": "Necromancer",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Necromancer",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Dark Fantasy Grimoire & Undead Arts",
+				"genre": "Urban fantasy",
+				"variant": "Caster File",
+				"url": "https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg",
+				"quote": "You didn’t ask for this. You were just trying to live your life.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Occult lineage, taboo practice, and philosophical motivation",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Job:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Necromancy:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Desire:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Affiliations": {
+				"id": "affiliations",
+				"description": "Operating configuration dice and statements",
+				"statement": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "70%",
+							"height": 1
+						},
+						"rating": {
+							"left": "70%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Affiliation",
+				"plural": "Affiliations",
+				"traits": {
+					"My Life": {},
+					"The World": {},
+					"The Demi-Monde": {}
+				}
+			},
+			"Roles": {
+				"id": "roles-specialties",
+				"description": "Dark magical callings and practices",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 6,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "38%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Role",
+				"plural": "Roles",
+				"traits": {
+					"Diplomat": {},
+					"Fighter": {},
+					"Guardian": {},
+					"Healer": {},
+					"Sneak": {},
+					"Transporter": {}
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Occult relics, grimoires, and dark instruments",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 3,
+						"width": "38%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Ability": {
+				"id": "necromantic-arts",
+				"description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 1,
+					"place": {
+						"left": "38%",
+						"top": 2,
+						"width": "62%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Ability",
+				"plural": "Abilities",
+				"traits": {
+					"Necromancy": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"Descriptor Tags:": {},
+							"SFX": {
+								"traits": {
+									"Been There": {
+										"description": "When you are resurrecting a ______________, double your Necromancy."
+									},
+									"Done That": {
+										"description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP."
+									},
+									"Limit — Dammit": {
+										"description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"Session Record": {
+				"id": "session-record",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"reservedSlots": 10,
+					"place": {
+						"left": "0%",
+						"top": 4,
+						"width": "62%",
+						"height": 1
+					},
+					"pips": {
+						"labels": true,
+						"perRow": 10
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {}
+			},
+			"Complications": {
+				"id": "complications",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 3,
+					"place": {
+						"left": "62%",
+						"top": 4,
+						"width": "38%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"playMutable": true,
+					"pillar": "play"
+				},
+				"noun": "Complication",
+				"plural": "Complications",
+				"traits": {
+					"Deathmark": {
+						"description": "Deathmark"
+					}
+				}
+			}
+		}
+	}
 }

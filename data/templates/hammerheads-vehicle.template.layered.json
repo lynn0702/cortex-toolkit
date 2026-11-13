@@ -1,522 +1,392 @@
 {
-  "id": "hammerheads-vehicle",
-  "version": 1,
-  "title": "Hammerheads - Vehicle File",
-  "subtitle": "Rescue Craft & Fleet Support",
-  "game": "Hammerheads",
-  "variant": "Vehicle File",
-  "pages": 1,
-  "genre": "Action / Rescue / Vehicles",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
-  },
-  "character": {
-    "id": "template-hammerheads-vehicle",
-    "isTemplate": true,
-    "name": "",
-    "game": "Hammerheads",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Hammerheads",
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Hammerhead Attributes": {
-        "id": "hammerhead-attributes",
-        "description": "Rescue craft airframes, systems, and handling",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            8,
-            10
-          ],
-          "subtraitRatingLadder": [
-            8,
-            10
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "25%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Hammerhead Attribute",
-        "plural": "Hammerhead Attributes",
-        "traits": {
-          "Hammerhead One": {
-            "description": "More agile, possesses more precise sensors and instruments.",
-            "traits": {
-              "Systems": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Engines": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Frame": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Hammerhead Two": {
-            "description": "Faster, more power and range.",
-            "traits": {
-              "Systems": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Engines": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Frame": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Hammerhead Three": {
-            "description": "Bigger, tougher, and more rugged.",
-            "traits": {
-              "Systems": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Engines": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Frame": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    10
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Vehicle Distinctions": {
-        "id": "vehicle-distinctions",
-        "description": "Factory blessings and fleet reputation",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "ratingLadder": [
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "25%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Vehicle Distinction",
-        "plural": "Vehicle Distinctions",
-        "traits": {
-          "Resource Support Vehicle": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Top of the Line": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Broad-Spectrum Sensors": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Resource Pools": {
-        "id": "resource-pools",
-        "description": "Staged supplies, support teams, and fleet backup",
-        "view": {
-          "traitColumns": 2,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "dice-count"
-          },
-          "ratingLadder": [
-            6
-          ],
-          "multiDie": true,
-          "notes": "",
-          "reservedSlots": 6,
-          "place": {
-            "left": "75%",
-            "top": 0,
-            "width": "25%",
-            "height": 1
-          },
-          "labels": {
-            "rating": "RATING",
-            "dice": "/ DICE"
-          },
-          "pillar": "plus"
-        },
-        "noun": "Resource Pool",
-        "plural": "Resource Pools",
-        "traits": {
-          "Unassigned Resources": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "Tactical Support": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "Medical Supplies": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "IT/Network Support": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "Food/Shelter": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "Land/Sea/Air Support": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6,
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          }
-        }
-      }
-    }
-  }
+	"id": "hammerheads-vehicle",
+	"version": 1,
+	"character": {
+		"id": "template-hammerheads-vehicle",
+		"isTemplate": true,
+		"name": "",
+		"game": "Hammerheads",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Hammerheads",
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Hammerheads - Vehicle File",
+				"subtitle": "Rescue Craft & Fleet Support",
+				"genre": "Action / Rescue / Vehicles",
+				"variant": "Vehicle File",
+				"url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Hammerhead Attributes": {
+				"id": "hammerhead-attributes",
+				"description": "Rescue craft airframes, systems, and handling",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						8,
+						10
+					],
+					"subtraitRatingLadder": [
+						8,
+						10
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "25%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Hammerhead Attribute",
+				"plural": "Hammerhead Attributes",
+				"traits": {
+					"Hammerhead One": {
+						"description": "More agile, possesses more precise sensors and instruments.",
+						"traits": {
+							"Systems": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"Engines": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"Frame": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							}
+						}
+					},
+					"Hammerhead Two": {
+						"description": "Faster, more power and range.",
+						"traits": {
+							"Systems": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"Engines": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							},
+							"Frame": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							}
+						}
+					},
+					"Hammerhead Three": {
+						"description": "Bigger, tougher, and more rugged.",
+						"traits": {
+							"Systems": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"Engines": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										8
+									]
+								}
+							},
+							"Frame": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										10
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"Vehicle Distinctions": {
+				"id": "vehicle-distinctions",
+				"description": "Factory blessings and fleet reputation",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"ratingLadder": [
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "25%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Vehicle Distinction",
+				"plural": "Vehicle Distinctions",
+				"traits": {
+					"Resource Support Vehicle": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Top of the Line": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Broad-Spectrum Sensors": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Resource Pools": {
+				"id": "resource-pools",
+				"description": "Staged supplies, support teams, and fleet backup",
+				"view": {
+					"traitColumns": 2,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "dice-count"
+					},
+					"ratingLadder": [
+						6
+					],
+					"multiDie": true,
+					"notes": "",
+					"reservedSlots": 6,
+					"place": {
+						"left": "75%",
+						"top": 0,
+						"width": "25%",
+						"height": 1
+					},
+					"labels": {
+						"rating": "RATING",
+						"dice": "/ DICE"
+					},
+					"pillar": "plus"
+				},
+				"noun": "Resource Pool",
+				"plural": "Resource Pools",
+				"traits": {
+					"Unassigned Resources": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"Tactical Support": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"Medical Supplies": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"IT/Network Support": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"Food/Shelter": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"Land/Sea/Air Support": {
+						"rating": {
+							"value": [
+								6,
+								6,
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					}
+				},
+				"rating": {
+					"type": "Dice",
+					"value": []
+				}
+			}
+		}
+	}
 }

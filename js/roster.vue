@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
-import { getView } from './model.ts';
+import {
+	getView,
+	getTemplateListing,
+	hasTemplateListing,
+	getTemplateTitle,
+	getTemplateSubtitle,
+	getTemplateGenre,
+	getTemplateVariant,
+	getTemplateDescription,
+	getTemplateHeroImage,
+	characterToSheetTemplate,
+} from './model.ts';
 import PortraitRing from './portrait-ring.vue';
+import TraitSetFrame from './trait-set-frame.vue';
 import ModalDialog from './modal-dialog.vue';
 import TraitSetMini from './trait-set-mini.vue';
 import { SHOWCASE_TEMPLATES, DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
@@ -57,6 +69,7 @@ const showDeleteAllConfirm = ref(false);
 const showLibrary = ref(false);
 const showTraitSetMini = ref(false);
 const librarySearch = ref('');
+const libraryCategory = ref<'all' | 'official' | 'reference' | 'saved'>('all');
 
 const inputFile = ref<HTMLInputElement | null>(null);
 
@@ -110,7 +123,27 @@ const libraryTemplates = computed(() => {
 	if (typeof characterCurioLibraryTemplates === 'undefined') {
 		loadLibraryTemplates();
 	}
-	const merged = [...customTemplates.value, DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base];
+	const knownIds = new Set<string>(
+		[...customTemplates.value, DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base]
+			.map((t: any) => String(t?.id || ''))
+			.filter(Boolean),
+	);
+	const rosterDemoTemplates = (props.characters || [])
+		.filter((c: any) => {
+			if (!c || typeof c !== 'object') return false;
+			if (!c.isTemplate && !hasTemplateListing(getView(c)?.listing)) return false;
+			const tplRef = c.sheet?.template;
+			const linkedId = typeof tplRef === 'string' ? tplRef : String(tplRef?.id || '');
+			return !linkedId || !knownIds.has(linkedId);
+		})
+		.map((c: any) => ({ ...characterToSheetTemplate(c), userSaved: true }));
+	const merged = [
+		...customTemplates.value,
+		...rosterDemoTemplates,
+		DREAMER_ARCHITECT_SHOWCASE,
+		...SHOWCASE_TEMPLATES,
+		...base,
+	];
 	const seen = new Set<string>();
 	return merged.filter((t: any) => {
 		const id = t?.id;
@@ -120,59 +153,193 @@ const libraryTemplates = computed(() => {
 	});
 });
 
+function isOfficialEntry(t: any): boolean {
+	return !t?.userSaved && Boolean(safeLinkUrl(getTemplateListing(t)?.url));
+}
+
+function isReferenceEntry(t: any): boolean {
+	return !t?.userSaved && !safeLinkUrl(getTemplateListing(t)?.url);
+}
+
+function isSavedSheetTemplate(tmpl: any): boolean {
+	return Boolean(tmpl?.userSaved && customTemplates.value.some((ct: any) => ct?.id === tmpl?.id));
+}
+
+const libraryCategoryCounts = computed(() => {
+	const all = libraryTemplates.value;
+	return {
+		all: all.length,
+		official: all.filter(isOfficialEntry).length,
+		reference: all.filter(isReferenceEntry).length,
+		saved: all.filter((t: any) => Boolean(t?.userSaved)).length,
+	};
+});
+
+const effectiveLibraryCategory = computed(() =>
+	libraryCategory.value === 'saved' && libraryCategoryCounts.value.saved === 0 ? 'all' : libraryCategory.value,
+);
+
 const libraryTemplatesFiltered = computed(() => {
 	let list = libraryTemplates.value;
+	const cat = effectiveLibraryCategory.value;
+	if (cat === 'official') {
+		list = list.filter(isOfficialEntry);
+	} else if (cat === 'reference') {
+		list = list.filter(isReferenceEntry);
+	} else if (cat === 'saved') {
+		list = list.filter((t: any) => Boolean(t?.userSaved));
+	}
 	if (librarySearch.value && librarySearch.value.trim().length) {
 		const q = librarySearch.value.toLowerCase().trim();
 		list = list.filter(
 			(t: any) =>
-				(t.title || t.name || t.id || '').toLowerCase().includes(q) ||
-				(t.subtitle && t.subtitle.toLowerCase().includes(q)) ||
-				(t.genre && t.genre.toLowerCase().includes(q)) ||
-				(t.listing && t.listing.genre && t.listing.genre.toLowerCase().includes(q)) ||
-				(t.listing && t.listing.quote && t.listing.quote.toLowerCase().includes(q)),
+				getTemplateTitle(t).toLowerCase().includes(q) ||
+				String(t?.id || '')
+					.toLowerCase()
+					.includes(q) ||
+				getTemplateSubtitle(t).toLowerCase().includes(q) ||
+				getTemplateGenre(t).toLowerCase().includes(q) ||
+				getTemplateVariant(t).toLowerCase().includes(q) ||
+				getTemplateDescription(t).toLowerCase().includes(q) ||
+				String(t?.character?.game || '')
+					.toLowerCase()
+					.includes(q) ||
+				(t.character?.traitSets || []).some((s: any) =>
+					String(s?.name || '')
+						.toLowerCase()
+						.includes(q),
+				),
 		);
 	}
 	return list;
 });
 
+function resetLibraryFilters() {
+	librarySearch.value = '';
+	libraryCategory.value = 'all';
+}
+
 function safeImageUrl(url: any) {
 	return characterCurioFunctions.safeImageUrl(url);
 }
 
-// Mini character for a library card hero: the listing cover is the
-// portrait, Setting/Prep/Complexity are a three-trait set rendered on
-// the ring by the sheet's own ring component + die icons.
+function safeLinkUrl(url: any) {
+	return characterCurioFunctions.safeLinkUrl(url);
+}
+
+function cardHeroImage(tmpl: any): string {
+	return getTemplateHeroImage(tmpl);
+}
+
+function cardRatingTraits(tmpl: any) {
+	const listing = getTemplateListing(tmpl) || {};
+	const entries: Array<[string, unknown]> = [
+		['Setting', listing.setting],
+		['Prep', listing.prep],
+		['Complexity', listing.complexity],
+	];
+	const traits: Array<{ name: string; rating: { type: 'Die'; value: number[] } }> = [];
+	for (const [label, raw] of entries) {
+		const m = /^d(\d+)$/i.exec(String(raw || '').trim());
+		if (m) {
+			traits.push({
+				name: label,
+				rating: { type: 'Die', value: [Number(m[1])] },
+			});
+		}
+	}
+	return traits;
+}
+
+function cardHasRatings(tmpl: any): boolean {
+	return cardRatingTraits(tmpl).length > 0;
+}
+
+// Mini character for a library card hero: the cover image acts as portrait,
+// and real Setting/Prep/Complexity ratings (when present) render on the ring.
 function cardRingCharacter(tmpl: any) {
-	const sizeOf = (v: unknown) => {
-		const m = /^d(\d+)$/.exec(String(v || ''));
-		return m ? Number(m[1]) : 0;
-	};
-	const listing = (tmpl && tmpl.listing) || {};
+	const ratings = cardRatingTraits(tmpl);
+	const charView = getView(tmpl?.character);
+	const ringColor =
+		typeof charView?.primaryColor === 'string' && charView.primaryColor.trim()
+			? charView.primaryColor.trim()
+			: 'primary';
 	return {
-		name: tmpl.title,
-		portrait: { url: listing.image || '' },
+		name: getTemplateTitle(tmpl),
+		portrait: { url: cardHeroImage(tmpl) },
+		view: charView?.diceConfig ? { diceConfig: charView.diceConfig } : {},
 		traitSets: [
 			{
 				id: 'ratings',
 				name: 'Ratings',
-				traits: [
-					{
-						name: 'Setting',
-						rating: { type: 'Die', value: [sizeOf(listing.setting)] },
+				view: {
+					border: 'none',
+					frame: {
+						shape: 'circle',
+						array: ratings.length ? 'arc' : 'none',
+						span: [0, 360],
+						...(ratings.length ? { traitsSpan: [45, 135] } : {}),
+						stroke: '4px',
+						color: ringColor,
 					},
-					{
-						name: 'Prep',
-						rating: { type: 'Die', value: [sizeOf(listing.prep)] },
-					},
-					{
-						name: 'Complexity',
-						rating: { type: 'Die', value: [sizeOf(listing.complexity)] },
-					},
-				],
+				},
+				traits: ratings,
 			},
 		],
 	};
+}
+
+function cardDescription(tmpl: any): string {
+	return getTemplateDescription(tmpl);
+}
+
+function cardMetaBadges(tmpl: any): string[] {
+	const badges: string[] = [];
+	const charView = getView(tmpl?.character);
+	const pages = Number(charView?.pageCount || (tmpl as any)?.pages || 0);
+	if (pages > 0) {
+		badges.push(pages === 1 ? '1 Page' : `${pages} Pages`);
+	}
+	if ((charView?.pageOrientation || charView?.orientation) === 'landscape') {
+		badges.push('Landscape');
+	}
+	const variant = getTemplateVariant(tmpl);
+	if (variant && variant !== 'Character File' && variant !== 'Showcase') {
+		badges.push(variant);
+	}
+	return badges;
+}
+
+function cardTraitTags(tmpl: any): { visible: string[]; overflow: number } {
+	const seen = new Set<string>();
+	const names: string[] = [];
+	for (const s of tmpl?.character?.traitSets || []) {
+		const rawName = String(s?.name || '').trim();
+		if (!rawName) continue;
+		if (s?.id === 'name' || getView(s)?.style?.body === 'name') continue;
+		if (seen.has(rawName)) continue;
+		seen.add(rawName);
+		names.push(rawName);
+	}
+	return {
+		visible: names.slice(0, 8),
+		overflow: Math.max(0, names.length - 8),
+	};
+}
+
+function cardSchematicBlocks(tmpl: any): Array<'ring' | 'cut' | 'half' | 'full'> {
+	const sets = (tmpl?.character?.traitSets || []).filter(
+		(s: any) => Boolean(s?.name) && s?.id !== 'name' && getView(s)?.style?.body !== 'name',
+	);
+	return sets.slice(0, 6).map((s: any) => {
+		const view = getView(s);
+		const frame = typeof view?.frame === 'object' && view.frame !== null ? view.frame : null;
+		const border = typeof view?.border === 'object' && view.border !== null ? view.border : null;
+		if (frame?.shape === 'circle' || view?.frame === 'ring') return 'ring';
+		if (border?.corner === 'cut') return 'cut';
+		if (view?.place?.width === '50%') return 'half';
+		return 'full';
+	});
 }
 
 function openLibrary() {
@@ -454,7 +621,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 							</optgroup>
 							<optgroup label="Library Templates">
 								<option v-for="tmpl in libraryTemplates" :key="tmpl.id" :value="'library:' + tmpl.id">
-									{{ tmpl.title || tmpl.id }}
+									{{ getTemplateTitle(tmpl) }}
 								</option>
 							</optgroup>
 						</select>
@@ -810,14 +977,18 @@ function getRelativeDateLabel(date1: any, date2: any) {
 				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<div class="modal-inner">
-				<div class="library-header">
-					<h2><i class="fas fa-book-open" aria-hidden="true"></i> Library</h2>
-					<p>
-						Select a character sheet template from the official collections. Create a new character, save to your
-						templates, or print directly.
-					</p>
+				<header class="library-header">
+					<div class="library-title-row">
+						<h2><i class="fas fa-book-open" aria-hidden="true"></i> Library</h2>
+						<span class="library-count" aria-label="Visible templates">
+							{{ libraryTemplatesFiltered.length
+							}}<template v-if="libraryTemplatesFiltered.length !== libraryTemplates.length">
+								/ {{ libraryTemplates.length }}</template
+							>
+						</span>
+					</div>
 
-					<search class="library-search-row">
+					<search class="library-controls">
 						<div class="library-search-input">
 							<i class="fas fa-search" aria-hidden="true"></i>
 							<input
@@ -825,103 +996,203 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								id="library-search"
 								name="librarySearch"
 								v-model="librarySearch"
-								placeholder="Search templates by name, genre, or mechanics..."
+								placeholder="Search name, genre, or trait sets..."
 								aria-label="Search templates"
 								autocorrect="off"
 								autocapitalize="none"
 								spellcheck="false"
 							/>
+							<button
+								v-if="librarySearch"
+								type="button"
+								class="library-search-clear"
+								aria-label="Clear search"
+								@click="librarySearch = ''"
+							>
+								<i class="fas fa-times" aria-hidden="true"></i>
+							</button>
+						</div>
+
+						<div class="library-filter-pills" role="group" aria-label="Filter templates">
+							<button
+								type="button"
+								class="library-filter-pill"
+								:class="{ active: effectiveLibraryCategory === 'all' }"
+								:aria-pressed="effectiveLibraryCategory === 'all'"
+								@click="libraryCategory = 'all'"
+							>
+								All <span class="library-filter-count">{{ libraryCategoryCounts.all }}</span>
+							</button>
+							<button
+								type="button"
+								class="library-filter-pill"
+								:class="{ active: effectiveLibraryCategory === 'official' }"
+								:aria-pressed="effectiveLibraryCategory === 'official'"
+								@click="libraryCategory = 'official'"
+							>
+								Official <span class="library-filter-count">{{ libraryCategoryCounts.official }}</span>
+							</button>
+							<button
+								type="button"
+								class="library-filter-pill"
+								:class="{ active: effectiveLibraryCategory === 'reference' }"
+								:aria-pressed="effectiveLibraryCategory === 'reference'"
+								@click="libraryCategory = 'reference'"
+							>
+								Reference <span class="library-filter-count">{{ libraryCategoryCounts.reference }}</span>
+							</button>
+							<button
+								v-if="libraryCategoryCounts.saved > 0"
+								type="button"
+								class="library-filter-pill"
+								:class="{ active: effectiveLibraryCategory === 'saved' }"
+								:aria-pressed="effectiveLibraryCategory === 'saved'"
+								@click="libraryCategory = 'saved'"
+							>
+								Saved <span class="library-filter-count">{{ libraryCategoryCounts.saved }}</span>
+							</button>
 						</div>
 					</search>
-				</div>
+				</header>
 
-				<div class="library-grid">
+				<div class="library-body">
 					<div class="library-loading" v-if="libraryLoading">
 						<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Loading Library…
 					</div>
 					<div class="roster-import-error" v-if="libraryError">{{ libraryError }}</div>
-					<article class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
-						<div class="library-card-header">
-							<div class="library-card-title-group">
-								<h3 class="library-card-title">
-									<a v-if="tmpl.listing && tmpl.listing.url" :href="tmpl.listing.url" target="_blank" rel="noopener">{{
-										tmpl.title
-									}}</a>
-									<template v-else>{{ tmpl.title }}</template>
-								</h3>
-								<div class="library-card-subtitle">{{ tmpl.subtitle }}</div>
-							</div>
-							<div class="library-card-badges">
-								<span class="badge-genre">{{
-									(tmpl.listing && tmpl.listing.genre) || tmpl.genre || (tmpl.userSaved ? 'Custom' : '')
-								}}</span>
-							</div>
-						</div>
-						<div class="library-card-hero" v-if="tmpl.listing && tmpl.listing.image">
-							<div class="portrait">
-								<div class="portrait-inner">
-									<div
-										class="portrait-circle portrait-alignment-top-center"
-										:style="'background-image: url(' + safeImageUrl(tmpl.listing.image) + ');'"
-									></div>
+					<div class="library-empty" v-if="!libraryLoading && !libraryError && libraryTemplatesFiltered.length === 0">
+						<p>No matching templates.</p>
+						<button type="button" class="btn-library secondary" @click="resetLibraryFilters">Reset</button>
+					</div>
+					<div class="library-grid" v-if="libraryTemplatesFiltered.length > 0">
+						<article class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
+							<header class="library-card-header">
+								<div
+									class="library-card-badges"
+									v-if="getTemplateGenre(tmpl) || tmpl.userSaved || cardMetaBadges(tmpl).length"
+								>
+									<span class="badge-genre" v-if="getTemplateGenre(tmpl) || tmpl.userSaved">{{
+										getTemplateGenre(tmpl) || 'Saved'
+									}}</span>
+									<span class="badge-meta" v-for="badge in cardMetaBadges(tmpl)" :key="badge">{{ badge }}</span>
 								</div>
-								<PortraitRing :character="cardRingCharacter(tmpl)" :editing="[]" :ringTraitID="0" />
+								<h3 class="library-card-title">
+									<a
+										v-if="safeLinkUrl(getTemplateListing(tmpl)?.url)"
+										:href="safeLinkUrl(getTemplateListing(tmpl)?.url)"
+										target="_blank"
+										rel="noopener noreferrer"
+										>{{ getTemplateTitle(tmpl) }}</a
+									>
+									<template v-else>{{ getTemplateTitle(tmpl) }}</template>
+								</h3>
+								<div class="library-card-subtitle" v-if="getTemplateSubtitle(tmpl)">
+									{{ getTemplateSubtitle(tmpl) }}
+								</div>
+							</header>
+
+							<div
+								v-if="cardHeroImage(tmpl)"
+								class="library-card-hero"
+								:class="{ 'is-portrait-only': !cardHasRatings(tmpl) }"
+							>
+								<div class="portrait portrait-shape-circle">
+									<div class="portrait-inner">
+										<div
+											class="portrait-circle portrait-alignment-top-center"
+											:style="'background-image: url(' + safeImageUrl(cardHeroImage(tmpl)) + ');'"
+										></div>
+										<TraitSetFrame mode="portrait" :trait-set="cardRingCharacter(tmpl).traitSets[0]" />
+									</div>
+									<PortraitRing
+										v-if="cardHasRatings(tmpl)"
+										:character="cardRingCharacter(tmpl)"
+										:editing="[]"
+										:ringTraitID="0"
+									/>
+								</div>
 							</div>
-						</div>
-						<p class="library-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
-						<div class="library-card-traits">
-							<span
-								class="trait-tag"
-								v-for="ts in (tmpl.character?.traitSets || []).filter((s: any) => s?.name)"
-								:key="ts.name"
-								>{{ ts.name }}</span
-							>
-						</div>
-						<div class="library-card-actions">
-							<button
-								type="button"
-								class="btn-library secondary"
-								v-if="tmpl.character"
-								@click="emit('previewTemplate', tmpl)"
-								title="Preview template"
-							>
-								<i class="fas fa-eye" aria-hidden="true"></i> Preview
-							</button>
-							<button
-								type="button"
-								class="btn-library primary"
-								@click="useLibrary(tmpl, false, false)"
-								title="Create an editable character"
-							>
-								<i class="fas fa-plus" aria-hidden="true"></i> Character
-							</button>
-							<button
-								type="button"
-								class="btn-library secondary"
-								@click="useLibrary(tmpl, true, false)"
-								title="Save template to Roster"
-							>
-								<i class="fas fa-bookmark" aria-hidden="true"></i> Template
-							</button>
-							<button
-								type="button"
-								class="btn-library print"
-								@click="useLibrary(tmpl, false, true)"
-								title="Open in Print Tab"
-							>
-								<i class="fas fa-print" aria-hidden="true"></i> Print
-							</button>
-							<button
-								v-if="tmpl.userSaved"
-								type="button"
-								class="btn-library secondary"
-								@click="emit('deleteSheetTemplate', tmpl.id)"
-								title="Remove saved template"
-							>
-								<i class="fas fa-trash" aria-hidden="true"></i> Remove
-							</button>
-						</div>
-					</article>
+							<div v-else class="library-card-schematic" aria-hidden="true">
+								<div
+									class="schematic-page"
+									:class="{
+										'is-landscape':
+											(getView(tmpl.character)?.pageOrientation || getView(tmpl.character)?.orientation) ===
+											'landscape',
+									}"
+								>
+									<span
+										v-for="(kind, idx) in cardSchematicBlocks(tmpl)"
+										:key="idx"
+										class="schematic-block"
+										:class="'schematic-' + kind"
+									></span>
+								</div>
+								<span class="schematic-caption"
+									>{{ cardTraitTags(tmpl).visible.length + cardTraitTags(tmpl).overflow }} trait sets</span
+								>
+							</div>
+
+							<p class="library-card-desc" v-if="cardDescription(tmpl)">{{ cardDescription(tmpl) }}</p>
+
+							<footer class="library-card-footer">
+								<div class="library-card-traits" v-if="cardTraitTags(tmpl).visible.length">
+									<span class="trait-tag" v-for="name in cardTraitTags(tmpl).visible" :key="name">{{ name }}</span>
+									<span class="trait-tag trait-tag-more" v-if="cardTraitTags(tmpl).overflow > 0"
+										>+{{ cardTraitTags(tmpl).overflow }}</span
+									>
+								</div>
+								<div class="library-card-actions">
+									<div class="library-actions-primary">
+										<button
+											type="button"
+											class="btn-library secondary"
+											v-if="tmpl.character"
+											@click="emit('previewTemplate', tmpl)"
+											title="Preview sheet"
+										>
+											<i class="fas fa-eye" aria-hidden="true"></i> Preview
+										</button>
+										<button
+											type="button"
+											class="btn-library primary"
+											@click="useLibrary(tmpl, false, false)"
+											title="Create character"
+										>
+											<i class="fas fa-plus" aria-hidden="true"></i> Character
+										</button>
+									</div>
+									<div class="library-actions-utility">
+										<button
+											type="button"
+											class="btn-library subtle"
+											@click="useLibrary(tmpl, true, false)"
+											title="Save template"
+										>
+											<i class="fas fa-bookmark" aria-hidden="true"></i> Template
+										</button>
+										<button
+											type="button"
+											class="btn-library subtle print"
+											@click="useLibrary(tmpl, false, true)"
+											title="Print sheet"
+										>
+											<i class="fas fa-print" aria-hidden="true"></i> Print
+										</button>
+										<button
+											v-if="isSavedSheetTemplate(tmpl)"
+											type="button"
+											class="btn-library subtle danger"
+											@click="emit('deleteSheetTemplate', tmpl.id)"
+											title="Remove template"
+										>
+											<i class="fas fa-trash" aria-hidden="true"></i> Remove
+										</button>
+									</div>
+								</div>
+							</footer>
+						</article>
+					</div>
 				</div>
 			</div>
 		</ModalDialog>

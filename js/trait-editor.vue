@@ -5,6 +5,7 @@ import {
 	getView,
 	ensureView,
 	getRating,
+	resolveRating,
 	ratingDice,
 	setRatingDie,
 	setRatingDice,
@@ -102,6 +103,8 @@ const parentNode = computed(() =>
 const trait = computed<any>(() =>
 	traitChain.value.length > 0 ? traitChain.value[traitChain.value.length - 1] : undefined,
 );
+
+const ancestorFallbacks = computed(() => [...traitChain.value.slice(0, -1).reverse(), traitSet.value]);
 
 const isPlay = computed(() => props.submode === 'play');
 const canDeleteInPlay = computed(() => characterCurioFunctions.isPlayMutableSet(traitSet.value));
@@ -230,7 +233,7 @@ const isLabeledPipsSet = computed(() => {
 
 const pipRowChecked = computed({
 	get() {
-		const rating = getRating(trait.value);
+		const rating = resolveRating(trait.value, ancestorFallbacks.value);
 		if (rating && rating.type === 'Pip' && Array.isArray(rating.value) && rating.value.length) {
 			return rating.value[0] === true;
 		}
@@ -243,10 +246,10 @@ const pipRowChecked = computed({
 	},
 });
 
-const dice = computed(() => characterCurioFunctions.getTraitDice(trait.value));
+const dice = computed(() => characterCurioFunctions.getTraitDice(trait.value, ancestorFallbacks.value));
 
 function firstDieOf(node: any) {
-	return ratingDice(getRating(node))[0] || 0;
+	return ratingDice(resolveRating(node, ancestorFallbacks.value))[0] || 0;
 }
 
 function isDieActiveOf(node: any, size: number) {
@@ -256,7 +259,7 @@ function isDieActiveOf(node: any, size: number) {
 // Rated is the gate: a trait is rated iff it carries a rating. Where it
 // has none, the editor offers to add one; the Rating control and its
 // range editor render directly beneath.
-const isRatedTrait = computed(() => isRated(trait.value));
+const isRatedTrait = computed(() => isRated(trait.value, ancestorFallbacks.value));
 
 function addRating() {
 	if (!trait.value) return;
@@ -276,19 +279,20 @@ function addRating() {
 // switch itself is explicit, so nothing is silently discarded.
 const RATING_TYPES = ['Die', 'Dice', 'Counter', 'Pip'] as const;
 
-const ratingType = computed(() => getRating(trait.value)?.type ?? null);
+const ratingType = computed(() => resolveRating(trait.value, ancestorFallbacks.value)?.type ?? null);
 
 // Out is a range option for Die/Dice ratings, defaulted off. Surgical:
 // setting true opts the range in, false drops the key.
 const ratingHasOut = computed({
 	get() {
-		const r = getRating(trait.value);
+		const r = resolveRating(trait.value, ancestorFallbacks.value);
 		return !!r && (r.type === 'Die' || r.type === 'Dice') && (r as any).out === true;
 	},
 	set(value: boolean) {
 		const t = trait.value as unknown as Record<string, any>;
 		const r = t && t.rating;
-		if (!r || typeof r !== 'object' || (r.type !== 'Die' && r.type !== 'Dice')) return;
+		const resolved = resolveRating(t, ancestorFallbacks.value);
+		if (!r || typeof r !== 'object' || !resolved || (resolved.type !== 'Die' && resolved.type !== 'Dice')) return;
 		if (value) {
 			r.out = true;
 		} else {
@@ -310,11 +314,15 @@ const confirmRatingChange = ref<'Counter' | 'Die' | 'Dice' | 'Pip' | null>(null)
 function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	const t = trait.value as unknown as Record<string, any>;
 	if (!t) return;
-	const cur = getRating(t);
+	const cur = resolveRating(t, ancestorFallbacks.value);
 	if (cur?.type === type) return;
 	const hasChildValues =
 		Array.isArray(t.traits) &&
-		t.traits.some((ct: any) => getRating(ct) !== undefined || (Array.isArray(ct?.traits) && ct.traits.length > 0));
+		t.traits.some(
+			(ct: any) =>
+				resolveRating(ct, [t, ...ancestorFallbacks.value]) !== undefined ||
+				(Array.isArray(ct?.traits) && ct.traits.length > 0),
+		);
 	if (hasChildValues) {
 		confirmRatingChange.value = type;
 	} else {
@@ -326,7 +334,7 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	confirmRatingChange.value = null;
 	const t = trait.value as unknown as Record<string, any>;
 	if (!t) return;
-	const cur = getRating(t);
+	const cur = resolveRating(t, ancestorFallbacks.value);
 	if (cur?.type === type) return;
 	if (Array.isArray(t.traits)) {
 		t.traits.forEach((ct: any) => {
@@ -368,7 +376,7 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 
 // Counter inputs: a number field with its [min, max] range.
 function counterBounds(): [number, number] {
-	const r = getRating(trait.value);
+	const r = resolveRating(trait.value, ancestorFallbacks.value);
 	if (r && r.type === 'Counter') {
 		const nums = (r.range || []).filter((n): n is number => typeof n === 'number');
 		if (nums.length >= 2) {
@@ -382,7 +390,7 @@ function counterBounds(): [number, number] {
 
 const counterNumber = computed({
 	get() {
-		const r = getRating(trait.value);
+		const r = resolveRating(trait.value, ancestorFallbacks.value);
 		if (r && r.type === 'Counter' && typeof r.value[0] === 'number') return r.value[0];
 		return 0;
 	},
@@ -411,7 +419,8 @@ function setCounterBound(which: 0 | 1, val: any) {
 		hi = n;
 		if (hi < lo) lo = hi;
 	}
-	const cur = typeof getRating(t)?.value[0] === 'number' ? ((getRating(t) as any).value[0] as number) : lo;
+	const resolved = resolveRating(t, ancestorFallbacks.value);
+	const cur = typeof resolved?.value[0] === 'number' ? (resolved.value[0] as number) : lo;
 	t.rating = { type: 'Counter', value: [Math.max(lo, Math.min(hi, cur))], range: [lo, hi] };
 	if (isSetSubtraitMode.value) {
 		syncCompanionSubtraits(t.noun || t.name);
@@ -435,13 +444,13 @@ function commitPipBubbleCount(event: Event) {
 
 // Pip inputs: a bubble row; a track is a list of bubbles.
 const pipBubbleCount = computed(() => {
-	const r = getRating(trait.value);
+	const r = resolveRating(trait.value, ancestorFallbacks.value);
 	if (!r || r.type !== 'Pip') return 0;
 	return r.value.length;
 });
 
 function pipBubbleAt(index: number): boolean {
-	const r = getRating(trait.value);
+	const r = resolveRating(trait.value, ancestorFallbacks.value);
 	return Boolean(r && r.type === 'Pip' && r.value[index] === true);
 }
 
@@ -449,7 +458,7 @@ function togglePipBubble(index: number) {
 	const t = trait.value as unknown as Record<string, any>;
 	if (!t) return;
 	const n = Math.max(pipBubbleCount.value, index + 1);
-	const cur = getRating(t);
+	const cur = resolveRating(t, ancestorFallbacks.value);
 	const list: boolean[] = [];
 	for (let i = 0; i < n; i++) {
 		list.push(Boolean(cur && cur.type === 'Pip' && cur.value[i] === true));
@@ -463,7 +472,7 @@ function setPipBubbleCount(count: number) {
 	const t = trait.value as unknown as Record<string, any>;
 	if (!t) return;
 	const n = Math.max(1, Math.min(100, Math.floor(Number(count)) || 1));
-	const cur = getRating(t);
+	const cur = resolveRating(t, ancestorFallbacks.value);
 	const list: boolean[] = [];
 	for (let i = 0; i < n; i++) {
 		list.push(Boolean(cur && cur.type === 'Pip' && cur.value[i] === true));
@@ -474,7 +483,7 @@ function setPipBubbleCount(count: number) {
 
 function setTraitRange(scale: number[]) {
 	const t = trait.value as unknown as Record<string, any>;
-	const rating = getRating(t);
+	const rating = resolveRating(t, ancestorFallbacks.value);
 	if (!rating) return;
 	t.rating = {
 		type: rating.type,
@@ -660,7 +669,7 @@ const childSubtraits = computed(() => {
 			});
 			return;
 		}
-		const r = getRating(sub);
+		const r = resolveRating(sub, [trait.value, ...ancestorFallbacks.value]);
 		const label = (isSetSubtraitMode.value ? sub.noun || sub.name : sub.name || sub.noun) || 'Subtrait';
 		const summary = r?.type
 			? r.type
@@ -764,7 +773,7 @@ const shouldShowTrackOut = computed(() => {
 	return isSteppedTrackSet.value || ratingHasOut.value;
 });
 
-const isOut = computed(() => isOutDie(trait.value, [traitSet.value]));
+const isOut = computed(() => isOutDie(trait.value, ancestorFallbacks.value));
 
 const outLabel = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
@@ -851,7 +860,7 @@ const hideUnratedSetDie = computed(() =>
 		parentIsBranch.value &&
 		branchRole.value !== 'specialty' &&
 		setRating.value &&
-		!isRated(trait.value),
+		!isRated(trait.value, ancestorFallbacks.value),
 	),
 );
 
@@ -1127,7 +1136,7 @@ function stepDownDieAtIndex(index: number) {
 
 function toggleTraitValue(val: any) {
 	const t = trait.value as unknown as Record<string, any>;
-	const cur = ratingDice(getRating(t))[0] || 0;
+	const cur = ratingDice(resolveRating(t, ancestorFallbacks.value))[0] || 0;
 	if (val === cur && !isOut.value) {
 		t.isOut = false;
 		characterCurioFunctions.setTraitDice(trait.value, []);
@@ -1145,7 +1154,7 @@ function toggleOutValue() {
 		characterCurioFunctions.setTraitDice(trait.value, []);
 	} else {
 		t.isOut = true;
-		setRatingDie(t, rangeTop(t) + 2);
+		setRatingDie(t, rangeTop(t, ancestorFallbacks.value) + 2);
 		const r = t.rating;
 		if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) r.out = true;
 	}
@@ -1153,12 +1162,18 @@ function toggleOutValue() {
 }
 
 // Effective ladder: own range → set rating range → set ratingLadder → base.
-const dieRange = computed(() => resolveRange(trait.value, [traitSet.value]));
+const dieRange = computed(() => resolveRange(trait.value, ancestorFallbacks.value));
 
 // True when the trait states no Die/Dice range of its own and inherits.
 const isRangeInherited = computed(() => {
-	const r = getRating(trait.value);
-	return !r || (r.type !== 'Die' && r.type !== 'Dice') || !Array.isArray(r.range) || r.range.length === 0;
+	const resolved = resolveRating(trait.value, ancestorFallbacks.value);
+	const ownRange = (trait.value as any)?.rating?.range;
+	return (
+		!resolved ||
+		(resolved.type !== 'Die' && resolved.type !== 'Dice') ||
+		!Array.isArray(ownRange) ||
+		ownRange.length === 0
+	);
 });
 
 function getDieStepPrev(currentSize: number, range: number[] = dieRange.value): number | null {
@@ -1514,18 +1529,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 
 <template>
 	<aside :class="cssClass" ref="rootEl" @click.stop="">
-		<div class="editor-arrow"></div>
-
 		<div class="editor-controls">
-			<button
-				type="button"
-				class="editor-close"
-				@click.stop="selectElement([])"
-				title="Done"
-				aria-label="Close trait editor"
-			>
-				<i class="fas fa-times" aria-hidden="true"></i>
-			</button>
 			<button
 				v-if="!isPlay"
 				type="button"

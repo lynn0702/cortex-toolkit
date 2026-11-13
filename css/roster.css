@@ -33,6 +33,15 @@
 	line-height: 1.2;
 	border-radius: 999px;
 	--button-color: var(--color-interactive);
+	&.roster-button-library {
+		--button-color: var(--color-interactive);
+		background: var(--color-interactive);
+		color: var(--die-active-text);
+
+		&:hover {
+			background: color-mix(in oklab, var(--color-interactive) 85%, black);
+		}
+	}
 	&.roster-button-delete,
 	&.roster-button-delete-all {
 		--button-color: var(--color-primary);
@@ -451,26 +460,7 @@
 	font-weight: bold;
 }
 
-@media screen and (max-width: 600px) {
-	.roster-item {
-		column-gap: 1rem;
-		align-items: flex-start;
-
-		& > div:nth-child(1) {
-			flex: 0 0 4.75rem;
-		}
-	}
-
-	.roster-item-name {
-		white-space: normal;
-		font-size: 1.05rem;
-	}
-}
-
-/* ============================================================ */
-/* MOBILE ROSTER REFLOW (<=600px) */
-/* ============================================================ */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 48rem) {
 	.roster-item {
 		column-gap: 1rem;
 		align-items: flex-start;

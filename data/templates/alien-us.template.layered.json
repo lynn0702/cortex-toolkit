@@ -1,627 +1,614 @@
 {
-  "id": "alien-us",
-  "version": 1,
-  "title": "Alien, Us",
-  "subtitle": "Sci-Fi Infiltration & Paranoia",
-  "game": "Alien, Us",
-  "variant": "Character File",
-  "pages": 2,
-  "genre": "Sci-Fi / Espionage",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866",
-    "quote": "You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.",
-    "genre": "Cold War Sci-Fi Drama",
-    "setting": "d6",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg"
-  },
-  "character": {
-    "id": "template-alien-us",
-    "isTemplate": true,
-    "name": "",
-    "game": "Alien, Us",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 2,
-      "template": "Alien, Us",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "full-width",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Core alien background, job, and personality",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "multiDie": false,
-          "ratingLadder": [
-            8
-          ],
-          "notes": "",
-          "reservedSlots": 3,
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Alien Background:": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Alien Role/Job:": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Personality/Quirk:": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Skills & Specialties": {
-        "id": "subtrait-columns",
-        "description": "Core baseline d6 skills with branching d8+ specialties",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "subtrait-columns"
-          },
-          "subtraitRatingLadder": [
-            8,
-            10,
-            12
-          ],
-          "labels": {
-            "left": "Specialties",
-            "center": "Skills",
-            "right": "Specialties"
-          },
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 7,
-          "pillar": "prime"
-        },
-        "rating": {
-          "type": "Die",
-          "value": [
-            6
-          ],
-          "range": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ]
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {
-          "Bout": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          },
-          "Chat": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          },
-          "Find": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          },
-          "Make": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          },
-          "Play": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          },
-          "Operate": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          },
-          "Work": {
-            "slots": {
-              "0": {
-                "view": {
-                  "branchSide": "left"
-                }
-              },
-              "1": {
-                "view": {
-                  "branchSide": "right"
-                }
-              }
-            }
-          }
-        }
-      },
-      "Values": {
-        "id": "values",
-        "description": "Alien worldview versus human conditioning",
-        "statement": true,
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "notes": "",
-          "reservedSlots": 7,
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Value",
-        "plural": "Values",
-        "traits": {
-          "Alien": {},
-          "Conformity": {},
-          "Materialism": {},
-          "Paranoia": {},
-          "Patriotism": {},
-          "Secrecy": {},
-          "Spirituality": {}
-        }
-      },
-      "Talents": {
-        "id": "talents",
-        "description": "Specialized alien abilities and tech modules",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "50%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "labels": {
-            "col1": "TALENT",
-            "col2": "ACTIVATION",
-            "col3": "EFFECT"
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "28%",
-              "height": 1
-            },
-            "description": {
-              "left": "28%",
-              "top": 0,
-              "width": "33%",
-              "height": 1
-            },
-            "child:SFX": {
-              "left": "61%",
-              "top": 0,
-              "width": "39%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Talent",
-        "plural": "Talents",
-        "traits": {}
-      },
-      "Signature Assets / Tech": {
-        "id": "signature-assets-tech",
-        "description": "Alien equipment and concealed devices",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "notes": "",
-          "reservedSlots": 3,
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "76%",
-              "height": 1
-            },
-            "rating": {
-              "left": "76%",
-              "top": 0,
-              "width": "24%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset / Tech",
-        "plural": "Signature Assets / Tech",
-        "traits": {}
-      },
-      "Relationships": {
-        "id": "relationships",
-        "description": "Connections to human contacts, superiors, and rivals",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "multiDie": false,
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "notes": "",
-          "reservedSlots": 10,
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Relationship",
-        "plural": "Relationships",
-        "traits": {}
-      },
-      "Session Record": {
-        "id": "session-record",
-        "description": "Session track and progression log",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 20,
-          "place": {
-            "left": "50%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pips": {
-            "labels": true,
-            "perRow": 20
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {}
-      }
-    }
-  }
+	"id": "alien-us",
+	"version": 1,
+	"character": {
+		"id": "template-alien-us",
+		"isTemplate": true,
+		"name": "",
+		"game": "Alien, Us",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 2,
+			"template": "Alien, Us",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "full-width",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Sci-Fi Infiltration & Paranoia",
+				"genre": "Cold War Sci-Fi Drama",
+				"url": "https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg",
+				"quote": "You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.",
+				"setting": "d6",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Core alien background, job, and personality",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"multiDie": false,
+					"ratingLadder": [
+						8
+					],
+					"notes": "",
+					"reservedSlots": 3,
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Alien Background:": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"type": "Die",
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Alien Role/Job:": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"type": "Die",
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Personality/Quirk:": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"type": "Die",
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"Skills & Specialties": {
+				"id": "subtrait-columns",
+				"description": "Core baseline d6 skills with branching d8+ specialties",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "subtrait-columns"
+					},
+					"subtraitRatingLadder": [
+						8,
+						10,
+						12
+					],
+					"labels": {
+						"left": "Specialties",
+						"center": "Skills",
+						"right": "Specialties"
+					},
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 7,
+					"pillar": "prime"
+				},
+				"rating": {
+					"type": "Die",
+					"value": [
+						6
+					]
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {
+					"Bout": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					},
+					"Chat": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					},
+					"Find": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					},
+					"Make": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					},
+					"Play": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					},
+					"Operate": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					},
+					"Work": {
+						"slots": {
+							"0": {
+								"view": {
+									"branchSide": "left"
+								}
+							},
+							"1": {
+								"view": {
+									"branchSide": "right"
+								}
+							}
+						}
+					}
+				}
+			},
+			"Values": {
+				"id": "values",
+				"description": "Alien worldview versus human conditioning",
+				"statement": true,
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"notes": "",
+					"reservedSlots": 7,
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Value",
+				"plural": "Values",
+				"traits": {
+					"Alien": {},
+					"Conformity": {},
+					"Materialism": {},
+					"Paranoia": {},
+					"Patriotism": {},
+					"Secrecy": {},
+					"Spirituality": {}
+				}
+			},
+			"Talents": {
+				"id": "talents",
+				"description": "Specialized alien abilities and tech modules",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "50%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"labels": {
+						"col1": "TALENT",
+						"col2": "ACTIVATION",
+						"col3": "EFFECT"
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "28%",
+							"height": 1
+						},
+						"description": {
+							"left": "28%",
+							"top": 0,
+							"width": "33%",
+							"height": 1
+						},
+						"child:SFX": {
+							"left": "61%",
+							"top": 0,
+							"width": "39%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Talent",
+				"plural": "Talents",
+				"traits": {}
+			},
+			"Signature Assets / Tech": {
+				"id": "signature-assets-tech",
+				"description": "Alien equipment and concealed devices",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"notes": "",
+					"reservedSlots": 3,
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "76%",
+							"height": 1
+						},
+						"rating": {
+							"left": "76%",
+							"top": 0,
+							"width": "24%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset / Tech",
+				"plural": "Signature Assets / Tech",
+				"traits": {}
+			},
+			"Relationships": {
+				"id": "relationships",
+				"description": "Connections to human contacts, superiors, and rivals",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"multiDie": false,
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"notes": "",
+					"reservedSlots": 10,
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Relationship",
+				"plural": "Relationships",
+				"traits": {}
+			},
+			"Session Record": {
+				"id": "session-record",
+				"description": "Session track and progression log",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 20,
+					"place": {
+						"left": "50%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pips": {
+						"labels": true,
+						"perRow": 20
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {}
+			}
+		}
+	}
 }

@@ -1,601 +1,576 @@
 {
-  "id": "camp-bewilderwood",
-  "version": 1,
-  "title": "Camp Bewilderwood",
-  "subtitle": "Cryptid Summer Camp Mystery",
-  "game": "Camp Bewilderwood",
-  "variant": "Camper File",
-  "pages": 1,
-  "genre": "Supernatural / Youth Mystery",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866",
-    "quote": "Someone has decided you’re destined for great things. You’re twelve.",
-    "genre": "Supernatural summer camp / YA adventure",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg"
-  },
-  "character": {
-    "id": "template-camp-bewilderwood",
-    "isTemplate": true,
-    "name": "",
-    "game": "Camp Bewilderwood",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Camp Bewilderwood",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Camp background, camper reputation, and hidden destiny",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "66%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "70%",
-              "height": 1
-            },
-            "rating": {
-              "left": "70%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "block": {
-              "left": "0%",
-              "top": 3,
-              "width": "100%",
-              "height": 1
-            },
-            "badge": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "HERITAGE:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Heritage": {
-                    "description": "Spend a PP to step up an attribute when you connect to your heritage."
-                  }
-                }
-              }
-            }
-          },
-          "DESTINY:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Destiny": {
-                    "description": "Spend a PP to reroll your dice when you embrace your destiny."
-                  }
-                }
-              }
-            }
-          },
-          "CAMP REPUTATION:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Camp Reputation": {
-                    "description": "Spend a PP to create a d8 asset linked to the thing you're known for."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Values": {
-        "id": "values",
-        "description": "Camper ideals and loyalties",
-        "statement": true,
-        "hasQuestionedPip": true,
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 5,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "66%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "70%",
-              "height": 1
-            },
-            "rating": {
-              "left": "70%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Value",
-        "plural": "Values",
-        "traits": {
-          "Bravery": {},
-          "Community": {},
-          "Curiosity": {},
-          "Friendship": {},
-          "Mischief": {}
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Treasured camper keepsakes and scavenged relics",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "66%",
-            "top": 0,
-            "width": "34%",
-            "height": 1
-          },
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Attributes": {
-        "id": "attributes",
-        "description": "Core camper capability ratings",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "66%",
-            "top": 1,
-            "width": "34%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Mental": {},
-          "Physical": {},
-          "Social": {}
-        }
-      },
-      "Standing": {
-        "id": "paired-slots",
-        "description": "Camp social standing with complication and bonus dice",
-        "statement": true,
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 6,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "40%",
-            "height": 1
-          },
-          "labels": {
-            "slot0": "COMPLICATION",
-            "slot1": "BONUS"
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "50%",
-              "height": 1
-            },
-            "child:Statement": {
-              "left": "50%",
-              "top": 0,
-              "width": "50%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Standing",
-        "plural": "Standings",
-        "traits": {},
-        "slots": {
-          "0": {
-            "traits": {
-              "COMPLICATION": {},
-              "BONUS": {}
-            }
-          },
-          "1": {
-            "traits": {
-              "COMPLICATION": {},
-              "BONUS": {}
-            }
-          },
-          "2": {
-            "traits": {
-              "COMPLICATION": {},
-              "BONUS": {}
-            }
-          },
-          "3": {
-            "traits": {
-              "COMPLICATION": {},
-              "BONUS": {}
-            }
-          },
-          "4": {
-            "traits": {
-              "COMPLICATION": {},
-              "BONUS": {}
-            }
-          },
-          "5": {
-            "traits": {
-              "COMPLICATION": {},
-              "BONUS": {}
-            }
-          }
-        }
-      },
-      "Badges": {
-        "id": "badges",
-        "description": "Merit badges earned at camp",
-        "counterLabel": "XP",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "header": "top",
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "die-rows"
-          },
-          "counterLabel": "XP",
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 17,
-          "place": {
-            "left": "40%",
-            "top": 2,
-            "width": "60%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Badge",
-        "plural": "Badges",
-        "traits": {}
-      },
-      "Talents": {
-        "id": "talents",
-        "description": "Camper knacks and signature tricks",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 2,
-          "labels": {
-            "col1": "TALENT",
-            "col2": "ACTIVATION",
-            "col3": "EFFECT"
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "28%",
-              "height": 1
-            },
-            "description": {
-              "left": "28%",
-              "top": 0,
-              "width": "33%",
-              "height": 1
-            },
-            "child:SFX": {
-              "left": "61%",
-              "top": 0,
-              "width": "39%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Talent",
-        "plural": "Talents",
-        "traits": {}
-      }
-    }
-  }
+	"id": "camp-bewilderwood",
+	"version": 1,
+	"character": {
+		"id": "template-camp-bewilderwood",
+		"isTemplate": true,
+		"name": "",
+		"game": "Camp Bewilderwood",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Camp Bewilderwood",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Cryptid Summer Camp Mystery",
+				"genre": "Supernatural summer camp / YA adventure",
+				"variant": "Camper File",
+				"url": "https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg",
+				"quote": "Someone has decided you’re destined for great things. You’re twelve.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Camp background, camper reputation, and hidden destiny",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "66%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "70%",
+							"height": 1
+						},
+						"rating": {
+							"left": "70%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"block": {
+							"left": "0%",
+							"top": 3,
+							"width": "100%",
+							"height": 1
+						},
+						"badge": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"HERITAGE:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Heritage": {
+										"description": "Spend a PP to step up an attribute when you connect to your heritage."
+									}
+								}
+							}
+						}
+					},
+					"DESTINY:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Destiny": {
+										"description": "Spend a PP to reroll your dice when you embrace your destiny."
+									}
+								}
+							}
+						}
+					},
+					"CAMP REPUTATION:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Camp Reputation": {
+										"description": "Spend a PP to create a d8 asset linked to the thing you're known for."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Values": {
+				"id": "values",
+				"description": "Camper ideals and loyalties",
+				"statement": true,
+				"hasQuestionedPip": true,
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 5,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "66%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "70%",
+							"height": 1
+						},
+						"rating": {
+							"left": "70%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Value",
+				"plural": "Values",
+				"traits": {
+					"Bravery": {},
+					"Community": {},
+					"Curiosity": {},
+					"Friendship": {},
+					"Mischief": {}
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Treasured camper keepsakes and scavenged relics",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "66%",
+						"top": 0,
+						"width": "34%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Attributes": {
+				"id": "attributes",
+				"description": "Core camper capability ratings",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "66%",
+						"top": 1,
+						"width": "34%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Mental": {},
+					"Physical": {},
+					"Social": {}
+				}
+			},
+			"Standing": {
+				"id": "paired-slots",
+				"description": "Camp social standing with complication and bonus dice",
+				"statement": true,
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 6,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "40%",
+						"height": 1
+					},
+					"labels": {
+						"slot0": "COMPLICATION",
+						"slot1": "BONUS"
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "50%",
+							"height": 1
+						},
+						"child:Statement": {
+							"left": "50%",
+							"top": 0,
+							"width": "50%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Standing",
+				"plural": "Standings",
+				"traits": {},
+				"slots": {
+					"0": {
+						"traits": {
+							"COMPLICATION": {},
+							"BONUS": {}
+						}
+					},
+					"1": {
+						"traits": {
+							"COMPLICATION": {},
+							"BONUS": {}
+						}
+					},
+					"2": {
+						"traits": {
+							"COMPLICATION": {},
+							"BONUS": {}
+						}
+					},
+					"3": {
+						"traits": {
+							"COMPLICATION": {},
+							"BONUS": {}
+						}
+					},
+					"4": {
+						"traits": {
+							"COMPLICATION": {},
+							"BONUS": {}
+						}
+					},
+					"5": {
+						"traits": {
+							"COMPLICATION": {},
+							"BONUS": {}
+						}
+					}
+				}
+			},
+			"Badges": {
+				"id": "badges",
+				"description": "Merit badges earned at camp",
+				"counterLabel": "XP",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"header": "top",
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "die-rows"
+					},
+					"counterLabel": "XP",
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 17,
+					"place": {
+						"left": "40%",
+						"top": 2,
+						"width": "60%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Badge",
+				"plural": "Badges",
+				"traits": {}
+			},
+			"Talents": {
+				"id": "talents",
+				"description": "Camper knacks and signature tricks",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 2,
+					"labels": {
+						"col1": "TALENT",
+						"col2": "ACTIVATION",
+						"col3": "EFFECT"
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "28%",
+							"height": 1
+						},
+						"description": {
+							"left": "28%",
+							"top": 0,
+							"width": "33%",
+							"height": 1
+						},
+						"child:SFX": {
+							"left": "61%",
+							"top": 0,
+							"width": "39%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Talent",
+				"plural": "Talents",
+				"traits": {}
+			}
+		}
+	}
 }

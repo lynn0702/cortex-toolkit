@@ -5,14 +5,15 @@ import TraitSetBlock from '../js/trait-set-block.vue';
 import { VANGUARD_FRAME_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
 import { characterCurioSetPresets, characterCurioFunctions } from '../js/functions.ts';
 import { computeFrameAnchors, resolveFrame } from '../js/frame-geometry.ts';
-import { isHiddenIn } from '../js/model.ts';
+import { getTemplateTitle, isHiddenIn } from '../js/model.ts';
 
 describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', () => {
 	it('verifies SHOWCASE_TEMPLATES exposes the Vanguard Frame Showcase at index 0', () => {
 		expect(SHOWCASE_TEMPLATES.length).toBeGreaterThanOrEqual(1);
 		const tmpl = SHOWCASE_TEMPLATES[0];
 		expect(tmpl.id).toBe('vanguard-frame-showcase');
-		expect(tmpl.title).toBe('Vanguard Frame Showcase');
+		expect(getTemplateTitle(tmpl)).toBe('Vanguard Frame Showcase');
+		expect((tmpl as any).blurb).toBeUndefined();
 		expect(tmpl.character.traitSets.length).toBe(8);
 	});
 
@@ -71,7 +72,7 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		expect(glory?.traits?.[0]?.rating?.value).toEqual([true]);
 
 		// Session notes does not reference JSON tab
-		const sessionNotes = char.traitSets[7];
+		const sessionNotes = char.traitSets[7] as any;
 		expect(sessionNotes.notes).not.toContain('JSON tab');
 		expect(sessionNotes.notes).toContain('Set Editor');
 	});
@@ -239,7 +240,7 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 
 	it('dynamically re-derives computeFrameAnchors from 6 to 7 positions when pushing a 7th trait', async () => {
 		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-		const frame = resolveFrame(character.traitSets[0].view.frame);
+		const frame = resolveFrame(character.traitSets[0].view?.frame);
 		expect(frame).not.toBeNull();
 
 		// 6 positions

@@ -1,685 +1,657 @@
 {
-  "id": "hammerheads-character",
-  "version": 1,
-  "title": "Hammerheads",
-  "subtitle": "Disaster Response & Rescue Pilots",
-  "game": "Hammerheads",
-  "variant": "Character File",
-  "pages": 2,
-  "genre": "Action / Rescue / Drama",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
-  },
-  "character": {
-    "id": "template-hammerheads-character",
-    "isTemplate": true,
-    "name": "",
-    "game": "Hammerheads",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 2,
-      "template": "Hammerheads",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "attributes",
-        "description": "Body, mind, and presence under pressure",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "trackLabel": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            },
-            "track": {
-              "left": "0%",
-              "top": 3,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "labels": {
-            "stress": "STRESS"
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Physical": {},
-          "Mental": {},
-          "Social": {}
-        }
-      },
-      "Training Packages": {
-        "id": "training-packages",
-        "description": "Rescue disciplines and vehicle qualifications",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 14,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Training Package",
-        "plural": "Training Packages",
-        "traits": {
-          "Crowd Control": {},
-          "Emergency Medical": {},
-          "Firefighting": {},
-          "Hammerhead Pilot": {},
-          "HAZMAT": {},
-          "High-Altitude Recovery": {},
-          "Legal Specialist": {},
-          "Logistics": {},
-          "Marine Recovery": {},
-          "Network Specialist": {},
-          "Mechanic": {},
-          "Tactical Response": {},
-          "Technical Analyst": {},
-          "Urban Recovery": {}
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Origin, true nature, and defining quirk",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "ratingLadder": [
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "36%",
-            "top": 0,
-            "width": "64%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Your Life Before:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  },
-                  "Connect": {
-                    "description": "Spend a PP to step up an attribute when you connect to your old life."
-                  },
-                  "Overdrive": {
-                    "description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life."
-                  }
-                }
-              }
-            }
-          },
-          "Your Approach/Attitude:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  },
-                  "True Nature": {
-                    "description": "Spend a PP to reroll your dice when you align with your true nature."
-                  },
-                  "Push Limits": {
-                    "description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature."
-                  }
-                }
-              }
-            }
-          },
-          "Your Quirk/Quality:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  },
-                  "Embrace": {
-                    "description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality."
-                  },
-                  "Escalate": {
-                    "description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Relationships": {
-        "id": "relationships",
-        "description": "Crew bonds, debts, and troublemakers",
-        "statement": true,
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 7,
-          "place": {
-            "left": "36%",
-            "top": 1,
-            "width": "64%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "70%",
-              "height": 1
-            },
-            "rating": {
-              "left": "70%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Relationship",
-        "plural": "Relationships",
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "saved my life",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "saved my life": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "1": {
-            "description": "owes me big",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "owes me big": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "2": {
-            "description": "is a troublemaker",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "is a troublemaker": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "3": {
-            "description": "knows their stuff",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "knows their stuff": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "4": {
-            "description": "is a liability",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "is a liability": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "5": {
-            "description": "is dependable",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "is dependable": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "6": {
-            "description": "is good for a laugh",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "is good for a laugh": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "XP": {
-        "id": "xp",
-        "description": "Experience points bubble track",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 0,
-          "pips": {
-            "perRow": 10,
-            "connected": true
-          },
-          "place": {
-            "left": "36%",
-            "top": 2,
-            "width": "64%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "XP",
-        "plural": "XP",
-        "traits": {}
-      },
-      "Crisis Pools": {
-        "id": "crisis-pools",
-        "description": "Threat clocks and escalating disaster pools",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": true,
-          "notes": "",
-          "reservedSlots": 4,
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "play"
-        },
-        "noun": "Crisis Pool",
-        "plural": "Crisis Pools",
-        "traits": {}
-      }
-    }
-  }
+	"id": "hammerheads-character",
+	"version": 1,
+	"character": {
+		"id": "template-hammerheads-character",
+		"isTemplate": true,
+		"name": "",
+		"game": "Hammerheads",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 2,
+			"template": "Hammerheads",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Disaster Response & Rescue Pilots",
+				"genre": "Action / Rescue / Drama",
+				"url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "attributes",
+				"description": "Body, mind, and presence under pressure",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"trackLabel": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						},
+						"track": {
+							"left": "0%",
+							"top": 3,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"labels": {
+						"stress": "STRESS"
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Physical": {},
+					"Mental": {},
+					"Social": {}
+				}
+			},
+			"Training Packages": {
+				"id": "training-packages",
+				"description": "Rescue disciplines and vehicle qualifications",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 14,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Training Package",
+				"plural": "Training Packages",
+				"traits": {
+					"Crowd Control": {},
+					"Emergency Medical": {},
+					"Firefighting": {},
+					"Hammerhead Pilot": {},
+					"HAZMAT": {},
+					"High-Altitude Recovery": {},
+					"Legal Specialist": {},
+					"Logistics": {},
+					"Marine Recovery": {},
+					"Network Specialist": {},
+					"Mechanic": {},
+					"Tactical Response": {},
+					"Technical Analyst": {},
+					"Urban Recovery": {}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Origin, true nature, and defining quirk",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"ratingLadder": [
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "36%",
+						"top": 0,
+						"width": "64%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Your Life Before:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									},
+									"Connect": {
+										"description": "Spend a PP to step up an attribute when you connect to your old life."
+									},
+									"Overdrive": {
+										"description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life."
+									}
+								}
+							}
+						}
+					},
+					"Your Approach/Attitude:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									},
+									"True Nature": {
+										"description": "Spend a PP to reroll your dice when you align with your true nature."
+									},
+									"Push Limits": {
+										"description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature."
+									}
+								}
+							}
+						}
+					},
+					"Your Quirk/Quality:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									},
+									"Embrace": {
+										"description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality."
+									},
+									"Escalate": {
+										"description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Relationships": {
+				"id": "relationships",
+				"description": "Crew bonds, debts, and troublemakers",
+				"statement": true,
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 7,
+					"place": {
+						"left": "36%",
+						"top": 1,
+						"width": "64%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "70%",
+							"height": 1
+						},
+						"rating": {
+							"left": "70%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Relationship",
+				"plural": "Relationships",
+				"traits": {},
+				"slots": {
+					"0": {
+						"description": "saved my life",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"saved my life": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"1": {
+						"description": "owes me big",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"owes me big": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"2": {
+						"description": "is a troublemaker",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"is a troublemaker": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"3": {
+						"description": "knows their stuff",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"knows their stuff": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"4": {
+						"description": "is a liability",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"is a liability": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"5": {
+						"description": "is dependable",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"is dependable": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"6": {
+						"description": "is good for a laugh",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"is good for a laugh": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"XP": {
+				"id": "xp",
+				"description": "Experience points bubble track",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 0,
+					"pips": {
+						"perRow": 10,
+						"connected": true
+					},
+					"place": {
+						"left": "36%",
+						"top": 2,
+						"width": "64%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "XP",
+				"plural": "XP",
+				"traits": {}
+			},
+			"Crisis Pools": {
+				"id": "crisis-pools",
+				"description": "Threat clocks and escalating disaster pools",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": true,
+					"notes": "",
+					"reservedSlots": 4,
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "play"
+				},
+				"noun": "Crisis Pool",
+				"plural": "Crisis Pools",
+				"traits": {}
+			}
+		}
+	}
 }

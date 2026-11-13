@@ -25,8 +25,8 @@ import { cloneDeep } from './clone-deep.ts';
 
 export interface RenderTrait {
 	name?: string;
-	description?: string;
-	traits?: RenderTrait[];
+	description?: string | null;
+	traits?: RenderTrait[] | null;
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
 	xp?: unknown;
@@ -39,14 +39,15 @@ export interface RenderTrait {
 export interface RenderSet {
 	id?: string | null;
 	name?: string;
-	description?: string;
-	traits?: RenderTrait[];
+	description?: string | null;
+	traits?: RenderTrait[] | null;
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
 	[key: string]: unknown;
 }
 
 export interface RenderCharacter {
+	description?: string | null;
 	traitSets?: RenderSet[];
 	[key: string]: unknown;
 }
@@ -76,7 +77,11 @@ const ratingForDice = (dice: number[]): Record<string, unknown> => ({
 // ---------- render <- layered (materialize) ----------
 
 // entity traits map -> render traits array. `pres` supplies order; entity keys win.
-function buildTraits(pres: RenderTrait[] | undefined, map: Record<string, TraitRaw> | undefined): RenderTrait[] {
+function buildTraits(
+	pres: RenderTrait[] | null | undefined,
+	map: Record<string, TraitRaw> | undefined,
+	inheritedType?: string,
+): RenderTrait[] {
 	const out: RenderTrait[] = [];
 	const used = new Set<string>();
 	const entityTraits = map && typeof map === 'object' && !Array.isArray(map) ? map : {};
@@ -92,7 +97,7 @@ function buildTraits(pres: RenderTrait[] | undefined, map: Record<string, TraitR
 				used.add(name);
 				const raw = entityTraits[name];
 				if (raw === null) continue; // removed
-				out.push(buildTrait(pt, raw, name));
+				out.push(buildTrait(pt, raw, name, inheritedType));
 			} else {
 				out.push(clone(pt)); // inherited
 			}
@@ -101,7 +106,7 @@ function buildTraits(pres: RenderTrait[] | undefined, map: Record<string, TraitR
 	for (const [name, raw] of Object.entries(entityTraits)) {
 		if (used.has(name)) continue;
 		if (raw === null) continue;
-		out.push(buildTrait(null, raw, name));
+		out.push(buildTrait(null, raw, name, inheritedType));
 	}
 	return out;
 }
@@ -133,7 +138,23 @@ function mergeCustom(base: unknown, override: unknown): Record<string, unknown> 
 	return result;
 }
 
-function buildTrait(pres: RenderTrait | null, raw: TraitRaw, name: string): RenderTrait {
+function mergeRating(base: unknown, override: unknown, inheritedType?: string): unknown {
+	if (override === null) return null;
+	if (!override || typeof override !== 'object' || Array.isArray(override)) {
+		return clone(override);
+	}
+	const ov = override as Record<string, unknown>;
+	if (base && typeof base === 'object' && !Array.isArray(base)) {
+		const bv = base as Record<string, unknown>;
+		const baseType = (typeof bv.type === 'string' ? bv.type : undefined) ?? inheritedType;
+		if (ov.type === undefined || baseType === undefined || ov.type === baseType) {
+			return mergeCustom(bv, ov);
+		}
+	}
+	return clone(ov);
+}
+
+function buildTrait(pres: RenderTrait | null, raw: TraitRaw, name: string, inheritedType?: string): RenderTrait {
 	const et = asTrait(raw);
 	const t: RenderTrait = pres ? clone(pres) : { name };
 	if (!pres) t.name = name;
@@ -145,6 +166,10 @@ function buildTrait(pres: RenderTrait | null, raw: TraitRaw, name: string): Rend
 		}
 		if (k === 'view') {
 			t.view = mergeCustom(pres?.view, v);
+			continue;
+		}
+		if (k === 'rating') {
+			(t as Record<string, unknown>).rating = mergeRating(pres?.rating, v, inheritedType);
 			continue;
 		}
 		if (k === 'value') {
@@ -164,9 +189,13 @@ function buildTrait(pres: RenderTrait | null, raw: TraitRaw, name: string): Rend
 		delete tr.value;
 		delete tr.dice;
 	}
-	const subs = et.traits as Record<string, TraitRaw> | undefined;
-	if (subs) {
-		t.traits = buildTraits(pres?.traits, subs);
+	const tRating = tr.rating && typeof tr.rating === 'object' ? (tr.rating as Record<string, unknown>) : null;
+	const childInheritedType = (tRating && typeof tRating.type === 'string' ? tRating.type : undefined) ?? inheritedType;
+	const subs = et.traits as Record<string, TraitRaw> | null | undefined;
+	if (subs === null) {
+		(t as Record<string, unknown>).traits = null;
+	} else if (subs) {
+		t.traits = buildTraits(pres?.traits, subs, childInheritedType);
 	}
 	return t;
 }
@@ -184,10 +213,16 @@ function buildSet(pres: RenderSet | null, eset: SetObject, name: string): Render
 			set.view = mergeCustom(pres?.view, v);
 			continue;
 		}
+		if (k === 'rating') {
+			(set as Record<string, unknown>).rating = mergeRating(pres?.rating, v);
+			continue;
+		}
 		(set as Record<string, unknown>)[k] = clone(v);
 	}
+	const setRating = set.rating && typeof set.rating === 'object' ? (set.rating as Record<string, unknown>) : null;
+	const setInheritedType = setRating && typeof setRating.type === 'string' ? setRating.type : undefined;
 	const traitsMap = eset.traits as Record<string, TraitRaw> | undefined;
-	set.traits = buildTraits(pres?.traits, traitsMap);
+	set.traits = buildTraits(pres?.traits, traitsMap, setInheritedType);
 	return set;
 }
 
@@ -236,6 +271,17 @@ export function materializeCharacter(
 	}
 	// isTemplate belongs to the entity, not the presentation template it folds onto.
 	out.isTemplate = file.isTemplate === true;
+	// Catalog listing metadata belongs on templates or explicit creator showcases,
+	// never inherited onto non-template player characters created from them.
+	const fileHasListing = Boolean(
+		file.view &&
+		typeof file.view === 'object' &&
+		!Array.isArray(file.view) &&
+		(file.view as Record<string, unknown>).listing !== undefined,
+	);
+	if (!out.isTemplate && !fileHasListing && out.view && typeof out.view === 'object' && !Array.isArray(out.view)) {
+		delete (out.view as Record<string, unknown>).listing;
+	}
 	// the template ref rides under `template` in layered form, `sheet.template` in render form.
 	if (file.template !== undefined) out.sheet = { template: clone(file.template) };
 
@@ -328,10 +374,9 @@ function layeredTraitFrom(t: RenderTrait): TraitObject {
 	for (const [k, v] of Object.entries(t)) {
 		if (k === 'name' || k === 'traits' || k === 'rating' || k === '_lid' || k === 'id' || k === 'removedTraits')
 			continue;
-		// Canonical emit: empty custom/tags stay out (absence carries the
-		// same meaning). description "" is KEPT: in a delta it is an
-		// explicit clear of an inherited description. Explicit nulls
-		// (removals, unrated) are kept.
+		// Canonical emit: empty custom/tags and empty description "" stay out
+		// (absence carries the same meaning). Explicit nulls (removals,
+		// cleared descriptions, unrated) are kept.
 		if (k === 'custom' && v && typeof v === 'object' && !Array.isArray(v)) {
 			const bag = clone(v) as Record<string, unknown>;
 			if (!Object.keys(bag).length) continue;
@@ -345,14 +390,19 @@ function layeredTraitFrom(t: RenderTrait): TraitObject {
 			continue;
 		}
 		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
+		if (k === 'description' && v === '') continue;
 		(node as Record<string, unknown>)[k] = clone(v);
 	}
-	const subs: Record<string, TraitRaw> = {};
-	for (const st of Array.isArray(t.traits) ? t.traits : []) {
-		if (!st || typeof st.name !== 'string' || !st.name.length) continue;
-		subs[st.name] = layeredTraitFrom(st);
+	if (t.traits === null) {
+		(node as Record<string, unknown>).traits = null;
+	} else {
+		const subs: Record<string, TraitRaw> = {};
+		for (const st of Array.isArray(t.traits) ? t.traits : []) {
+			if (!st || typeof st.name !== 'string' || !st.name.length) continue;
+			subs[st.name] = layeredTraitFrom(st);
+		}
+		if (Object.keys(subs).length) node.traits = subs;
 	}
-	if (Object.keys(subs).length) node.traits = subs;
 	return node;
 }
 
@@ -370,6 +420,7 @@ function layeredSetFrom(set: RenderSet): SetObject {
 		)
 			continue;
 		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
+		if (k === 'description' && v === '') continue;
 		s[k] = clone(v);
 	}
 	const traits: Record<string, TraitRaw> = {};
@@ -392,6 +443,7 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 	const entity: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(ch)) {
 		if (k === 'traitSets' || k === 'sheet' || k === 'removedSets') continue;
+		if (k === 'description' && v === '') continue;
 		entity[k] = clone(v);
 	}
 	const sets: Record<string, SetObject> = {};

@@ -1,697 +1,605 @@
 {
-  "id": "trace-20",
-  "version": 1,
-  "title": "TRACE 2.0",
-  "subtitle": "Civic Paranormal Investigation",
-  "game": "TRACE 2.0",
-  "variant": "Character File",
-  "pages": 1,
-  "genre": "Mystery / Procedural / Urban Fantasy",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
-  },
-  "character": {
-    "id": "template-trace-20",
-    "isTemplate": true,
-    "name": "",
-    "game": "TRACE 2.0",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "TRACE 2.0",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Affiliations": {
-        "id": "affiliations",
-        "description": "Team configuration ratings",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "30%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Affiliation",
-        "plural": "Affiliations",
-        "traits": {
-          "Solo": {},
-          "Partner": {},
-          "Squad": {}
-        }
-      },
-      "Roles": {
-        "id": "roles",
-        "description": "Civic investigation disciplines",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 7,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "30%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Role",
-        "plural": "Roles",
-        "traits": {
-          "Forensics": {},
-          "Investigation": {},
-          "Legal": {},
-          "Medicine": {},
-          "Psychology": {},
-          "Tactics": {},
-          "Technology": {}
-        }
-      },
-      "Resources": {
-        "id": "resources",
-        "description": "Civic assets, contacts, and backup",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10
-          ],
-          "multiDie": true,
-          "notes": "",
-          "reservedSlots": 8,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "30%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "82%",
-              "height": 1
-            },
-            "rating": {
-              "left": "82%",
-              "top": 0,
-              "width": "18%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Resource",
-        "plural": "Resources",
-        "traits": {},
-        "slots": {
-          "0": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                10,
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "1": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                8,
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "2": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "3": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Defining history, drive, and complication",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "30%",
-            "top": 0,
-            "width": "70%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Distinction #1:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Distinction #2:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Distinction #3:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Talents": {
-        "id": "talents",
-        "description": "Training tricks and case-cracking knacks",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 6,
-          "place": {
-            "left": "30%",
-            "top": 1,
-            "width": "70%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Talent",
-        "plural": "Talents",
-        "traits": {
-          "Talent #1:": {},
-          "Talent #2:": {},
-          "Talent #3:": {},
-          "Talent #4:": {},
-          "Talent #5:": {},
-          "Talent #6:": {}
-        }
-      },
-      "Stress": {
-        "id": "stress",
-        "description": "Emotional and physical pressure tracks",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "die-track"
-          },
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 5,
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "place": {
-            "left": "30%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "noun": "Stress",
-        "plural": "Stress",
-        "traits": {
-          "Afraid": {},
-          "Angry": {},
-          "Anxious": {},
-          "Exhausted": {},
-          "Injured": {}
-        }
-      },
-      "Growth Pool": {
-        "id": "growth-pool",
-        "description": "Base d6 d6",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "dice-count"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": true,
-          "reservedSlots": 5,
-          "place": {
-            "left": "80%",
-            "top": 2,
-            "width": "20%",
-            "height": 1
-          },
-          "labels": {
-            "rating": "RATING",
-            "dice": "/ DICE"
-          },
-          "pillar": "play"
-        },
-        "pool": true,
-        "noun": "Growth Die",
-        "plural": "Growth Dice",
-        "traits": {
-          "D4": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                4
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 0
-            }
-          },
-          "D6": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 2
-            }
-          },
-          "D8": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 0
-            }
-          },
-          "D10": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 0
-            }
-          },
-          "D12": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                12
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 0
-            }
-          }
-        }
-      }
-    }
-  }
+	"id": "trace-20",
+	"version": 1,
+	"character": {
+		"id": "template-trace-20",
+		"isTemplate": true,
+		"name": "",
+		"game": "TRACE 2.0",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "TRACE 2.0",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Civic Paranormal Investigation",
+				"genre": "Mystery / Procedural / Urban Fantasy",
+				"url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Affiliations": {
+				"id": "affiliations",
+				"description": "Team configuration ratings",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "30%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Affiliation",
+				"plural": "Affiliations",
+				"traits": {
+					"Solo": {},
+					"Partner": {},
+					"Squad": {}
+				}
+			},
+			"Roles": {
+				"id": "roles",
+				"description": "Civic investigation disciplines",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 7,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "30%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Role",
+				"plural": "Roles",
+				"traits": {
+					"Forensics": {},
+					"Investigation": {},
+					"Legal": {},
+					"Medicine": {},
+					"Psychology": {},
+					"Tactics": {},
+					"Technology": {}
+				}
+			},
+			"Resources": {
+				"id": "resources",
+				"description": "Civic assets, contacts, and backup",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10
+					],
+					"multiDie": true,
+					"notes": "",
+					"reservedSlots": 8,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "30%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "82%",
+							"height": 1
+						},
+						"rating": {
+							"left": "82%",
+							"top": 0,
+							"width": "18%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Resource",
+				"plural": "Resources",
+				"traits": {},
+				"slots": {
+					"0": {
+						"rating": {
+							"value": [
+								10,
+								10
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"1": {
+						"rating": {
+							"value": [
+								8,
+								8
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"2": {
+						"rating": {
+							"value": [
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"3": {
+						"rating": {
+							"value": [
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					}
+				},
+				"rating": {
+					"type": "Dice",
+					"value": []
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Defining history, drive, and complication",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "30%",
+						"top": 0,
+						"width": "70%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Distinction #1:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Distinction #2:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Distinction #3:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Talents": {
+				"id": "talents",
+				"description": "Training tricks and case-cracking knacks",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 6,
+					"place": {
+						"left": "30%",
+						"top": 1,
+						"width": "70%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Talent",
+				"plural": "Talents",
+				"traits": {
+					"Talent #1:": {},
+					"Talent #2:": {},
+					"Talent #3:": {},
+					"Talent #4:": {},
+					"Talent #5:": {},
+					"Talent #6:": {}
+				}
+			},
+			"Stress": {
+				"id": "stress",
+				"description": "Emotional and physical pressure tracks",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "die-track"
+					},
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 5,
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"place": {
+						"left": "30%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"noun": "Stress",
+				"plural": "Stress",
+				"traits": {
+					"Afraid": {},
+					"Angry": {},
+					"Anxious": {},
+					"Exhausted": {},
+					"Injured": {}
+				}
+			},
+			"Growth Pool": {
+				"id": "growth-pool",
+				"description": "Base d6 d6",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "dice-count"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": true,
+					"reservedSlots": 5,
+					"place": {
+						"left": "80%",
+						"top": 2,
+						"width": "20%",
+						"height": 1
+					},
+					"labels": {
+						"rating": "RATING",
+						"dice": "/ DICE"
+					},
+					"pillar": "play"
+				},
+				"pool": true,
+				"noun": "Growth Die",
+				"plural": "Growth Dice",
+				"traits": {
+					"D4": {
+						"rating": {
+							"value": [
+								4
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 0
+						}
+					},
+					"D6": {
+						"rating": {
+							"value": [
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 2
+						}
+					},
+					"D8": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 0
+						}
+					},
+					"D10": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 0
+						}
+					},
+					"D12": {
+						"rating": {
+							"value": [
+								12
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 0
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			}
+		}
+	}
 }

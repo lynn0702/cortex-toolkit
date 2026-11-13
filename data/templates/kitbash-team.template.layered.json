@@ -1,184 +1,180 @@
 {
-  "id": "kitbash-team",
-  "version": 1,
-  "title": "Kit Bash! - Team File",
-  "subtitle": "Modular Comic Book Superheroes",
-  "game": "Kit Bash!",
-  "variant": "Team Roster File",
-  "pages": 1,
-  "genre": "Comic Book / Superhero",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
-    "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
-    "genre": "Superhero",
-    "setting": "d6",
-    "prep": "d12",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
-  },
-  "character": {
-    "id": "template-kitbash-team",
-    "isTemplate": true,
-    "name": "",
-    "game": "KitBash",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "KitBash",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Team Base": {
-        "id": "team-base",
-        "description": "As a group, decide on the following information.",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Location": {},
-          "Description": {},
-          "Benefits": {},
-          "Drawbacks": {}
-        }
-      },
-      "Team Resources": {
-        "id": "team-resources",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "dice-count"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": true,
-          "reservedSlots": 20,
-          "labels": {
-            "rating": "RATING",
-            "dice": "/ DICE"
-          },
-          "pillar": "plus"
-        },
-        "noun": "Resource",
-        "plural": "Resources",
-        "traits": {}
-      }
-    }
-  }
+	"id": "kitbash-team",
+	"version": 1,
+	"character": {
+		"id": "template-kitbash-team",
+		"isTemplate": true,
+		"name": "",
+		"game": "Kit Bash!",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Kit Bash!",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Kit Bash! - Team File",
+				"subtitle": "Modular Comic Book Superheroes",
+				"genre": "Superhero",
+				"variant": "Team Roster File",
+				"url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg",
+				"quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+				"setting": "d6",
+				"prep": "d12",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Team Base": {
+				"id": "team-base",
+				"description": "As a group, decide on the following information.",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Location": {},
+					"Description": {},
+					"Benefits": {},
+					"Drawbacks": {}
+				}
+			},
+			"Team Resources": {
+				"id": "team-resources",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "dice-count"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": true,
+					"reservedSlots": 20,
+					"labels": {
+						"rating": "RATING",
+						"dice": "/ DICE"
+					},
+					"pillar": "plus"
+				},
+				"noun": "Resource",
+				"plural": "Resources",
+				"traits": {}
+			}
+		}
+	}
 }

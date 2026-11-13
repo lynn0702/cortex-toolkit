@@ -267,7 +267,10 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 
 	const hasExplicitRingTraits =
 		Array.isArray(traitSetOrFrame?.traits) && traitSetOrFrame.traits.some((t: any) => Boolean(getView(t)?.ring));
-	const setRatingType = traitSetOrFrame?.rating?.type;
+	const setRatingType =
+		Array.isArray(traitSetOrFrame?.rating?.value) && traitSetOrFrame.rating.value.length > 0
+			? traitSetOrFrame?.rating?.type
+			: undefined;
 
 	if (!raw) {
 		if (view?.style?.body === 'portrait-ring') {

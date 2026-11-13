@@ -24,6 +24,7 @@ import TraitSetBlock from './trait-set-block.vue';
 import ModalDialog from './modal-dialog.vue';
 import PrintToolbar from './print-toolbar.vue';
 import TraitSetMini from './trait-set-mini.vue';
+import PresetGalleryCard from './preset-gallery-card.vue';
 import { resolveFrame } from './frame-geometry.ts';
 import { resolveFrameColorPresentation } from './color-palette.ts';
 
@@ -399,11 +400,12 @@ function addTrait(traitSetID: number) {
 		trait.rating = { type: 'Die', value: [allowed[0]], range: allowed.slice() };
 	}
 
-	character.traitSets[traitSetID].traits.push(trait);
+	if (!Array.isArray(traitSet.traits)) traitSet.traits = [];
+	traitSet.traits.push(trait);
 
 	updateCharacter(character);
 
-	const newTraitID = character.traitSets[traitSetID].traits.length - 1;
+	const newTraitID = traitSet.traits.length - 1;
 	selectElement(['trait', traitSetID, newTraitID]);
 }
 
@@ -1004,40 +1006,24 @@ watch(
 											</button>
 										</div>
 									</div>
-									<div class="inline-presets-list">
-										<div
-											class="inline-preset-card"
+									<div class="preset-gallery-grid">
+										<PresetGalleryCard
 											v-for="preset in inlineBuiltInPresets"
 											:key="'builtin-' + preset.id"
-										>
-											<div class="inline-preset-main">
-												<div class="inline-preset-name">{{ preset.label }}</div>
-												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-											</div>
-											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageIndex)">
-												<i class="fas fa-plus" aria-hidden="true"></i> Add Preset
-											</button>
-										</div>
-										<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'custom-' + preset.id">
-											<div class="inline-preset-main">
-												<div class="inline-preset-name">{{ preset.label }}</div>
-												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-											</div>
-											<div class="inline-preset-actions">
-												<button
-													type="button"
-													class="btn-inline-delete"
-													title="Delete custom preset"
-													aria-label="Delete custom preset"
-													@click.stop="removeInlineCustomPreset(preset.id)"
-												>
-													<i class="fas fa-trash-alt" aria-hidden="true"></i>
-												</button>
-												<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageIndex)">
-													<i class="fas fa-plus" aria-hidden="true"></i> Add Preset
-												</button>
-											</div>
-										</div>
+											:preset="preset"
+											action-label="Add Preset"
+											@add="addPresetSet(preset, pageIndex)"
+										/>
+										<PresetGalleryCard
+											v-for="preset in inlineCustomPresets"
+											:key="'custom-' + preset.id"
+											:preset="preset"
+											action-label="Add Preset"
+											deletable
+											delete-label="Delete custom preset"
+											@add="addPresetSet(preset, pageIndex)"
+											@delete="removeInlineCustomPreset(preset.id)"
+										/>
 									</div>
 								</div>
 							</div>
@@ -1064,37 +1050,29 @@ watch(
 				<div class="modal-inner">
 					<div class="modal-header-actions">
 						<h2><i class="fas fa-gamepad" aria-hidden="true"></i> Add Play Card</h2>
-						<button type="button" class="btn-gallery-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
+						<button type="button" class="btn-preset-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
 							<i class="fas fa-th-large" aria-hidden="true"></i> New Card in Mini
 						</button>
 					</div>
 					<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
-					<div class="style-gallery-grid">
-						<div class="style-gallery-card" v-for="preset in playBuiltInPresets" :key="'play-builtin-' + preset.id">
-							<div class="style-gallery-name">{{ preset.label }}</div>
-							<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-							<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
-								<i class="fas fa-plus" aria-hidden="true"></i> Add to Session
-							</button>
-						</div>
-						<div class="style-gallery-card" v-for="preset in playCustomPresets" :key="'play-custom-' + preset.id">
-							<div class="style-gallery-card-header">
-								<div class="style-gallery-name">{{ preset.label }}</div>
-								<button
-									type="button"
-									class="editor-header-btn"
-									title="Delete saved preset"
-									aria-label="Delete saved preset"
-									@click.stop="removePlayCustomPreset(preset.id)"
-								>
-									<i class="fas fa-trash-alt" aria-hidden="true"></i>
-								</button>
-							</div>
-							<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-							<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
-								<i class="fas fa-plus" aria-hidden="true"></i> Add to Session
-							</button>
-						</div>
+					<div class="preset-gallery-grid">
+						<PresetGalleryCard
+							v-for="preset in playBuiltInPresets"
+							:key="'play-builtin-' + preset.id"
+							:preset="preset"
+							action-label="Add to Session"
+							@add="addPresetSet(preset)"
+						/>
+						<PresetGalleryCard
+							v-for="preset in playCustomPresets"
+							:key="'play-custom-' + preset.id"
+							:preset="preset"
+							action-label="Add to Session"
+							deletable
+							delete-label="Delete saved preset"
+							@add="addPresetSet(preset)"
+							@delete="removePlayCustomPreset(preset.id)"
+						/>
 					</div>
 				</div>
 			</ModalDialog>

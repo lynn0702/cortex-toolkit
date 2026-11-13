@@ -1,452 +1,397 @@
 {
-  "id": "solarpunk-commune",
-  "version": 1,
-  "title": "Solarpunk - Commune File",
-  "subtitle": "Ecological Hope & Community Technology",
-  "game": "Solarpunk",
-  "variant": "Commune File",
-  "pages": 1,
-  "genre": "SolarPunk / Settlement",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
-    "quote": "The corporations took everything. The land, the water, the air.",
-    "genre": "Near-future eco-punk / hopepunk",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
-  },
-  "character": {
-    "id": "template-solarpunk-commune",
-    "isTemplate": true,
-    "name": "",
-    "game": "SolarPunk",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "SolarPunk",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "commune-attributes",
-        "description": "Collective settlement strengths",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Resources": {},
-          "Security": {},
-          "Connections": {}
-        }
-      },
-      "Distinctions": {
-        "id": "commune-distinctions",
-        "description": "Settlement unity, organization, and morale",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Unity:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Organization:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Morale:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6
-          ],
-          "reservedSlots": 4,
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "94%",
-              "height": 1
-            },
-            "rating": {
-              "left": "94%",
-              "top": 0,
-              "width": "6%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Asset",
-        "plural": "Assets",
-        "traits": {},
-        "slots": {
-          "0": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "2": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "3": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Skills": {
-        "id": "skills",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "subtrait-columns"
-          },
-          "ratingLadder": [
-            6,
-            8
-          ],
-          "subtraitRatingLadder": [],
-          "reservedSlots": 9,
-          "labels": {
-            "left": "SKILL",
-            "right": "SPECIALTIES"
-          },
-          "pillar": "prime"
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {}
-      }
-    }
-  }
+	"id": "solarpunk-commune",
+	"version": 1,
+	"character": {
+		"id": "template-solarpunk-commune",
+		"isTemplate": true,
+		"name": "",
+		"game": "Solarpunk",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Solarpunk",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Solarpunk - Commune File",
+				"subtitle": "Ecological Hope & Community Technology",
+				"genre": "Near-future eco-punk / hopepunk",
+				"variant": "Commune File",
+				"url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg",
+				"quote": "The corporations took everything. The land, the water, the air.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "commune-attributes",
+				"description": "Collective settlement strengths",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Resources": {},
+					"Security": {},
+					"Connections": {}
+				}
+			},
+			"Distinctions": {
+				"id": "commune-distinctions",
+				"description": "Settlement unity, organization, and morale",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Unity:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Organization:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Morale:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6
+					],
+					"reservedSlots": 4,
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "94%",
+							"height": 1
+						},
+						"rating": {
+							"left": "94%",
+							"top": 0,
+							"width": "6%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Asset",
+				"plural": "Assets",
+				"traits": {},
+				"slots": {
+					"0": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"1": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"2": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"3": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Skills": {
+				"id": "skills",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "subtrait-columns"
+					},
+					"ratingLadder": [
+						6,
+						8
+					],
+					"subtraitRatingLadder": [],
+					"reservedSlots": 9,
+					"labels": {
+						"left": "SKILL",
+						"right": "SPECIALTIES"
+					},
+					"pillar": "prime"
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {}
+			}
+		}
+	}
 }

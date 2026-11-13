@@ -10,7 +10,9 @@ import {
 	nextVisibility,
 	resolveSetPillar,
 	getPillarLabel,
+	hasTemplateListing,
 	type Character,
+	type TemplateListing,
 	type Visibility,
 } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
@@ -52,6 +54,7 @@ const emit = defineEmits<{
 
 const currentTab = computed(() => props.tab);
 const watermarkError = ref('');
+const listingImageError = ref('');
 const externalFontUrlDraft = ref('');
 const externalFontNameDraft = ref('');
 const externalFontNameTouched = ref(false);
@@ -62,6 +65,7 @@ const sheetThemePresets = SHEET_THEME_PRESETS;
 
 const inputName = ref<HTMLInputElement | null>(null);
 const watermarkFileInput = ref<HTMLInputElement | null>(null);
+const listingImageFileInput = ref<HTMLInputElement | null>(null);
 const fontUrlInput = ref<HTMLInputElement | null>(null);
 const fontUrlNameInput = ref<HTMLInputElement | null>(null);
 
@@ -321,6 +325,44 @@ const sheetTemplateId = computed(() => {
 	return t.id || '';
 });
 
+const LISTING_RATING_OPTIONS = ['', 'd4', 'd6', 'd8', 'd10', 'd12'] as const;
+const LISTING_RATING_FIELDS: ReadonlyArray<{
+	key: keyof TemplateListing;
+	label: string;
+	id: string;
+	name: string;
+}> = [
+	{ key: 'setting', label: 'Setting', id: 'char-listing-setting', name: 'listingSetting' },
+	{ key: 'prep', label: 'Prep', id: 'char-listing-prep', name: 'listingPrep' },
+	{ key: 'complexity', label: 'Complexity', id: 'char-listing-complexity', name: 'listingComplexity' },
+];
+
+const hasListingOrTemplate = computed(() =>
+	Boolean(props.character?.isTemplate || hasTemplateListing(getView(props.character)?.listing)),
+);
+
+const safeListingImage = computed(() => characterCurioFunctions.safeImageUrl(getListingField('image')));
+
+function getListingField(key: keyof TemplateListing): string {
+	return String(getView(props.character)?.listing?.[key] ?? '');
+}
+
+function setListingField(key: keyof TemplateListing, raw: string, trimValue = true) {
+	if (!props.character) return;
+	const str = String(raw ?? '');
+	const trimmed = str.trim();
+	const view = ensureView(props.character);
+	if (trimmed.length > 0) {
+		view.listing = { ...(view.listing || {}), [key]: trimValue ? trimmed : str };
+	} else if (view.listing && typeof view.listing === 'object') {
+		delete view.listing[key];
+		if (!hasTemplateListing(view.listing)) {
+			delete view.listing;
+		}
+	}
+	updateCharacter(props.character);
+}
+
 const pageJustification = computed({
 	get() {
 		return getView(props.character)?.pageJustification || 'top-base';
@@ -500,31 +542,57 @@ function setWatermarkProperty(key: string, val: any) {
 	updateCharacter(props.character);
 }
 
-function uploadWatermarkStart() {
-	watermarkFileInput.value?.click();
-}
-
-function uploadWatermarkProcess(event: Event) {
+function handleImageUpload(
+	event: Event,
+	errorTarget: { value: string },
+	maxDimension: number,
+	quality: number,
+	onSuccess: (dataURL: string) => void,
+) {
 	const input = event.target as HTMLInputElement;
-
-	watermarkError.value = '';
+	errorTarget.value = '';
 	if (!input.files || !input.files.length) return;
-	characterCurioFunctions.processImageFile(input.files[0], 1280, 0.8).then(
+	characterCurioFunctions.processImageFile(input.files[0], maxDimension, quality).then(
 		(dataURL: string) => {
-			watermarkURL.value = dataURL;
-			watermarkEnabled.value = true;
+			onSuccess(dataURL);
 			input.value = null as any;
 		},
 		(error: any) => {
-			watermarkError.value = error?.message || 'Could not process that image.';
+			errorTarget.value = error?.message || 'Could not process that image.';
 			input.value = null as any;
 		},
 	);
 }
 
+function uploadWatermarkStart() {
+	watermarkFileInput.value?.click();
+}
+
+function uploadWatermarkProcess(event: Event) {
+	handleImageUpload(event, watermarkError, 1280, 0.8, (dataURL) => {
+		watermarkURL.value = dataURL;
+		watermarkEnabled.value = true;
+	});
+}
+
 function removeWatermark() {
 	watermarkURL.value = '';
 	watermarkEnabled.value = false;
+}
+
+function uploadListingImageStart() {
+	listingImageFileInput.value?.click();
+}
+
+function uploadListingImageProcess(event: Event) {
+	handleImageUpload(event, listingImageError, 1024, 0.85, (dataURL) => {
+		setListingField('image', dataURL);
+	});
+}
+
+function removeListingImage() {
+	listingImageError.value = '';
+	setListingField('image', '');
 }
 
 function setPrimaryColor(hex: string) {
@@ -798,15 +866,7 @@ function updateCharacter(character: any) {
 </script>
 
 <template>
-	<aside :class="{ editor: true, 'editor-character': true, open: open, scrollable: true }" @click.stop="">
-		<div class="editor-arrow"></div>
-
-		<div class="editor-controls">
-			<button type="button" class="editor-close" aria-label="Close" @click.stop="selectElement([])" title="Close">
-				<i class="fas fa-times" aria-hidden="true"></i>
-			</button>
-		</div>
-
+	<aside :class="{ editor: true, 'editor-character': true, open: open }" @click.stop="">
 		<div class="editor-inner">
 			<div>
 				<div class="editor-fields">
@@ -1079,6 +1139,163 @@ function updateCharacter(character: any) {
 								</div>
 							</div>
 						</div>
+
+						<details class="editor-group" :open="hasListingOrTemplate">
+							<summary class="editor-group-title">Library Listing</summary>
+							<div class="editor-field">
+								<label for="char-listing-title">Card Title</label>
+								<input
+									type="text"
+									id="char-listing-title"
+									name="listingTitle"
+									:value="getListingField('title')"
+									placeholder="Defaults to game or name"
+									@input="setListingField('title', targetValue($event), false)"
+									@change="setListingField('title', targetValue($event), true)"
+								/>
+							</div>
+
+							<div class="editor-field">
+								<label for="char-listing-subtitle">Subtitle</label>
+								<input
+									type="text"
+									id="char-listing-subtitle"
+									name="listingSubtitle"
+									:value="getListingField('subtitle')"
+									placeholder="Short tagline"
+									@input="setListingField('subtitle', targetValue($event), false)"
+									@change="setListingField('subtitle', targetValue($event), true)"
+								/>
+							</div>
+
+							<div class="editor-field">
+								<div class="editor-grid-2">
+									<div>
+										<label for="char-listing-genre" class="editor-sub-label">Genre</label>
+										<input
+											type="text"
+											id="char-listing-genre"
+											name="listingGenre"
+											:value="getListingField('genre')"
+											placeholder="Genre"
+											@input="setListingField('genre', targetValue($event), false)"
+											@change="setListingField('genre', targetValue($event), true)"
+										/>
+									</div>
+									<div>
+										<label for="char-listing-variant" class="editor-sub-label">Variant</label>
+										<input
+											type="text"
+											id="char-listing-variant"
+											name="listingVariant"
+											:value="getListingField('variant')"
+											placeholder="Edition or format"
+											@input="setListingField('variant', targetValue($event), false)"
+											@change="setListingField('variant', targetValue($event), true)"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="editor-field">
+								<label for="char-listing-url">External Link</label>
+								<input
+									type="url"
+									id="char-listing-url"
+									name="listingUrl"
+									:value="getListingField('url')"
+									placeholder="https://..."
+									@input="setListingField('url', targetValue($event), false)"
+									@change="setListingField('url', targetValue($event), true)"
+								/>
+							</div>
+
+							<div class="editor-field">
+								<label for="char-listing-image">Cover Image</label>
+								<div class="editor-watermark-preview-box">
+									<div v-if="safeListingImage" class="text-center p-xs">
+										<img :src="safeListingImage" class="editor-watermark-preview-img" alt="Cover preview" />
+									</div>
+
+									<div class="editor-button-container">
+										<div class="editor-button-container-inner">
+											<button type="button" class="editor-button" @click.prevent="uploadListingImageStart">
+												<span>
+													<i class="fas fa-upload" aria-hidden="true"></i>
+													{{ getListingField('image') ? 'Change' : 'Upload' }} Cover
+												</span>
+											</button>
+											<button
+												type="button"
+												class="editor-button editor-btn-danger-mini"
+												v-if="getListingField('image')"
+												@click.prevent="removeListingImage"
+											>
+												<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Remove</span>
+											</button>
+										</div>
+									</div>
+
+									<input
+										type="file"
+										id="char-listing-image-file"
+										name="listingImageFile"
+										ref="listingImageFileInput"
+										class="sr-only"
+										aria-label="Upload cover image"
+										@change="uploadListingImageProcess"
+										accept="image/*"
+									/>
+
+									<div class="editor-upload-error" v-if="listingImageError">{{ listingImageError }}</div>
+
+									<div class="mt-sm">
+										<label for="char-listing-image" class="editor-sub-label">Image URL</label>
+										<input
+											type="text"
+											id="char-listing-image"
+											name="listingImage"
+											:value="getListingField('image')"
+											placeholder="https://..."
+											@input="setListingField('image', targetValue($event), false)"
+											@change="setListingField('image', targetValue($event), true)"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="editor-field">
+								<label for="char-listing-quote">Card Copy</label>
+								<textarea
+									id="char-listing-quote"
+									name="listingQuote"
+									:value="getListingField('quote')"
+									rows="3"
+									placeholder="Defaults to description"
+									@input="setListingField('quote', targetValue($event), false)"
+									@change="setListingField('quote', targetValue($event), true)"
+								></textarea>
+							</div>
+
+							<div class="editor-field">
+								<div class="editor-label">Ratings</div>
+								<div class="editor-listing-ratings-grid mt-xs">
+									<div v-for="rf in LISTING_RATING_FIELDS" :key="rf.key">
+										<label :for="rf.id" class="editor-sub-label">{{ rf.label }}</label>
+										<select
+											:id="rf.id"
+											:name="rf.name"
+											:value="getListingField(rf.key)"
+											@change="setListingField(rf.key, targetValue($event))"
+										>
+											<option v-for="opt in LISTING_RATING_OPTIONS" :key="rf.key + '-' + opt" :value="opt">
+												{{ opt || '—' }}
+											</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</details>
 
 						<!-- WATERMARK CONFIGURATION -->
 						<div class="editor-field">

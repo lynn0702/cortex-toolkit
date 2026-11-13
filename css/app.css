@@ -20,8 +20,6 @@
 	--page-height: 297.1mm;
 	--page-margin: 10mm;
 	--header-size: 3rem;
-	/* --sidebar-size:  6rem; */
-	--sidebar-size: 0px;
 
 	--space-2xs: 0.25rem;
 	--space-xs: 0.5rem;
@@ -31,6 +29,7 @@
 	--space-xl: 3rem;
 
 	--jump-strip-h: 2.5rem;
+	--session-nav-h: 2.94rem;
 	--roller-footer-h: 3.5rem;
 	--split-roller-h: 38.2dvh;
 	--drawer-radius: 1rem;
@@ -89,7 +88,6 @@
 	--z-toolbar: 950;
 	--z-toolbar-pinned: 1000;
 	--z-editor: 2000;
-	--z-editor-scroll-indicator: 2100;
 	--z-editor-controls: 2200;
 	--z-modal-close: 10200;
 }
@@ -103,13 +101,11 @@
 	.modal-button-container,
 	.roster-button-container,
 	.roster-item-button-container,
-	.edit-toolbar,
 	.editor,
 	.header,
 	.footer,
 	.session-nav,
 	.modal-session-add,
-	.sidebar,
 	.toast-notification,
 	.print-toolbar,
 	.studio-panel,
@@ -315,7 +311,6 @@ textarea:focus-visible {
 
 	.chip-remove,
 	.session-tab-close,
-	.roller-btn-icon,
 	.btn-pp-step {
 		min-width: 2.5rem;
 		min-height: 2.5rem;
@@ -366,10 +361,10 @@ textarea:focus-visible {
 	margin: 0.5rem auto;
 	max-width: 60rem;
 	padding: 0.5rem 0.75rem;
-	background: #fef9c3;
-	border: 1px solid #eab308;
+	background: color-mix(in oklab, var(--color-secondary) 35%, var(--bg-surface-elevated));
+	border: 1px solid var(--border-strong);
 	border-radius: 6px;
-	color: #713f12;
+	color: var(--text-main);
 	font-size: 0.8rem;
 	display: flex;
 	align-items: center;
@@ -377,8 +372,8 @@ textarea:focus-visible {
 	flex-wrap: wrap;
 
 	.btn-update-primary {
-		background: #ca8a04;
-		color: #fff;
+		background: var(--color-interactive);
+		color: var(--die-active-text);
 		border: none;
 		border-radius: 4px;
 		padding: 0.25rem 0.6rem;
@@ -387,8 +382,8 @@ textarea:focus-visible {
 
 	.btn-update-secondary {
 		background: transparent;
-		color: #713f12;
-		border: 1px solid #ca8a04;
+		color: var(--text-main);
+		border: 1px solid var(--border-strong);
 		border-radius: 4px;
 		padding: 0.25rem 0.6rem;
 		cursor: pointer;
@@ -429,5 +424,45 @@ textarea:focus-visible {
 	.roster-button {
 		border: 1px solid ButtonText;
 		color: ButtonText;
+	}
+}
+
+/* TOAST NOTIFICATION */
+.toast-notification {
+	position: fixed;
+	bottom: calc(var(--header-size) + 1.25rem);
+	left: 50%;
+	transform: translateX(-50%);
+	background: var(--studio-header-bg);
+	color: var(--studio-text);
+	border: 1px solid var(--studio-border);
+	padding: 0.6rem 1.2rem;
+	border-radius: 999rem;
+	box-shadow: 0 0.25rem 0.9rem color-mix(in oklab, var(--text-main) 24%, transparent);
+	font-family: var(--font-heading);
+	font-size: 0.85rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	display: flex;
+	align-items: center;
+	column-gap: 0.5rem;
+	z-index: var(--z-modal-close);
+	pointer-events: none;
+
+	i {
+		color: var(--color-secondary);
+	}
+
+	&.toast-enter-active,
+	&.toast-leave-active {
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	&.toast-enter-from,
+	&.toast-leave-to {
+		opacity: 0;
+		transform: translate(-50%, 0.6rem);
 	}
 }

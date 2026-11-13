@@ -1,454 +1,427 @@
 {
-  "id": "titans-handler",
-  "version": 1,
-  "title": "Titans vs Leviathans - Handler",
-  "subtitle": "Giant Mech vs Kaiju Combat",
-  "game": "Titans vs Leviathans",
-  "variant": "Handler File",
-  "pages": 1,
-  "genre": "Mecha / Kaiju / Military",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
-    "quote": "The city shakes. The bay churns.",
-    "genre": "Kaiju / mech action",
-    "setting": "d8",
-    "prep": "d6",
-    "complexity": "d6",
-    "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
-  },
-  "character": {
-    "id": "template-titans-handler",
-    "isTemplate": true,
-    "name": "",
-    "game": "Titans vs Leviathans",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Titans vs Leviathans",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "handler-attributes",
-        "description": "Neural synchronization and handler capabilities",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Prowess": {},
-          "Control": {},
-          "Renown": {}
-        }
-      },
-      "Roles": {
-        "id": "roles",
-        "description": "Combat roles and tactical responsibilities",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 5,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Role",
-        "plural": "Roles",
-        "traits": {
-          "Backup": {},
-          "Blaster": {},
-          "Boss": {},
-          "Brain": {},
-          "Brawler": {}
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Personal identity, public persona, and driving aspiration",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 1,
-          "ratingLadder": [
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Identity:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  },
-                  "Affirmation": {
-                    "description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity."
-                  },
-                  "Authenticity": {
-                    "description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity."
-                  }
-                }
-              }
-            }
-          },
-          "Persona:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  },
-                  "Shake it Off": {
-                    "description": "Spend a PP to recover a complication when acting in line with your public persona."
-                  },
-                  "Double Down": {
-                    "description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona."
-                  }
-                }
-              }
-            }
-          },
-          "Aspiration:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  },
-                  "Cards on the Table": {
-                    "description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration."
-                  },
-                  "Hurts for a Minute": {
-                    "description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Handler cockpit gear and personal assets",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 2,
-          "place": {
-            "left": "28%",
-            "top": 1,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Complications": {
-        "id": "complications",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 2,
-          "playMutable": true,
-          "pillar": "play"
-        },
-        "noun": "Complication",
-        "plural": "Complications",
-        "traits": {}
-      }
-    }
-  }
+	"id": "titans-handler",
+	"version": 1,
+	"character": {
+		"id": "template-titans-handler",
+		"isTemplate": true,
+		"name": "",
+		"game": "Titans vs Leviathans",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Titans vs Leviathans",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Titans vs Leviathans - Handler",
+				"subtitle": "Giant Mech vs Kaiju Combat",
+				"genre": "Kaiju / mech action",
+				"variant": "Handler File",
+				"url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg",
+				"quote": "The city shakes. The bay churns.",
+				"setting": "d8",
+				"prep": "d6",
+				"complexity": "d6"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "handler-attributes",
+				"description": "Neural synchronization and handler capabilities",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Prowess": {},
+					"Control": {},
+					"Renown": {}
+				}
+			},
+			"Roles": {
+				"id": "roles",
+				"description": "Combat roles and tactical responsibilities",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 5,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Role",
+				"plural": "Roles",
+				"traits": {
+					"Backup": {},
+					"Blaster": {},
+					"Boss": {},
+					"Brain": {},
+					"Brawler": {}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Personal identity, public persona, and driving aspiration",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 1,
+					"ratingLadder": [
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Identity:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									},
+									"Affirmation": {
+										"description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity."
+									},
+									"Authenticity": {
+										"description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity."
+									}
+								}
+							}
+						}
+					},
+					"Persona:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									},
+									"Shake it Off": {
+										"description": "Spend a PP to recover a complication when acting in line with your public persona."
+									},
+									"Double Down": {
+										"description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona."
+									}
+								}
+							}
+						}
+					},
+					"Aspiration:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									},
+									"Cards on the Table": {
+										"description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration."
+									},
+									"Hurts for a Minute": {
+										"description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Handler cockpit gear and personal assets",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 2,
+					"place": {
+						"left": "28%",
+						"top": 1,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Complications": {
+				"id": "complications",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 2,
+					"playMutable": true,
+					"pillar": "play"
+				},
+				"noun": "Complication",
+				"plural": "Complications",
+				"traits": {}
+			}
+		}
+	}
 }

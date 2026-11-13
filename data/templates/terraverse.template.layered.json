@@ -1,844 +1,815 @@
 {
-  "id": "terraverse",
-  "version": 1,
-  "title": "Terraverse",
-  "subtitle": "Epic Science-Fantasy Multiverse",
-  "game": "Terraverse",
-  "variant": "Character File",
-  "pages": 2,
-  "genre": "Sci-Fi / Superhero / Multiverse",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866",
-    "quote": "Every world is a version of this one. Some are close — a step to the left, a slightly different history.",
-    "genre": "Science fantasy / multiverse adventure",
-    "setting": "d10",
-    "prep": "d10",
-    "complexity": "d10",
-    "image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg"
-  },
-  "character": {
-    "id": "template-terraverse",
-    "isTemplate": true,
-    "name": "",
-    "game": "Terraverse",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 2,
-      "template": "Terraverse",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "attributes",
-        "description": "Core hero ratings with Vitality and Willpower",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 6,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Agility": {},
-          "Alertness": {},
-          "Intelligence": {},
-          "Strength": {},
-          "Vitality": {},
-          "Willpower": {}
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Multiversal origin, champion archetype, and personal drive",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "reservedSlots": 6,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {},
-        "slots": {
-          "0": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "2": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Artifacts and multiversal gear",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "28%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Skills & Specialties": {
-        "id": "subtrait-columns",
-        "description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "subtrait-columns"
-          },
-          "ratingLadder": [
-            4,
-            6
-          ],
-          "subtraitRatingLadder": [
-            8,
-            10,
-            12
-          ],
-          "labels": {
-            "left": "Skills",
-            "right": "Specialties"
-          },
-          "multiDie": false,
-          "reservedSlots": 19,
-          "place": {
-            "left": "28%",
-            "top": 1,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {
-          "Craft": {},
-          "Drive": {},
-          "Fight": {},
-          "Fix": {},
-          "Fly": {},
-          "Focus": {},
-          "Influence": {},
-          "Know": {},
-          "Labor": {},
-          "Move": {},
-          "Notice": {},
-          "Operate": {},
-          "Perform": {},
-          "Shoot": {},
-          "Sneak": {},
-          "Survive": {},
-          "Throw": {},
-          "Treat": {},
-          "Trick": {}
-        }
-      },
-      "Initiative": {
-        "id": "initiative",
-        "view": {
-          "ladder": true,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "die-rows"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "labelPosition": "vertical",
-          "reservedSlots": 2,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Die",
-        "plural": "Dice",
-        "traits": {}
-      },
-      "Hero Dice": {
-        "id": "hero-dice",
-        "view": {
-          "ladder": true,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "die-rows"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "labelPosition": "vertical",
-          "reservedSlots": 1,
-          "place": {
-            "left": "0%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Die",
-        "plural": "Dice",
-        "traits": {}
-      },
-      "Life Points": {
-        "id": "life-points",
-        "description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 12,
-            "connected": true
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Point",
-        "plural": "Points",
-        "traits": {}
-      },
-      "Power Set 1": {
-        "id": "power-set-1",
-        "description": "SFX: • SFX: • Limit:",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {},
-        "slots": {
-          "0": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "SFX 1": {},
-                  "SFX 2": {},
-                  "Limit": {}
-                }
-              }
-            }
-          }
-        }
-      },
-      "Power Set 2": {
-        "id": "power-set-2",
-        "description": "SFX: • SFX: • Limit:",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "33.333%",
-            "top": 0,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {},
-        "slots": {
-          "0": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "SFX 1": {},
-                  "SFX 2": {},
-                  "Limit": {}
-                }
-              }
-            }
-          }
-        }
-      },
-      "Power Set 3": {
-        "id": "power-set-3",
-        "description": "SFX: • SFX: • Limit:",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "66.666%",
-            "top": 0,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {},
-        "slots": {
-          "0": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "SFX 1": {},
-                  "SFX 2": {},
-                  "Limit": {}
-                }
-              }
-            }
-          }
-        }
-      },
-      "Talents": {
-        "id": "talents-growth-options",
-        "description": "Name, Activation, and Effect",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "page": 2,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 4,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "66.663%",
-            "height": 1
-          },
-          "labels": {
-            "col1": "TALENT",
-            "col2": "ACTIVATION",
-            "col3": "EFFECT"
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "28%",
-              "height": 1
-            },
-            "description": {
-              "left": "28%",
-              "top": 0,
-              "width": "33%",
-              "height": 1
-            },
-            "child:SFX": {
-              "left": "61%",
-              "top": 0,
-              "width": "39%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Talent",
-        "plural": "Talents",
-        "traits": {}
-      },
-      "Session Record": {
-        "id": "session-record",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 6,
-            "connected": true
-          },
-          "reservedSlots": 0,
-          "place": {
-            "left": "66.663%",
-            "top": 1,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {}
-      },
-      "Leveling Up": {
-        "id": "leveling-up",
-        "view": {
-          "header": "top",
-          "headerAlign": "center",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "66.66%",
-            "top": 2,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "play",
-          "parts": {
-            "description": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Option",
-        "plural": "Options",
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another"
-          }
-        }
-      }
-    }
-  }
+	"id": "terraverse",
+	"version": 1,
+	"character": {
+		"id": "template-terraverse",
+		"isTemplate": true,
+		"name": "",
+		"game": "Terraverse",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 2,
+			"template": "Terraverse",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Epic Science-Fantasy Multiverse",
+				"genre": "Science fantasy / multiverse adventure",
+				"url": "https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg",
+				"quote": "Every world is a version of this one. Some are close — a step to the left, a slightly different history.",
+				"setting": "d10",
+				"prep": "d10",
+				"complexity": "d10"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "attributes",
+				"description": "Core hero ratings with Vitality and Willpower",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 6,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Agility": {},
+					"Alertness": {},
+					"Intelligence": {},
+					"Strength": {},
+					"Vitality": {},
+					"Willpower": {}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Multiversal origin, champion archetype, and personal drive",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"reservedSlots": 6,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {},
+				"slots": {
+					"0": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									}
+								}
+							}
+						}
+					},
+					"1": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									}
+								}
+							}
+						}
+					},
+					"2": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Artifacts and multiversal gear",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "28%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Skills & Specialties": {
+				"id": "subtrait-columns",
+				"description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "subtrait-columns"
+					},
+					"ratingLadder": [
+						4,
+						6
+					],
+					"subtraitRatingLadder": [
+						8,
+						10,
+						12
+					],
+					"labels": {
+						"left": "Skills",
+						"right": "Specialties"
+					},
+					"multiDie": false,
+					"reservedSlots": 19,
+					"place": {
+						"left": "28%",
+						"top": 1,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {
+					"Craft": {},
+					"Drive": {},
+					"Fight": {},
+					"Fix": {},
+					"Fly": {},
+					"Focus": {},
+					"Influence": {},
+					"Know": {},
+					"Labor": {},
+					"Move": {},
+					"Notice": {},
+					"Operate": {},
+					"Perform": {},
+					"Shoot": {},
+					"Sneak": {},
+					"Survive": {},
+					"Throw": {},
+					"Treat": {},
+					"Trick": {}
+				}
+			},
+			"Initiative": {
+				"id": "initiative",
+				"view": {
+					"ladder": true,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "die-rows"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"labelPosition": "vertical",
+					"reservedSlots": 2,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Die",
+				"plural": "Dice",
+				"traits": {}
+			},
+			"Hero Dice": {
+				"id": "hero-dice",
+				"view": {
+					"ladder": true,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "die-rows"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"labelPosition": "vertical",
+					"reservedSlots": 1,
+					"place": {
+						"left": "0%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Die",
+				"plural": "Dice",
+				"traits": {}
+			},
+			"Life Points": {
+				"id": "life-points",
+				"description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 12,
+						"connected": true
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Point",
+				"plural": "Points",
+				"traits": {}
+			},
+			"Power Set 1": {
+				"id": "power-set-1",
+				"description": "SFX: • SFX: • Limit:",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {},
+				"slots": {
+					"0": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"SFX 1": {},
+									"SFX 2": {},
+									"Limit": {}
+								}
+							}
+						}
+					}
+				}
+			},
+			"Power Set 2": {
+				"id": "power-set-2",
+				"description": "SFX: • SFX: • Limit:",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "33.333%",
+						"top": 0,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {},
+				"slots": {
+					"0": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"SFX 1": {},
+									"SFX 2": {},
+									"Limit": {}
+								}
+							}
+						}
+					}
+				}
+			},
+			"Power Set 3": {
+				"id": "power-set-3",
+				"description": "SFX: • SFX: • Limit:",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "66.666%",
+						"top": 0,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {},
+				"slots": {
+					"0": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"SFX 1": {},
+									"SFX 2": {},
+									"Limit": {}
+								}
+							}
+						}
+					}
+				}
+			},
+			"Talents": {
+				"id": "talents-growth-options",
+				"description": "Name, Activation, and Effect",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"page": 2,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 4,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "66.663%",
+						"height": 1
+					},
+					"labels": {
+						"col1": "TALENT",
+						"col2": "ACTIVATION",
+						"col3": "EFFECT"
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "28%",
+							"height": 1
+						},
+						"description": {
+							"left": "28%",
+							"top": 0,
+							"width": "33%",
+							"height": 1
+						},
+						"child:SFX": {
+							"left": "61%",
+							"top": 0,
+							"width": "39%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Talent",
+				"plural": "Talents",
+				"traits": {}
+			},
+			"Session Record": {
+				"id": "session-record",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 6,
+						"connected": true
+					},
+					"reservedSlots": 0,
+					"place": {
+						"left": "66.663%",
+						"top": 1,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {}
+			},
+			"Leveling Up": {
+				"id": "leveling-up",
+				"view": {
+					"header": "top",
+					"headerAlign": "center",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "66.66%",
+						"top": 2,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "play",
+					"parts": {
+						"description": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Option",
+				"plural": "Options",
+				"traits": {},
+				"slots": {
+					"0": {
+						"description": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another"
+					}
+				}
+			}
+		}
+	}
 }

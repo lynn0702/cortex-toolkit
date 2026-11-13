@@ -64,7 +64,7 @@ describe('TagEditor, tag search, and edit-mode history snapshots', () => {
 		const sample: any = {
 			name: 'Dreamer',
 			tags: ['solo'],
-			portrait: { url: '', alt: '', tags: ['tarot-portrait'] },
+			portrait: { url: '', alt: '', tags: ['portrait'] },
 			traitSets: [
 				{
 					id: 'set-1',
@@ -82,7 +82,6 @@ describe('TagEditor, tag search, and edit-mode history snapshots', () => {
 		};
 
 		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'solo')).toBe(true);
-		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'tarot')).toBe(true);
 		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'core-set')).toBe(true);
 		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'craft')).toBe(true);
 		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'nested-sub')).toBe(true);

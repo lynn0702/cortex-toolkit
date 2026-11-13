@@ -33,7 +33,7 @@
   - Tier 3 edits that add bespoke spacing scales, custom color palettes, or decorative animations without a documented layout/a11y defect violate the `5%` guardrail and must be rejected in review.
 - `[DECIDED]` **Active Mobile Target Baseline (`DECISIONS.md` 2026-11-13 & Prompt Spec):**
   - Single `3rem` header below `48rem` (`<SessionNav>` hidden; `<AppHeader>` surfaces centered `[popover="auto"]` `#mobile-sheet-menu`).
-  - Play jump chrome target envelope: `3rem` header + `2.5rem` jump strip (`--jump-strip-h: 2.5rem` in `css/app.css:L33`; see `[OPEN 3]` on `2.25rem` doc drift in `design/DECISIONS.md:L353`).
+  - Play jump chrome target envelope: `3rem` header + `2.5rem` jump strip (`--jump-strip-h: 2.5rem` in `css/app.css`, ratified `[DECIDED]` in `design/DECISIONS.md` 2026-11-13).
   - Three-state mobile Play drawer (`data-state="staged" | "split" | "full"`): `staged: 3.5rem` (`--roller-footer-h`), `split: 38.2dvh` (`--split-roller-h`), `full: 100dvh` (auto-collapses `.header`).
 
 ### 1.3 Macro Budget Inversion Finding
@@ -205,11 +205,11 @@ At `1440×900`, `StudioPanel` (`--studio-panel-width: 23rem` = `368px`, `top: 3r
    - Normalize `768px` (19 sites), `600px` (5 sites), `520px` (2 sites), and `1399px/1400px` (4 sites) onto consistent `rem` breakpoints (`48rem`, `87.5rem`).
    - Replace raw `#0f172a`/`#1e293b`/`#94a3b8` literals in `css/studio-panel.css`, `css/multi-character.css`, and `css/print.css` with `--bg-surface-*` / `--text-*` tokens, add dark-mode rules for `.multi-character-column`, and fix `.footer-nav .nav-icon` (`css/frame.css:L478` `color: black` invisible in dark mode).
 
-### 4.2 Open Decisions Requiring Author Ratification
+### 4.2 Ratified Decisions (`[OPEN 1–3]` Resolved `2026-11-13`)
 
-- **`[OPEN 1]` Hide `<AppFooter>` (`3rem` / `48px`) below `48rem` outside `About` / `Roster`?**
-  `<AppFooter>` is already occluded behind `.mobile-roller-pill-bar` in Mobile Play and behind `<StudioPanel>` when open, yet steals `5.69%` vertical canvas on Mobile Create (panel closed) for two low-traffic utility links (`?` About and GitHub).
-- **`[OPEN 2]` Keep Mobile Create `<StudioPanel>` as a `100%` sheet-occluding overlay, or adopt a `split` preview height?**
-  On `390×844`, opening `<StudioPanel>` in Create mode covers `0%` of the sheet (`studio-panel.css:L122`: `top: var(--header-size); bottom: 0`), whereas Mobile Play already demonstrates a `38.2dvh` split state for live sheet inspection.
-- **`[OPEN 3]` Reconcile `--jump-strip-h` (`2.5rem` in `css/app.css:L33` vs. `2.25rem` in `design/DECISIONS.md:L353`) & Desktop Pillars Sticky Offset:**
-  Verify whether `2.5rem` is the canonical height (`3rem + 2.5rem` chrome envelope) and update Desktop Pillars `.mobile-set-jump-strip` (`css/print.css:L3610` `top: calc(var(--header-size) + 42px)`) to match actual `.session-nav` height (`~47px` / `2.94rem`) so it does not tuck `5px` under the session bar.
+- **`[DECIDED]` Hide `<AppFooter>` (`3rem` / `48px`) below `48rem` outside `About` / `Roster` (`[OPEN 1]`):**
+  Hiding `.footer` on `character` and `print` below `48rem` and reclaiming `main.main` / `.sheet-column` mobile bottom padding in Create mode restores the full bottom viewport row to the sheet. The GitHub link moves off `<AppFooter>` into `About` and `#mobile-sheet-menu`, and `.footer-nav .nav-icon` uses `--text-muted` / `--text-main` tokens for dark-mode legibility.
+- **`[DECIDED]` Keep Mobile Create `<StudioPanel>` as a full-height sheet-occluding overlay (`[OPEN 2]`):**
+  Below `48rem`, Create-mode `<StudioPanel>` keeps `top: var(--header-size); bottom: 0` (ratified for now rather than adopting a `split` preview height).
+- **`[DECIDED]` Canonical `--jump-strip-h: 2.5rem` & Desktop Pillars Sticky Offset (`[OPEN 3]`):**
+  `--jump-strip-h: 2.5rem` is canonical (`design/DECISIONS.md` corrected from `2.25rem`), and Desktop Pillars `.mobile-set-jump-strip` positions sticky `top` at `calc(var(--header-size) + var(--session-nav-h, 2.94rem))` so it sits flush below `<SessionNav>`.

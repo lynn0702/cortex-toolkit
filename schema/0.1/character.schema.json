@@ -20,7 +20,10 @@
 					"description": "The name of the trait set."
 				},
 				"description": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "A description of the trait set."
 				},
 				"noun": {
@@ -32,7 +35,10 @@
 					"description": "The plural noun used to describe multiple traits in this set."
 				},
 				"traits": {
-					"type": "array",
+					"type": [
+						"array",
+						"null"
+					],
 					"description": "The traits in the trait set.",
 					"items": {
 						"$ref": "#/$defs/trait"
@@ -83,10 +89,8 @@
 			"required": [
 				"id",
 				"name",
-				"description",
 				"noun",
 				"plural",
-				"traits",
 				"tags"
 			]
 		},
@@ -136,7 +140,10 @@
 					"description": "The Scale effect, named where data must name it: keep this many extra dice for the total."
 				},
 				"description": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "A description of the trait."
 				},
 				"xp": {
@@ -156,7 +163,10 @@
 					"description": "Alternative counter value for this trait."
 				},
 				"traits": {
-					"type": "array",
+					"type": [
+						"array",
+						"null"
+					],
 					"description": "Any child traits attached this parent trait.",
 					"items": {
 						"$ref": "#/$defs/trait"
@@ -175,8 +185,6 @@
 			"additionalProperties": false,
 			"required": [
 				"name",
-				"description",
-				"traits",
 				"tags"
 			]
 		},
@@ -185,12 +193,17 @@
 			"description": "The node's rating: { type: Counter | Die | Dice | Pip, value: [], range: [] }. Value is always a list; range is the ladder it may take. Absent means unrated.",
 			"properties": {
 				"type": {
-					"type": "string",
+					"description": "Counter = scalar number in value[0]. Die = single-die size in value[0]. Dice = die list in value. Pip = boolean array of checkboxes/bubbles in value. Optional when a child node inherits its rating type from an enclosing trait or set.",
+					"type": [
+						"string",
+						"null"
+					],
 					"enum": [
 						"Counter",
 						"Die",
 						"Dice",
-						"Pip"
+						"Pip",
+						null
 					]
 				},
 				"value": {
@@ -219,7 +232,6 @@
 				}
 			},
 			"required": [
-				"type",
 				"value"
 			],
 			"additionalProperties": false
@@ -301,7 +313,10 @@
 			"description": "The character’s preferred pronouns."
 		},
 		"description": {
-			"type": "string",
+			"type": [
+				"string",
+				"null"
+			],
 			"description": "A short summary or subtitle for the character."
 		},
 		"traitSets": {
@@ -422,7 +437,6 @@
 		"name",
 		"game",
 		"pronouns",
-		"description",
 		"traitSets",
 		"portrait",
 		"plotPoints",

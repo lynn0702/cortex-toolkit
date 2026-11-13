@@ -169,7 +169,7 @@ const allItems = computed<PaletteItem[]>(() => {
 
 				const trName = String(tr.name || tr.label || '').trim();
 				const trDesc = String(tr.description || '').trim();
-				const trDice = tr.spent === true ? [] : availableDice(tr);
+				const trDice = tr.spent === true ? [] : availableDice(tr, [ts]);
 				const children = Array.isArray(tr.traits) ? tr.traits : [];
 				if (!trName && !trDesc && trDice.length === 0 && children.length === 0) continue;
 
@@ -265,7 +265,7 @@ const allItems = computed<PaletteItem[]>(() => {
 					}
 
 					if (!childName) continue;
-					const childDice = child.spent === true ? [] : availableDice(child);
+					const childDice = child.spent === true ? [] : availableDice(child, [tr, ts]);
 					const childNotation = childDice.length ? formatDiceNotation(childDice) : '';
 					const childTags = normalizeTags(child.tags);
 					const childDesc = String(child.description || '').trim();

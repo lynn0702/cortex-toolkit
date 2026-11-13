@@ -5,12 +5,17 @@ const templatesPath = path.join(__dirname, '../js/templates.js');
 let templates = require(templatesPath);
 
 templates = templates.map((item) => {
-	// 1. Remove parenthetical explainer text from title
-	const cleanTitle = item.title.replace(/\s*\([^)]*\)/g, '').trim();
-	item.title = cleanTitle;
-
 	const char = item.character;
 	if (!char) return item;
+
+	// 1. Remove parenthetical explainer text from card title / game
+	if (char.view && char.view.listing && typeof char.view.listing.title === 'string') {
+		char.view.listing.title = char.view.listing.title.replace(/\s*\([^)]*\)/g, '').trim();
+	}
+	const cleanGame = String(char.game || '')
+		.replace(/\s*\([^)]*\)/g, '')
+		.trim();
+	char.game = cleanGame;
 
 	// 2. Ensure blank character fields
 	char.name = '';
@@ -37,8 +42,8 @@ templates = templates.map((item) => {
 
 	delete char.view.columns;
 	delete char.view.columnsPage2;
-	char.view.pageCount = item.pages || 1;
-	char.view.template = item.game || cleanTitle;
+	char.view.pageCount = Number(char.view.pageCount) || 1;
+	char.view.template = cleanGame || (char.view.listing && char.view.listing.title) || item.id;
 	char.view.columnAlignment = item.id === 'alien-us' ? 'full-width' : 'top-base';
 	char.view.columnOffsets = { left: 0, center: 0, right: 0 };
 

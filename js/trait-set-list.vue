@@ -39,6 +39,7 @@ const {
 	isTraitOut,
 	getTraitDice,
 	getRating,
+	resolveTraitRating,
 	isDieSpent,
 	toggleDieSpentInPlay,
 	isSpendable,
@@ -359,22 +360,25 @@ function hasTraitSetDescription(ts: any) {
 									</button>
 								</div>
 								<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
-								<div class="trait-value pip-value" v-else-if="getRating(item.trait)?.type === 'Pip'">
+								<div class="trait-value pip-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Pip'">
 									<span
 										v-for="(filled, pIdx) in getTraitPipBubbles(item.trait)"
 										:key="pIdx"
 										class="pip-bubble"
 										:class="{ filled: !printBlank && filled }"
 										role="checkbox"
+										:tabindex="printBlank ? -1 : 0"
 										:aria-checked="filled ? 'true' : 'false'"
 										:aria-label="`Pip ${pIdx + 1} of ${item.trait.name || 'trait'}`"
-										@click.stop="toggleTraitPipBubble(item.trait, pIdx)"
+										@click.stop="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
+										@keydown.enter.prevent="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
+										@keydown.space.prevent="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
 									></span>
 								</div>
-								<div class="trait-value counter-value" v-else-if="getRating(item.trait)?.type === 'Counter'">
-									<span class="counter-display">{{ getRating(item.trait)?.value?.[0] ?? 0 }}</span>
+								<div class="trait-value counter-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Counter'">
+									<span class="counter-display">{{ resolveTraitRating(item.trait)?.value?.[0] ?? 0 }}</span>
 								</div>
-								<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">
+								<div class="trait-value multidie-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Dice'">
 									<div
 										v-for="(dieSize, dIdx) in printBlank || item.isPlaceholder
 											? getTraitSetRatings(traitSet)
@@ -436,6 +440,7 @@ function hasTraitSetDescription(ts: any) {
 									</div>
 								</div>
 								<div
+									v-else
 									class="trait-value single-die-value"
 									:class="{
 										'has-hinder-pill':
@@ -846,7 +851,9 @@ function hasTraitSetDescription(ts: any) {
 										<div class="trait-value child-part-value" v-else>
 											<template
 												v-if="
-													getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Pip'
+													resolveTraitRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun), [
+														item.trait,
+													])?.type === 'Pip'
 												"
 											>
 												<span
@@ -865,12 +872,16 @@ function hasTraitSetDescription(ts: any) {
 											</template>
 											<template
 												v-else-if="
-													getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Die'
+													resolveTraitRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun), [
+														item.trait,
+													])?.type === 'Die'
 												"
 											>
 												<span
-													v-for="size in getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))
-														?.range || [4, 6, 8, 10, 12]"
+													v-for="size in resolveTraitRating(
+														getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun),
+														[item.trait],
+													)?.range || [4, 6, 8, 10, 12]"
 													:key="size"
 													:class="{
 														active:
@@ -888,12 +899,15 @@ function hasTraitSetDescription(ts: any) {
 											</template>
 											<template
 												v-else-if="
-													getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Dice'
+													resolveTraitRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun), [
+														item.trait,
+													])?.type === 'Dice'
 												"
 											>
 												<div
-													v-for="(dieSize, dIdx) in getRating(
+													v-for="(dieSize, dIdx) in resolveTraitRating(
 														getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun),
+														[item.trait],
 													)?.value || []"
 													:key="dIdx"
 													class="multidie-badge-wrap"
@@ -906,12 +920,15 @@ function hasTraitSetDescription(ts: any) {
 											</template>
 											<template
 												v-else-if="
-													getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type ===
-													'Counter'
+													resolveTraitRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun), [
+														item.trait,
+													])?.type === 'Counter'
 												"
 											>
 												<span class="counter-display">{{
-													getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.value?.[0] ?? 0
+													resolveTraitRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun), [
+														item.trait,
+													])?.value?.[0] ?? 0
 												}}</span>
 											</template>
 										</div>
@@ -1246,7 +1263,7 @@ function hasTraitSetDescription(ts: any) {
 									<div class="trait-value" v-else-if="!printBlank && getRatingPlacement(traitSet) === 'none'"></div>
 
 									<!-- DICE-RATED TRAIT -->
-									<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">
+									<div class="trait-value multidie-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Dice'">
 										<div
 											v-for="(dieSize, dIdx) in printBlank || item.isPlaceholder
 												? getTraitSetRatings(traitSet)
@@ -1311,6 +1328,7 @@ function hasTraitSetDescription(ts: any) {
 
 									<!-- STANDARD SINGLE-DIE TRAIT -->
 									<div
+										v-else
 										class="trait-value single-die-value"
 										:class="{
 											'has-hinder-pill':

@@ -19,7 +19,9 @@ import {
 	ensureView,
 	isNameSet,
 	getRating,
+	preserveInheritedTraitTypes,
 	ratingDice,
+	resolveRating,
 	setRatingDie,
 	resolveVisibility,
 	nextVisibility,
@@ -248,7 +250,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				const sName = String(s.name || '')
 					.trim()
 					.toLowerCase();
-				if (sNoun === 'statement' || sName === 'statement' || getRating(s)?.type === 'Pip') return false;
+				if (sNoun === 'statement' || sName === 'statement' || resolveRating(s, [t, traitSet.value])?.type === 'Pip')
+					return false;
 				if (trackOn && (sNoun === trackNameLower || sName === trackNameLower)) return false;
 				return true;
 			});
@@ -303,7 +306,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			(t: any) =>
 				Array.isArray(t?.traits) &&
 				t.traits.some((sub: any) => {
-					const r = getRating(sub);
+					const r = resolveRating(sub, [t, traitSet.value]);
 					return r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
 				}),
 		);
@@ -1020,7 +1023,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const hasCounterTrait = computed(() => {
 		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
-		return traits.some((t: any) => t?.rating?.type === 'Counter');
+		return traits.some((t: any) => resolveRating(t, [traitSet.value])?.type === 'Counter');
 	});
 
 	const ratingLadder = computed({
@@ -1062,6 +1065,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (Number(value) > 0) {
 				setRatingDie(ts, Number(value));
 			} else {
+				preserveInheritedTraitTypes(ts);
 				delete ts.rating;
 			}
 			updateCharacter(structuredClone(toRaw(props.character)));
@@ -1279,7 +1283,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				return;
 			}
 			const label = resolveSubtraitNoun(sub);
-			const r = getRating(sub);
+			const r = resolveRating(sub, [traitSet.value]);
 			const summary = r?.type ? r.type : 'Unrated';
 			result.push({ idx, sub, label, summary });
 		});

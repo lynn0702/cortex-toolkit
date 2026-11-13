@@ -10,7 +10,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-	<footer class="footer">
+	<footer class="footer" :class="'footer-mode-' + (mode || 'roster')">
 		<div class="footer-inner">
 			<div class="footer-colophon">
 				<a href="#" @click.prevent="emit('navigate', 'about', null)"
@@ -30,17 +30,6 @@ const emit = defineEmits<{
 						>
 							<span class="nav-icon"><i class="far fa-question-circle" aria-hidden="true"></i></span>
 						</button>
-					</li>
-					<li>
-						<a
-							href="https://github.com/lynn0702/cortex-toolkit"
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label="View on GitHub"
-							title="View on GitHub"
-						>
-							<span class="nav-icon"><i class="fab fa-github" aria-hidden="true"></i></span>
-						</a>
 					</li>
 				</ul>
 			</nav>

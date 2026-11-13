@@ -6,6 +6,7 @@ import {
 	getView,
 	ensureView,
 	getRating,
+	resolveRating,
 	ratingDice,
 	resolveHitches,
 	keepsExtraDice,
@@ -77,10 +78,11 @@ const ringSlots = computed<RingSlot[]>(() => {
 	const slots: RingSlot[] = [];
 	const isSingleMultiDieTraitSpread =
 		traits.value.length === 1 &&
-		(getRating(traits.value[0])?.type === 'Dice' || ratingDice(getRating(traits.value[0])).length > 1);
+		(resolveRating(traits.value[0], [ringSet.value])?.type === 'Dice' ||
+			ratingDice(resolveRating(traits.value[0], [ringSet.value])).length > 1);
 	for (const trait of traits.value) {
 		const traitIdx = allTraits.indexOf(trait);
-		const dice = ratingDice(getRating(trait));
+		const dice = ratingDice(resolveRating(trait, [ringSet.value]));
 		const label = isSingleMultiDieTraitSpread ? '' : trait.name || '';
 		const source = (getView(trait)?.noun as string) || (getView(ringSet.value)?.ringNoun as string) || trait.name || '';
 		if (dice.length === 0) {
@@ -138,7 +140,7 @@ const ringSlots = computed<RingSlot[]>(() => {
 });
 const scaleDieValue = computed(() => {
 	const st = scaleTrait.value;
-	if (st) return ratingDice(getRating(st))[0] || 8;
+	if (st) return ratingDice(resolveRating(st, [ringSet.value]))[0] || 8;
 	const setNode = ringSet.value;
 	if (getView(setNode)?.scaleDie) {
 		return Number(getView(setNode)?.scaleDie);
@@ -151,9 +153,7 @@ const scaleDieValue = computed(() => {
 const isTraitEditorOpen = computed(() =>
 	Boolean(props.editing && props.editing[0] === 'trait' && props.editing[1] === props.ringTraitID),
 );
-const isOtherEditorOpen = computed(() =>
-	Boolean(props.editing && props.editing.length > 0 && !isSelected(['scaleDie'])),
-);
+const isScaleSelected = computed(() => isSelected(['scaleDie', props.ringTraitID]) || isSelected(['scaleDie']));
 
 const ringConfig = computed(() => {
 	const setNode = ringSet.value;
@@ -185,7 +185,7 @@ function updateCharacter(character: any) {
 }
 
 function renderDieValue(value: any, isFilled = true) {
-	return characterCurioFunctions.renderDieconSVG(value, isFilled, '', getView(props.character)?.diceConfig);
+	return characterCurioFunctions.renderDieconSVG(value, isFilled, '', getView(props.character)?.diceConfig ?? null);
 }
 
 function getTraitAngle(t: number | string) {
@@ -343,7 +343,7 @@ function handleTraitClick(ringTraitIDVal: number | string, t: number | string, t
 	}
 	if (props.submode === 'play') {
 		const ts = props.character?.traitSets?.[setIdx];
-		const first = ratingDice(getRating(trait))[0];
+		const first = ratingDice(resolveRating(trait, [ts]))[0];
 		if (first) {
 			emit('addDieToRoller', {
 				size: first,
@@ -370,9 +370,6 @@ function handleScaleDieClick() {
 			});
 		}
 	} else {
-		if (isOtherEditorOpen.value) {
-			return;
-		}
 		if (scaleTrait.value) {
 			const ringSetID = props.ringTraitID;
 			const traitIdx = (props.character?.traitSets?.[ringSetID]?.traits || []).indexOf(scaleTrait.value);
@@ -381,7 +378,7 @@ function handleScaleDieClick() {
 				return;
 			}
 		}
-		selectElement(['scaleDie']);
+		selectElement(['scaleDie', props.ringTraitID]);
 	}
 }
 
@@ -538,13 +535,14 @@ function setScaleDieValue(val: any) {
 	if (ringSetNode) {
 		ensureView(ringSetNode).scaleDie = num;
 
-		const stIndex = ringSetNode.traits.findIndex((t: any) => t.name?.trim().toLowerCase() === 'scale');
+		const traitsList = Array.isArray(ringSetNode.traits) ? ringSetNode.traits : [];
+		const stIndex = traitsList.findIndex((t: any) => t.name?.trim().toLowerCase() === 'scale');
 		if (num === 0) {
 			if (stIndex !== -1) {
-				ringSetNode.traits.splice(stIndex, 1);
+				traitsList.splice(stIndex, 1);
 			}
 		} else if (stIndex !== -1) {
-			const st = ringSetNode.traits[stIndex] as unknown as Record<string, any>;
+			const st = traitsList[stIndex] as unknown as Record<string, any>;
 			st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
 			// Scale remains a trait name; its effect is keepsExtra.
 			st.keepsExtra = 1;
@@ -626,14 +624,14 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 		<!-- SCALE DIE -->
 		<div
 			class="scale-die"
-			:class="{ 'under-editor': isOtherEditorOpen, 'is-draggable': submode === 'edit' }"
+			:class="{ 'is-draggable': submode === 'edit' }"
 			v-if="scaleDieValue > 0"
 			:style="getScaleDieStyle()"
 			@pointerdown="startRingDrag($event, 'scale')"
 		>
 			<div
 				class="scale-die-inner"
-				:class="{ selected: isSelected(['scaleDie']) }"
+				:class="{ selected: isScaleSelected }"
 				role="button"
 				tabindex="0"
 				:aria-label="submode === 'play' ? 'Stage d' + scaleDieValue + ' Scale die' : 'Edit Scale die'"
@@ -649,55 +647,6 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 				<span :class="'die-' + (scaleDieValue || 8)" v-html="renderDieValue(scaleDieValue)" aria-hidden="true"></span>
 				<div class="scale-name">SCALE</div>
 			</div>
-
-			<transition name="editor" appear>
-				<aside class="editor scale-die-editor open" v-show="submode === 'edit' && isSelected(['scaleDie'])" @click.stop>
-					<div class="editor-arrow"></div>
-					<div class="editor-controls">
-						<button
-							type="button"
-							class="editor-close"
-							@click.stop="selectElement([])"
-							title="Done"
-							aria-label="Close ring scale editor"
-						>
-							<i class="fas fa-times" aria-hidden="true"></i>
-						</button>
-						<button
-							type="button"
-							class="editor-delete"
-							@click.stop="
-								setScaleDieValue(0);
-								selectElement([]);
-							"
-							title="Remove Scale Die"
-							aria-label="Remove Scale Die"
-						>
-							<i class="fas fa-trash" aria-hidden="true"></i>
-						</button>
-					</div>
-					<div class="editor-fields">
-						<div class="editor-field">
-							<label>Scale Die Rating</label>
-							<div class="scale-stepper">
-								<button
-									v-for="s in [4, 6, 8, 10, 12]"
-									:key="'scale-' + s"
-									type="button"
-									class="btn-step"
-									:class="{ active: scaleDieValue === s }"
-									:aria-pressed="scaleDieValue === s"
-									:aria-label="'Scale d' + s"
-									:title="'Scale d' + s"
-									@click.stop="setScaleDieValue(s)"
-								>
-									<span v-html="renderDieValue(s, scaleDieValue === s)"></span>
-								</button>
-							</div>
-						</div>
-					</div>
-				</aside>
-			</transition>
 		</div>
 	</div>
 </template>

@@ -1,534 +1,492 @@
 {
-  "id": "misty-cove",
-  "version": 1,
-  "title": "Misty Cove",
-  "subtitle": "Emotional Gothic Mystery",
-  "game": "Misty Cove",
-  "variant": "Character File",
-  "pages": 1,
-  "genre": "Mystery / Drama / Supernatural",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866",
-    "quote": "The town knows you’re different. They always have.",
-    "genre": "Small-town supernatural drama",
-    "setting": "d6",
-    "prep": "d6",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg"
-  },
-  "character": {
-    "id": "template-misty-cove",
-    "isTemplate": true,
-    "name": "",
-    "game": "Misty Cove",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Misty Cove",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Coastal heritage, town role, and personal quirk",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8,
-            10,
-            12
-          ],
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "64%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Extraordinary:": {
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's die rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Backstory:": {},
-          "Role:": {}
-        }
-      },
-      "Signature Assets": {
-        "id": "signature-assets-curios",
-        "description": "Heirlooms and keepsakes from the misty coast",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "64%",
-            "top": 0,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Attributes": {
-        "id": "emotional-attributes-stress",
-        "description": "Core emotional drives with corresponding statements and stress",
-        "statement": true,
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 5,
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            },
-            "rating": {
-              "left": "30%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            },
-            "trackLabel": {
-              "left": "60%",
-              "top": 0,
-              "width": "13%",
-              "height": 1
-            },
-            "track": {
-              "left": "73%",
-              "top": 0,
-              "width": "27%",
-              "height": 1
-            }
-          },
-          "labels": {
-            "stress": "STRESS"
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Anger": {},
-          "Desire": {},
-          "Fear": {},
-          "Joy": {},
-          "Sorrow": {}
-        }
-      },
-      "Relationships": {
-        "id": "town-relationships",
-        "description": "Bonds and rivalries with local residents",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 10,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "64%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "70%",
-              "height": 1
-            },
-            "rating": {
-              "left": "70%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Relationship",
-        "plural": "Relationships",
-        "traits": {}
-      },
-      "Growth Pool": {
-        "id": "growth-pool",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "dice-count"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": true,
-          "reservedSlots": 5,
-          "place": {
-            "left": "64%",
-            "top": 2,
-            "width": "36%",
-            "height": 1
-          },
-          "labels": {
-            "rating": "RATING",
-            "dice": "/ DICE"
-          },
-          "pillar": "play"
-        },
-        "pool": true,
-        "noun": "Growth Die",
-        "plural": "Growth Dice",
-        "traits": {
-          "D4": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                4
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D6": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D8": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D10": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D12": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                12
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          }
-        }
-      },
-      "Complications": {
-        "id": "complications",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 5,
-          "place": {
-            "left": "64%",
-            "top": 3,
-            "width": "36%",
-            "height": 1
-          },
-          "parts": {
-            "rating": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "name": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "playMutable": true,
-          "pillar": "play"
-        },
-        "noun": "Complication",
-        "plural": "Complications",
-        "traits": {}
-      }
-    }
-  }
+	"id": "misty-cove",
+	"version": 1,
+	"character": {
+		"id": "template-misty-cove",
+		"isTemplate": true,
+		"name": "",
+		"game": "Misty Cove",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Misty Cove",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Emotional Gothic Mystery",
+				"genre": "Small-town supernatural drama",
+				"url": "https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg",
+				"quote": "The town knows you’re different. They always have.",
+				"setting": "d6",
+				"prep": "d6",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Coastal heritage, town role, and personal quirk",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8,
+						10,
+						12
+					],
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "64%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Extraordinary:": {
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"type": "Die",
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's die rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Backstory:": {},
+					"Role:": {}
+				}
+			},
+			"Signature Assets": {
+				"id": "signature-assets-curios",
+				"description": "Heirlooms and keepsakes from the misty coast",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "64%",
+						"top": 0,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Attributes": {
+				"id": "emotional-attributes-stress",
+				"description": "Core emotional drives with corresponding statements and stress",
+				"statement": true,
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 5,
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						},
+						"rating": {
+							"left": "30%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						},
+						"trackLabel": {
+							"left": "60%",
+							"top": 0,
+							"width": "13%",
+							"height": 1
+						},
+						"track": {
+							"left": "73%",
+							"top": 0,
+							"width": "27%",
+							"height": 1
+						}
+					},
+					"labels": {
+						"stress": "STRESS"
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Anger": {},
+					"Desire": {},
+					"Fear": {},
+					"Joy": {},
+					"Sorrow": {}
+				}
+			},
+			"Relationships": {
+				"id": "town-relationships",
+				"description": "Bonds and rivalries with local residents",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 10,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "64%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "70%",
+							"height": 1
+						},
+						"rating": {
+							"left": "70%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Relationship",
+				"plural": "Relationships",
+				"traits": {}
+			},
+			"Growth Pool": {
+				"id": "growth-pool",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "dice-count"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": true,
+					"reservedSlots": 5,
+					"place": {
+						"left": "64%",
+						"top": 2,
+						"width": "36%",
+						"height": 1
+					},
+					"labels": {
+						"rating": "RATING",
+						"dice": "/ DICE"
+					},
+					"pillar": "play"
+				},
+				"pool": true,
+				"noun": "Growth Die",
+				"plural": "Growth Dice",
+				"traits": {
+					"D4": {
+						"rating": {
+							"value": [
+								4
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D6": {
+						"rating": {
+							"value": [
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D8": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D10": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D12": {
+						"rating": {
+							"value": [
+								12
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Complications": {
+				"id": "complications",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 5,
+					"place": {
+						"left": "64%",
+						"top": 3,
+						"width": "36%",
+						"height": 1
+					},
+					"parts": {
+						"rating": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"name": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"playMutable": true,
+					"pillar": "play"
+				},
+				"noun": "Complication",
+				"plural": "Complications",
+				"traits": {}
+			}
+		}
+	}
 }

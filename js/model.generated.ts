@@ -59,7 +59,7 @@ export interface Character {
   /**
    * A short summary or subtitle for the character.
    */
-  description: string;
+  description?: string | null;
   /**
    * The character’s trait sets.
    */
@@ -122,7 +122,7 @@ export interface TraitSet {
   /**
    * A description of the trait set.
    */
-  description: string;
+  description?: string | null;
   /**
    * The singular noun used to describe a trait in this set.
    */
@@ -134,7 +134,7 @@ export interface TraitSet {
   /**
    * The traits in the trait set.
    */
-  traits: Trait[];
+  traits?: Trait[] | null;
   /**
    * Label for the secondary counter column header, e.g. 'XP'.
    */
@@ -185,7 +185,7 @@ export interface Trait {
   /**
    * A description of the trait.
    */
-  description: string;
+  description?: string | null;
   /**
    * XP or numeral counter value for this trait.
    */
@@ -197,7 +197,7 @@ export interface Trait {
   /**
    * Any child traits attached this parent trait.
    */
-  traits: Trait[];
+  traits?: Trait[] | null;
   tags: Tags;
   view?: View;
   custom?: Custom;
@@ -206,7 +206,10 @@ export interface Trait {
  * The node's rating: { type: Counter | Die | Dice | Pip, value: [], range: [] }. Value is always a list; range is the ladder it may take. Absent means unrated.
  */
 export interface Rating {
-  type: "Counter" | "Die" | "Dice" | "Pip";
+  /**
+   * Counter = scalar number in value[0]. Die = single-die size in value[0]. Dice = die list in value. Pip = boolean array of checkboxes/bubbles in value. Optional when a child node inherits its rating type from an enclosing trait or set.
+   */
+  type?: "Counter" | "Die" | "Dice" | "Pip" | null;
   /**
    * Always a list: die sizes for Die/Dice, a number for Counter, booleans for Pip.
    */
@@ -228,7 +231,7 @@ export interface Custom {
 }
 
 /**
- * A reusable sheet layout: same shape as a character entry ({ id (static), title, ..., character: {...} }). Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.
+ * A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.
  */
 export interface SheetTemplate {
   /**
@@ -239,16 +242,6 @@ export interface SheetTemplate {
    * Static template identifier. Assigned once, never regenerated; imports replace the same id instead of duplicating.
    */
   id: string;
-  /**
-   * Human-readable template title.
-   */
-  title?: string;
-  subtitle?: string;
-  game?: string;
-  variant?: string;
-  pages?: number;
-  genre?: string;
-  description?: string;
   /**
    * Template format version.
    */

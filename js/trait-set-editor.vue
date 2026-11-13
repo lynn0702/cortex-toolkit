@@ -103,21 +103,10 @@ const selectedPillar = computed<string>({
 
 <template>
 	<aside :class="cssClass" @click.stop="" ref="rootEl">
-		<div class="editor-arrow"></div>
-
 		<div class="editor-controls">
 			<button type="button" @click.stop="saveSetAsPreset" title="Save Set Preset" aria-label="Save Set Preset">
 				<i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'" aria-hidden="true"></i>
 				<span class="editor-control-label">{{ presetSaved ? 'Saved' : 'Save Preset' }}</span>
-			</button>
-			<button
-				type="button"
-				class="editor-close"
-				@click.stop="selectElement([])"
-				title="Done"
-				aria-label="Close trait set editor"
-			>
-				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<button
 				v-if="!isName"

@@ -47,6 +47,7 @@ const {
 	addTrait,
 	removeTrait,
 	removeTraitSet,
+	resolveTraitRating,
 	getRating,
 	renderDieValue,
 	getCounterLabel,
@@ -217,7 +218,7 @@ watch(rootEl, (el) => {
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<span
-						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die'"
+						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die' && ratingDice(getRating(traitSet)).length > 0"
 						class="trait-set-header-rating diecon-wrapper"
 						v-html="renderDieValue((getRating(traitSet)?.value?.[0] as number) || 8, true)"
 						role="button"
@@ -234,7 +235,12 @@ watch(rootEl, (el) => {
 						"
 					></span>
 					<span
-						v-else-if="traitSet.rating && getRating(traitSet)?.type === 'Dice' && traitArrayMode === 'none'"
+						v-else-if="
+							traitSet.rating &&
+							getRating(traitSet)?.type === 'Dice' &&
+							ratingDice(getRating(traitSet)).length > 0 &&
+							traitArrayMode === 'none'
+						"
 						class="trait-set-header-dice"
 					>
 						<span
@@ -258,7 +264,7 @@ watch(rootEl, (el) => {
 					</span>
 					<div
 						class="trait-set-header-counter"
-						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"
+						v-if="headerTop && traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter')"
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
@@ -285,7 +291,13 @@ watch(rootEl, (el) => {
 
 			<!-- Set-level Dice fallback when header is none and Trait Array is None -->
 			<div
-				v-if="!hasHeader && traitSet.rating && getRating(traitSet)?.type === 'Dice' && traitArrayMode === 'none'"
+				v-if="
+					!hasHeader &&
+					traitSet.rating &&
+					getRating(traitSet)?.type === 'Dice' &&
+					ratingDice(getRating(traitSet)).length > 0 &&
+					traitArrayMode === 'none'
+				"
 				class="trait-set-body-dice"
 			>
 				<span
@@ -400,7 +412,7 @@ watch(rootEl, (el) => {
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<span
-						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die'"
+						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die' && ratingDice(getRating(traitSet)).length > 0"
 						class="trait-set-header-rating diecon-wrapper"
 						v-html="renderDieValue((getRating(traitSet)?.value?.[0] as number) || 8, true)"
 						role="button"
@@ -417,7 +429,12 @@ watch(rootEl, (el) => {
 						"
 					></span>
 					<span
-						v-else-if="traitSet.rating && getRating(traitSet)?.type === 'Dice' && traitArrayMode === 'none'"
+						v-else-if="
+							traitSet.rating &&
+							getRating(traitSet)?.type === 'Dice' &&
+							ratingDice(getRating(traitSet)).length > 0 &&
+							traitArrayMode === 'none'
+						"
 						class="trait-set-header-dice"
 					>
 						<span
@@ -441,7 +458,7 @@ watch(rootEl, (el) => {
 					</span>
 					<div
 						class="trait-set-header-counter"
-						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"
+						v-if="headerTop && traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter')"
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>

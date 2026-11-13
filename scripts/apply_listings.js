@@ -177,30 +177,58 @@ let listed = 0,
 
 templates.forEach((entry) => {
 	if (!entry || typeof entry !== 'object') return;
-	delete entry.description;
-	entry.title = fix(entry.title);
-	entry.game = fix(entry.game);
-	const sp = entry.game;
-	delete entry.listing;
+	const ch = entry.character;
+	if (!ch || typeof ch !== 'object') return;
+	ch.view = ch.view && typeof ch.view === 'object' ? ch.view : {};
+	const prev = (ch.view.listing && typeof ch.view.listing === 'object' ? ch.view.listing : entry.listing) || {};
+	const prevTitle = prev.title || entry.title;
+	const prevSubtitle = prev.subtitle || entry.subtitle;
+	const prevGenre = prev.genre || entry.genre;
+	const prevVariant =
+		prev.variant || (entry.variant !== 'Character File' && entry.variant !== 'Showcase' ? entry.variant : '');
+	if (!ch.game && entry.game) ch.game = entry.game;
+	ch.game = fix(ch.game);
+	if (ch.view.template) ch.view.template = fix(ch.view.template);
+	const sp = ch.game || prevTitle;
+	for (const legacyKey of [
+		'title',
+		'subtitle',
+		'game',
+		'variant',
+		'pages',
+		'genre',
+		'description',
+		'blurb',
+		'listing',
+	]) {
+		delete entry[legacyKey];
+	}
+	const baseMeta = {};
+	if (prevTitle && prevTitle !== ch.game) baseMeta.title = fix(prevTitle);
+	if (prevSubtitle) baseMeta.subtitle = prevSubtitle;
+	if (prevGenre) baseMeta.genre = prevGenre;
+	if (prevVariant) baseMeta.variant = prevVariant;
 	if (sp === 'Toolkit Reference') {
+		ch.view.listing = baseMeta;
 		bare++;
 		return;
 	}
 	if (HANDBOOK_SETTINGS.indexOf(sp) !== -1) {
-		entry.listing = { url: HANDBOOK_URL };
+		ch.view.listing = { ...baseMeta, url: HANDBOOK_URL };
 		handbook++;
 		return;
 	}
 	if (!LISTINGS[sp]) throw new Error('no listing data for game ' + JSON.stringify(sp) + ' (' + entry.id + ')');
 	const L = LISTINGS[sp];
-	entry.listing = {
-		url: L.url,
-		quote: L.quote,
+	ch.view.listing = {
+		...baseMeta,
 		genre: L.genre,
+		url: L.url,
+		image: imageOf(L.url),
+		quote: L.quote,
 		setting: L.setting,
 		prep: L.prep,
 		complexity: L.complexity,
-		image: imageOf(L.url),
 	};
 	listed++;
 });

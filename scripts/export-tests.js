@@ -83,10 +83,10 @@ function walk(node, fn) {
 	ok(traitIds === 0, 'layered emit: no trait-level ids', traitIds);
 	ok(emptyCustom === 0, 'layered emit: no empty custom', emptyCustom);
 	ok(emptyTags === 0, 'layered emit: no empty tags', emptyTags);
-	// description "" survives in deltas: it is an explicit clear of an
-	// inherited description (templates, which are the base layer, never
-	// carry it — layered emit strips it there).
-	ok(e.sets.Distinctions.traits.Brawn.description === '', 'layered emit: cleared description kept');
+	// Sparse emit: empty description "" and empty traits [] are omitted
+	// (explicit nulls are still kept to clear inherited values).
+	ok(e.sets.Distinctions.traits.Brawn.description === undefined, 'layered emit: empty description omitted');
+	ok(e.sets.Distinctions.traits.Gone.traits === undefined, 'layered emit: empty traits omitted');
 	ok(
 		JSON.stringify(e.sets.Distinctions.traits.Brawn.rating) ===
 			JSON.stringify({ type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }),
@@ -156,7 +156,16 @@ function walk(node, fn) {
 	ok(traitIds === 0, 'export deltas: no trait-level id', traitIds);
 	ok(empties === 0, 'export deltas: no empty custom/tags', empties);
 	const customMade = out.traitSets[0].traits.find((tr) => tr.name === 'Custom Made');
-	ok(customMade && customMade.description === '', 'export deltas: cleared description kept', customMade);
+	ok(customMade && customMade.description === undefined, 'export deltas: empty description omitted', customMade);
+	ok(customMade && customMade.traits === undefined, 'export deltas: empty traits omitted', customMade);
+
+	// Explicit null clears survive stripCharacterForExport.
+	live.traitSets[0].traits[0].description = null;
+	live.traitSets[0].traits[0].traits = null;
+	const nullOut = F.stripCharacterForExport(live, base);
+	const nullBrawn = nullOut.traitSets[0].traits.find((tr) => tr.name === 'Brawn');
+	ok(nullBrawn && nullBrawn.description === null, 'export deltas: explicit description null kept', nullBrawn);
+	ok(nullBrawn && nullBrawn.traits === null, 'export deltas: explicit traits null kept', nullBrawn);
 	ok(out.traitSets[0].id === 'distinctions', 'export deltas: set join id kept');
 	ok(out.sheet.template.character, 'export: template embedded');
 }

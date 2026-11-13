@@ -1,827 +1,823 @@
 {
-  "id": "inheritors-family",
-  "version": 1,
-  "title": "Inheritors - Family & GMCs",
-  "subtitle": "Superpowered Dynasty Heritage",
-  "game": "Inheritors",
-  "variant": "Family Tree File",
-  "pages": 2,
-  "genre": "Superhero / Dynastic Drama",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
-    "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
-    "genre": "Modern Pulp Action-Adventure",
-    "setting": "d6",
-    "prep": "d10",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
-  },
-  "character": {
-    "id": "template-inheritors-family",
-    "isTemplate": true,
-    "name": "",
-    "game": "Inheritors",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 2,
-      "template": "Inheritors",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Your Generation": {
-        "id": "your-generation",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        }
-      },
-      "Parents' Generation": {
-        "id": "parents-generation-a",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        }
-      },
-      "Parents' Generation~2": {
-        "id": "parents-generation-b",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "50%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "Parents' Generation"
-      },
-      "Grandparents' Generation": {
-        "id": "grandparents-generation-a",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        }
-      },
-      "Grandparents' Generation~2": {
-        "id": "grandparents-generation-b",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "50%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "Grandparents' Generation"
-      },
-      "Wild Card Branch": {
-        "id": "wild-card-a",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        }
-      },
-      "Wild Card Branch~2": {
-        "id": "wild-card-b",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "0%",
-            "top": 4,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "Wild Card Branch"
-      },
-      "Wild Card Branch~3": {
-        "id": "wild-card-c",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "50%",
-            "top": 4,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "Wild Card Branch"
-      },
-      "Wild Card Branch~4": {
-        "id": "wild-card-d",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "0%",
-            "top": 5,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "Wild Card Branch"
-      },
-      "Wild Card Branch~5": {
-        "id": "wild-card-e",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "place": {
-            "left": "50%",
-            "top": 5,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "Wild Card Branch"
-      },
-      "GMC": {
-        "id": "gmc-a",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Relationship to PCs": {},
-          "Relationship to GMCs": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        }
-      },
-      "GMC~2": {
-        "id": "gmc-b",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "50%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Relationship to PCs": {},
-          "Relationship to GMCs": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "GMC"
-      },
-      "GMC~3": {
-        "id": "gmc-c",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Relationship to PCs": {},
-          "Relationship to GMCs": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "GMC"
-      },
-      "GMC~4": {
-        "id": "gmc-d",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "50%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Relationship to PCs": {},
-          "Relationship to GMCs": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "GMC"
-      },
-      "GMC~5": {
-        "id": "gmc-e",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Relationship to PCs": {},
-          "Relationship to GMCs": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "GMC"
-      },
-      "GMC~6": {
-        "id": "gmc-f",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 2,
-          "place": {
-            "left": "50%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Detail",
-        "plural": "Details",
-        "traits": {
-          "Name": {},
-          "Relationship to PCs": {},
-          "Relationship to GMCs": {},
-          "Description": {},
-          "Fame": {},
-          "Features": {},
-          "Deed": {},
-          "Current Fate": {}
-        },
-        "label": "GMC"
-      }
-    }
-  }
+	"id": "inheritors-family",
+	"version": 1,
+	"character": {
+		"id": "template-inheritors-family",
+		"isTemplate": true,
+		"name": "",
+		"game": "Inheritors",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 2,
+			"template": "Inheritors",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Inheritors - Family & GMCs",
+				"subtitle": "Superpowered Dynasty Heritage",
+				"genre": "Modern Pulp Action-Adventure",
+				"variant": "Family Tree File",
+				"url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg",
+				"quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+				"setting": "d6",
+				"prep": "d10",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Your Generation": {
+				"id": "your-generation",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				}
+			},
+			"Parents' Generation": {
+				"id": "parents-generation-a",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				}
+			},
+			"Parents' Generation~2": {
+				"id": "parents-generation-b",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "50%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "Parents' Generation"
+			},
+			"Grandparents' Generation": {
+				"id": "grandparents-generation-a",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				}
+			},
+			"Grandparents' Generation~2": {
+				"id": "grandparents-generation-b",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "50%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "Grandparents' Generation"
+			},
+			"Wild Card Branch": {
+				"id": "wild-card-a",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				}
+			},
+			"Wild Card Branch~2": {
+				"id": "wild-card-b",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "0%",
+						"top": 4,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "Wild Card Branch"
+			},
+			"Wild Card Branch~3": {
+				"id": "wild-card-c",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "50%",
+						"top": 4,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "Wild Card Branch"
+			},
+			"Wild Card Branch~4": {
+				"id": "wild-card-d",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "0%",
+						"top": 5,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "Wild Card Branch"
+			},
+			"Wild Card Branch~5": {
+				"id": "wild-card-e",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"place": {
+						"left": "50%",
+						"top": 5,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "Wild Card Branch"
+			},
+			"GMC": {
+				"id": "gmc-a",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Relationship to PCs": {},
+					"Relationship to GMCs": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				}
+			},
+			"GMC~2": {
+				"id": "gmc-b",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "50%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Relationship to PCs": {},
+					"Relationship to GMCs": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "GMC"
+			},
+			"GMC~3": {
+				"id": "gmc-c",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Relationship to PCs": {},
+					"Relationship to GMCs": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "GMC"
+			},
+			"GMC~4": {
+				"id": "gmc-d",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "50%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Relationship to PCs": {},
+					"Relationship to GMCs": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "GMC"
+			},
+			"GMC~5": {
+				"id": "gmc-e",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Relationship to PCs": {},
+					"Relationship to GMCs": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "GMC"
+			},
+			"GMC~6": {
+				"id": "gmc-f",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 2,
+					"place": {
+						"left": "50%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Detail",
+				"plural": "Details",
+				"traits": {
+					"Name": {},
+					"Relationship to PCs": {},
+					"Relationship to GMCs": {},
+					"Description": {},
+					"Fame": {},
+					"Features": {},
+					"Deed": {},
+					"Current Fate": {}
+				},
+				"label": "GMC"
+			}
+		}
+	}
 }

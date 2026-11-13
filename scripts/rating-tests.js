@@ -3,6 +3,9 @@
 // Usage: node scripts/rating-tests.js  (exit 1 on failure)
 const {
 	getRating,
+	resolveType,
+	resolveRating,
+	preserveInheritedTraitTypes,
 	ratingDice,
 	setRatingDice,
 	setRatingDie,
@@ -311,6 +314,83 @@ const { resolveRange } = require('../js/model.ts');
 	ok(JSON.stringify(t.rating.range) === '[6,8,10]', 'explicit range is written');
 	setRatingDie(t, 8);
 	ok(JSON.stringify(t.rating.range) === '[6,8,10]', 'explicit range survives stepping');
+}
+
+// ---- 9. Type fallthrough + preserveInheritedTraitTypes (Part A Item 3).
+{
+	const { resolveRange } = require('../js/model.ts');
+	const setDie = { rating: { type: 'Die', value: [] } };
+	const setWithRange = { rating: { type: 'Die', value: [], range: [6, 8, 10] } };
+	const traitOmitted = { rating: { value: [8] } };
+	const traitNullType = { rating: { type: null, value: [6] } };
+	const traitExplicit = { rating: { type: 'Pip', value: [true] } };
+	const traitUnrated = { name: 'Flavor' };
+
+	ok(resolveType(traitOmitted, [setDie]) === 'Die', 'resolveType inherits from set');
+	ok(resolveType(traitNullType, [setDie]) === 'Die', 'resolveType treats null as omitted');
+	ok(resolveType(traitExplicit, [setDie]) === 'Pip', 'resolveType keeps explicit trait type');
+	ok(resolveType(traitOmitted, [{ rating: { value: [6] } }, setDie]) === 'Die', 'resolveType walks multi-level');
+	ok(resolveType(traitOmitted, []) === undefined, 'resolveType undefined with no ancestor type');
+
+	const rOmitted = resolveRating(traitOmitted, [setDie]);
+	ok(
+		rOmitted && rOmitted.type === 'Die' && JSON.stringify(rOmitted.value) === '[8]',
+		'resolveRating fills inherited type',
+	);
+	ok(resolveRating(traitOmitted, []) === undefined, 'resolveRating undefined when no type resolvable');
+	ok(resolveRating(traitUnrated, [setDie]) === undefined, 'resolveRating stays undefined on unrated trait');
+	const rUnratedSet = { rating: { value: [10] } };
+	ok(resolveRating(rUnratedSet) === undefined, 'getRating/resolveRating without fallback rejects typeless rating');
+
+	ok(isRated(traitOmitted, [setDie]), 'isRated true with inherited type');
+	ok(!isRated(traitOmitted), 'isRated false without fallback when type omitted');
+	ok(JSON.stringify(availableDice(traitOmitted, [setDie])) === '[8]', 'availableDice reads inherited Die');
+	ok(
+		JSON.stringify(resolveRange(traitOmitted, [setWithRange])) === '[6,8,10]',
+		'resolveRange applies set range with inherited Die type',
+	);
+	ok(hasOutRange({ rating: { value: [8], out: true } }, [setWithRange]), 'hasOutRange honors inherited Die type');
+	ok(
+		isOutDie({ rating: { value: [12], out: true } }, [setWithRange]),
+		'isOutDie compares against resolved range with inherited Die type',
+	);
+
+	// Subtrait inside trait inside set
+	const nestedSet = {
+		rating: { type: 'Die', value: [] },
+		traits: [
+			{
+				name: 'Duty',
+				rating: { value: [8] },
+				traits: [
+					{ name: 'Sub', rating: { value: [6] } },
+					{ name: 'Override', rating: { type: 'Pip', value: [true] } },
+				],
+			},
+		],
+	};
+	ok(
+		resolveType(nestedSet.traits[0].traits[0], [nestedSet.traits[0], nestedSet]) === 'Die',
+		'nested subtrait resolves set type through parent trait',
+	);
+
+	// preserveInheritedTraitTypes materializes omitted/null types recursively before clearing parent rating
+	const preserved = {
+		rating: { type: 'Die', value: [] },
+		traits: [
+			{ name: 'A', rating: { value: [8] }, traits: [{ name: 'Sub', rating: { value: [6] } }] },
+			{ name: 'B', rating: { type: null, value: [10] } },
+			{ name: 'C', rating: { type: 'Pip', value: [true] } },
+			{ name: 'D' },
+		],
+	};
+	preserveInheritedTraitTypes(preserved);
+	delete preserved.rating;
+	ok(preserved.traits[0].rating.type === 'Die', 'preserveInheritedTraitTypes stamps omitted type');
+	ok(preserved.traits[0].traits[0].rating.type === 'Die', 'preserveInheritedTraitTypes stamps nested subtrait');
+	ok(preserved.traits[1].rating.type === 'Die', 'preserveInheritedTraitTypes replaces null type');
+	ok(preserved.traits[2].rating.type === 'Pip', 'preserveInheritedTraitTypes leaves explicit type alone');
+	ok(preserved.traits[3].rating === undefined, 'preserveInheritedTraitTypes leaves unrated trait alone');
 }
 
 console.log(`rating-tests: ${pass} passed, ${fail} failed`);

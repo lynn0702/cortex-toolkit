@@ -1,1596 +1,1301 @@
 {
-  "id": "kitchen-sink",
-  "title": "Kitchen Sink Style Showcase",
-  "subtitle": "All 17 Trait Set Styles & Features",
-  "game": "Toolkit Reference",
-  "variant": "Showcase",
-  "pages": 3,
-  "genre": "Reference",
-  "version": 1,
-  "updatedAt": "2026-10-14T12:00:00.000Z",
-  "character": {
-    "id": "00000000-0000-4000-8000-000000000001",
-    "isTemplate": true,
-    "dateCreated": "2026-10-14T12:00:00.000Z",
-    "dateModified": "2026-10-14T12:00:00.000Z",
-    "dateTouched": "2026-10-14T12:00:00.000Z",
-    "name": "Kitchen Sink Showcase",
-    "player": "Style Audit",
-    "game": "",
-    "pronouns": "They / Them",
-    "description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
-    "plotPoints": 3,
-    "notes": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.",
-    "tags": [
-      "showcase",
-      "kitchen-sink"
-    ],
-    "portrait": {
-      "url": "",
-      "alt": "Character Portrait",
-      "view": {
-        "alignment": "center-center",
-        "location": "header"
-      }
-    },
-    "view": {
-      "nickname": "The Everything Sheet",
-      "pageCount": 3,
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                3
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "ks-distinctions",
-        "view": {
-          "page": 1,
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "reservedSlots": 3,
-          "ratingLadder": [
-            8
-          ],
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "94%",
-              "height": 1
-            },
-            "rating": {
-              "left": "94%",
-              "top": 0,
-              "width": "6%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "block": {
-              "left": "0%",
-              "top": 3,
-              "width": "100%",
-              "height": 1
-            },
-            "badge": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Walking Style Guide": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "Every layout edge case deserves a test.",
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out this distinction's d8 for a d4."
-                  },
-                  "Pixel Parity": {
-                    "description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "slots": {
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out this distinction's d8 for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "2": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you switch out this distinction's d8 for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Values": {
-        "id": "ks-values-statements",
-        "statement": true,
-        "hasQuestionedPip": true,
-        "view": {
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "place": {
-            "left": "50%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "70%",
-              "height": 1
-            },
-            "rating": {
-              "left": "70%",
-              "top": 0,
-              "width": "30%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Value",
-        "plural": "Values",
-        "traits": {
-          "Craft": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "Form and function are inseparable.",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "Form and function are inseparable.": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "Speed": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "Ship early, refine relentlessly.",
-            "traits": {
-              "Statement": {
-                "traits": {
-                  "Ship early, refine relentlessly.": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        true
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "Clarity": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Skills": {
-        "id": "ks-subtrait-columns",
-        "view": {
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "subtrait-columns"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "labels": {
-            "left": "SKILL",
-            "right": "SPECIALTIES"
-          },
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Skill",
-        "plural": "Skills",
-        "traits": {
-          "Engineering": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "traits": {
-              "Clockwork": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Aetherics": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Navigation": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "traits": {
-              "Star Charts": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Diplomacy": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Standing": {
-        "id": "ks-paired-slots",
-        "statement": true,
-        "view": {
-          "page": 1,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": true
-          },
-          "labels": {
-            "slot0": "COMPLICATION",
-            "slot1": "BONUS"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "subtraitRatingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "place": {
-            "left": "50%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "reservedSlots": 2,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "50%",
-              "height": 1
-            },
-            "child:Statement": {
-              "left": "50%",
-              "top": 0,
-              "width": "50%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Standing",
-        "plural": "Standings",
-        "traits": {
-          "The Guild": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "They owe me a drydock bay.",
-            "traits": {
-              "Complication": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Bonus": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    8
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              },
-              "Statement": {
-                "traits": {
-                  "They owe me a drydock bay.": {
-                    "rating": {
-                      "type": "Pip",
-                      "value": [
-                        false
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Badges": {
-        "id": "ks-die-rows",
-        "counterLabel": "XP",
-        "view": {
-          "page": 1,
-          "header": "top",
-          "headerAlign": "left",
-          "style": {
-            "header": "default",
-            "body": "die-rows"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 3,
-          "cluster": "badges-resources",
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Badge",
-        "plural": "Badges",
-        "traits": {
-          "First Responder": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "xp": 3
-          },
-          "Trailblazer": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "xp": 1
-          }
-        }
-      },
-      "Talents": {
-        "id": "ks-three-col-table",
-        "view": {
-          "page": 1,
-          "features": {
-            "description": true,
-            "sfx": true,
-            "subtraits": false
-          },
-          "labels": {
-            "col1": "TALENT",
-            "col2": "ACTIVATION",
-            "col3": "EFFECT"
-          },
-          "reservedSlots": 2,
-          "place": {
-            "left": "50%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "28%",
-              "height": 1
-            },
-            "description": {
-              "left": "28%",
-              "top": 0,
-              "width": "33%",
-              "height": 1
-            },
-            "child:SFX": {
-              "left": "61%",
-              "top": 0,
-              "width": "39%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Talent",
-        "plural": "Talents",
-        "traits": {
-          "Overclock": {
-            "description": "Spend 1 PP when rolling Engineering.",
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Effect": {
-                    "description": "Step up your Effect die by one step for the scene."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Resources": {
-        "id": "ks-dice-count",
-        "view": {
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "dice-count"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "multiDie": true,
-          "labels": {
-            "rating": "RATING",
-            "dice": "/ DICE"
-          },
-          "cluster": "badges-resources",
-          "place": {
-            "left": "0%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Resource",
-        "plural": "Resources",
-        "traits": {
-          "Salvage Cache": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                8,
-                8,
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "Contacts": {
-            "rating": {
-              "type": "Dice",
-              "value": [
-                6,
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          }
-        }
-      },
-      "Stress": {
-        "id": "ks-stress",
-        "view": {
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "die-track"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "outIndicator": true,
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "place": {
-            "left": "50%",
-            "top": 3,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "noun": "Stress",
-        "plural": "Stress",
-        "traits": {
-          "Physical": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Mental": {},
-          "Social": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                12
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Growth Ladder": {
-        "id": "ks-dice-ladder",
-        "view": {
-          "ladder": true,
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "die-rows"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "noun": "Rung",
-        "plural": "Rungs",
-        "traits": {
-          "Novice": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Adept": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Master": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Dossier": {
-        "id": "ks-labeled-fields",
-        "view": {
-          "page": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "place": {
-            "left": "50%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Field",
-        "plural": "Fields",
-        "traits": {
-          "Origin": {
-            "description": "Outer Rim Shipyard #4"
-          },
-          "Drive": {
-            "description": "Restore the lost fleet"
-          },
-          "Quirk": {}
-        }
-      },
-      "Progress Track": {
-        "id": "ks-pips",
-        "view": {
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "pips": {
-            "perRow": 5,
-            "connected": true
-          },
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            true,
-            true,
-            true,
-            true,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Pip",
-        "plural": "Pips",
-        "traits": {}
-      },
-      "Session Record": {
-        "id": "ks-session-record",
-        "view": {
-          "page": 2,
-          "style": {
-            "header": "default",
-            "body": "pips"
-          },
-          "place": {
-            "left": "50%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "reservedSlots": 3,
-          "pips": {
-            "labels": true,
-            "perRow": 1
-          },
-          "pillar": "play"
-        },
-        "rating": {
-          "type": "Pip",
-          "value": [
-            false,
-            false,
-            false
-          ]
-        },
-        "noun": "Session",
-        "plural": "Sessions",
-        "traits": {
-          "Session 1: The Awakening": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Session 2: Crossing the Threshold": {}
-        }
-      },
-      "Roles (Compact Two-Column)": {
-        "id": "ks-two-col-compact",
-        "view": {
-          "page": 2,
-          "style": {
-            "header": "two-columns-compact",
-            "body": "two-columns-compact"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Role",
-        "plural": "Roles",
-        "traits": {
-          "Tactician": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Outrider": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Scholar": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Sentinel": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                4
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Notes": {
-        "id": "ks-notes",
-        "view": {
-          "page": 2,
-          "place": {
-            "left": "50%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "play",
-          "parts": {
-            "description": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Note",
-        "plural": "Notes",
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*"
-          }
-        }
-      },
-      "Detailed Columns": {
-        "id": "ks-detailed-columns",
-        "view": {
-          "page": 3,
-          "style": {
-            "header": "default",
-            "body": "two-columns-detailed"
-          },
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Entry",
-        "plural": "Entries",
-        "traits": {
-          "Alpha": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "First detailed entry."
-          },
-          "Beta": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "Second detailed entry."
-          },
-          "Gamma": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "Third detailed entry."
-          },
-          "Delta": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "description": "Fourth detailed entry."
-          }
-        }
-      },
-      "Resource Pool": {
-        "id": "ks-resource-pool",
-        "view": {
-          "page": 3,
-          "style": {
-            "header": "pool-rows",
-            "body": "pool-rows"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": true
-          },
-          "place": {
-            "left": "50%",
-            "top": 0,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Resource",
-        "plural": "Resources",
-        "traits": {
-          "Supply": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "traits": {
-              "Ammo": {
-                "rating": {
-                  "type": "Die",
-                  "value": [
-                    6
-                  ],
-                  "range": [
-                    4,
-                    6,
-                    8,
-                    10,
-                    12
-                  ]
-                }
-              }
-            }
-          },
-          "Fuel": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          },
-          "Intel": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0
-          }
-        }
-      },
-      "Signature Assets": {
-        "id": "ks-assets",
-        "view": {
-          "page": 3,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus",
-          "frame": {
-            "box": true
-          }
-        },
-        "noun": "Asset",
-        "plural": "Assets",
-        "traits": {
-          "Custom Sidearm": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Survey Kit": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Encrypted Comms": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Simple List": {
-        "id": "ks-list",
-        "view": {
-          "page": 3,
-          "style": {
-            "header": "list",
-            "body": "list"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "place": {
-            "left": "50%",
-            "top": 1,
-            "width": "50%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Item",
-        "plural": "Items",
-        "traits": {
-          "Item One": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Item Two": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "Item Three": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Image Set": {
-        "id": "ks-image",
-        "view": {
-          "page": 3,
-          "style": {
-            "header": "default",
-            "body": "image"
-          },
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "imageConfig": {
-            "url": "",
-            "height": 120,
-            "alignment": "center",
-            "caption": "Image set caption"
-          },
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "100%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Image",
-        "plural": "Images",
-        "traits": {}
-      }
-    }
-  }
+	"id": "kitchen-sink",
+	"version": 1,
+	"updatedAt": "2026-10-14T12:00:00.000Z",
+	"character": {
+		"id": "00000000-0000-4000-8000-000000000001",
+		"isTemplate": true,
+		"dateCreated": "2026-10-14T12:00:00.000Z",
+		"dateModified": "2026-10-14T12:00:00.000Z",
+		"dateTouched": "2026-10-14T12:00:00.000Z",
+		"name": "Kitchen Sink Showcase",
+		"player": "Style Audit",
+		"game": "Toolkit Reference",
+		"pronouns": "They / Them",
+		"description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
+		"plotPoints": 3,
+		"notes": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.",
+		"tags": [
+			"showcase",
+			"kitchen-sink"
+		],
+		"portrait": {
+			"url": "",
+			"alt": "Character Portrait",
+			"view": {
+				"alignment": "center-center",
+				"location": "header"
+			}
+		},
+		"view": {
+			"nickname": "The Everything Sheet",
+			"pageCount": 3,
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"title": "Kitchen Sink Style Showcase",
+				"subtitle": "All 17 Trait Set Styles & Features",
+				"genre": "Reference"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								3
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "ks-distinctions",
+				"view": {
+					"page": 1,
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"reservedSlots": 3,
+					"ratingLadder": [
+						8
+					],
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "94%",
+							"height": 1
+						},
+						"rating": {
+							"left": "94%",
+							"top": 0,
+							"width": "6%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"block": {
+							"left": "0%",
+							"top": 3,
+							"width": "100%",
+							"height": 1
+						},
+						"badge": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Walking Style Guide": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"description": "Every layout edge case deserves a test.",
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
+									},
+									"Pixel Parity": {
+										"description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
+									}
+								}
+							}
+						}
+					}
+				},
+				"slots": {
+					"1": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
+									}
+								}
+							}
+						}
+					},
+					"2": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Values": {
+				"id": "ks-values-statements",
+				"statement": true,
+				"hasQuestionedPip": true,
+				"view": {
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"place": {
+						"left": "50%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "70%",
+							"height": 1
+						},
+						"rating": {
+							"left": "70%",
+							"top": 0,
+							"width": "30%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Value",
+				"plural": "Values",
+				"traits": {
+					"Craft": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"description": "Form and function are inseparable.",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"Form and function are inseparable.": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"Speed": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"description": "Ship early, refine relentlessly.",
+						"traits": {
+							"Statement": {
+								"traits": {
+									"Ship early, refine relentlessly.": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												true
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"Clarity": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Skills": {
+				"id": "ks-subtrait-columns",
+				"view": {
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "subtrait-columns"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"labels": {
+						"left": "SKILL",
+						"right": "SPECIALTIES"
+					},
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Skill",
+				"plural": "Skills",
+				"traits": {
+					"Engineering": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"traits": {
+							"Clockwork": {
+								"rating": {
+									"value": [
+										8
+									]
+								}
+							},
+							"Aetherics": {
+								"rating": {
+									"value": [
+										6
+									]
+								}
+							}
+						}
+					},
+					"Navigation": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"traits": {
+							"Star Charts": {
+								"rating": {
+									"value": [
+										6
+									]
+								}
+							}
+						}
+					},
+					"Diplomacy": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Standing": {
+				"id": "ks-paired-slots",
+				"statement": true,
+				"view": {
+					"page": 1,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": true
+					},
+					"labels": {
+						"slot0": "COMPLICATION",
+						"slot1": "BONUS"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"subtraitRatingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"place": {
+						"left": "50%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"reservedSlots": 2,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "50%",
+							"height": 1
+						},
+						"child:Statement": {
+							"left": "50%",
+							"top": 0,
+							"width": "50%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Standing",
+				"plural": "Standings",
+				"traits": {
+					"The Guild": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"description": "They owe me a drydock bay.",
+						"traits": {
+							"Complication": {
+								"rating": {
+									"value": [
+										6
+									]
+								}
+							},
+							"Bonus": {
+								"rating": {
+									"value": [
+										8
+									]
+								}
+							},
+							"Statement": {
+								"traits": {
+									"They owe me a drydock bay.": {
+										"rating": {
+											"type": "Pip",
+											"value": [
+												false
+											]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Badges": {
+				"id": "ks-die-rows",
+				"counterLabel": "XP",
+				"view": {
+					"page": 1,
+					"header": "top",
+					"headerAlign": "left",
+					"style": {
+						"header": "default",
+						"body": "die-rows"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 3,
+					"cluster": "badges-resources",
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Badge",
+				"plural": "Badges",
+				"traits": {
+					"First Responder": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"xp": 3
+					},
+					"Trailblazer": {
+						"rating": {
+							"value": [
+								6
+							]
+						},
+						"xp": 1
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Talents": {
+				"id": "ks-three-col-table",
+				"view": {
+					"page": 1,
+					"features": {
+						"description": true,
+						"sfx": true,
+						"subtraits": false
+					},
+					"labels": {
+						"col1": "TALENT",
+						"col2": "ACTIVATION",
+						"col3": "EFFECT"
+					},
+					"reservedSlots": 2,
+					"place": {
+						"left": "50%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "28%",
+							"height": 1
+						},
+						"description": {
+							"left": "28%",
+							"top": 0,
+							"width": "33%",
+							"height": 1
+						},
+						"child:SFX": {
+							"left": "61%",
+							"top": 0,
+							"width": "39%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Talent",
+				"plural": "Talents",
+				"traits": {
+					"Overclock": {
+						"description": "Spend 1 PP when rolling Engineering.",
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Effect": {
+										"description": "Step up your Effect die by one step for the scene."
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"Resources": {
+				"id": "ks-dice-count",
+				"view": {
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "dice-count"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"multiDie": true,
+					"labels": {
+						"rating": "RATING",
+						"dice": "/ DICE"
+					},
+					"cluster": "badges-resources",
+					"place": {
+						"left": "0%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Resource",
+				"plural": "Resources",
+				"traits": {
+					"Salvage Cache": {
+						"rating": {
+							"value": [
+								8,
+								8,
+								8
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"Contacts": {
+						"rating": {
+							"value": [
+								6,
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					}
+				},
+				"rating": {
+					"type": "Dice",
+					"value": []
+				}
+			},
+			"Stress": {
+				"id": "ks-stress",
+				"view": {
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "die-track"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"outIndicator": true,
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"place": {
+						"left": "50%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"noun": "Stress",
+				"plural": "Stress",
+				"traits": {
+					"Physical": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Mental": {},
+					"Social": {
+						"rating": {
+							"value": [
+								12
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Growth Ladder": {
+				"id": "ks-dice-ladder",
+				"view": {
+					"ladder": true,
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "die-rows"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"noun": "Rung",
+				"plural": "Rungs",
+				"traits": {
+					"Novice": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"Adept": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Master": {
+						"rating": {
+							"value": [
+								10
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Dossier": {
+				"id": "ks-labeled-fields",
+				"view": {
+					"page": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"place": {
+						"left": "50%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Field",
+				"plural": "Fields",
+				"traits": {
+					"Origin": {
+						"description": "Outer Rim Shipyard #4"
+					},
+					"Drive": {
+						"description": "Restore the lost fleet"
+					},
+					"Quirk": {}
+				}
+			},
+			"Progress Track": {
+				"id": "ks-pips",
+				"view": {
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"pips": {
+						"perRow": 5,
+						"connected": true
+					},
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						true,
+						true,
+						true,
+						true,
+						false,
+						false,
+						false,
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Pip",
+				"plural": "Pips",
+				"traits": {}
+			},
+			"Session Record": {
+				"id": "ks-session-record",
+				"view": {
+					"page": 2,
+					"style": {
+						"header": "default",
+						"body": "pips"
+					},
+					"place": {
+						"left": "50%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"reservedSlots": 3,
+					"pips": {
+						"labels": true,
+						"perRow": 1
+					},
+					"pillar": "play"
+				},
+				"rating": {
+					"type": "Pip",
+					"value": [
+						false,
+						false,
+						false
+					]
+				},
+				"noun": "Session",
+				"plural": "Sessions",
+				"traits": {
+					"Session 1: The Awakening": {
+						"rating": {
+							"type": "Die",
+							"value": [
+								6
+							]
+						}
+					},
+					"Session 2: Crossing the Threshold": {}
+				}
+			},
+			"Roles (Compact Two-Column)": {
+				"id": "ks-two-col-compact",
+				"view": {
+					"page": 2,
+					"style": {
+						"header": "two-columns-compact",
+						"body": "two-columns-compact"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Role",
+				"plural": "Roles",
+				"traits": {
+					"Tactician": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Outrider": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"Scholar": {
+						"rating": {
+							"value": [
+								10
+							]
+						}
+					},
+					"Sentinel": {
+						"rating": {
+							"value": [
+								4
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Notes": {
+				"id": "ks-notes",
+				"view": {
+					"page": 2,
+					"place": {
+						"left": "50%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "play",
+					"parts": {
+						"description": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Note",
+				"plural": "Notes",
+				"traits": {},
+				"slots": {
+					"0": {
+						"description": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*"
+					}
+				}
+			},
+			"Detailed Columns": {
+				"id": "ks-detailed-columns",
+				"view": {
+					"page": 3,
+					"style": {
+						"header": "default",
+						"body": "two-columns-detailed"
+					},
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Entry",
+				"plural": "Entries",
+				"traits": {
+					"Alpha": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"description": "First detailed entry."
+					},
+					"Beta": {
+						"rating": {
+							"value": [
+								6
+							]
+						},
+						"description": "Second detailed entry."
+					},
+					"Gamma": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"description": "Third detailed entry."
+					},
+					"Delta": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"description": "Fourth detailed entry."
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Resource Pool": {
+				"id": "ks-resource-pool",
+				"view": {
+					"page": 3,
+					"style": {
+						"header": "pool-rows",
+						"body": "pool-rows"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": true
+					},
+					"place": {
+						"left": "50%",
+						"top": 0,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Resource",
+				"plural": "Resources",
+				"traits": {
+					"Supply": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"traits": {
+							"Ammo": {
+								"rating": {
+									"value": [
+										6
+									]
+								}
+							}
+						}
+					},
+					"Fuel": {
+						"rating": {
+							"value": [
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					},
+					"Intel": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"spendable": true,
+						"hitches": 0
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Signature Assets": {
+				"id": "ks-assets",
+				"view": {
+					"page": 3,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus",
+					"frame": {
+						"box": true
+					}
+				},
+				"noun": "Asset",
+				"plural": "Assets",
+				"traits": {
+					"Custom Sidearm": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Survey Kit": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"Encrypted Comms": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Simple List": {
+				"id": "ks-list",
+				"view": {
+					"page": 3,
+					"style": {
+						"header": "list",
+						"body": "list"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"place": {
+						"left": "50%",
+						"top": 1,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Item",
+				"plural": "Items",
+				"traits": {
+					"Item One": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Item Two": {
+						"rating": {
+							"value": [
+								6
+							]
+						}
+					},
+					"Item Three": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Image Set": {
+				"id": "ks-image",
+				"view": {
+					"page": 3,
+					"style": {
+						"header": "default",
+						"body": "image"
+					},
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"imageConfig": {
+						"url": "",
+						"height": 120,
+						"alignment": "center",
+						"caption": "Image set caption"
+					},
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "100%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Image",
+				"plural": "Images",
+				"traits": {}
+			}
+		}
+	}
 }

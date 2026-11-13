@@ -438,7 +438,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		dreamerBlock.unmount();
 	});
 
-	it('exposes Portrait Size, Portrait Position, Bookmark vs .editor-close, filled/unfilled die chips, and passes axe-core in TraitSetEditor', async () => {
+	it('exposes Portrait Size, Portrait Position, Bookmark without .editor-close, filled/unfilled die chips, and passes axe-core in TraitSetEditor', async () => {
 		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
 		const dreamerIdx = character.traitSets.findIndex((s: any) => s.name === 'The Dreamer');
 
@@ -446,14 +446,13 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 			props: { character, traitSetID: dreamerIdx, open: true },
 		});
 
-		// Bookmark action stays separate from .editor-close so studio panel hides only Close
 		const bookmarkBtn = wrapper.find(
 			'.editor-controls button[aria-label*="Bookmark"], .editor-controls button[aria-label*="Preset"]',
 		);
 		const closeBtn = wrapper.find('.editor-controls button.editor-close');
 		expect(bookmarkBtn.exists()).toBe(true);
 		expect(bookmarkBtn.classes()).not.toContain('editor-close');
-		expect(closeBtn.exists()).toBe(true);
+		expect(closeBtn.exists()).toBe(false);
 
 		// Range and Single Die chips expose aria-pressed, omit redundant d4-d12 text, and render filled/unfilled SVGs
 		const rangeBtns = wrapper.findAll('.editor-field .rating-scale-chips button[aria-pressed]');

@@ -1,4 +1,5 @@
 // dice-pool — dice pool model (CortexPal-compatible). TypeScript leaf.
+import { resolveRating } from './model.ts';
 
 export const DIE_EXPRESSION = /(\d*(d|D))?(4|6|8|10|12)/;
 export const DIE_SIZES = [4, 6, 8, 10, 12];
@@ -233,7 +234,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 		const setHitches = resolveNumericHitches(ts, 1);
 		const setKeepsExtra = resolveNumericKeepsExtra(ts, 0);
 
-		const setDice = extractValidDice(ts.rating);
+		const setDice = extractValidDice(resolveRating(ts));
 		if (setDice.length > 0) {
 			const setName = String(ts.name || setNoun || `Set ${sIdx + 1}`).trim();
 			const setDesc = String(ts.description || '').trim();
@@ -280,7 +281,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 			const tr = traits[tIdx];
 			if (!tr || tr.spent === true || tr.id === 'plotPoints') continue;
 
-			const trDice = extractValidDice(tr.rating);
+			const trDice = extractValidDice(resolveRating(tr, [ts]));
 			const children = Array.isArray(tr.traits) ? tr.traits : [];
 			const hasHinderChild = children.some((c: any) => {
 				const cname = String(c?.name || '')
@@ -322,7 +323,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 				const subName = String(sub.name || '').trim();
 				const subLower = subName.toLowerCase();
 				if (!subName || subLower === 'hinder' || subLower === 'sfx' || subLower === 'statement') continue;
-				const subDice = extractValidDice(sub.rating);
+				const subDice = extractValidDice(resolveRating(sub, [tr, ts]));
 				if (subDice.length === 0) continue;
 				results.push({
 					key: `${setKey}-t-${tr.id || tIdx}-sub-${sub.id || subIdx}`,

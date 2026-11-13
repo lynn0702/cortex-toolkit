@@ -75,7 +75,8 @@ function createDefaultRatingForType(type: RatingType | 'None', customRange?: num
 // Ensure every trait's rating uses canonical { type, value: [...], range: [...] }
 function normalizeRating(r: any, defaultType: RatingType = 'Die'): Rating {
 	if (!r || typeof r !== 'object') return createDefaultRatingForType(defaultType)!;
-	const type: RatingType = r.type === 'Dice' || r.type === 'Pip' || r.type === 'Counter' ? r.type : 'Die';
+	const type: RatingType =
+		r.type === 'Dice' || r.type === 'Pip' || r.type === 'Counter' || r.type === 'Die' ? r.type : defaultType;
 	const rawVal = Array.isArray(r.value)
 		? r.value
 		: Array.isArray(r.values)
@@ -134,12 +135,19 @@ function createDefaultWorkingSet(source?: any): any {
 				rating: { left: '65%', top: 0, width: '35%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
 			};
 		}
+		const setTypeRaw = copy?.rating?.type;
+		const setFallbackType: RatingType =
+			setTypeRaw === 'Dice' || setTypeRaw === 'Pip' || setTypeRaw === 'Counter' || setTypeRaw === 'Die'
+				? setTypeRaw
+				: 'Die';
 		if (Array.isArray(copy.traits)) {
 			copy.traits.forEach((t: any) => {
-				if (t.rating) t.rating = normalizeRating(t.rating);
+				if (t.rating) t.rating = normalizeRating(t.rating, setFallbackType);
 				if (Array.isArray(t.traits)) {
+					const traitFallbackType: RatingType = t.rating?.type || setFallbackType;
 					t.traits.forEach((sub: any) => {
-						if (sub.rating && !characterCurioFunctions.isSfxContainer(sub)) sub.rating = normalizeRating(sub.rating);
+						if (sub.rating && !characterCurioFunctions.isSfxContainer(sub))
+							sub.rating = normalizeRating(sub.rating, traitFallbackType);
 					});
 				}
 			});

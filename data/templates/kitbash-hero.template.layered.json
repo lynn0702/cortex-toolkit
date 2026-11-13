@@ -1,694 +1,630 @@
 {
-  "id": "kitbash-hero",
-  "version": 1,
-  "title": "Kit Bash!",
-  "subtitle": "Modular Comic Book Superheroes",
-  "game": "Kit Bash!",
-  "variant": "Hero File",
-  "pages": 1,
-  "genre": "Comic Book / Superhero",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
-    "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
-    "genre": "Superhero",
-    "setting": "d6",
-    "prep": "d12",
-    "complexity": "d8",
-    "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
-  },
-  "character": {
-    "id": "template-kitbash-hero",
-    "isTemplate": true,
-    "name": "",
-    "game": "KitBash",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "KitBash",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Pronouns"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Origin, motivation, and crime-fighting persona",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "ratingLadder": [
-            8
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {
-          "Personality:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Past:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          },
-          "Quirk:": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
-            },
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {
-                    "rating": {
-                      "type": "Die",
-                      "value": [
-                        4
-                      ],
-                      "range": [
-                        4
-                      ]
-                    },
-                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Affiliations": {
-        "id": "affiliations",
-        "description": "Operating mode ratings",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "33.333%",
-            "top": 0,
-            "width": "33.333%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Affiliation",
-        "plural": "Affiliations",
-        "traits": {
-          "Personal:": {},
-          "Group:": {},
-          "World:": {}
-        }
-      },
-      "Specialties": {
-        "id": "specialties",
-        "description": "Master and expert professional skills",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 5,
-          "place": {
-            "left": "66.666%",
-            "top": 0,
-            "width": "33.334%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Specialty",
-        "plural": "Specialties",
-        "traits": {}
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Heroic gear and vehicles",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "33.333%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Signature Asset",
-        "plural": "Signature Assets",
-        "traits": {}
-      },
-      "Stress": {
-        "id": "stress",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "die-track",
-            "body": "die-track"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 3,
-          "place": {
-            "left": "33.333%",
-            "top": 1,
-            "width": "33.333%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "play"
-        },
-        "noun": "Stress",
-        "plural": "Stress",
-        "traits": {
-          "Physical": {},
-          "Mental": {},
-          "Social": {}
-        }
-      },
-      "Growth Pool": {
-        "id": "growth-pool",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "dice-count"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": true,
-          "reservedSlots": 5,
-          "place": {
-            "left": "66.666%",
-            "top": 1,
-            "width": "33.334%",
-            "height": 1
-          },
-          "labels": {
-            "rating": "RATING",
-            "dice": "/ DICE"
-          },
-          "pillar": "play"
-        },
-        "pool": true,
-        "noun": "Growth Die",
-        "plural": "Growth Dice",
-        "traits": {
-          "D4": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                4
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D6": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                6
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D8": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D10": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                10
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          },
-          "D12": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                12
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            },
-            "spendable": true,
-            "hitches": 0,
-            "view": {
-              "poolCount": 1
-            }
-          }
-        }
-      },
-      "Power Set 1": {
-        "id": "power-set",
-        "description": "Modular powers, SFX triggers, and shutdown limits",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Power Set",
-        "plural": "Power Sets",
-        "traits": {
-          "Powers": {},
-          "Limits": {}
-        }
-      },
-      "Power Set 2": {
-        "id": "power-set-2",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {
-          "Powers": {},
-          "Limits": {}
-        }
-      },
-      "Power Set 3": {
-        "id": "power-set-3",
-        "view": {
-          "header": "top",
-          "headerAlign": "left",
-          "traitColumns": 2,
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "pillar": "plus",
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          }
-        },
-        "noun": "Power",
-        "plural": "Powers",
-        "traits": {
-          "Powers": {},
-          "Limits": {}
-        }
-      }
-    }
-  }
+	"id": "kitbash-hero",
+	"version": 1,
+	"character": {
+		"id": "template-kitbash-hero",
+		"isTemplate": true,
+		"name": "",
+		"game": "Kit Bash!",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Kit Bash!",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Modular Comic Book Superheroes",
+				"genre": "Superhero",
+				"variant": "Hero File",
+				"url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg",
+				"quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+				"setting": "d6",
+				"prep": "d12",
+				"complexity": "d8"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Pronouns"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Origin, motivation, and crime-fighting persona",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"ratingLadder": [
+						8
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {
+					"Personality:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Past:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					},
+					"Quirk:": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"view": {
+							"badge": {
+								"text": "SFX",
+								"shape": "vertical-bar",
+								"color": "black"
+							}
+						},
+						"traits": {
+							"SFX": {
+								"traits": {
+									"Hinder": {
+										"rating": {
+											"value": [
+												4
+											],
+											"range": [
+												4
+											]
+										},
+										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+									}
+								}
+							}
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Affiliations": {
+				"id": "affiliations",
+				"description": "Operating mode ratings",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "33.333%",
+						"top": 0,
+						"width": "33.333%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Affiliation",
+				"plural": "Affiliations",
+				"traits": {
+					"Personal:": {},
+					"Group:": {},
+					"World:": {}
+				}
+			},
+			"Specialties": {
+				"id": "specialties",
+				"description": "Master and expert professional skills",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 5,
+					"place": {
+						"left": "66.666%",
+						"top": 0,
+						"width": "33.334%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Specialty",
+				"plural": "Specialties",
+				"traits": {}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"description": "Heroic gear and vehicles",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "33.333%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Signature Asset",
+				"plural": "Signature Assets",
+				"traits": {}
+			},
+			"Stress": {
+				"id": "stress",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "die-track",
+						"body": "die-track"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 3,
+					"place": {
+						"left": "33.333%",
+						"top": 1,
+						"width": "33.333%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "play"
+				},
+				"noun": "Stress",
+				"plural": "Stress",
+				"traits": {
+					"Physical": {},
+					"Mental": {},
+					"Social": {}
+				}
+			},
+			"Growth Pool": {
+				"id": "growth-pool",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "dice-count"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": true,
+					"reservedSlots": 5,
+					"place": {
+						"left": "66.666%",
+						"top": 1,
+						"width": "33.334%",
+						"height": 1
+					},
+					"labels": {
+						"rating": "RATING",
+						"dice": "/ DICE"
+					},
+					"pillar": "play"
+				},
+				"pool": true,
+				"noun": "Growth Die",
+				"plural": "Growth Dice",
+				"traits": {
+					"D4": {
+						"rating": {
+							"value": [
+								4
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D6": {
+						"rating": {
+							"value": [
+								6
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D8": {
+						"rating": {
+							"value": [
+								8
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D10": {
+						"rating": {
+							"value": [
+								10
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					},
+					"D12": {
+						"rating": {
+							"value": [
+								12
+							]
+						},
+						"spendable": true,
+						"hitches": 0,
+						"view": {
+							"poolCount": 1
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Power Set 1": {
+				"id": "power-set",
+				"description": "Modular powers, SFX triggers, and shutdown limits",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Power Set",
+				"plural": "Power Sets",
+				"traits": {
+					"Powers": {},
+					"Limits": {}
+				}
+			},
+			"Power Set 2": {
+				"id": "power-set-2",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {
+					"Powers": {},
+					"Limits": {}
+				}
+			},
+			"Power Set 3": {
+				"id": "power-set-3",
+				"view": {
+					"header": "top",
+					"headerAlign": "left",
+					"traitColumns": 2,
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"pillar": "plus",
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					}
+				},
+				"noun": "Power",
+				"plural": "Powers",
+				"traits": {
+					"Powers": {},
+					"Limits": {}
+				}
+			}
+		}
+	}
 }

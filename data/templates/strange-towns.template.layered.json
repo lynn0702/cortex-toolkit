@@ -1,452 +1,435 @@
 {
-  "id": "strange-towns",
-  "version": 1,
-  "title": "Strange Towns",
-  "subtitle": "Small Town Supernatural Weirdness",
-  "game": "Strange Towns",
-  "variant": "Townsperson File",
-  "pages": 1,
-  "genre": "Horror / Small Town / Weird Fiction",
-  "listing": {
-    "url": "https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866",
-    "quote": "There’s something wrong with this town. Maybe it’s the sheriff who never blinks.",
-    "genre": "Weird horror / small-town mystery",
-    "setting": "d6",
-    "prep": "d6",
-    "complexity": "d6",
-    "image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg"
-  },
-  "character": {
-    "id": "template-strange-towns",
-    "isTemplate": true,
-    "name": "",
-    "game": "Strange Towns",
-    "description": "",
-    "pronouns": "",
-    "plotPoints": 1,
-    "notes": "",
-    "player": "",
-    "portrait": {
-      "url": "",
-      "view": {
-        "location": "header"
-      }
-    },
-    "view": {
-      "pageCount": 1,
-      "template": "Strange Towns",
-      "watermark": {
-        "enabled": true,
-        "url": "images/cortex_prime_logo_light_transparent.png",
-        "opacity": 0.08,
-        "scale": 70,
-        "page": "all"
-      },
-      "columnAlignment": "top-base",
-      "columnOffsets": {
-        "left": 0,
-        "center": 0,
-        "right": 0
-      }
-    },
-    "sets": {
-      "Name": {
-        "id": "name",
-        "view": {
-          "style": {
-            "header": "default",
-            "body": "name"
-          },
-          "page": 1
-        },
-        "traits": {
-          "name": {
-            "label": "Name"
-          },
-          "player": {
-            "label": "Player"
-          },
-          "nickname": {
-            "label": "Nickname"
-          },
-          "pronouns": {
-            "label": "Ruin"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "game": {
-            "label": "Game",
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "portrait": {},
-          "caption": {},
-          "plotPoints": {
-            "rating": {
-              "type": "Counter",
-              "value": [
-                1
-              ],
-              "range": [
-                0,
-                20
-              ]
-            },
-            "label": "PP",
-            "spendable": true,
-            "view": {
-              "visibility": "hidden"
-            }
-          },
-          "notes": {
-            "view": {
-              "visibility": "hidden"
-            }
-          }
-        }
-      },
-      "Attributes": {
-        "id": "attributes",
-        "description": "Core attributes",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            6,
-            8,
-            10
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 3,
-          "place": {
-            "left": "0%",
-            "top": 0,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Attribute",
-        "plural": "Attributes",
-        "traits": {
-          "Mental": {},
-          "Physical": {},
-          "Social": {}
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Mundane, Offbeat, and Strange facets of town life",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "ratingLadder": [
-            8
-          ],
-          "page": 1,
-          "multiDie": false,
-          "reservedSlots": 3,
-          "place": {
-            "left": "28%",
-            "top": 0,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Distinction",
-        "plural": "Distinctions",
-        "traits": {}
-      },
-      "Roles": {
-        "id": "roles",
-        "description": "Town archetypes and societal roles",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "notes": "",
-          "reservedSlots": 6,
-          "place": {
-            "left": "0%",
-            "top": 1,
-            "width": "28%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "prime"
-        },
-        "noun": "Role",
-        "plural": "Roles",
-        "traits": {
-          "Enforcer": {},
-          "Entrepreneur": {},
-          "Rebel": {},
-          "Sage": {},
-          "Shepherd": {},
-          "Townie": {}
-        }
-      },
-      "Relationships": {
-        "id": "relationships-strange-die",
-        "description": "Bonds and ties within the town",
-        "view": {
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "multiDie": false,
-          "reservedSlots": 6,
-          "place": {
-            "left": "28%",
-            "top": 1,
-            "width": "72%",
-            "height": 1
-          },
-          "pillar": "prime"
-        },
-        "noun": "Relationship",
-        "plural": "Relationships",
-        "traits": {}
-      },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            8
-          ],
-          "reservedSlots": 2,
-          "place": {
-            "left": "0%",
-            "top": 2,
-            "width": "25%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "pillar": "plus"
-        },
-        "noun": "Asset",
-        "plural": "Assets",
-        "traits": {},
-        "slots": {
-          "0": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          },
-          "1": {
-            "rating": {
-              "type": "Die",
-              "value": [
-                8
-              ],
-              "range": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ]
-            }
-          }
-        }
-      },
-      "Complications": {
-        "id": "complications",
-        "view": {
-          "features": {
-            "description": true,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "default"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 3,
-          "place": {
-            "left": "25%",
-            "top": 2,
-            "width": "50%",
-            "height": 1
-          },
-          "parts": {
-            "name": {
-              "left": "0%",
-              "top": 0,
-              "width": "100%",
-              "height": 1
-            },
-            "rating": {
-              "left": "0%",
-              "top": 1,
-              "width": "100%",
-              "height": 1
-            },
-            "description": {
-              "left": "0%",
-              "top": 2,
-              "width": "100%",
-              "height": 1
-            }
-          },
-          "playMutable": true,
-          "pillar": "play"
-        },
-        "noun": "Complication",
-        "plural": "Complications",
-        "traits": {}
-      },
-      "Strange Die": {
-        "id": "strange-die",
-        "view": {
-          "ladder": true,
-          "features": {
-            "description": false,
-            "sfx": false,
-            "subtraits": false
-          },
-          "page": 1,
-          "style": {
-            "header": "default",
-            "body": "die-rows"
-          },
-          "ratingLadder": [
-            4,
-            6,
-            8,
-            10,
-            12
-          ],
-          "reservedSlots": 1,
-          "place": {
-            "left": "75%",
-            "top": 2,
-            "width": "25%",
-            "height": 1
-          },
-          "pillar": "plus"
-        },
-        "noun": "Die",
-        "plural": "Dice",
-        "traits": {}
-      }
-    }
-  }
+	"id": "strange-towns",
+	"version": 1,
+	"character": {
+		"id": "template-strange-towns",
+		"isTemplate": true,
+		"name": "",
+		"game": "Strange Towns",
+		"pronouns": "",
+		"plotPoints": 1,
+		"notes": "",
+		"player": "",
+		"portrait": {
+			"url": "",
+			"view": {
+				"location": "header"
+			}
+		},
+		"view": {
+			"pageCount": 1,
+			"template": "Strange Towns",
+			"watermark": {
+				"enabled": true,
+				"url": "images/cortex_prime_logo_light_transparent.png",
+				"opacity": 0.08,
+				"scale": 70,
+				"page": "all"
+			},
+			"columnAlignment": "top-base",
+			"columnOffsets": {
+				"left": 0,
+				"center": 0,
+				"right": 0
+			},
+			"listing": {
+				"subtitle": "Small Town Supernatural Weirdness",
+				"genre": "Weird horror / small-town mystery",
+				"variant": "Townsperson File",
+				"url": "https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866",
+				"image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg",
+				"quote": "There’s something wrong with this town. Maybe it’s the sheriff who never blinks.",
+				"setting": "d6",
+				"prep": "d6",
+				"complexity": "d6"
+			}
+		},
+		"sets": {
+			"Name": {
+				"id": "name",
+				"view": {
+					"style": {
+						"header": "default",
+						"body": "name"
+					},
+					"page": 1
+				},
+				"traits": {
+					"name": {
+						"label": "Name"
+					},
+					"player": {
+						"label": "Player"
+					},
+					"nickname": {
+						"label": "Nickname"
+					},
+					"pronouns": {
+						"label": "Ruin"
+					},
+					"description": {
+						"label": "Description"
+					},
+					"game": {
+						"label": "Game",
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"portrait": {},
+					"caption": {},
+					"plotPoints": {
+						"rating": {
+							"type": "Counter",
+							"value": [
+								1
+							],
+							"range": [
+								0,
+								20
+							]
+						},
+						"label": "PP",
+						"spendable": true,
+						"view": {
+							"visibility": "hidden"
+						}
+					},
+					"notes": {
+						"view": {
+							"visibility": "hidden"
+						}
+					}
+				}
+			},
+			"Attributes": {
+				"id": "attributes",
+				"description": "Core attributes",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						6,
+						8,
+						10
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 3,
+					"place": {
+						"left": "0%",
+						"top": 0,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Attribute",
+				"plural": "Attributes",
+				"traits": {
+					"Mental": {},
+					"Physical": {},
+					"Social": {}
+				}
+			},
+			"Distinctions": {
+				"id": "distinctions",
+				"description": "Mundane, Offbeat, and Strange facets of town life",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"ratingLadder": [
+						8
+					],
+					"page": 1,
+					"multiDie": false,
+					"reservedSlots": 3,
+					"place": {
+						"left": "28%",
+						"top": 0,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Distinction",
+				"plural": "Distinctions",
+				"traits": {}
+			},
+			"Roles": {
+				"id": "roles",
+				"description": "Town archetypes and societal roles",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"notes": "",
+					"reservedSlots": 6,
+					"place": {
+						"left": "0%",
+						"top": 1,
+						"width": "28%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "prime"
+				},
+				"noun": "Role",
+				"plural": "Roles",
+				"traits": {
+					"Enforcer": {},
+					"Entrepreneur": {},
+					"Rebel": {},
+					"Sage": {},
+					"Shepherd": {},
+					"Townie": {}
+				}
+			},
+			"Relationships": {
+				"id": "relationships-strange-die",
+				"description": "Bonds and ties within the town",
+				"view": {
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"multiDie": false,
+					"reservedSlots": 6,
+					"place": {
+						"left": "28%",
+						"top": 1,
+						"width": "72%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Relationship",
+				"plural": "Relationships",
+				"traits": {}
+			},
+			"Signature Assets": {
+				"id": "signature-assets",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						8
+					],
+					"reservedSlots": 2,
+					"place": {
+						"left": "0%",
+						"top": 2,
+						"width": "25%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"pillar": "plus"
+				},
+				"noun": "Asset",
+				"plural": "Assets",
+				"traits": {},
+				"slots": {
+					"0": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"1": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					}
+				},
+				"rating": {
+					"type": "Die",
+					"value": []
+				}
+			},
+			"Complications": {
+				"id": "complications",
+				"view": {
+					"features": {
+						"description": true,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "default"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 3,
+					"place": {
+						"left": "25%",
+						"top": 2,
+						"width": "50%",
+						"height": 1
+					},
+					"parts": {
+						"name": {
+							"left": "0%",
+							"top": 0,
+							"width": "100%",
+							"height": 1
+						},
+						"rating": {
+							"left": "0%",
+							"top": 1,
+							"width": "100%",
+							"height": 1
+						},
+						"description": {
+							"left": "0%",
+							"top": 2,
+							"width": "100%",
+							"height": 1
+						}
+					},
+					"playMutable": true,
+					"pillar": "play"
+				},
+				"noun": "Complication",
+				"plural": "Complications",
+				"traits": {}
+			},
+			"Strange Die": {
+				"id": "strange-die",
+				"view": {
+					"ladder": true,
+					"features": {
+						"description": false,
+						"sfx": false,
+						"subtraits": false
+					},
+					"page": 1,
+					"style": {
+						"header": "default",
+						"body": "die-rows"
+					},
+					"ratingLadder": [
+						4,
+						6,
+						8,
+						10,
+						12
+					],
+					"reservedSlots": 1,
+					"place": {
+						"left": "75%",
+						"top": 2,
+						"width": "25%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Die",
+				"plural": "Dice",
+				"traits": {}
+			}
+		}
+	}
 }
