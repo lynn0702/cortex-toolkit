@@ -4,10 +4,15 @@ import {
 	dicePool as dicePoolModel,
 	DIE_SIZES,
 	flattenCharacterTraits,
+	loadRollLog,
+	MAX_ROLL_LOG_ENTRIES,
 	parseTraitShorthand,
+	saveRollLog,
 	type DiceItem,
 	type FlattenedTraitSuggestion,
 	type PoolEvaluation,
+	type RollLogEntry,
+	type RollLogSideSummary,
 	type RollResult,
 	type SeparateGroup,
 	type WordBankItem,
@@ -48,6 +53,9 @@ const savedCombine = typeof localStorage !== 'undefined' ? localStorage.getItem(
 const localOppositionPool = ref(new dicePoolModel.DicePool());
 const localSide = ref<'player' | 'opposition'>('player');
 const localPlotPoints = ref(1);
+const rollLog = ref<RollLogEntry[]>(loadRollLog());
+const activeLogEntryId = ref<string | null>(null);
+const copiedEntryId = ref<string | null>(null);
 const localPlayerWords = ref<WordBankItem[]>([]);
 
 const currentSide = computed<'player' | 'opposition'>(() => props.activePoolSide || localSide.value);
@@ -644,16 +652,16 @@ function spendPPForKeep() {
 	if (isRolled.value) reEvaluateRoll();
 }
 
-function spendPPForStunt() {
+function spendPPForD6() {
 	if (effectivePlotPoints.value < 1) return;
 	adjustPP(-1);
-	addWordToPool(activePool.value, currentSide.value, 'PP Stunt', 'pp');
+	addWordToPool(activePool.value, currentSide.value, 'PP: +d6', 'pp');
 	addDiceToTargetPool(
 		activePool.value,
 		{
 			size: 6,
 			qty: 1,
-			source: 'PP Stunt',
+			source: 'PP: +d6',
 			hitches: 1,
 		},
 		true,
@@ -893,6 +901,91 @@ function updateCombinedLog() {
 	dicePoolOutput.value = parts.join('\n');
 }
 
+function buildSideLogSummary(ev: PoolEvaluation | null): RollLogSideSummary | undefined {
+	if (!ev) return undefined;
+	return {
+		total: ev.isBotch ? 0 : ev.manualTotal,
+		effectDie: ev.manualEffectDie,
+		hitches: ev.totalHitches,
+		isBotch: ev.isBotch,
+		diceSummary: ev.results.map((r) => `d${r.size}:${r.value}${r.isHitch ? '!' : ''}`).join(' '),
+		log: ev.log,
+	};
+}
+
+function recordRollLogEntry() {
+	const entry: RollLogEntry = {
+		id: getUuid(),
+		timestamp: Date.now(),
+		characterName: String(props.character?.name || 'Sheet').trim() || 'Sheet',
+		contest: isContestRoll.value,
+		player: buildSideLogSummary(playerEvaluation.value),
+		opposition: buildSideLogSummary(oppEvaluation.value),
+		summaryText: dicePoolOutput.value,
+	};
+	rollLog.value = [entry, ...rollLog.value].slice(0, MAX_ROLL_LOG_ENTRIES);
+	activeLogEntryId.value = entry.id;
+	saveRollLog(rollLog.value);
+}
+
+function syncActiveRollLogEntry() {
+	if (!activeLogEntryId.value) return;
+	const idx = rollLog.value.findIndex((e) => e.id === activeLogEntryId.value);
+	if (idx === -1) return;
+	const prev = rollLog.value[idx];
+	const nextEntry: RollLogEntry = {
+		...prev,
+		contest: isContestRoll.value,
+		player: buildSideLogSummary(playerEvaluation.value),
+		opposition: buildSideLogSummary(oppEvaluation.value),
+		summaryText: dicePoolOutput.value,
+	};
+	const updated = [...rollLog.value];
+	updated[idx] = nextEntry;
+	rollLog.value = updated;
+	saveRollLog(rollLog.value);
+}
+
+async function copyTextSafe(text: string, markerId: string) {
+	try {
+		if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+			await navigator.clipboard.writeText(text);
+		}
+	} catch {
+		// Ignore clipboard permission errors in headless/unfocused environments
+	}
+	copiedEntryId.value = markerId;
+	setTimeout(() => {
+		if (copiedEntryId.value === markerId) copiedEntryId.value = null;
+	}, 1500);
+}
+
+function copyLogEntry(entry: RollLogEntry) {
+	const text = `[${entry.characterName}] ${entry.summaryText}`;
+	copyTextSafe(text, entry.id);
+}
+
+function copyAllLogEntries() {
+	const text = rollLog.value
+		.map((entry) => `[${formatLogTime(entry.timestamp)} | ${entry.characterName}]\n${entry.summaryText}`)
+		.join('\n\n');
+	copyTextSafe(text, '__all__');
+}
+
+function clearRollLog() {
+	rollLog.value = [];
+	activeLogEntryId.value = null;
+	saveRollLog([]);
+}
+
+function formatLogTime(ts: number): string {
+	try {
+		return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	} catch {
+		return '';
+	}
+}
+
 function reEvaluateRoll(preserveManualRoles = false) {
 	if (playerEvaluation.value) {
 		playerEvaluation.value = evaluateSideResults(
@@ -919,6 +1012,7 @@ function reEvaluateRoll(preserveManualRoles = false) {
 		);
 	}
 	updateCombinedLog();
+	syncActiveRollLogEntry();
 }
 
 const rollButtonLabel = computed(() => {
@@ -1081,6 +1175,7 @@ function roll(opts?: { forceDialog?: boolean }) {
 
 	isRolled.value = true;
 	updateCombinedLog();
+	recordRollLogEntry();
 
 	if (opts?.forceDialog || isMobileViewport()) {
 		nextTick(() => openOutcomeDialog());
@@ -1235,6 +1330,8 @@ defineExpose({
 	bestEffectInfo,
 	isContestRoll,
 	contestSummary,
+	rollLog,
+	clearRollLog,
 });
 </script>
 
@@ -1533,9 +1630,9 @@ defineExpose({
 						type="button"
 						class="action-btn pp-spend-btn"
 						:disabled="effectivePlotPoints < 1"
-						@click="spendPPForStunt"
+						@click="spendPPForD6"
 					>
-						1 PP: +d6 Stunt
+						1 PP: +d6
 					</button>
 				</div>
 
@@ -1624,6 +1721,67 @@ defineExpose({
 					@expandDialog="openOutcomeDialog"
 				/>
 			</div>
+
+			<!-- SESSION ROLL LOG -->
+			<details class="roller-section roller-log-section" v-if="rollLog.length > 0">
+				<summary class="roller-log-summary">
+					<i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
+					<span>Roll Log ({{ rollLog.length }})</span>
+				</summary>
+				<div class="roller-log-toolbar">
+					<button
+						type="button"
+						class="roller-log-btn"
+						@click="copyAllLogEntries"
+						aria-label="Copy all roll log entries"
+					>
+						<i class="fas fa-copy" aria-hidden="true"></i>
+						<span>{{ copiedEntryId === '__all__' ? 'Copied' : 'Copy All' }}</span>
+					</button>
+					<button type="button" class="roller-log-btn" @click="clearRollLog" aria-label="Clear roll log">
+						<i class="fas fa-trash" aria-hidden="true"></i>
+						<span>Clear Log</span>
+					</button>
+				</div>
+				<ul class="roller-log-list">
+					<li class="roller-log-entry" v-for="entry in rollLog" :key="entry.id">
+						<div class="roller-log-meta">
+							<span>{{ entry.characterName }} · {{ formatLogTime(entry.timestamp) }}</span>
+							<button
+								type="button"
+								class="roller-log-btn"
+								@click="copyLogEntry(entry)"
+								:aria-label="'Copy roll log entry for ' + entry.characterName"
+							>
+								<i class="fas fa-copy" aria-hidden="true"></i>
+								<span>{{ copiedEntryId === entry.id ? 'Copied' : 'Copy' }}</span>
+							</button>
+						</div>
+						<div class="roller-log-outcome" v-if="entry.contest && entry.player && entry.opposition">
+							<span>
+								Player {{ entry.player.isBotch ? 'Botch' : entry.player.total }} ({{ entry.player.effectDie }}) vs Opp
+								{{ entry.opposition.isBotch ? 'Botch' : entry.opposition.total }} ({{ entry.opposition.effectDie }})
+							</span>
+							<span class="roller-log-hitch-badge" v-if="entry.player.hitches + entry.opposition.hitches > 0">
+								{{ entry.player.hitches + entry.opposition.hitches }} Hitch
+							</span>
+						</div>
+						<div class="roller-log-outcome" v-else-if="entry.player || entry.opposition">
+							<template v-for="sideSum in [entry.player || entry.opposition]" :key="entry.id">
+								<span v-if="sideSum">
+									{{ sideSum.isBotch ? 'Botch' : 'Total ' + sideSum.total }} · Effect {{ sideSum.effectDie }}
+								</span>
+								<span class="roller-log-hitch-badge" v-if="sideSum && sideSum.hitches > 0">
+									{{ sideSum.hitches }} Hitch
+								</span>
+							</template>
+						</div>
+						<div class="roller-log-dice" v-if="entry.player?.diceSummary || entry.opposition?.diceSummary">
+							{{ [entry.player?.diceSummary, entry.opposition?.diceSummary].filter(Boolean).join(' | ') }}
+						</div>
+					</li>
+				</ul>
+			</details>
 		</div>
 
 		<!-- TOP-LAYER MODAL OUTCOME DIALOG (MOBILE + DESKTOP EXPAND) -->

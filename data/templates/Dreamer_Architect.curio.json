@@ -1,6 +1,6 @@
 {
 	"$schema": "../../schema/0.1/character.schema.json",
-	"description": "Two minds, one sheet â€” a tarot-card display. The Architect builds the form; the Dreamer finds the beauty. An example of the Character Curio builder: a portrait ring, distinctions, and a single shared set of Values.",
+	"description": "Two minds, one sheet — a tarot-card display. The Architect builds the form; the Dreamer finds the beauty. An example of the Character Curio builder: a portrait ring, distinctions, and a single shared set of Values.",
 	"game": "Character Curio",
 	"id": "d6b1030e-c194-4556-958a-3e6f91c538a2",
 	"name": "The Dreamer & the Architect",
@@ -87,7 +87,7 @@
 			},
 			"id": "the-architect",
 			"description": "",
-			"plural": "Boss Dies",
+			"plural": "Boss Dice",
 			"tags": []
 		},
 		{

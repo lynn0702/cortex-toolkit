@@ -98,11 +98,17 @@
 .fa-check-circle:before {
 	content: '\f058';
 }
+.fa-chevron-right:before {
+	content: '\f054';
+}
 .fa-circle-half-stroke:before {
 	content: '\f042';
 }
 .fa-circle-notch:before {
 	content: '\f1ce';
+}
+.fa-clock-rotate-left:before {
+	content: '\f1da';
 }
 .fa-code:before {
 	content: '\f121';
@@ -218,6 +224,9 @@
 .fa-rotate-left:before {
 	content: '\f2ea';
 }
+.fa-rotate-right:before {
+	content: '\f2f9';
+}
 .fa-save:before {
 	content: '\f0c7';
 }
@@ -235,6 +244,12 @@
 }
 .fa-sun:before {
 	content: '\f185';
+}
+.fa-tag:before {
+	content: '\f02b';
+}
+.fa-tags:before {
+	content: '\f02c';
 }
 .fa-th:before {
 	content: '\f00a';

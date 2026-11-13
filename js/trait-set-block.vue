@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getView, isNameSet } from './model.ts';
+import { ensureView, getView, isNameSet } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { computed, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
@@ -126,6 +126,46 @@ const shouldRenderBodyComponent = computed(() => {
 });
 
 const rootEl = ref<HTMLElement | null>(null);
+const ringFileInput = ref<HTMLInputElement | null>(null);
+const isRingDragOver = ref(false);
+
+function applyRingImageFile(file: File) {
+	if (!file || !character.value || !traitSet.value) return;
+	characterCurioFunctions.processImageFile(file, 1280, 0.85).then(
+		(dataURL: string) => {
+			const v = ensureView(traitSet.value);
+			v.imageConfig ??= {};
+			v.imageConfig.url = dataURL;
+			if (v.frame && typeof v.frame === 'object' && v.frame.image) {
+				v.frame.image.url = dataURL;
+			}
+			updateCharacter(character.value);
+			selectElement(['traitSet', s.value]);
+		},
+		() => {},
+	);
+}
+
+function onRingDropzoneClick() {
+	selectElement(['traitSet', s.value]);
+	ringFileInput.value?.click();
+}
+
+function onRingFileChange(event: Event) {
+	const input = event.target as HTMLInputElement;
+	const file = input.files?.[0];
+	if (file) applyRingImageFile(file);
+	input.value = '';
+}
+
+function onRingDrop(event: DragEvent) {
+	isRingDragOver.value = false;
+	const file = event.dataTransfer?.files?.[0];
+	if (file && file.type.startsWith('image/')) {
+		applyRingImageFile(file);
+	}
+}
+
 onMounted(() => {
 	ts.observeContainer(rootEl.value);
 });
@@ -239,12 +279,32 @@ watch(rootEl, (el) => {
 						height="100%"
 						:style="effectivePortraitStyle"
 					>
-						<img
-							class="portrait-placeholder"
-							v-if="!effectiveImageUrl"
-							src="/images/cortex_prime_logo_light_transparent.png"
-							alt="Portrait placeholder"
-						/>
+						<template v-if="!effectiveImageUrl && submode === 'edit'">
+							<button
+								type="button"
+								class="ring-portrait-dropzone"
+								:class="{ 'is-dragover': isRingDragOver }"
+								aria-label="Upload or drop portrait image"
+								@click.stop="onRingDropzoneClick"
+								@dragenter.prevent="isRingDragOver = true"
+								@dragover.prevent="isRingDragOver = true"
+								@dragleave.prevent="isRingDragOver = false"
+								@drop.prevent="onRingDrop"
+							>
+								<i class="fas fa-image" aria-hidden="true"></i>
+								<span>Drop or upload</span>
+							</button>
+							<input
+								ref="ringFileInput"
+								type="file"
+								:id="'ring-portrait-file-' + s"
+								:name="'ringPortraitFile_' + s"
+								class="sr-only"
+								accept="image/*"
+								aria-label="Upload ring portrait image"
+								@change="onRingFileChange"
+							/>
+						</template>
 					</div>
 				</div>
 				<PortraitRing

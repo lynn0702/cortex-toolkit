@@ -188,5 +188,45 @@ function ok(cond, name, extra) {
 // ---- constants
 ok(DIE_SIZES.length === 5 && DEFAULT_D4.size === 4, 'constants intact');
 
+// ---- roll log persistence & cap
+{
+	const { ROLL_LOG_STORAGE_KEY, MAX_ROLL_LOG_ENTRIES, loadRollLog, saveRollLog } = require('../js/dice-pool.ts');
+	const mem = {};
+	const mockStorage = {
+		getItem: (k) => (k in mem ? mem[k] : null),
+		setItem: (k, v) => {
+			mem[k] = String(v);
+		},
+	};
+
+	ok(loadRollLog(mockStorage).length === 0, 'loadRollLog returns [] when empty');
+
+	mem[ROLL_LOG_STORAGE_KEY] = '{not valid json';
+	ok(loadRollLog(mockStorage).length === 0, 'loadRollLog handles corrupt JSON gracefully');
+
+	const sample = Array.from({ length: 55 }, (_, i) => ({
+		id: `log-${i}`,
+		timestamp: 1000 + i,
+		characterName: 'The Architect',
+		contest: false,
+		player: {
+			total: 10 + (i % 6),
+			effectDie: 'd8',
+			hitches: 0,
+			isBotch: false,
+			diceSummary: 'd8:6 d6:4',
+			log: 'Total: 10',
+		},
+		summaryText: `Roll #${i}`,
+	}));
+	saveRollLog(sample, mockStorage);
+	const loaded = loadRollLog(mockStorage);
+	ok(
+		loaded.length === MAX_ROLL_LOG_ENTRIES && loaded[0].id === 'log-0' && loaded[49].id === 'log-49',
+		'saveRollLog caps persisted entries at MAX_ROLL_LOG_ENTRIES (50)',
+		loaded.length,
+	);
+}
+
 console.log(`dice-pool-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

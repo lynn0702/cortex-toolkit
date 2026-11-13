@@ -724,15 +724,44 @@
 	}
 }
 
-.portrait-placeholder {
+.ring-portrait-dropzone {
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 72%;
-	height: 72%;
-	object-fit: contain;
-	opacity: 0.55;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 2px dashed var(--color-separator);
+	background: transparent;
+	color: var(--color-inactive);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	padding: 1rem;
+	font-family: var(--font-secondary);
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-align: center;
+	cursor: pointer;
+	transition:
+		border-color 0.2s,
+		background-color 0.2s,
+		color 0.2s;
+
+	& i {
+		font-size: 1.4rem;
+		opacity: 0.75;
+	}
+
+	&:hover,
+	&:focus-visible,
+	&.is-dragover {
+		border-color: var(--color-interactive);
+		background-color: color-mix(in srgb, var(--color-interactive), transparent 88%);
+		color: var(--color-interactive);
+	}
 }
 
 .portrait-preview {
@@ -2232,8 +2261,9 @@ button.trait-title-btn {
 				border-color: var(--frame-color, var(--border-strong));
 			}
 
-			.portrait-placeholder {
-				filter: invert(0.85);
+			.ring-portrait-dropzone {
+				border-color: var(--border-strong);
+				color: var(--text-muted);
 			}
 
 			.character-pp-badge {

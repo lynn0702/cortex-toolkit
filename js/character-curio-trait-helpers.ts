@@ -3,23 +3,20 @@
 //
 // Model recap:
 //   entity: { name, game, type, challenge?, sets: { [setName]: set } }
-//   set:    { description?, select?, requiresSelect?, usableBy?, traits: { [name]: trait } }
-//   trait:  "d8"  (shorthand)  or  { value?, description?, usableBy?, traits? }
+//   set:    { description?, select?, requiresSelect?, traits: { [name]: trait } }
+//   trait:  "d8"  (shorthand)  or  { value?, description?, traits? }
 // Merge: mergeLayers(...layers), later wins — absent inherits, null clears.
 
 export const DIE_SIZES = [4, 6, 8, 10, 12] as const;
 export type DieSize = (typeof DIE_SIZES)[number];
 export type DieString = `d${DieSize}`;
 
-export type UsableBy = 'owner' | 'anyone' | 'opposition';
 export type SelectMode = 'one' | 'any';
 export type StepDir = 'up' | 'down';
-export type Party = 'owner' | 'opposition';
 
 export interface TraitObject {
 	value?: string | null;
 	description?: string;
-	usableBy?: UsableBy;
 	/** Staging behaviour: adding the node stages its whole array of available dice. */
 	pool?: boolean;
 	traits?: Record<string, TraitRaw>;
@@ -33,7 +30,6 @@ export interface SetObject {
 	description?: string;
 	select?: SelectMode;
 	requiresSelect?: boolean;
-	usableBy?: UsableBy;
 	traits: Record<string, TraitRaw>;
 	[key: string]: unknown;
 }
@@ -225,39 +221,20 @@ export function stepDie(die: string, dir: StepDir = 'down'): string {
 	return `d${DIE_SIZES[j]}`;
 }
 
-/**
- * usableBy(trait, set, layer) — outward fallback: trait → set → layer → "owner".
- * Pass the trait's enclosing set and layer; first defined value wins.
- */
-export function usableBy(trait: unknown, ...scopes: unknown[]): UsableBy {
-	for (const s of [trait, ...scopes]) {
-		const u = (s as { usableBy?: UsableBy } | null)?.usableBy;
-		if (u) return u;
-	}
-	return 'owner';
-}
-
 export interface SetPickDef {
 	name?: string;
 	select?: SelectMode;
 	requiresSelect?: boolean;
-	usableBy?: UsableBy;
 }
 
 /**
- * checkSetPick(set, n, party) — one set's take against its selection rules.
- * n: count or array of picked names; party: who is picking.
+ * checkSetPick(set, n) — one set's take against its selection rules.
+ * n: count or array of picked names.
  * Returns [] when ok, else human-readable issues. Empty = good.
  */
-export function checkSetPick(
-	set: SetPickDef | null | undefined,
-	n: number | string[],
-	party: Party = 'owner',
-): string[] {
+export function checkSetPick(set: SetPickDef | null | undefined, n: number | string[]): string[] {
 	const issues: string[] = [];
 	const count = Array.isArray(n) ? n.length : n;
-	const who: UsableBy = set?.usableBy ?? 'owner';
-	if (who !== 'anyone' && party !== who) issues.push(`${set?.name ?? 'set'} is usable by ${who}`);
 	if ((set?.select ?? 'any') === 'one' && count > 1) issues.push('select at most one die from this set');
 	if (set?.requiresSelect && count < 1) issues.push('must select at least one die from this set');
 	return issues;

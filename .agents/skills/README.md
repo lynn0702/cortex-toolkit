@@ -1,111 +1,32 @@
-# character-curio agent skills
+# Cortex Toolkit Agent Skills
 
-Six distilled skills, one per folder, in the open Agent
-Skills format: each folder holds a `SKILL.md` with YAML
-frontmatter (`name` + `description`) and Markdown
-instructions. They encode the lessons from the
-lessons-learned register as loadable procedures, so the
-next agent session starts from them instead of relearning
-them from churn.
+Seven repo skills for the `character-curio` / `cortex-toolkit` codebase. Each folder under `.agents/skills/` contains a single focused `SKILL.md` grounded in `design/DECISIONS.md`, `AGENTS.md`, `schema/0.1/`, `scripts/validate.js`, and `scripts/gate.js`.
 
-## The six skills
+| Skill | Purpose |
+| --- | --- |
+| `measure-before-you-build` | Verify constants, CSS tokens, schema keys, validator rules, and FA subset coverage against the current repo tree before writing code or JSON. |
+| `provenance-labels` | Label design claims `[DECIDED]`, `[SUGGESTION]`, or `[OPEN]`, preserve `design/DECISIONS.md` history, and keep code/docs in positive current law. |
+| `vocabulary-check` | Validate every JSON key, `view` property, `KNOWN_PARTS` token, `style.body` ID, and `tags` value against current Character Curio vocabulary. |
+| `paired-corpus-and-gates` | Keep paired templates, generated model types, font/icon subsets, Vite graph imports, and `v-html` sanitizers synced, and pass all 7 `npm run gate` steps. |
+| `session-scope` | Enforce §0 baseline preconditions, single-phase narrow slices, stop signals, per-slice checkpoints, and clean handoff without unreviewed commits. |
+| `mobile-verdict-separation` | Keep desktop `npm run gate`, runtime `npm run smoke`, and visual/geometric verdicts (`--shots` or DOM measurement) strictly separate. |
+| `style-controls` | Enforce the 9 CSS and template controls (no static inline styles, `--z-*` / `<dialog>`, `!important` <= 4, shallow selectors, tokens, units, Prettier, self-hosted fonts/icons). |
 
-| Skill | Load it when... |
-|---|---|
-| `measure-before-you-build` | Starting from a brief/spec, or using any asserted constant, key, or formula |
-| `provenance-labels` | Writing or reviewing a spec, brief, or design doc |
-| `vocabulary-check` | Writing or reviewing JSON data (templates, presets, trait sets, view data) |
-| `paired-corpus-and-gates` | Changing paired files, adding a file, or finishing any change |
-| `session-scope` | Starting a session, when scope grows, when work churns, before handing over |
-| `mobile-verdict-separation` | Verifying mobile, responsive, print, or geometric work, or writing rendering claims |
+## Repository layout note
 
-No scripts are bundled: every procedure uses the agent's
-own tools (grep, read, test runs, browser). That keeps the
-skills portable across tools with nothing to install.
+- The canonical home-grown skills live directly in `.agents/skills/` inside this repository — edit them here and keep their YAML frontmatter valid (`name` matching the directory name and folded `description: >-` under 1024 characters).
+- Third-party installed skills (such as `modern-web-guidance`, tracked via `skills-lock.json` and ignored by `.gitignore`) may live alongside them in `.agents/skills/` and must not be modified when maintaining repo skills.
 
-## Install (project — recommended)
-
-Copy the six folders into the repo, at the project root:
-
-```
-<repo>/.agents/skills/
-```
-
-So the tree reads `.agents/skills/measure-before-you-build/SKILL.md`,
-and so on. This one location is read by both tools in use:
-OpenCode reads `.agents/skills/` (alongside
-`.opencode/skills/` and `.claude/skills/`), and Antigravity
-reads `.agents/skills/` in the project. Because the skills
-live in the repo, they are versioned with the project, and
-the repo copy becomes canonical — edit them there, not in
-this package.
-
-Then restart (or start a new) agent session. The agent sees
-each skill's name and description at startup and loads the
-full instructions when a task matches the description.
-
-## Global install (optional)
-
-If you want the skills available in every project instead
-of this one:
-
-- OpenCode: `~/.config/opencode/skills/` (or the shared
-  `~/.agents/skills/`).
-- Antigravity: `~/.gemini/config/skills/` per its docs.
-  Note: some guides list `~/.gemini/antigravity/skills/`
-  instead for the global path. If a global install does
-  not appear in the agent's skill list, check the other
-  path before assuming the skill is broken.
-
-Project install is recommended over global: these skills
-reference character-curio paths (`design/DECISIONS.md`,
-`js/templates.js`, `data/templates/`, `validate.js`), so
-they only make sense inside this repo.
-
-## AGENTS.md wiring (belt and braces)
-
-The repo's `AGENTS.md` is read at session start. Paste
-this section into it so the skills are found even if a
-tool's skill discovery is off or a session starts without
-them loaded:
+## `AGENTS.md` skill summary snippet
 
 ```markdown
 ## Skills (load before acting)
 
-This repo ships six skills in `.agents/skills/`. When a
-task matches a skill's trigger, load that skill's SKILL.md
-first and follow it; do not paraphrase it from memory.
-
-- measure-before-you-build — starting from a brief/spec,
-  or using any asserted constant, key, or formula.
-- provenance-labels — writing or reviewing a spec, brief,
-  or design doc.
-- vocabulary-check — writing or reviewing JSON data
-  (templates, presets, trait sets, view data).
-- paired-corpus-and-gates — changing paired files, adding
-  a file, or finishing any change.
-- session-scope — starting a session, when scope grows,
-  when work churns, before handing over.
-- mobile-verdict-separation — verifying mobile,
-  responsive, print, or geometric work, or writing
-  rendering claims.
-
-If skill discovery is unavailable in your tool, read the
-SKILL.md file directly from `.agents/skills/<name>/`.
+- measure-before-you-build — starting from a brief/spec, or using any asserted constant, key, or formula.
+- provenance-labels — writing or reviewing a spec, brief, or design doc.
+- vocabulary-check — writing or reviewing JSON data (templates, presets, trait sets, view data).
+- paired-corpus-and-gates — changing paired files, adding a file, or finishing any change.
+- session-scope — starting a session, when scope grows, when work churns, before handing over.
+- mobile-verdict-separation — verifying mobile, responsive, print, or geometric work, or when writing rendering claims.
+- style-controls — writing or changing CSS, a Vue template, or any style-adjacent code.
 ```
-
-## Validate after install
-
-- Every folder contains a `SKILL.md`, and the frontmatter
-  `name` matches the folder name exactly (lowercase
-  letters, digits, single hyphens, 64 characters max).
-- Every `description` is under 1,024 characters and says
-  both what the skill does and when to use it.
-- Ask the agent to list its loaded skills and confirm all
-  six appear. If one is missing, check the folder name
-  and frontmatter first — that is the usual cause.
-
-## Version
-
-When a lesson changes, update the skill that encodes it and the
-register together.

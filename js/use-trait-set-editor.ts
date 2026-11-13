@@ -105,6 +105,22 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (v: string) => setProperty('description', v),
 	});
 
+	const tags = computed<string[]>({
+		get: () => (Array.isArray(traitSet.value?.tags) ? traitSet.value.tags : []),
+		set: (v: string[]) => setProperty('tags', v),
+	});
+
+	const portraitTags = computed<string[]>({
+		get: () => (Array.isArray(props.character?.portrait?.tags) ? props.character.portrait.tags : []),
+		set: (v: string[]) => {
+			if (!props.character) return;
+			props.character.portrait ??= { url: '', alt: '', tags: [] };
+			props.character.portrait.alt ??= '';
+			props.character.portrait.tags = v;
+			updateCharacter(props.character);
+		},
+	});
+
 	const noun = computed({
 		get: () => traitSet.value?.noun ?? '',
 		set: (v: string) => setProperty('noun', v),
@@ -1707,14 +1723,24 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		ctk.imageConfig[key] = value;
 
 		if ((isName.value || isRing.value) && props.character) {
+			if (ctk.frame && typeof ctk.frame === 'object' && ctk.frame.image && key === 'url') {
+				if (value) ctk.frame.image.url = value;
+				else delete ctk.frame.image.url;
+			}
 			if (key === 'url') {
-				props.character.portrait ??= {};
+				props.character.portrait ??= { url: '', alt: '', tags: [] };
+				props.character.portrait.alt ??= '';
+				props.character.portrait.tags ??= [];
 				props.character.portrait.url = value;
 			} else if (key === 'alignment') {
-				props.character.portrait ??= {};
+				props.character.portrait ??= { url: '', alt: '', tags: [] };
+				props.character.portrait.alt ??= '';
+				props.character.portrait.tags ??= [];
 				ensureView(props.character.portrait).alignment = value;
 			} else if (key === 'zoom') {
-				props.character.portrait ??= {};
+				props.character.portrait ??= { url: '', alt: '', tags: [] };
+				props.character.portrait.alt ??= '';
+				props.character.portrait.tags ??= [];
 				ensureView(props.character.portrait).zoom = value;
 			} else if (key === 'caption' && isName.value) {
 				const t = characterCurioFunctions.ensureNameTrait(props.character, 'caption');
@@ -1900,6 +1926,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		traitSetID,
 		name,
 		description,
+		tags,
+		portraitTags,
 		noun,
 		plural,
 		styleBody,

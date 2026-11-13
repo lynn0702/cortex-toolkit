@@ -40,10 +40,12 @@ rewrite('js/app.min.js', [[/js\/templates\.bundle\.js\?v=[\w-]+/g, `js/templates
 
 const appHash = hashOf('js/app.min.js');
 const cssHash = hashOf('css/app.min.css');
+const fontsHash = hashOf('css/fonts.css');
 
 rewrite('index.html', [
 	[/js\/app\.min\.js\?v=[\w-]+/g, `js/app.min.js?v=${appHash}`],
 	[/css\/app\.min\.css\?v=[\w-]+/g, `css/app.min.css?v=${cssHash}`],
+	[/css\/fonts\.css\?v=[\w-]+/g, `css/fonts.css?v=${fontsHash}`],
 ]);
 
-console.log(`version-assets: app=${appHash} css=${cssHash} templates=${tplHash}`);
+console.log(`version-assets: app=${appHash} css=${cssHash} fonts=${fontsHash} templates=${tplHash}`);

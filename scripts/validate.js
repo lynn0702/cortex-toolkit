@@ -401,8 +401,8 @@ function checkLayeredTrait(node, where, depth) {
 	}
 	checkRetiredTraitKeys(node, where);
 	checkNodeOptions(node, where);
-	if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
-		err(`${where}: usableBy must be owner|anyone|opposition`);
+	if (node.usableBy !== undefined) {
+		err(`${where}: usableBy is retired (trait ownership is not tracked)`);
 	}
 	const visLayered =
 		node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
@@ -473,8 +473,8 @@ function checkLayeredFile(where, data) {
 		for (const k of ['ratingPosition', 'counterLabel']) {
 			if (set[k] !== undefined) err(`${where}/${name}: presentation key ${k} lives in the type layer`);
 		}
-		if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {
-			err(`${where}/${name}: usableBy must be owner|anyone|opposition`);
+		if (set.usableBy !== undefined) {
+			err(`${where}/${name}: usableBy is retired (trait ownership is not tracked)`);
 		}
 		if (set.select !== undefined && ['one', 'any'].indexOf(set.select) === -1) {
 			err(`${where}/${name}: select must be one|any`);
@@ -515,8 +515,8 @@ function checkTemplateTrait(node, where, depth, inSlot) {
 	if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
 	checkRetiredTraitKeys(node, where);
 	checkNodeOptions(node, where);
-	if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
-		err(`${where}: usableBy must be owner|anyone|opposition`);
+	if (node.usableBy !== undefined) {
+		err(`${where}: usableBy is retired (trait ownership is not tracked)`);
 	}
 	const visTemplate =
 		node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
@@ -652,8 +652,8 @@ function checkTemplateFile(where, data) {
 			err(`${where}/${name}: tombstones are gone, use local nulls`);
 		}
 		if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
-		if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {
-			err(`${where}/${name}: usableBy must be owner|anyone|opposition`);
+		if (set.usableBy !== undefined) {
+			err(`${where}/${name}: usableBy is retired (trait ownership is not tracked)`);
 		}
 		if (set.select !== undefined && ['one', 'any'].indexOf(set.select) === -1) {
 			err(`${where}/${name}: select must be one|any`);

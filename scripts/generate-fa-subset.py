@@ -8,14 +8,15 @@ appendix = """
 fa-align-center fa-align-left fa-align-right fa-angles-left fa-angles-right
 fa-arrow-left fa-arrow-right fa-arrows-left-right fa-award fa-bolt fa-book-open
 fa-bookmark fa-building-columns fa-bullhorn fa-check fa-check-circle
-fa-circle-half-stroke fa-circle-notch fa-code fa-cog fa-columns fa-copy fa-dice
+fa-chevron-right fa-circle-half-stroke fa-circle-notch fa-clock-rotate-left
+fa-code fa-cog fa-columns fa-copy fa-dice
 fa-dice-d20 fa-download fa-eraser fa-exclamation fa-exclamation-circle
 fa-exclamation-triangle fa-eye fa-eye-slash fa-file-alt fa-file-arrow-up
 fa-file-download fa-file-export fa-file-upload fa-floppy-disk fa-gamepad
 fa-github fa-grip-lines fa-grip-lines-vertical fa-hand-pointer fa-heartbeat
 fa-id-card fa-image fa-layer-group fa-minus fa-moon fa-palette fa-pencil
-fa-pencil-alt fa-plus fa-print fa-question-circle fa-redo fa-save fa-search
-fa-shield-alt fa-shield-halved fa-sliders fa-sun fa-th fa-th-large fa-times
+fa-pencil-alt fa-plus fa-print fa-question-circle fa-redo fa-rotate-right fa-save fa-search
+fa-shield-alt fa-shield-halved fa-sliders fa-sun fa-tag fa-tags fa-th fa-th-large fa-times
 fa-trash fa-trash-alt fa-trash-can fa-triangle-exclamation fa-undo fa-upload
 fa-user fa-users fa-wand-magic-sparkles fa-window-maximize fa-xmark
 """.split()

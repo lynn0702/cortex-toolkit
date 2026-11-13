@@ -673,10 +673,98 @@ export class DicePool {
 	}
 }
 
+export const ROLL_LOG_STORAGE_KEY = 'characterCurioRollLog';
+export const MAX_ROLL_LOG_ENTRIES = 50;
+
+export interface RollLogStorage {
+	getItem(key: string): string | null;
+	setItem(key: string, value: string): void;
+}
+
+export interface RollLogSideSummary {
+	total: number;
+	effectDie: string;
+	hitches: number;
+	isBotch: boolean;
+	diceSummary: string;
+	log: string;
+}
+
+export interface RollLogEntry {
+	id: string;
+	timestamp: number;
+	characterName: string;
+	contest: boolean;
+	player?: RollLogSideSummary;
+	opposition?: RollLogSideSummary;
+	summaryText: string;
+}
+
+function defaultRollLogStorage(): RollLogStorage | null {
+	return typeof localStorage !== 'undefined' ? localStorage : null;
+}
+
+function isValidSideSummary(s: any): s is RollLogSideSummary {
+	return Boolean(
+		s &&
+		typeof s === 'object' &&
+		typeof s.total === 'number' &&
+		typeof s.effectDie === 'string' &&
+		typeof s.hitches === 'number' &&
+		typeof s.isBotch === 'boolean' &&
+		typeof s.diceSummary === 'string' &&
+		typeof s.log === 'string',
+	);
+}
+
+export function loadRollLog(storage: RollLogStorage | null | undefined = defaultRollLogStorage()): RollLogEntry[] {
+	if (!storage) return [];
+	try {
+		const raw = storage.getItem(ROLL_LOG_STORAGE_KEY);
+		if (!raw) return [];
+		const parsed = JSON.parse(raw);
+		if (!Array.isArray(parsed)) return [];
+		return parsed
+			.filter((entry): entry is RollLogEntry =>
+				Boolean(
+					entry &&
+					typeof entry === 'object' &&
+					typeof entry.id === 'string' &&
+					typeof entry.timestamp === 'number' &&
+					typeof entry.characterName === 'string' &&
+					typeof entry.contest === 'boolean' &&
+					typeof entry.summaryText === 'string' &&
+					(entry.player === undefined || isValidSideSummary(entry.player)) &&
+					(entry.opposition === undefined || isValidSideSummary(entry.opposition)),
+				),
+			)
+			.slice(0, MAX_ROLL_LOG_ENTRIES);
+	} catch {
+		return [];
+	}
+}
+
+export function saveRollLog(
+	entries: RollLogEntry[],
+	storage: RollLogStorage | null | undefined = defaultRollLogStorage(),
+): void {
+	if (!storage) return;
+	try {
+		const trimmed = Array.isArray(entries) ? entries.slice(0, MAX_ROLL_LOG_ENTRIES) : [];
+		storage.setItem(ROLL_LOG_STORAGE_KEY, JSON.stringify(trimmed));
+	} catch {
+		// Ignore quota / unavailable storage errors
+	}
+}
+
 export const dicePool = {
 	Die: Die,
 	DicePool: DicePool,
 	DIE_SIZES: DIE_SIZES,
 	parseTraitShorthand: parseTraitShorthand,
 	flattenCharacterTraits: flattenCharacterTraits,
+	ROLL_LOG_STORAGE_KEY: ROLL_LOG_STORAGE_KEY,
+	MAX_ROLL_LOG_ENTRIES: MAX_ROLL_LOG_ENTRIES,
+	loadRollLog: loadRollLog,
+	saveRollLog: saveRollLog,
 };

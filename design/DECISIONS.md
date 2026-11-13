@@ -317,6 +317,10 @@ remain fully legible in print and economy print modes.
 - The new example character, replacing Sendak (and superseding The Scrivener). A tarot-card display, intentionally — two circular portraits, leader lines, centered composition. Three sets. "The Architect" (noun Distinction): portrait ring (De bouwmeester, 1919, Rijksmuseum) with 3 ring traits (Line, Light, Space — d10) + 3 distinctions (Function Before Form, Less is More, All My Darlings are Dead — d8). "Values" is the SINGLE shared set: Data (d8) "belongs to the people, not the builders", Design (d6) "what is built is but inspiration", Service (d10) "your fee is yours to set, mine is free". "The Dreamer" (noun Distinction): portrait (Corot, The Dreamer at the Fountain, 1855–63) + 3 distinctions (Beauty is all around us, I'll have another slice, Come darling, let's have tea — d8). The six persona traits are Distinctions, not Values.
 - Surfacing: the example loads on splash but fades away when the user has their own saved characters — first run (no saved characters) auto-opens it as a template preview (not saved, with "Use this template"); once a saved character exists the app opens the user's character instead and the example stops auto-opening and leaves the roster, but stays in the Library.
 
+### Retire trait ownership (`usableBy`) (2026-11-12)
+- Trait ownership metadata (`usableBy`, `UsableBy`, `Party`) is retired. Various SFX allow players or opposition to pull dice from any trait, and there is no intuitive way to pre-assign ownership routing cleanly in Play mode.
+- The Play-mode roller keeps explicit Player vs Opposition pool targets; schemas and helpers must not carry `usableBy` fields or ownership helpers.
+
 ## Open (decisions needed)
 
 - (none pending)

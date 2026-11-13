@@ -131,7 +131,17 @@ const character = computed(() => {
 });
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
 
-const { canUndo, canRedo, initHistory, commitHistorySnapshot, markDirty, validateEditing, undo, redo } = useHistory({
+const {
+	canUndo,
+	canRedo,
+	initHistory,
+	commitHistorySnapshot,
+	scheduleHistorySnapshot,
+	markDirty,
+	validateEditing,
+	undo,
+	redo,
+} = useHistory({
 	mode,
 	character,
 	characters,
@@ -162,7 +172,13 @@ const availableToOpen = computed(() => {
 	return characters.value.filter((c: any) => {
 		if (c.isTemplate) return false;
 		if (openCharacterIDs.value.includes(c.id)) return false;
-		if (q.length && !c.name?.toLowerCase().includes(q) && !c.game?.toLowerCase().includes(q)) return false;
+		if (
+			q.length &&
+			!c.name?.toLowerCase().includes(q) &&
+			!c.game?.toLowerCase().includes(q) &&
+			!characterCurioFunctions.characterMatchesTagQuery(c, q)
+		)
+			return false;
 		return true;
 	});
 });
@@ -1359,6 +1375,7 @@ function updateCharacter(characterData: any) {
 			deferredSaveTimer = null;
 			saveLocalData();
 		}, 120);
+		scheduleHistorySnapshot(400);
 		return Promise.resolve();
 	}
 	const saved = saveLocalData();
@@ -1383,8 +1400,9 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 		}
 	}
 
-	const target = event.target ? (event.target as HTMLElement).tagName : '';
-	if (target === 'INPUT' || target === 'TEXTAREA') return;
+	const el = event.target as HTMLElement | null;
+	const target = el ? el.tagName : '';
+	if (target === 'INPUT' || target === 'TEXTAREA' || target === 'SELECT' || el?.isContentEditable) return;
 
 	if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === 'z') {
 		event.preventDefault();

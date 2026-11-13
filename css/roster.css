@@ -485,3 +485,28 @@
 		font-size: 1.05rem;
 	}
 }
+
+.roster-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin: 0.35rem 0;
+}
+
+.roster-tag-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.12rem 0.5rem;
+	border-radius: 999rem;
+	border: 1px solid var(--color-primary);
+	background: transparent;
+	color: var(--color-label);
+	font-size: 0.75rem;
+	cursor: pointer;
+}
+
+.roster-tag-chip:hover {
+	color: white;
+	border-color: var(--color-interactive);
+}

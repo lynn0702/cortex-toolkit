@@ -42,7 +42,26 @@ export function useHistory(deps: HistoryDeps) {
 
 	const canRedo = computed(() => mode.value === 'character' && historyIndex.value < history.value.length - 1);
 
+	let snapshotTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function cancelScheduledSnapshot() {
+		if (snapshotTimer !== null) {
+			clearTimeout(snapshotTimer);
+			snapshotTimer = null;
+		}
+	}
+
+	function scheduleHistorySnapshot(delayMs = 400) {
+		if (isNavigatingHistory.value || !character.value) return;
+		cancelScheduledSnapshot();
+		snapshotTimer = setTimeout(() => {
+			snapshotTimer = null;
+			commitHistorySnapshot();
+		}, delayMs);
+	}
+
 	function initHistory() {
+		cancelScheduledSnapshot();
 		hasUncommittedChanges.value = false;
 		if (character.value) {
 			history.value = [JSON.stringify(character.value)];
@@ -54,6 +73,7 @@ export function useHistory(deps: HistoryDeps) {
 	}
 
 	function commitHistorySnapshot() {
+		cancelScheduledSnapshot();
 		if (isNavigatingHistory.value || !character.value) return;
 		hasUncommittedChanges.value = false;
 		const snap = JSON.stringify(character.value);
@@ -109,6 +129,7 @@ export function useHistory(deps: HistoryDeps) {
 	}
 
 	function redo() {
+		cancelScheduledSnapshot();
 		if (!canRedo.value) return;
 		hasUncommittedChanges.value = false;
 		isNavigatingHistory.value = true;
@@ -123,5 +144,16 @@ export function useHistory(deps: HistoryDeps) {
 		});
 	}
 
-	return { canUndo, canRedo, initHistory, commitHistorySnapshot, markDirty, validateEditing, undo, redo };
+	return {
+		canUndo,
+		canRedo,
+		initHistory,
+		commitHistorySnapshot,
+		scheduleHistorySnapshot,
+		cancelScheduledSnapshot,
+		markDirty,
+		validateEditing,
+		undo,
+		redo,
+	};
 }

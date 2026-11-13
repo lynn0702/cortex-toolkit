@@ -1,94 +1,52 @@
 ---
 name: paired-corpus-and-gates
-description: Change paired files together, wire new files into the build graph, and run the repo Definition of Done before handing work over. Use when changing templates or paired files, adding a file, or finishing any change. Prevents silent non-loading, corpus drift, and unverified handoffs.
+description: >-
+  Keep paired templates, generated model types, font/icon subsets, Vite module imports, and built outputs synchronized, and enforce the 7-step Definition of Done before handoff. Use when editing paired files, schemas, templates, icons, or finishing any change.
 ---
 
-# Paired corpus and gates
+# Paired Corpus and Gates
 
-Files in this repo travel in pairs, and a change that
-touches one half of a pair without the other is
-incomplete. Gates are run by the agent at every ITEM, not
-by the reviewer after the fact. In this skill, a turn is one
-brief item (or one slice), not one tool call and not one
-edit. Running the full suite after every edit is the chew
-this revision removes; the item boundary is where the full
-suite earns its keep.
+Whenever you modify one half of a paired corpus, schema, asset manifest, or component graph, update its counterpart in the same change and finish with the full Definition of Done gate.
 
-## Paired files — change together
+## Paired files, generated outputs, and build wiring
 
-- `js/templates.js` and `data/templates/*.template.layered.json`
-  are a paired corpus. Template content changes touch both
-  sides. Never hand-edit one side and leave the other.
-- `js/model.generated.ts` is generated. Never hand-edit it;
-  regenerate it.
-- Bundles are built, never hand-tweaked. A fix that edits
-  a bundle directly will be overwritten and is not a fix.
-- New files must be imported into the webpack graph or
-  they silently do not load. A file that exists but is
-  never imported is not shipped. Check the import graph
-  after adding any file.
-- Never bind user text with raw `v-html`. Only
-  `renderText` / `renderMarkdown` / `renderNotesText` or
-  values that are safe by construction. Grep for `v-html`
-  before handing over.
+1. **Templates corpus (`npm run validate`)**
+   - Paired files: `js/templates.js` ↔ `data/templates/*.template.layered.json` (+ `data/templates/Dreamer_Architect.curio.json`).
+   - Built bundle: `js/templates.bundle.js` (generated via `scripts/combine-templates.js`).
+   - Mirror hand-authored template content across `js/templates.js` and its `.template.layered.json` file; `scripts/realign_templates.js` normalizes formatting/columns in `js/templates.js` only.
 
-## Definition of Done — run at every item boundary, and
-## in full before handoff
+2. **Schemas and TypeScript model (`npm run types`)**
+   - Source: `schema/0.1/*.schema.json` → Generated: `js/model.generated.ts` (never hand-edit generated types).
+   - App-only `view` types and runtime helpers live in `js/model.ts`.
 
-The agent runs the full gates at every item boundary.
-A handoff with ungreen gates is not a handoff; it is a
-progress report that says so.
+3. **Icons, fonts, and cache-busted HTML**
+   - `fa-*` icon classes used in `js/*.vue` / `js/*.ts` ↔ `scripts/generate-fa-subset.py` (`css/fontawesome.css` + `fonts/fa-*.woff2`).
+   - Self-hosted fonts: `css/fonts.css` + `fonts/*.woff2` (managed via `scripts/fetch-fonts.mjs`).
+   - Built outputs: `js/app.min.js`, `js/templates.bundle.js`, `css/app.min.css`, and `?v=` query hashes stamped into `index.html` by `scripts/version-assets.js`. Never hand-edit compiled bundles.
 
-Tiers (all three, no skipping):
+4. **Vite module graph**
+   - `js/app.js` is the Vite entry point. Components are `.vue` SFCs imported explicitly by their consumers (no global registration). Any new `.ts` or `.vue` file must be imported into the Vite module graph or Rollup/Vite will tree-shake it away silently.
 
-- Within an item: no full gates after every edit. Use
-  targeted checks only — the test file or files covering
-  the change, and editor/type feedback on the touched
-  code. If an edit breaks the build, the item-boundary
-  gates catch it; that is their job.
-- At each item boundary: the full gates — build zero
-  errors, type check zero errors, all test suites
-  passing, validation zero errors and zero warnings,
-  import-graph check if files were added, v-html grep
-  accounted for.
-- Browser smoke: once per RENDERING item (an item that
-  changes what renders on screen or in print), plus one
-  final smoke over all affected surfaces before handoff.
-  Non-rendering items (data, model) get
-  no browser smoke; their proof is gates plus a data
-  census. A smoke pass that skips the affected surface
-  is still not a smoke pass — batching WHEN it runs
-  never narrows WHAT it covers.
+5. **`v-html` security rule**
+   - Never bind user-controlled text with raw `v-html`. Only vetted sanitizers and fixed-SVG/token renderers are permitted by Gate Step 6:
+     `renderText`, `renderMarkdown`, `renderNotesText`, `renderNameHtml`, `getDieDisplayValue`, `renderDieValueForPrint`, `renderDieValue`, `renderDate`, `renderDicePreview`, `singleDieSVG`, `bundleDiceSVG`, `renderDieconSVG`.
 
-- Full gates via `npm run gate`: type check zero errors, build zero errors, test suites all passing, validation zero errors and zero warnings, v-html scan clean.
-- Git hooks: `.githooks/` configured (`npm run prepare`) enforcing fast checks on pre-commit and `npm run gate` on pre-push.
-- Import-graph check: every new file reachable.
-- Browser smoke: roster, editors, Play, reload, and the
-  device width the change affects. A smoke pass that skips
-  the affected surface is not a smoke pass.
+## Definition of Done (`npm run gate`)
 
-Run the full gate (`npm run gate`) AFTER your last file edit. Do
-not edit any file after the final gate run — an edit after the
-gate makes the gate's result stale, and a stale gate is not
-evidence. Paste the gate's full terminal output (all six `[PASS]`
-lines plus `ALL GATES PASSED`) into the session report. A "gate
-green" claim without the output is not evidence.
+Run `npm run gate` (`node scripts/gate.js`) after your very last edit. It enforces all **7** gates in sequence:
 
-## What gates do not prove
+1. Production Build (`vite` + `combine-templates` + `gen-types` + `version-assets`)
+2. Code Style (`prettier`)
+3. Type Check (`vue-tsc`)
+4. Test Suites (`vitest` + Node suites)
+5. Schema & Corpus Validation (`scripts/validate.js`)
+6. Security Audit (`v-html` scan)
+7. Icon Subset Coverage (`fa-*` check)
 
-Gates green is not a mobile verdict and not a visual
-verdict. Desktop tooling cannot judge geometry, clipping,
-alignment, overflow, or real phone behavior. See the
-mobile-verdict-separation skill: keep the gate verdict and
-the mobile/visual verdict separate in every report, and
-name each limit where it occurs.
+Confirm all **seven** `[PASS]` lines and `ALL GATES PASSED` in tool output before handing work over.
 
-## Do not
+## Browser smoke for UI & rendering changes
 
-- Hand over work with failing or unrung gates and call it
-  done.
-- Fix a gate failure by weakening the gate (skipping a
-  suite, loosening a validator, deleting an assertion)
-  without the user explicitly approving that change.
-- Treat a file's existence as its shipment. Unimported
-  code does not run.
+When touching templates, CSS, layout, routing, roller, or print views, also run:
+- `npm run smoke` (`node scripts/smoke.cjs`) to verify desktop (`1440×900`) and mobile (`390×844`) boot, navigation, roller, print, and roster flows with zero console/page errors or remote font requests.
+- Add `--shots` (`node scripts/smoke.cjs --shots`) whenever visual or geometric changes need screenshot inspection.

@@ -1,98 +1,46 @@
 ---
 name: measure-before-you-build
-description: Verify every constant, key, field, and formula in a brief or spec against the current repo tree before writing code or data. Use when starting implementation from a brief, when a spec asserts CSS values, config keys, viewport math, or geometry, or when data must match the current model. Prevents building from asserted constants that are wrong, stale, or invented.
+description: >-
+  Verify every constant, CSS token, schema key, field name, validator rule, and formula against the current repo tree before writing code or data. Use when starting implementation from a brief or spec, adding styles or fa-* icons, or authoring JSON templates and presets.
 ---
 
-# Measure before you build
+# Measure Before You Build
 
-A brief or spec that asserts a number, a key, or a formula is
-not evidence. The repo tree is. Never copy a constant out of
-a brief into code or data. Measure it first.
+Never build from asserted constants, memory, or invented schema keys. Measure every key, type, constraint, and style token directly against the current repository before editing.
 
-## Procedure
+## What to verify before editing
 
-1. List every asserted fact in the brief that your change
-   depends on: CSS values, view keys, function names, part
-   keys, ranges, angles, sizes, breakpoints, file paths.
-2. For each one, find it in the current tree before you use
-   it:
-   - Search source, not bundles: `grep -rn --include='*.vue'
-     --include='*.ts' --include='*.js' --include='*.scss'
-     <term> js css design scripts` — never trust a hit in a
-     `.min.js` or bundle file, which may be stale.
-   - Read the defining code, not a comment about it. A CSS
-     value belongs to the rule that actually renders the
-     element; check the selector, not just the number.
-   - For data, check a current corpus example in
-     `data/templates/` or `js/templates.js`, not the brief's
-     example JSON, which may be pre-refactor.
-3. If the measured value matches the brief, proceed and say
-   so (one line: measured X at <file>).
-4. If it does NOT match, first ask WHAT it mismatches:
+1. **Model and `view` keys**: Read `js/model.ts`, `js/sheet-grid.ts`, and `js/frame-geometry.ts` (not prose summaries) to confirm live interfaces (`ViewBag`, `Rating`, `Portrait`, `PlaceRect`, `PartCell`, `FrameConfig`) and `KNOWN_PARTS`.
+2. **Schema & validation constraints**: Check `schema/0.1/*.schema.json` and `scripts/validate.js` for required fields, allowed patterns (for example, `tags` must match `/^[A-Za-z0-9-./]+$/`), and retired keys/body IDs that fail validation.
+3. **Reference sheet example**: Inspect `data/templates/Dreamer_Architect.curio.json` when verifying current layered sheet structure in practice.
+4. **Icons and fonts**: Before using any `fa-*` class in a template or component, check `scripts/generate-fa-subset.py` and `css/fontawesome.css` so only included subset icons are referenced (or add the icon to the subset script and rebuild). Check `css/fonts.css` for self-hosted font families.
+5. **Layout styles and tokens**: Search `css/*.css` (excluding built bundles) and `js/*.vue` to verify existing `--*` custom properties, class names, and breakpoints before adding CSS.
 
-   - Brief versus TREE (the repo at HEAD): stop. Report the
-     mismatch with both values and the file that proves it.
-     Do not silently use the brief's value, and do not
-     silently use the tree's value when the brief's intent
-     is unclear — the mismatch is a question for the user,
-     not a choice to make alone. This half of the rule is
-     unchanged.
-   - Brief versus SKILL (a skill's text, example list, or
-     vocabulary list): the brief wins. Note the conflict in
-     one line (skill name + item), follow the brief, and
-     proceed. Do NOT stall the session on it. Carry the
-     note into the session report so the skill can be
-     refreshed — that note is how a frozen list gets
-     corrected instead of re-stalling the next session.
-     (Repo rule, unchanged: when a prompt and a standing
-     rule conflict, the prompt wins for that session.)
+## Cross-platform search commands
 
-Batch the census. One grep pass per item covering all
-its asserted facts — not a separate search per fact when
-one pass covers many. Report the census once per item
-(measured X at a named file, one line each), not once per
-fact per turn.
-5. If a fact cannot be measured (it depends on a rendered
-   layout, a real viewport, or a visual result), say so
-   plainly. Do not substitute an invented number. Route it
-   to a real-browser check (see the mobile-verdict-separation
-   skill).
+Exclude built and generated artifacts (`*.min.js`, `*.bundle.js`, `*.min.css`, `js/model.generated.ts`) so searches measure source truth only.
 
-## What counts as measured
+- **POSIX / Git Bash (`grep`)**:
+  ```sh
+  grep -rn --include='*.css' --include='*.ts' --include='*.vue' \
+    --exclude='*.min.js' --exclude='*.bundle.js' --exclude='*.min.css' --exclude='model.generated.ts' \
+    'PATTERN' css js
+  ```
+- **Windows PowerShell (`Select-String`)**:
+  ```powershell
+  Get-ChildItem -Path css,js -Recurse -Include *.css,*.ts,*.vue |
+    Where-Object { $_.Name -notmatch '\.(min|bundle)\.(js|css)$' -and $_.Name -ne 'model.generated.ts' } |
+    Select-String -Pattern 'PATTERN'
+  ```
+- **Portable Node (`node -e`)**:
+  ```sh
+  node -e "const fs=require('fs'),p=require('path');function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){const f=p.join(d,e.name);if(e.isDirectory())walk(f);else if(/\.(css|ts|vue)$/.test(e.name)&&!/\.(min|bundle)\./.test(e.name)&&e.name!=='model.generated.ts'){const s=fs.readFileSync(f,'utf8').split(/\r?\n/);s.forEach((l,i)=>{if(l.includes('PATTERN'))console.log(f+':'+(i+1)+': '+l.trim());});}}}walk('css');walk('js');"
+  ```
 
-- A key exists in current code or current data, and you
-  opened the file that reads or writes it.
-- A CSS value comes from the rule that styles the element
-  in question, at the current commit.
-- A formula or angle convention comes from the function
-  that computes it (for example the ring-angle function),
-  not from a spec's description of it.
-- A vocabulary claim is checked against the current corpus
-  and the current renderer, not against a previous spec.
+## Common measurement traps in this repo
 
-## Known traps in this repo
-
-- A number in a stylesheet may belong to a different
-  component than the brief claims. (The 10px a spec cited
-  for classic sets belonged to a stress button, not to a
-  trait set.)
-- A spec may cite config keys that were renamed. (Legacy
-  ring keys in a spec did not match the real `view.ringConfig`
-  and `view.ringTrait`.)
-- A spec may describe geometry that only holds in one
-  container shape. (Radial anchors computed in container
-  percentages do not land on a drawn path in a non-square
-  container.)
-- A spec's example JSON may carry fields that were
-  dissolved or renamed. Cross-check with the
-  vocabulary-check skill before using any of it.
-
-## Do not
-
-- Copy constants from a brief into code, data, or tests
-  without measuring them.
-- Treat a previous spec, a previous review, or your own
-  memory of the tree as a measurement. Measure at the
-  current commit.
-- Present an unmeasured value as verified. "Spec says X"
-  is not verification.
+- **Ring portrait keys**: Rings live on `view.ring` (`boolean` on a trait), `view.frame` (`shape: 'ring'`, `span`, `traitsSpan`, `ring`), and `view.ringConfig` on sets — never invent wrapper keys or unverified trait-level ring flags.
+- **Span & track placement**: `span` lives only under `view.frame.span` / `view.frame.traitsSpan`, and `track` / `trackLabel` live only under `view.parts` — not directly on a trait set.
+- **Restricted `tags`**: `tags` are valid on Character, Portrait, TraitSet, Trait, and Subtrait nodes, but values must satisfy `/^[A-Za-z0-9-./]+$/` (no spaces or arbitrary punctuation).
+- **Font Awesome subset**: Full Font Awesome Free is not bundled; using an unlisted `fa-*` icon causes Step 7 of `npm run gate` (`Icon Subset Coverage`) to fail unless added to `scripts/generate-fa-subset.py`.
+- **Root print zoom vs viewport units**: On-screen print preview scales via `.submode-print .pages { zoom: 0.8125 }` while `@media print` sets `html { font-size: 13px }`; verify actual CSS values rather than guessing pixel ratios.

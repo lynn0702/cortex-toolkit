@@ -81,7 +81,9 @@ const matchingCharacters = computed(() => {
 		const name = (c.name || '').toLowerCase();
 		const game = (c.game || '').toLowerCase();
 		const type = (c.type || getView(c)?.type || '').toLowerCase();
-		return name.includes(q) || game.includes(q) || type.includes(q);
+		return (
+			name.includes(q) || game.includes(q) || type.includes(q) || characterCurioFunctions.characterMatchesTagQuery(c, q)
+		);
 	});
 });
 
@@ -569,6 +571,20 @@ function getRelativeDateLabel(date1: any, date2: any) {
 							</div>
 
 							<div class="roster-description" v-text="character.description"></div>
+
+							<div class="roster-tags" v-if="Array.isArray(character.tags) && character.tags.length > 0">
+								<button
+									type="button"
+									class="roster-tag-chip"
+									v-for="(tag, tIdx) in character.tags"
+									:key="character.id + '-tag-' + tIdx"
+									@click.stop="rosterSearch = tag"
+									:title="'Filter by tag ' + tag"
+								>
+									<i class="fas fa-tag" aria-hidden="true"></i>
+									<span>{{ tag }}</span>
+								</button>
+							</div>
 
 							<div class="roster-date">
 								<span class="roster-date-label">Last modified: </span>

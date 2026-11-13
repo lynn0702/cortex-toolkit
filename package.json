@@ -29,6 +29,7 @@
 		"types": "node scripts/gen-types.mjs",
 		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",
+		"smoke": "node scripts/smoke.cjs",
 		"test": "vitest run && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/run-legacy-tests.js"
 	},
 	"engines": {

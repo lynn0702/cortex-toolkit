@@ -22,6 +22,7 @@ import {
 	type Character,
 } from './model.ts';
 import { buildParts } from './sheet-grid.ts';
+import TagEditor from './tag-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
@@ -612,6 +613,15 @@ const description = computed({
 	},
 	set(val: string) {
 		setProperty('description', val);
+	},
+});
+
+const traitTags = computed<string[]>({
+	get() {
+		return Array.isArray(trait.value?.tags) ? trait.value.tags : [];
+	},
+	set(val: string[]) {
+		setProperty('tags', val);
 	},
 });
 
@@ -1653,6 +1663,20 @@ function getDieDisplayValue(val: any) {
 					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
+					</div>
+
+					<div class="editor-field" v-if="!isPlay">
+						<TagEditor
+							v-model="traitTags"
+							:input-id="
+								'trait-tags-' +
+								traitSetID +
+								'-' +
+								traitID +
+								(subtraitID !== null && subtraitID !== undefined ? '-' + subtraitID : '')
+							"
+							label="Tags"
+						/>
 					</div>
 
 					<div class="editor-field" v-if="!isPlay">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
+import TagEditor from './tag-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
 
 const {
@@ -15,6 +16,7 @@ const {
 	imageHeight,
 	imageWidth,
 	imageCaption,
+	portraitTags,
 	namePortraitVisibility,
 	toggleNamePortraitVisibility,
 	uploadImageStart,
@@ -155,5 +157,9 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 			v-model="imageCaption"
 			placeholder="Optional image caption..."
 		/>
+	</div>
+
+	<div class="editor-field" v-if="isName || isRing">
+		<TagEditor v-model="portraitTags" :input-id="'trait-set-' + traitSetID + '-portrait-tags'" label="Portrait Tags" />
 	</div>
 </template>

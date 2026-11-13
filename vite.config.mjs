@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => ({
 		vue({
 			template: {
 				transformAssetUrls: false,
+				compilerOptions: {
+					isCustomElement: (tag) => tag === 'search',
+				},
 			},
 		}),
 	],

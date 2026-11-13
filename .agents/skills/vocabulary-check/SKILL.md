@@ -1,86 +1,49 @@
 ---
 name: vocabulary-check
-description: Check every key and field in new JSON data against the current character-curio vocabulary before it ships. Use when writing or reviewing templates, presets, trait sets, or any view data, or when a spec's example JSON looks pre-refactor. Prevents stale, renamed, or dissolved fields from entering the corpus.
+description: >-
+  Audit every JSON key, view property, layout style ID, node field, and branding term against the current Character Curio vocabulary before data or examples ship. Use when authoring or reviewing templates, presets, trait sets, schemas, or example JSON.
 ---
 
-# Vocabulary check
+# Vocabulary Check
 
-Vocabulary drift is a defect class in this repo, not a
-style nit. Renames and dissolves are total: when a field is
-renamed or dissolved, every occurrence goes — code, data,
-presets, templates, tests, and docs. A single stale key in
-a new file is a defect, even if nothing visibly breaks yet.
+Check all new or edited JSON, schemas, templates, and example payloads against the live Character Curio data model (`js/model.ts`, `js/sheet-grid.ts`, `js/use-trait-set-editor.ts`, `schema/0.1/*.schema.json`, `scripts/validate.js`).
 
-## Current vocabulary (check against this, then verify in
-## the tree — this list is a starting point, not the law)
+## Branding and file conventions
 
-Layout areas (view language — named for their layout role):
-`name`, `rating`, `description`, `badge`, `block`,
-`subtraits`, `trackLabel`, `track`.
+- **App & format identity**: `character-curio` / `"Character Curio"`; character files end in `.curio.json`; storage keys are `characterCurioData` and `characterCurioRollLog`.
+- **Schema references**: `https://characters.lynnjones.rocks/schema/0.1/...` or relative `../schema/0.1/character.schema.json`.
+- **External URLs & attribution**: `'cortex'` is used only for system attribution; DriveThruRPG image URLs stay verbatim; keep all code, JSON keys, and docs free of retired naming.
+- **Canonical reference character**: `data/templates/Dreamer_Architect.curio.json`.
 
-Live and NOT dead — do not strip these:
-- `span`, `header`, track keys, companions.
-- `view.frame`, `view.pillar`, `view.place`,
-  `view.playMutable`, `view.reservedSlots`,
-  `view.labels.pillars`, visibility values `shown` /
-  `editor-only` / `hidden` / `play-only`.
+## Live layout & `view` vocabulary
 
-In transition — decided direction, not yet landed.
-The current tree still carries these, but decided
-direction removes or moves them. Do NOT add them to
-new data, and do NOT treat a brief that removes them
-as a mismatch (see measure-before-you-build's
-brief-wins rule):
-- `features.sfx` → derived from SFX children presence
-  (no flag). Do not write it into new data.
-- Set-level `statement` / `hasQuestionedPip` →
-  derived from Statement container presence. Do not
-  write them into new data.
+- **`KNOWN_PARTS` (`js/sheet-grid.ts`)**: `name`, `rating`, `description`, `badge`, `block`, `subtraits`, `trackLabel`, `track`, and dynamic `child:<Name>`.
+- **Active `view.style.body` IDs (`js/use-trait-set-editor.ts`)**:
+  - Structural & sheet layouts: `default`, `name` (identity set), `portrait-ring`, `two-columns-compact`, `two-columns-detailed`, `pool-rows`, `dice-count`, `subtrait-columns`, `die-rows` (paired with `view.ladder` when ladder display is desired), `die-track`, `list`, `image`, `pips`.
+- **Live `view` keys & strict disambiguation**:
+  - Frame & placement: `view.frame` (`shape`, `span`, `traitsSpan`, `ring`, `color`, `image`), `view.place`, `view.columns`.
+  - Ring controls: `view.ring` (`boolean`, on a trait) and `view.ringConfig` (on a trait set).
+  - Style & parts: `view.style` (`body`, header/layout config), `view.parts`, `view.ladder`.
+  - **Disambiguation rules**:
+    - `span` belongs **only** inside `view.frame.span` / `view.frame.traitsSpan` — never at set top level or directly under `view`.
+    - `track` and `trackLabel` belong **only** inside `view.parts` — never as standalone set properties.
 
-Model rules that constrain data:
-- Rating shape: `rating { type: Counter | Die | Dice |
-  Pip, value: [], range: [] }`; `spendable` and `pool`
-  are separate flags; spent state lives in
-  `view.spentDice`, never in the rating.
-- `range` is the ladder, never `scale`.
-- JSON stays hand-editable: sparse storage, nulls allowed
-  on optional fields, NO trait-level ids or
-  database-management values in exported JSON.
-- `custom` is an open extension bag; never emit it empty.
-- SFX children are ordinary child traits, found by their
-  grouping (the 'SFX' child trait, by name/shape) — the
-  word survives only in data (trait names, badge text).
+## Live node-level mechanics
 
-When the tree and a user-directed brief disagree, the
-brief wins (see measure-before-you-build). Note the
-drift for the skill maintainer in the session report
-instead of stalling.
+- **`rating`**: `{ type, value, range?, out? }` (`range` for ranged/step-up traits; `out` for shut-down state).
+- **Dice & pool modifiers**: `hitches` (numeric; `0` = apart-rolling), `keepsExtra`, `pool`, `spendable`, `select`, `requiresSelect`.
+- **Metadata `tags`**: Optional array on Character, Portrait, TraitSet, Trait, or Subtrait; every tag must match `/^[A-Za-z0-9-./]+$/`.
+- **Child trait conventions**: Child sets named `"SFX"` or `"Statement"`, plus companion stress patterns, represent nested mechanics without separate hardcoded node schemas.
 
-## Procedure
+## In transition (read-supported, do not emit in new data)
 
-1. For every key in the new data, ask: does the current
-   renderer read it, and does the current corpus use it?
-   Grep the renderer and one current corpus example.
-2. For every key in a spec's example JSON, do the same —
-   spec examples are the most common carrier of stale
-   vocabulary.
-3. If a key is renamed, rename it everywhere the change
-   touches (data, code, tests, docs). A partial rename is
-   a defect.
-4. If a key is dissolved, remove it. Do not reintroduce it
-   under a new name. This app imports current-format files
-   only; old formats go through the separate converter
-   project.
-5. If a key's status is unclear (live flag versus dead
-   field), check the layered corpus and the renderer, and
-   ask one question rather than guessing. Stripping a live
-   field is as much a defect as shipping a dead one.
+- `view.features`
+- Set-level `statement` / `hasQuestionedPip`
 
-## Do not
+## Retired & validation-rejected (`scripts/validate.js` fails)
 
-- Copy example JSON from a spec into data without this
-  check.
-- Treat a spec's vocabulary as current. Specs go stale;
-  the tree is current.
-- Ship a new file that mixes current and pre-refactor
-  fields.
+Do **not** emit any of these keys or style IDs in new templates, presets, tests, or examples:
+
+- **Rejected data keys**: `usableBy`, `cost`, `trait.sfx`, `set.sfx`, `trait.statement`, `trait.questioned`, `trait.value`, `trait.dice`, `ratingPosition`.
+- **Rejected `view` keys**: `view.style.sheet`, `view.sheetStyle`, `view.style.hasAttributes`, `view.spotlight`, `view.attachedStress`, `view.stressConfig`, `view.setDie`, `view.pool`, `view.hidden`, `view.challengePool`, `view.isChallengePool`, `view.headerRight`, and set-level `location` / `track` / `span` / `colSpan` / `columnSpan` / `widths` / `rowBreak` / `colWidth` / `rowSpan` / `row`.
+- **Rejected `style.body` IDs**: `sfx-rows`, `boxed-rows`, `notes`, `paired-slots`, `three-column-table`, `labeled-fields`, `dice-ladder`, `session-record`, `angled-lines`, `distinctions`, `attributes`, `assets`, `resources`, `stress`.

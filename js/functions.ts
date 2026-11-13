@@ -61,6 +61,8 @@ export const characterCurioFunctions = {
 
 	loadGoogleFont: function (fontName: string) {
 		if (!fontName || typeof document === 'undefined') return;
+		const normalized = fontName.trim().toLowerCase();
+		if (normalized === 'josefin sans' || normalized === 'open sans' || normalized === 'alegreya sans sc') return;
 		const safeId = 'gfont-' + fontName.toLowerCase().replace(/[^a-z0-9]/g, '-');
 		if (document.getElementById(safeId)) return;
 		const link = document.createElement('link');
@@ -2140,6 +2142,50 @@ export const characterCurioFunctions = {
 		this.ensureTraitSetIds({ traitSets: [...(character?.traitSets || []), traitSet] });
 		this.assignLids({ traitSets: [traitSet] });
 		return traitSet;
+	},
+
+	collectCharacterTags: function (character: any): string[] {
+		if (!character || typeof character !== 'object') return [];
+		const seen = new Set<string>();
+		const out: string[] = [];
+		const addList = (list: unknown) => {
+			if (!Array.isArray(list)) return;
+			for (const raw of list) {
+				if (typeof raw !== 'string') continue;
+				const t = raw.trim();
+				if (!t) continue;
+				const key = t.toLowerCase();
+				if (seen.has(key)) continue;
+				seen.add(key);
+				out.push(t);
+			}
+		};
+		const walkTraits = (traits: unknown) => {
+			if (!Array.isArray(traits)) return;
+			for (const tr of traits) {
+				if (!tr || typeof tr !== 'object') continue;
+				addList((tr as any).tags);
+				walkTraits((tr as any).traits);
+			}
+		};
+		addList(character.tags);
+		addList(character.portrait?.tags);
+		if (Array.isArray(character.traitSets)) {
+			for (const ts of character.traitSets) {
+				if (!ts || typeof ts !== 'object') continue;
+				addList(ts.tags);
+				walkTraits(ts.traits);
+			}
+		}
+		return out;
+	},
+
+	characterMatchesTagQuery: function (character: any, query: string): boolean {
+		const q = String(query || '')
+			.trim()
+			.toLowerCase();
+		if (!q) return false;
+		return this.collectCharacterTags(character).some((t) => t.toLowerCase().includes(q));
 	},
 };
 

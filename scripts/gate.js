@@ -79,6 +79,53 @@ function checkVHtml(dir) {
 checkVHtml(path.join(root, 'js'));
 console.log('[PASS] Security Audit: all v-html instances use vetted renderers');
 
+// 7. Icon Subset Coverage
+console.log('\n[GATE] === 7. Icon Subset Coverage ===');
+const faCss = fs.readFileSync(path.join(root, 'css', 'fontawesome.css'), 'utf8');
+const definedIcons = new Set([...faCss.matchAll(/\.fa-([a-z0-9-]+):before/g)].map((m) => `fa-${m[1]}`));
+const ignoredFaClasses = new Set([
+	'fa-solid',
+	'fa-regular',
+	'fa-brands',
+	'fa-fw',
+	'fa-xs',
+	'fa-sm',
+	'fa-lg',
+	'fa-xl',
+	'fa-2x',
+	'fa-spin',
+]);
+const missingIcons = new Map();
+function checkIcons(dir) {
+	const entries = fs.readdirSync(dir, { withFileTypes: true });
+	for (const entry of entries) {
+		const full = path.join(dir, entry.name);
+		if (entry.isDirectory()) {
+			checkIcons(full);
+		} else if (
+			/\.(vue|ts)$/.test(entry.name) &&
+			!entry.name.endsWith('.min.js') &&
+			!entry.name.endsWith('.bundle.js')
+		) {
+			const content = fs.readFileSync(full, 'utf8');
+			for (const match of content.matchAll(/\bfa-([a-z0-9-]+)\b/g)) {
+				const cls = `fa-${match[1]}`;
+				if (ignoredFaClasses.has(cls) || definedIcons.has(cls)) continue;
+				if (!missingIcons.has(cls)) missingIcons.set(cls, []);
+				const rel = path.relative(root, full);
+				if (!missingIcons.get(cls).includes(rel)) missingIcons.get(cls).push(rel);
+			}
+		}
+	}
+}
+checkIcons(path.join(root, 'js'));
+if (missingIcons.size > 0) {
+	const detail = [...missingIcons.entries()].map(([cls, files]) => `${cls} (${files.join(', ')})`).join('; ');
+	console.error(`[FAIL] Missing Font Awesome subset icon(s): ${detail}`);
+	process.exit(1);
+}
+console.log('[PASS] Icon Subset Coverage: all fa-* classes exist in css/fontawesome.css');
+
 console.log('\n=========================================');
 console.log(' ALL GATES PASSED (Definition of Done) ');
 console.log('=========================================\n');

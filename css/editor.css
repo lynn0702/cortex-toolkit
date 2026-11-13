@@ -3434,3 +3434,64 @@ dialog.trait-set-mini-dialog {
 		}
 	}
 }
+
+.tag-editor {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+}
+
+.tag-chip-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+}
+
+.tag-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.15rem 0.5rem;
+	border-radius: 999rem;
+	border: 1px solid var(--color-primary);
+	background: var(--color-input);
+	color: white;
+	font-size: 0.78rem;
+}
+
+.tag-chip-remove {
+	border: none;
+	background: transparent;
+	color: var(--color-label);
+	cursor: pointer;
+	padding: 0 0.1rem;
+	font-size: 0.72rem;
+	line-height: 1;
+}
+
+.tag-chip-remove:hover {
+	color: white;
+}
+
+.tag-editor-input-row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.tag-editor-input-row input {
+	flex: 1;
+	min-width: 0;
+}
+
+.tag-add-btn {
+	flex-shrink: 0;
+}
+
+.tag-editor-error {
+	color: var(--color-hitch);
+	font-size: 0.76rem;
+}

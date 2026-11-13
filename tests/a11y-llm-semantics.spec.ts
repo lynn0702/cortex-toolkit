@@ -346,7 +346,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			} as any,
 		});
 
-		// PP Spend bar: 1 PP: +1 Keep & 1 PP: +d6 Stunt
+		// PP Spend bar: 1 PP: +1 Keep & 1 PP: +d6
 		const spendBtns = wrapper.findAll('.pp-spend-btn');
 		expect(spendBtns.length).toBe(2);
 		await spendBtns[0].trigger('click');
@@ -356,7 +356,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		await spendBtns[1].trigger('click');
 		expect(character.plotPoints).toBe(0);
-		expect(wrapper.find('.word-bank-list').text()).toContain('PP Stunt');
+		expect(wrapper.find('.word-bank-list').text()).toContain('PP: +d6');
 		expect(playerPool.items.length).toBe(3);
 
 		// Auto-Contest label and deterministic hitch roll
@@ -379,6 +379,61 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		await runAxeAudit(wrapper.element as HTMLElement);
 		wrapper.unmount();
+	});
+
+	it('DiceRoller persists Session Roll Log in localStorage, updates active entry on re-evaluation, and clears cleanly', async () => {
+		localStorage.removeItem('characterCurioRollLog');
+		const pool = new dicePool.DicePool();
+		pool.add([
+			{ size: 8, qty: 1, source: 'Agility' },
+			{ size: 10, qty: 1, source: 'Design' },
+			{ size: 6, qty: 1, source: 'Distinction' },
+		]);
+		const wrapper = mount(DiceRoller, {
+			props: {
+				open: true,
+				pool,
+				character: { name: 'Log Tester', traits: [] },
+			},
+		});
+
+		const rollBtn = wrapper.find('.roller-roll-btn');
+		const randomSpy = vi.spyOn(Math, 'random').mockReturnValueOnce(0.8).mockReturnValueOnce(0.5).mockReturnValue(0.9);
+		try {
+			await rollBtn.trigger('click');
+		} finally {
+			randomSpy.mockRestore();
+		}
+
+		expect(wrapper.find('.roller-log-section').exists()).toBe(true);
+		expect(wrapper.findAll('.roller-log-entry').length).toBe(1);
+		const storedAfterRoll = JSON.parse(localStorage.getItem('characterCurioRollLog') || '[]');
+		expect(storedAfterRoll.length).toBe(1);
+		expect(storedAfterRoll[0].characterName).toBe('Log Tester');
+
+		// Switch preset / re-evaluate active roll: updates active entry in place rather than duplicating
+		const effectBtn = wrapper.findAll('.preset-btn').find((b) => /best effect/i.test(b.text()));
+		if (effectBtn) {
+			await effectBtn.trigger('click');
+			expect(wrapper.findAll('.roller-log-entry').length).toBe(1);
+		}
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+		wrapper.unmount();
+
+		// Remount restores persisted roll log and Clear Log empties storage
+		const reloaded = mount(DiceRoller, {
+			props: {
+				open: true,
+				pool: new dicePool.DicePool(),
+				character: { name: 'Log Tester', traits: [] },
+			},
+		});
+		expect(reloaded.findAll('.roller-log-entry').length).toBe(1);
+		await reloaded.find('button[aria-label="Clear roll log"]').trigger('click');
+		expect(reloaded.find('.roller-log-section').exists()).toBe(false);
+		expect(JSON.parse(localStorage.getItem('characterCurioRollLog') || '[]')).toEqual([]);
+		reloaded.unmount();
 	});
 
 	it('audits Play-scoped TraitEditor for label immutability and zero structural leaks', async () => {
@@ -2553,6 +2608,44 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				expect(b.classes()).not.toContain('c');
 			}
 			block.unmount();
+		});
+
+		it('empty portrait-ring renders interactive drop-zone in edit mode only and passes axe-core', async () => {
+			const char: any = {
+				id: 'ring-empty-test',
+				name: 'Empty Ring',
+				portrait: { url: '', alt: '', tags: [] },
+				traitSets: [
+					{
+						id: 'attr-ring',
+						name: 'Attributes',
+						noun: 'Attribute',
+						plural: 'Attributes',
+						description: '',
+						tags: [],
+						traits: [{ name: 'Agility', rating: { type: 'Die', value: [8] }, traits: [], description: '', tags: [] }],
+						view: {
+							style: { body: 'portrait-ring', header: 'none' },
+							frame: { shape: 'ring', span: [0, 360], color: 'primary', stroke: '2px' },
+						},
+					},
+				],
+			};
+
+			const editWrapper = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			expect(editWrapper.find('.ring-portrait-dropzone').exists()).toBe(true);
+			expect(editWrapper.html()).not.toContain('cortex_prime_logo');
+			await runAxeAudit(editWrapper.element as HTMLElement);
+			editWrapper.unmount();
+
+			const playWrapper = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play', editing: [] },
+			});
+			expect(playWrapper.find('.ring-portrait-dropzone').exists()).toBe(false);
+			expect(playWrapper.html()).not.toContain('cortex_prime_logo');
+			playWrapper.unmount();
 		});
 	});
 });

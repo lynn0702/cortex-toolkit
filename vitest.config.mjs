@@ -6,6 +6,9 @@ export default defineConfig({
 		vue({
 			template: {
 				transformAssetUrls: false,
+				compilerOptions: {
+					isCustomElement: (tag) => tag === 'search',
+				},
 			},
 		}),
 	],

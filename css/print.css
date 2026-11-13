@@ -118,7 +118,8 @@
 	.sheet-add-set-bar,
 	.sheet-add-portrait-link,
 	.btn-sheet-add,
-	.btn-remove-header-portrait {
+	.btn-remove-header-portrait,
+	.ring-portrait-dropzone {
 		display: none;
 	}
 }

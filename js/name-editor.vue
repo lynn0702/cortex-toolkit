@@ -15,6 +15,7 @@ import {
 } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
+import TagEditor from './tag-editor.vue';
 
 interface DicePreset {
 	name: string;
@@ -214,6 +215,15 @@ const pronouns = computed({
 	},
 	set(val: string) {
 		setCharacterProperty('pronouns', val);
+	},
+});
+
+const characterTags = computed<string[]>({
+	get() {
+		return Array.isArray(props.character?.tags) ? props.character.tags : [];
+	},
+	set(val: string[]) {
+		setCharacterProperty('tags', val);
 	},
 });
 
@@ -959,6 +969,10 @@ function updateCharacter(character: any) {
 								placeholder="Player notes..."
 								aria-label="Notes"
 							></textarea>
+						</div>
+
+						<div class="editor-field">
+							<TagEditor v-model="characterTags" input-id="char-field-tags" label="Tags" />
 						</div>
 
 						<div class="editor-field">

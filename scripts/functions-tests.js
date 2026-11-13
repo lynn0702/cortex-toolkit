@@ -243,6 +243,22 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 		frameColorBlocks.length >= 5 && frameColorBlocks.every((block) => !/\bstroke\s*:/.test(block)),
 		'.frame-color-* classes do not declare stroke on container section',
 	);
+
+	// ---- Retired usableBy check + 2-arg checkSetPick
+	const H = require('../js/character-curio-trait-helpers.ts');
+	ok(H.usableBy === undefined, 'usableBy helper is retired from character-curio-trait-helpers');
+	ok(
+		H.checkSetPick({ name: 'Distinctions', select: 'one', requiresSelect: true }, ['A']).length === 0,
+		'checkSetPick validates selection constraints cleanly with 2 args',
+	);
+	ok(
+		H.checkSetPick({ name: 'Distinctions', select: 'one', requiresSelect: true }, ['A', 'B']).length === 1,
+		'checkSetPick catches select=one violations',
+	);
+	ok(
+		H.checkSetPick({ name: 'Distinctions', select: 'one', requiresSelect: true }, []).length === 1,
+		'checkSetPick catches requiresSelect violations',
+	);
 }
 
 console.log(`functions-tests: ${pass} passed, ${fail} failed`);

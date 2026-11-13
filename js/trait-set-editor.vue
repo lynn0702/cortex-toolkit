@@ -8,6 +8,7 @@ import TraitSetEditorImage from './trait-set-editor-image.vue';
 import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 import VisibilityEye from './visibility-eye.vue';
 import TraitSetMini from './trait-set-mini.vue';
+import TagEditor from './tag-editor.vue';
 
 const props = defineProps<{
 	character: any;
@@ -44,6 +45,7 @@ const {
 	setStyleLabel,
 	hasLabelContent,
 	description,
+	tags,
 	includeOut,
 	endWord,
 	hasCounterTrait,
@@ -295,6 +297,10 @@ function applyFromMini(updatedSet: any) {
 								name="traitSetDescription"
 								v-model="description"
 							></textarea>
+						</div>
+
+						<div class="editor-field" v-if="!isName">
+							<TagEditor v-model="tags" :input-id="'trait-set-tags-' + traitSetID" label="Tags" />
 						</div>
 
 						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
