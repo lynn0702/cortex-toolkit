@@ -146,6 +146,7 @@ monster-specific rules live there, not here.
 - 2026-10-12: Build is `npm run types` + mix production + asset versioning; template library ships as a separate chunk with content-hash loader.
 - 2026-10-11: Work order while still 0.x (fork was schema 0.1, site not live yet): spec freeze → TS scaffold → UI pass.
 - 2026-10-12: Model types generate from the schemas (`npm run types` → `model.generated.ts`); `model.ts` adds the app-only layer.
+- 2026-11-12: Compiled bundles (`js/app.min.js`, `css/app.min.css`, `js/templates.bundle.js`) are gitignored build outputs built locally and in CI; `scripts/version-assets.js` stamps the template chunk hash into `js/app.min.js` on build and stamps `?v=` asset hashes onto `_site/index.html` during Pages staging so tracked `index.html` stays clean.
 
 ### Template system (from 2026-10-08, still in force)
 - Template supplies starting content; user owns aesthetics; local user wins every conflict.
@@ -214,6 +215,12 @@ to `color` and defaults `stroke` to `'2px'`.
 The `black` token resolves to `#000000` in light mode and print, and `#f1f5f9`
 (`--dark-text-main`) under `html.dark-theme` on screen so black frames stay
 visible on dark cards.
+(4) (2026-11-12) `frame.color` accepts `secondary` and arbitrary CSS hex
+colors (`#rgb` / `#rrggbb`) via `.frame-color-custom` (`--frame-color`) in
+addition to the 5 base tokens; unrecognized non-hex strings continue to warn and
+fall back to `primary`. Editors also expose `view.tint` (block frame fill),
+`view.primaryColor`, `view.secondaryColor`, `view.accentColor`, and `diceConfig`
+unfilled outline/numeral colors.
 
 
 ### Retire `view.style.sheet` as a behavior switch

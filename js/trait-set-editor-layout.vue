@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 import TraitSetEditorRowMini from './trait-set-editor-row-mini.vue';
+import ColorPicker from './color-picker.vue';
 
 const {
+	traitSetID,
 	isRing,
 	isPartsPreview,
 	hasParts,
@@ -16,7 +18,10 @@ const {
 	frameWidth,
 	setFrameWidth,
 	frameColor,
+	frameColorTokens,
 	setFrameColor,
+	frameTint,
+	setFrameTint,
 	frameDash,
 	setFrameDash,
 	frameBox,
@@ -89,18 +94,27 @@ const {
 
 		<div class="editor-field">
 			<div class="editor-label">Frame Color</div>
-			<div class="editor-button-group">
-				<button
-					v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
-					:key="c"
-					type="button"
-					class="editor-group-btn"
-					:class="{ active: frameColor === c }"
-					@click.stop="setFrameColor(c)"
-				>
-					{{ c.charAt(0).toUpperCase() + c.slice(1) }}
-				</button>
-			</div>
+			<ColorPicker
+				:model-value="frameColor"
+				:input-id="'ts-' + traitSetID + '-frame-color'"
+				label="Frame Color"
+				:tokens="frameColorTokens"
+				@update:model-value="setFrameColor"
+			/>
+		</div>
+
+		<div class="editor-field" v-if="frameShape === 'block'">
+			<div class="editor-label">Frame Fill</div>
+			<ColorPicker
+				:model-value="frameTint"
+				:input-id="'ts-' + traitSetID + '-frame-tint'"
+				label="Frame Fill"
+				fallback-hex="#ffffff"
+				:allow-clear="true"
+				clear-label="Clear"
+				@update:model-value="setFrameTint"
+				@clear="setFrameTint('')"
+			/>
 		</div>
 
 		<div class="editor-field">

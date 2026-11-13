@@ -10,8 +10,8 @@ npm run gate
 # Stage all modified and deleted tracked files (including prettier-formatted files and source changes)
 git add -u
 
-# Ensure all build artifacts and generated types are tracked and staged
-git add -- index.html js/app.min.js js/templates.bundle.js css/app.min.css js/model.generated.ts 2>/dev/null || true
+# Ensure generated model types stay tracked and staged
+git add -- js/model.generated.ts 2>/dev/null || true
 
 echo "=== [PRE-COMMIT] Passed! Staged all verified changes and build artifacts. ==="
 echo ""

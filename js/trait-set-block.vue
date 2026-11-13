@@ -58,6 +58,7 @@ const {
 	frameSvgPath,
 	frameStrokeClass,
 	frameStrokeStyle,
+	traitSetFrameStyle,
 	effectiveImageUrl,
 	effectiveAlignment,
 	effectiveZoom,
@@ -179,6 +180,7 @@ watch(rootEl, (el) => {
 		ref="rootEl"
 		v-if="traitSet && !isHiddenIn(traitSet, submode)"
 		:class="getTraitSetClasses(traitSet)"
+		:style="traitSetFrameStyle"
 		:data-set-index="s"
 		:data-set-name="traitSet.name || undefined"
 		:aria-label="traitSet.name || 'Trait Set'"

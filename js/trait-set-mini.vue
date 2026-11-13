@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
-import { getView, ensureView, type Rating, type RatingType, type PartCell, DIE_LADDER } from './model.ts';
+import {
+	getView,
+	ensureView,
+	type Rating,
+	type RatingType,
+	type PartCell,
+	type Character,
+	DIE_LADDER,
+} from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { formatPct, parsePct, type PartName } from './sheet-grid.ts';
 import VisibilityEye from './visibility-eye.vue';
 import TraitSetBlock from './trait-set-block.vue';
+import ColorPicker from './color-picker.vue';
+import { getCharacterColorTokens } from './color-palette.ts';
 import { resolveFrame, type FrameShape, type FrameConfig } from './frame-geometry.ts';
 
 export interface PartBlueprint extends PartCell {
@@ -26,6 +36,7 @@ export interface ChildSlotDef {
 
 const props = defineProps<{
 	initialSet?: any;
+	character?: Character;
 }>();
 
 const emit = defineEmits<{
@@ -523,6 +534,13 @@ function setFrameStroke(stroke: string) {
 	v.frame = f;
 }
 
+const miniFrameColorTokens = computed(() => getCharacterColorTokens(props.character, 'frame'));
+
+const frameTint = computed<string>(() => {
+	const t = getView(workingSet.value)?.tint;
+	return typeof t === 'string' ? t : '';
+});
+
 function setFrameColor(color: string) {
 	const v = ensureView(workingSet.value);
 	const cfg = resolveFrame(workingSet.value);
@@ -533,6 +551,16 @@ function setFrameColor(color: string) {
 		delete f.color;
 	}
 	v.frame = f;
+}
+
+function setFrameTint(tint: string) {
+	const v = ensureView(workingSet.value);
+	const trimmed = String(tint || '').trim();
+	if (trimmed) {
+		v.tint = trimmed;
+	} else {
+		delete v.tint;
+	}
 }
 
 function setFrameDash(dash: string) {
@@ -1792,18 +1820,30 @@ function onDialogBackdropClick(event: MouseEvent) {
 						<!-- Color for all active frames -->
 						<div class="mini-param-row">
 							<span class="mini-param-label">Color:</span>
-							<div class="mini-param-presets" role="group" aria-label="Frame Colors">
-								<button
-									v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
-									:key="'c-' + c"
-									type="button"
-									class="mini-chip-btn"
-									:class="{ active: (activeFrame.color || 'primary') === c }"
-									@click="setFrameColor(c)"
-								>
-									{{ c.charAt(0).toUpperCase() + c.slice(1) }}
-								</button>
-							</div>
+							<ColorPicker
+								compact
+								:model-value="activeFrame.color || 'primary'"
+								input-id="mini-frame-color"
+								label="Frame Color"
+								:tokens="miniFrameColorTokens"
+								@update:model-value="setFrameColor"
+							/>
+						</div>
+
+						<!-- Fill tint for block frames -->
+						<div v-if="currentFrameShape === 'block'" class="mini-param-row">
+							<span class="mini-param-label">Fill:</span>
+							<ColorPicker
+								compact
+								:model-value="frameTint"
+								input-id="mini-frame-tint"
+								label="Frame Fill"
+								fallback-hex="#ffffff"
+								:allow-clear="true"
+								clear-label="Clear"
+								@update:model-value="setFrameTint"
+								@clear="setFrameTint('')"
+							/>
 						</div>
 
 						<!-- Dash pattern for all active frames -->

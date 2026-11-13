@@ -28,6 +28,7 @@ import {
 	resolveSubtraitPlural,
 } from './model.ts';
 import { resolveFrame, normalizeZoom, type FrameConfig } from './frame-geometry.ts';
+import { getCharacterColorTokens } from './color-palette.ts';
 import type {
 	Character,
 	TraitSet,
@@ -1415,6 +1416,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
+	const frameColorTokens = computed(() => getCharacterColorTokens(props.character, 'frame'));
+
 	function setFrameColor(color: string) {
 		const s = props.traitSetID;
 		const ctk = ctkFor(s);
@@ -1428,6 +1431,28 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			delete f.color;
 		}
 		ctk.frame = f;
+		updateCharacter(structuredClone(toRaw(props.character)));
+	}
+
+	const frameTint = computed<string>({
+		get: () => {
+			const t = getView(traitSet.value)?.tint;
+			return typeof t === 'string' ? t : '';
+		},
+		set: (tint: string) => {
+			setFrameTint(tint);
+		},
+	});
+
+	function setFrameTint(tint: string) {
+		const s = props.traitSetID;
+		const ctk = ctkFor(s);
+		const trimmed = String(tint || '').trim();
+		if (trimmed) {
+			ctk.tint = trimmed;
+		} else {
+			delete ctk.tint;
+		}
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -2007,7 +2032,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		frameWidth,
 		setFrameWidth,
 		frameColor,
+		frameColorTokens,
 		setFrameColor,
+		frameTint,
+		setFrameTint,
 		frameDash,
 		setFrameDash,
 		frameBox,

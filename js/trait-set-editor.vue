@@ -715,6 +715,7 @@ function applyFromMini(updatedSet: any) {
 			<TraitSetMini
 				v-if="showBlockMini"
 				:initialSet="props.character?.traitSets?.[traitSetID]"
+				:character="props.character"
 				@close="closeBlockMini"
 				@applyToSet="applyFromMini"
 				@saved="presetSaved = true"

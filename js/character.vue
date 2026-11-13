@@ -24,6 +24,8 @@ import TraitSetBlock from './trait-set-block.vue';
 import ModalDialog from './modal-dialog.vue';
 import PrintToolbar from './print-toolbar.vue';
 import TraitSetMini from './trait-set-mini.vue';
+import { resolveFrame } from './frame-geometry.ts';
+import { resolveFrameColorPresentation } from './color-palette.ts';
 
 const props = defineProps<{
 	submode?: string | null;
@@ -149,6 +151,9 @@ const hasRingSet = computed(() => ringSetIndex.value !== -1);
 
 const ringTraitID = computed(() => (hasRingSet.value ? ringSetIndex.value : -1));
 const ringSet = computed(() => (hasRingSet.value ? traitSets.value[ringTraitID.value] : null));
+const ringFramePresentation = computed(() =>
+	resolveFrameColorPresentation(ringSet.value ? resolveFrame(ringSet.value)?.color : undefined),
+);
 const effectivePortraitUrl = computed(() => getView(ringSet.value)?.imageConfig?.url || portrait.value?.url || '');
 
 const pageCount = computed(() => {
@@ -840,7 +845,14 @@ watch(
 							<!-- PORTRAIT RING IN PILLAR COLUMN -->
 							<div
 								v-if="col.hasClassicRing"
-								:class="{ portrait: true, 'portrait-standalone': !hasRingSet }"
+								:class="[
+									'portrait',
+									{ 'portrait-standalone': !hasRingSet },
+									ringSet ? ringFramePresentation.className : undefined,
+								]"
+								:style="
+									ringFramePresentation.customColor ? { '--frame-color': ringFramePresentation.customColor } : undefined
+								"
 								:data-set-index="-2"
 							>
 								<div class="portrait-inner" @click.stop="selectElement(['traitSet', ringTraitID])">
@@ -1062,6 +1074,7 @@ watch(
 			</ModalDialog>
 			<TraitSetMini
 				v-if="showPlayMini"
+				:character="props.character"
 				@close="showPlayMini = false"
 				@saved="playCustomPresets = characterCurioFunctions.getCustomSetPresets()"
 			/>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
+import ColorPicker from './color-picker.vue';
 
 const {
 	isRing,
@@ -16,6 +17,7 @@ const {
 	scaleDieValue,
 	traitSetID,
 	frameColor,
+	frameColorTokens,
 	setFrameColor,
 	hideRingNames,
 } = injectTraitSetEditor();
@@ -28,18 +30,13 @@ const {
 
 		<div class="editor-field">
 			<div class="editor-label">Frame Color</div>
-			<div class="editor-button-group">
-				<button
-					v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
-					:key="c"
-					type="button"
-					class="editor-group-btn"
-					:class="{ active: frameColor === c }"
-					@click.stop="setFrameColor(c)"
-				>
-					{{ c.charAt(0).toUpperCase() + c.slice(1) }}
-				</button>
-			</div>
+			<ColorPicker
+				:model-value="frameColor"
+				:input-id="'ts-ring-' + traitSetID + '-frame-color'"
+				label="Frame Color"
+				:tokens="frameColorTokens"
+				@update:model-value="setFrameColor"
+			/>
 			<div class="editor-checkbox-row mt-sm">
 				<input
 					type="checkbox"

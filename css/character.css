@@ -1930,6 +1930,10 @@ button.trait-title-btn {
 	--frame-color: var(--color-interactive, #38bdf8);
 }
 
+.frame-color-secondary {
+	--frame-color: var(--color-secondary, #d0efda);
+}
+
 .frame-color-muted {
 	--frame-color: var(--color-separator, rgba(148, 163, 184, 0.4));
 }
