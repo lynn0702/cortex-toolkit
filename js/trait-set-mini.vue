@@ -495,6 +495,8 @@ function setFrameShape(shape: FrameShape) {
 
 const defaultFrame: FrameConfig = {
 	shape: 'block',
+	portraitShape: 'none',
+	array: 'none',
 	span: [0, 360],
 	corner: 8,
 	color: 'primary',
@@ -1727,7 +1729,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 					<div class="mini-section-label">FRAME &amp; BORDER</div>
 					<div class="mini-frame-bar" role="group" aria-label="Set Frame Shape">
 						<button
-							v-for="sh in ['none', 'block', 'ring', 'ellipse', 'arc', 'line']"
+							v-for="sh in ['none', 'block', 'ring', 'arc', 'line']"
 							:key="'frame-sh-' + sh"
 							type="button"
 							class="mini-toggle-btn"
@@ -1740,10 +1742,8 @@ function onDialogBackdropClick(event: MouseEvent) {
 
 					<!-- Frame Parameters when active -->
 					<div v-if="activeFrame && currentFrameShape !== 'none'" class="mini-frame-params">
-						<!-- Angles for ring, ellipse, arc -->
-						<template
-							v-if="currentFrameShape === 'ring' || currentFrameShape === 'ellipse' || currentFrameShape === 'arc'"
-						>
+						<!-- Angles for ring, arc -->
+						<template v-if="currentFrameShape === 'ring' || currentFrameShape === 'arc'">
 							<div class="mini-param-row">
 								<label class="mini-param-label">
 									Start °
@@ -1861,7 +1861,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 						</div>
 
 						<!-- Box toggle for radial frames -->
-						<div v-if="['ring', 'ellipse', 'arc'].includes(currentFrameShape)" class="mini-param-row">
+						<div v-if="['ring', 'arc'].includes(currentFrameShape)" class="mini-param-row">
 							<span class="mini-param-label">Box:</span>
 							<div class="mini-param-presets" role="group" aria-label="Frame Box">
 								<button

@@ -438,7 +438,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		dreamerBlock.unmount();
 	});
 
-	it('exposes Ring Size, Ring Position, Bookmark vs .editor-close, filled/unfilled die chips, and passes axe-core in TraitSetEditor', async () => {
+	it('exposes Portrait Size, Portrait Position, Bookmark vs .editor-close, filled/unfilled die chips, and passes axe-core in TraitSetEditor', async () => {
 		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
 		const dreamerIdx = character.traitSets.findIndex((s: any) => s.name === 'The Dreamer');
 
@@ -467,22 +467,22 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(d4Include.attributes('aria-pressed')).toBe('false');
 		expect(d4Include.find('.diecon-unfilled').exists()).toBe(true);
 
-		// Ring Size slider updates view.frame.size and Auto resets it
-		const sizeInput = wrapper.find('input[type="range"][aria-label="Ring Size"]');
+		// Portrait Size slider updates view.frame.size and Auto resets it
+		const sizeInput = wrapper.find('input[type="range"][aria-label="Portrait Size"]');
 		expect(sizeInput.exists()).toBe(true);
 		await sizeInput.setValue('310');
 		await sizeInput.trigger('input');
 		expect(character.traitSets[dreamerIdx].view.frame.size).toBe(310);
 
-		const autoResetBtn = wrapper.find('button[aria-label="Reset ring size"]');
+		const autoResetBtn = wrapper.find('button[aria-label="Reset portrait size"]');
 		expect(autoResetBtn.exists()).toBe(true);
 		await autoResetBtn.trigger('click');
 		expect(character.traitSets[dreamerIdx].view.frame.size).toBeUndefined();
 
-		// Ring Position switches between Left, Center, Right with aria-pressed
+		// Portrait Position switches between Left, Center, Right with aria-pressed
 		const ringPosField = wrapper
 			.findAll('.editor-field')
-			.find((f) => f.find('.editor-label').exists() && f.find('.editor-label').text().trim() === 'Ring Position');
+			.find((f) => f.find('.editor-label').exists() && f.find('.editor-label').text().trim() === 'Portrait Position');
 		expect(ringPosField).toBeDefined();
 		const posButtons = ringPosField!.findAll('.editor-group-btn');
 		const leftPosBtn = posButtons.find((b) => b.text().trim() === 'Left');

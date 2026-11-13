@@ -25,6 +25,14 @@ import type {
 
 // Primitives re-exported unchanged from the schema projection.
 export type { Tags } from './model.generated.ts';
+export type {
+	BorderShape,
+	BorderConfig,
+	PortraitFrameShape,
+	TraitArrayMode,
+	FrameShape,
+	FrameConfig,
+} from './frame-geometry.ts';
 
 // ---------- ratings (2026-10-23: one shape at every level) ----------
 
@@ -576,6 +584,8 @@ export interface CharacterCurioCustom {
 	pipSeparator?: string;
 	/** Remove borders, backgrounds, and box-shadows around the section. */
 	borderless?: boolean;
+	/** Section border configuration (`none | block | line`). */
+	border?: import('./frame-geometry.ts').BorderShape | Partial<import('./frame-geometry.ts').BorderConfig> | string;
 	/** Singular noun override for traits on a ring (e.g. "Boss Die"). */
 	ringNoun?: string;
 	// behavior / labels

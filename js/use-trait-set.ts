@@ -1,6 +1,14 @@
 import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
-import { resolveFrame, computeFrameAnchors, buildFrameSvgPath, normalizeZoom } from './frame-geometry.ts';
+import {
+	resolveBorder,
+	resolveFrame,
+	computeFrameAnchors,
+	buildFrameSvgPath,
+	normalizeZoom,
+	type PortraitFrameShape,
+	type TraitArrayMode,
+} from './frame-geometry.ts';
 import { resolveFrameColorPresentation } from './color-palette.ts';
 import {
 	getView,
@@ -52,7 +60,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	const printBlank = computed(() => props.printBlank);
 	const viewY = computed(() => props.viewY);
 
-	// Phase 3c: SVG Frames & Dynamic Positional Anchors
+	// Orthogonal Border, Portrait Frame & Radial Array
+	const resolvedBorder = computed(() => resolveBorder(traitSet.value));
 	const resolvedFrame = computed(() => resolveFrame(traitSet.value));
 	const frameToggledOff = ref(false);
 	const containerWidth = ref<number>(600);
@@ -83,32 +92,42 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 	});
 
-	// Width-based forced-off: radial frames force off when container is narrower than their minimum required width
-	const isFrameForcedOff = computed(() => {
-		if (!resolvedFrame.value) return false;
-		const s = resolvedFrame.value.shape;
-		if (s === 'block' || s === 'line') return false;
-		const minWidth = s === 'arc' ? 360 : 480;
-		return containerWidth.value > 0 && containerWidth.value < minWidth;
-	});
+	const isFrameForcedOff = computed(() => false);
 
-	const isFrameActive = computed(
-		() => Boolean(resolvedFrame.value) && !frameToggledOff.value && !isFrameForcedOff.value,
+	const isFrameActive = computed(() => Boolean(resolvedFrame.value) && !frameToggledOff.value);
+
+	const isPositionalFrameActive = computed(() => false);
+
+	const traitArrayMode = computed<TraitArrayMode>(() =>
+		isFrameActive.value ? (resolvedFrame.value?.array ?? 'none') : 'none',
 	);
 
-	const isPositionalFrameActive = computed(() => {
-		if (!isFrameActive.value || !resolvedFrame.value) return false;
-		if (resolvedFrame.value.image?.url) return false;
-		const s = resolvedFrame.value.shape;
-		return s === 'ring' || s === 'ellipse' || s === 'arc' || (s as any) === 'path';
+	const portraitFrameShape = computed<PortraitFrameShape>(() => {
+		if (!isFrameActive.value || !resolvedFrame.value) return 'none';
+		return resolvedFrame.value.portraitShape;
 	});
+
+	const setOwnImageUrl = computed(() => {
+		const view = getView(traitSet.value);
+		if (view?.style?.body === 'image') return '';
+		return resolvedFrame.value?.image?.url || view?.imageConfig?.url || '';
+	});
+
+	const showPortraitHub = computed(
+		() =>
+			!isNameSet(traitSet.value) &&
+			getView(traitSet.value)?.style?.body !== 'image' &&
+			(traitArrayMode.value !== 'none' || Boolean(setOwnImageUrl.value) || portraitFrameShape.value !== 'none'),
+	);
 
 	const frameSvgPath = computed(() => {
 		if (!resolvedFrame.value) return '';
 		return buildFrameSvgPath(resolvedFrame.value);
 	});
 
-	const frameColorPresentation = computed(() => resolveFrameColorPresentation(resolvedFrame.value?.color));
+	const frameColorPresentation = computed(() =>
+		resolveFrameColorPresentation(resolvedFrame.value?.color ?? resolvedBorder.value?.color),
+	);
 	const frameColorClass = computed(() => {
 		const res = frameColorPresentation.value;
 		if (res.unknownToken) {
@@ -151,45 +170,28 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return computeFrameAnchors(rendered.length, resolvedFrame.value);
 	});
 
-	function getTraitAnchorStyle(t: number): Record<string, string> | undefined {
-		if (!isPositionalFrameActive.value) return undefined;
-		const a = frameAnchors.value[t];
-		if (!a) return undefined;
-		const left = a.offsetMm ? `calc(${a.x}% + ${a.offsetMm.x}mm)` : `${a.x}%`;
-		const top = a.offsetMm ? `calc(${a.y}% + ${a.offsetMm.y}mm)` : `${a.y}%`;
-		return {
-			position: 'absolute',
-			left,
-			top,
-			'--anchor-x': `${a.x}%`,
-			'--anchor-y': `${a.y}%`,
-			'--anchor-angle': `${a.angle}deg`,
-		};
+	function getTraitAnchorStyle(_t: number): Record<string, string> | undefined {
+		return undefined;
 	}
 
-	function getTraitNameAnchorStyle(t: number): Record<string, string> | undefined {
-		if (!isPositionalFrameActive.value) return undefined;
-		return frameAnchors.value[t]?.nameStyle;
+	function getTraitNameAnchorStyle(_t: number): Record<string, string> | undefined {
+		return undefined;
 	}
 
-	function getTraitAnchorDock(t: number): string | undefined {
-		if (!isPositionalFrameActive.value) return undefined;
-		return frameAnchors.value[t]?.dock;
+	function getTraitAnchorDock(_t: number): string | undefined {
+		return undefined;
 	}
 
-	function getTraitAnchorHemisphere(t: number): 'top' | 'bottom' | 'center' | undefined {
-		if (!isPositionalFrameActive.value) return undefined;
-		const a = frameAnchors.value[t];
-		if (!a) return undefined;
-		return a.y < 48 ? 'top' : a.y > 52 ? 'bottom' : 'center';
+	function getTraitAnchorHemisphere(_t: number): 'top' | 'bottom' | 'center' | undefined {
+		return undefined;
 	}
 
 	const effectiveImageUrl = computed(() => {
-		const fImg = resolvedFrame.value?.image?.url;
-		const view = getView(traitSet.value);
-		const sImg = view?.imageConfig?.url;
-		const charPortrait = props.character?.portrait?.url;
-		return fImg || sImg || charPortrait || '';
+		if (setOwnImageUrl.value) return setOwnImageUrl.value;
+		if (traitArrayMode.value !== 'none' || getView(traitSet.value)?.style?.body === 'portrait-ring') {
+			return props.character?.portrait?.url || '';
+		}
+		return '';
 	});
 
 	const effectiveAlignment = computed(() => {
@@ -287,7 +289,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		} else if (ctk?.header === 'none') {
 			classes['trait-set-header-none'] = true;
 		}
-		if (ctk?.borderless) {
+		const borderCfg = resolveBorder(traitSetArg);
+		if (
+			borderCfg.shape === 'none' ||
+			borderCfg.shape === 'line' ||
+			(borderCfg.shape === 'block' && borderCfg.explicit)
+		) {
 			classes['trait-set-borderless'] = true;
 		}
 		if ((ctk?.pips as any) === false) {
@@ -313,17 +320,30 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (vis === 'play-only') classes['trait-set-play-only'] = true;
 		if (vis === 'editor-only') classes['trait-set-editor-only'] = true;
 
-		if (isFrameActive.value) {
+		const hasArray = Boolean(frameCfg && frameCfg.array !== 'none');
+		const hasPortrait =
+			!isNameSet(traitSetArg) &&
+			ctk?.style?.body !== 'image' &&
+			(hasArray ||
+				Boolean(frameCfg?.image?.url || ctk?.imageConfig?.url) ||
+				Boolean(frameCfg && frameCfg.portraitShape !== 'none'));
+		if (hasPortrait) {
+			classes['trait-set-has-portrait'] = true;
+		}
+
+		if (borderCfg.explicit && (borderCfg.shape === 'block' || borderCfg.shape === 'line')) {
 			classes['trait-set-framed'] = true;
-			if (resolvedFrame.value?.shape) {
-				classes['trait-set-frame-' + resolvedFrame.value.shape] = true;
-			}
+			classes['trait-set-frame-' + borderCfg.shape] = true;
+		} else if (hasArray) {
+			classes['trait-set-framed'] = true;
+			classes['trait-set-frame-' + frameCfg!.array] = true;
+		} else if (hasPortrait && frameCfg?.portraitShape && frameCfg.portraitShape !== 'none') {
+			classes['trait-set-framed'] = true;
 		}
-		if (resolvedFrame.value) {
-			classes[frameColorClass.value] = true;
-		}
-		if (resolvedFrame.value?.shape === 'line') {
-			classes['trait-set-frame-line'] = true;
+
+		if (borderCfg.explicit || frameCfg) {
+			const cRes = resolveFrameColorPresentation(frameCfg?.color ?? borderCfg.color);
+			classes[cRes.className] = true;
 		}
 
 		return classes;
@@ -1708,7 +1728,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		isPipChildPart,
 		hasChildPartCell,
 		getChildTraitByNoun,
+		resolvedBorder,
 		resolvedFrame,
+		traitArrayMode,
+		portraitFrameShape,
+		showPortraitHub,
+		setOwnImageUrl,
 		isFrameForcedOff,
 		frameToggledOff,
 		isFrameActive,

@@ -3,7 +3,6 @@ import { getView } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
-import TraitSetFrame from './trait-set-frame.vue';
 
 const {
 	traitSet,
@@ -75,19 +74,9 @@ const {
 	hinderDie,
 	handleHinderDieClick,
 	stageTrackDie,
-	resolvedFrame,
-	isFrameActive,
-	isPositionalFrameActive,
-	frameSvgPath,
-	frameStrokeClass,
-	frameStrokeStyle,
-	getTraitAnchorStyle,
-	getTraitAnchorDock,
-	getTraitAnchorHemisphere,
-	getTraitNameAnchorStyle,
-	effectiveImageUrl,
-	effectiveAlignment,
-	effectivePortraitStyle,
+	resolvedBorder,
+	traitArrayMode,
+	showPortraitHub,
 } = injectTraitSet();
 
 function hasTraitSetDescription(ts: any) {
@@ -102,35 +91,8 @@ function hasTraitSetDescription(ts: any) {
 		:class="[
 			getView(traitSet)?.style?.body === 'list' ? 'trait-list-unrated' : '',
 			Number(getView(traitSet)?.traitColumns) > 1 ? 'trait-list-cols-' + getView(traitSet)?.traitColumns : '',
-			isPositionalFrameActive ? 'trait-list-framed frame-shape-' + resolvedFrame?.shape : '',
 		]"
 	>
-		<!-- Decorative SVG for positional frames (ring, ellipse, arc, path) -->
-		<TraitSetFrame v-if="isPositionalFrameActive" :trait-set="traitSet" />
-
-		<!-- Center Hub / Portrait slot for radial frames -->
-		<div
-			v-if="
-				isPositionalFrameActive &&
-				(resolvedFrame?.shape === 'ring' || resolvedFrame?.shape === 'ellipse' || resolvedFrame?.shape === 'arc') &&
-				(resolvedFrame?.shape === 'ring' || resolvedFrame?.image?.url)
-			"
-			class="frame-ring-hub-slot"
-			:class="{ 'has-frame-image': Boolean(effectiveImageUrl) }"
-			aria-hidden="true"
-		>
-			<slot name="hub">
-				<div
-					v-if="effectiveImageUrl"
-					:class="'portrait-circle portrait-alignment-' + effectiveAlignment"
-					width="100%"
-					height="100%"
-					:style="effectivePortraitStyle"
-				></div>
-				<div v-else class="frame-hub-circle"></div>
-			</slot>
-		</div>
-
 		<!-- PIPS BODY (XP / TRACK) -->
 		<TraitSetPips v-if="getView(traitSet)?.style?.body === 'pips'" />
 
@@ -142,9 +104,6 @@ function hasTraitSetDescription(ts: any) {
 					:data-trait-rating="firstDie(item.trait) ? 'd' + firstDie(item.trait) : undefined"
 					:data-trait-out="isTraitOut(item.trait, traitSet) ? 'true' : undefined"
 					:data-trait-questioned="isChildPipFilled(item.trait) ? 'true' : undefined"
-					:style="isPositionalFrameActive ? getTraitAnchorStyle(t) : undefined"
-					:data-frame-dock="isPositionalFrameActive ? getTraitAnchorDock(t) : undefined"
-					:data-frame-hemisphere="isPositionalFrameActive ? getTraitAnchorHemisphere(t) : undefined"
 				>
 					<transition name="trait" appear>
 						<!-- PARTS GRID (explicit trait-part coordinates) -->
@@ -1090,7 +1049,6 @@ function hasTraitSetDescription(ts: any) {
 										'trait-title-pip': Boolean(getPipChild(item.trait)),
 										'trait-title-stacked': getRatingPlacement(traitSet) === 'below',
 									}"
-									:style="isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined"
 								>
 									<span class="list-bullet" v-if="getView(traitSet)?.style?.body === 'list'">•</span>
 
@@ -1672,9 +1630,10 @@ function hasTraitSetDescription(ts: any) {
 	<transition appear>
 		<div
 			class="preview-button-container"
-			:class="{ 'ring-add-button': resolvedFrame?.shape === 'ring' }"
+			:class="{ 'ring-add-button': traitArrayMode !== 'none' }"
 			v-if="
-				resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet)))
+				(resolvedBorder.shape !== 'line' || showPortraitHub || Boolean(traitSet?.traits?.length)) &&
+				(submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet)))
 			"
 		>
 			<div class="preview-button-container-inner">

@@ -19,16 +19,17 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	it('verifies characterCurioSetPresets contains the 3 new Phase 3c Framed Presets', () => {
 		const ringPreset = characterCurioSetPresets['framed-ring-attributes'];
 		expect(ringPreset, 'framed-ring-attributes preset must exist').toBeDefined();
-		expect(ringPreset?.preset?.view?.frame?.shape).toBe('ring');
+		expect(ringPreset?.preset?.view?.frame?.shape).toBe('circle');
+		expect(ringPreset?.preset?.view?.frame?.array).toBe('ring');
 
 		const blockPreset = characterCurioSetPresets['framed-chamfer-block'];
 		expect(blockPreset, 'framed-chamfer-block preset must exist').toBeDefined();
-		expect(blockPreset?.preset?.view?.frame?.shape).toBe('block');
-		expect(blockPreset?.preset?.view?.frame?.corner).toBe('cut');
+		expect(blockPreset?.preset?.view?.border?.shape).toBe('block');
+		expect(blockPreset?.preset?.view?.border?.corner).toBe('cut');
 
 		const linePreset = characterCurioSetPresets['framed-section-line'];
 		expect(linePreset, 'framed-section-line preset must exist').toBeDefined();
-		expect(linePreset?.preset?.view?.frame?.shape).toBe('line');
+		expect(linePreset?.preset?.view?.border?.shape).toBe('line');
 	});
 
 	it('F4: verifies span normalization preserves explicit 0 and anchors maintain >= 0.01 precision', () => {
@@ -72,16 +73,17 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		// Session notes does not reference JSON tab
 		const sessionNotes = char.traitSets[7];
 		expect(sessionNotes.notes).not.toContain('JSON tab');
-		expect(sessionNotes.notes).toContain('Card Builder');
+		expect(sessionNotes.notes).toContain('Set Editor');
 	});
 
 	it('F6: verifies stroke tokens (strong, dashed) and unrecognized fallback to primary with warning', () => {
 		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as any;
 		// Test unrecognized color fallback
 		character.traitSets[0].view.frame = {
-			shape: 'ring',
+			shape: 'circle',
+			array: 'ring',
 			color: 'unknown-neon',
 		};
 		const wrapper = mount(TraitSetBlock, {
@@ -96,10 +98,10 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	});
 
 	it('F8: verifies line divider set renders as a bare rule with no header or card chrome', () => {
-		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as any;
 		const lineSet = character.traitSets[1];
 		expect(lineSet.name).toBe('');
-		expect(lineSet.view.frame.shape).toBe('line');
+		expect(lineSet.view.border.shape).toBe('line');
 
 		const wrapper = mount(TraitSetBlock, {
 			props: { character, traitSetID: 1, submode: 'edit', editing: [] },
@@ -180,12 +182,13 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		wrapper.unmount();
 	});
 
-	it('morphs ring -> ellipse -> block preserving all 6 traits in exact index order 0..5', async () => {
-		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+	it('morphs circle+ring -> circle+arc -> block preserving all 6 traits in exact index order 0..5', async () => {
+		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as any;
 		const set = character.traitSets[0];
 
-		// 1. Initial ring
-		expect(set.view.frame.shape).toBe('ring');
+		// 1. Initial circle + ring array
+		expect(set.view.frame.shape).toBe('circle');
+		expect(set.view.frame.array).toBe('ring');
 		const wrapper = mount(TraitSetBlock, {
 			props: {
 				character,
@@ -200,28 +203,33 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		const getRingTraitNames = () => wrapper.findAll('.ring-trait .ring-trait-name').map((el) => el.text().trim());
 		expect(getRingTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
 
-		// 2. Morph to ellipse
-		const characterEllipse = structuredClone(character);
-		characterEllipse.traitSets[0].view.frame.shape = 'ellipse';
-		await wrapper.setProps({ character: characterEllipse });
+		// 2. Morph to circle + arc array (all 6 traits preserved on radial arc)
+		const characterArc = structuredClone(character);
+		characterArc.traitSets[0].view.frame.array = 'arc';
+		characterArc.traitSets[0].view.frame.span = [45, 135];
+		await wrapper.setProps({ character: characterArc });
 		await nextTick();
 
-		expect(wrapper.find('.trait-list').exists()).toBe(true);
-		const getTraitNames = () => wrapper.findAll('.trait').map((el) => el.attributes('data-trait-name'));
-		expect(getTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
+		expect(wrapper.find('.portrait').exists()).toBe(true);
+		expect(wrapper.find('.ring-grid').exists()).toBe(true);
+		expect(getRingTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
 
-		// 3. Morph to block (container border frame)
+		// 3. Morph to block border with array disabled (list layout preserves traits)
 		const characterBlock = structuredClone(character);
-		(characterBlock.traitSets[0].view as any).frame = {
+		characterBlock.traitSets[0].view.border = {
 			shape: 'block',
 			corner: 'cut',
 			stroke: '2px',
 			color: 'primary',
 		};
+		characterBlock.traitSets[0].view.frame = {
+			shape: 'none',
+			array: 'none',
+		};
 		await wrapper.setProps({ character: characterBlock });
 		await nextTick();
 
-		// When block, the frame SVG renders at the block container level (.trait-set-frame-svg.frame-block-svg)
+		const getTraitNames = () => wrapper.findAll('.trait').map((el) => el.attributes('data-trait-name'));
 		expect(wrapper.find('.trait-set-frame-svg.frame-block-svg').exists()).toBe(true);
 		expect(wrapper.find('.portrait').exists()).toBe(false);
 		expect(getTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);

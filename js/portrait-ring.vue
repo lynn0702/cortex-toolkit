@@ -41,17 +41,16 @@ const scaleTrait = computed(() => {
 	return setNode.traits.find((t: any) => t.name?.trim().toLowerCase() === 'scale');
 });
 const traits = computed<Trait[]>(() => {
+	const frameCfg = resolveFrame(ringSet.value);
+	if (frameCfg && frameCfg.array === 'none') {
+		return [];
+	}
 	const all = (ringSet.value?.traits || []) as Trait[];
 	const nonScale = all.filter((t: any) => !(t.name?.trim().toLowerCase() === 'scale'));
 	const ringOnly = nonScale.filter((t: any) => Boolean(getView(t)?.ring));
 	if (ringOnly.length > 0) return ringOnly;
 	const hasExplicitRing = all.some((t: any) => Boolean(getView(t)?.ring));
 	if (hasExplicitRing) return [];
-	const frameCfg = resolveFrame(ringSet.value);
-	const hasRingConfig = Boolean(frameCfg?.ring || frameCfg?.ringConfig || frameCfg?.traitsSpan);
-	if (frameCfg?.image?.url && !hasRingConfig) {
-		return [];
-	}
 	return nonScale;
 });
 const isRingPool = computed(() => {
@@ -110,10 +109,13 @@ const ringSlots = computed<RingSlot[]>(() => {
 			});
 		}
 	}
+	const activeFrame = resolveFrame(ringSet.value);
+	if (activeFrame && activeFrame.array === 'none') {
+		return slots;
+	}
 	if (slots.length === 0 && ringSet.value) {
 		const setRating = getRating(ringSet.value);
-		const frameCfg = resolveFrame(ringSet.value);
-		const hasRingConfig = Boolean(frameCfg?.ring || frameCfg?.ringConfig || frameCfg?.traitsSpan);
+		const hasRingConfig = Boolean(activeFrame?.ring || activeFrame?.ringConfig || activeFrame?.traitsSpan);
 		if (setRating && (setRating.type === 'Dice' || hasRingConfig)) {
 			const dice = ratingDice(setRating);
 			const sourceLabel =
@@ -192,22 +194,44 @@ function getTraitAngle(t: number | string) {
 	if (count <= 0) return 0;
 
 	const frameCfg = resolveFrame(ringSet.value);
-	if (frameCfg?.traitsSpan) {
-		const baseAngle = (frameCfg.traitsSpan[0] ?? 0) - 90;
-		const delta = frameCfg.traitsSpan[1] - frameCfg.traitsSpan[0];
+	if (frameCfg?.array === 'arc') {
+		let s0: number;
+		let s1: number;
+		if (dragArcAngle.value !== null) {
+			const centerClock = dragArcAngle.value + 180;
+			const half = frameCfg.traitsSpan
+				? (frameCfg.traitsSpan[1] - frameCfg.traitsSpan[0]) / 2
+				: (((ringConfig.value.arcSpread ?? 25) / 100) * 360) / 2;
+			s0 = centerClock - half;
+			s1 = centerClock + half;
+		} else if (frameCfg.traitsSpan) {
+			s0 = frameCfg.traitsSpan[0];
+			s1 = frameCfg.traitsSpan[1];
+		} else {
+			const arcSpread = ringConfig.value.arcSpread ?? 25;
+			const totalSpan = (arcSpread / 100) * 360;
+			const centerClock = (ringConfig.value.arcAngle ?? -90) + 180;
+			s0 = centerClock - totalSpan / 2;
+			s1 = centerClock + totalSpan / 2;
+		}
+		const baseAngle = s0 - 90;
+		const delta = s1 - s0;
 		const alpha = count === 1 ? 0.5 : idx / (count - 1);
 		return baseAngle + alpha * delta;
 	}
 
-	const delta = frameCfg ? frameCfg.span[1] - frameCfg.span[0] : 0;
-	const isClosed = frameCfg ? Math.abs(delta) >= 360 : false;
-
-	if (frameCfg && isClosed) {
-		const baseAngle = (frameCfg.span[0] ?? 0) - 90;
-		return baseAngle + (idx / count) * 360;
+	const cfg = ringConfig.value;
+	if (frameCfg?.array === 'ring') {
+		const spreadPct = cfg.arcSpread ?? 100;
+		if (spreadPct >= 99.9) {
+			const baseAngle =
+				dragArcAngle.value !== null
+					? dragArcAngle.value
+					: (frameCfg.ringConfig?.arcAngle ?? (frameCfg.span[0] ?? 0) - 90);
+			return baseAngle + (idx / count) * 360;
+		}
 	}
 
-	const cfg = ringConfig.value;
 	const centerAngle = 90 + (cfg.arcAngle ?? -90);
 	const spreadFactor = (cfg.arcSpread ?? 100) / 100;
 	const totalSpan = 85 * spreadFactor;
@@ -380,7 +404,11 @@ function startRingDrag(event: PointerEvent, targetType: string) {
 	const initialRad = Math.atan2(startY - centerY, startX - centerX);
 	const initialDeg = (initialRad * 180) / Math.PI;
 
-	const startArcAngle = ringConfig.value.arcAngle ?? -90;
+	const startFrameCfg = resolveFrame(ringSet.value);
+	const startArcAngle =
+		startFrameCfg?.array === 'arc' && startFrameCfg?.traitsSpan
+			? (startFrameCfg.traitsSpan[0] + startFrameCfg.traitsSpan[1]) / 2 - 180
+			: (ringConfig.value.arcAngle ?? -90);
 	const startScaleAngle = ringConfig.value.scaleAngle ?? 0;
 
 	let hasMoved = false;
@@ -445,6 +473,21 @@ function startRingDrag(event: PointerEvent, targetType: string) {
 		if (hasMoved) {
 			if (targetType === 'traits' && dragArcAngle.value !== null) {
 				setRingConfigProp('arcAngle', dragArcAngle.value);
+				const node = ringSet.value;
+				const fCfg = resolveFrame(node);
+				if (node && fCfg?.array === 'arc') {
+					const v = ensureView(node);
+					const frameObj = typeof v.frame === 'object' && v.frame !== null ? (v.frame as any) : {};
+					const half = fCfg.traitsSpan
+						? (fCfg.traitsSpan[1] - fCfg.traitsSpan[0]) / 2
+						: (((ringConfig.value.arcSpread ?? 25) / 100) * 360) / 2;
+					const centerClock = dragArcAngle.value + 180;
+					frameObj.traitsSpan = [Math.round(centerClock - half), Math.round(centerClock + half)];
+					if (Math.abs((fCfg.span?.[1] ?? 360) - (fCfg.span?.[0] ?? 0)) < 360) {
+						frameObj.span = [...frameObj.traitsSpan];
+					}
+					v.frame = frameObj;
+				}
 			} else if (targetType === 'scale' && dragScaleAngle.value !== null) {
 				setRingConfigProp('scaleAngle', dragScaleAngle.value);
 			}

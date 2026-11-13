@@ -674,8 +674,54 @@
 	line-height: 1;
 	--highlight-radius: 1em;
 
+	.frame-portrait-svg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+
 	.submode-edit &::before {
 		border-radius: 50%;
+	}
+
+	.portrait-shape-none & .portrait-circle {
+		border: none;
+		border-radius: 0;
+	}
+
+	.portrait-shape-circle & .portrait-circle {
+		border: none;
+		border-radius: 50%;
+	}
+
+	.portrait-shape-square & .portrait-circle {
+		border: none;
+		border-radius: 0;
+	}
+
+	.portrait-shape-square &::before {
+		border-radius: 0;
+	}
+
+	.portrait-shape-round & .portrait-circle {
+		border: none;
+		border-radius: 14%;
+	}
+
+	.portrait-shape-round &::before {
+		border-radius: 14%;
+	}
+
+	.portrait-shape-cut & .portrait-circle {
+		border: none;
+		border-radius: 0;
+		clip-path: polygon(12% 1%, 88% 1%, 99% 12%, 99% 88%, 88% 99%, 12% 99%, 1% 88%, 1% 12%);
+	}
+
+	.portrait-shape-cut &::before {
+		border-radius: 0;
 	}
 }
 
@@ -1017,6 +1063,39 @@
 		order: 2;
 		margin-bottom: 0.5rem;
 	}
+}
+
+.character-sheet .trait-set.portrait-pos-center:has(.portrait):has(.trait-list) > .trait-set-body {
+	grid-template-columns: 1fr;
+	justify-items: center;
+
+	& > .portrait {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	& > .trait-list {
+		grid-column: 1;
+		grid-row: 2;
+		width: 100%;
+	}
+
+	& > .preview-button-container {
+		grid-column: 1;
+		grid-row: 3;
+	}
+}
+
+.trait-set-header-dice,
+.trait-set-body-dice {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.trait-set-body-dice {
+	margin-bottom: 0.35rem;
 }
 
 .character-sheet .trait-set.trait-set-valign-center:has(.portrait):has(.trait-list) > .trait-set-body {
@@ -1869,8 +1948,6 @@ button.trait-title-btn {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 0;
-	/* small local stacking literal */
 	pointer-events: none;
 
 	path {
@@ -1884,44 +1961,7 @@ button.trait-title-btn {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 0;
-	/* small local stacking literal */
 	pointer-events: none;
-}
-
-.frame-header-image {
-	width: 100%;
-	height: 8rem;
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
-	border-radius: 6px 6px 0 0;
-	margin-bottom: 0.5rem;
-	overflow: hidden;
-}
-
-.frame-ring-hub-slot {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 52%;
-	height: 52%;
-	transform: translate(-50%, -50%);
-	pointer-events: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-	z-index: 0;
-	/* small local stacking literal */
-
-	.frame-hub-circle {
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-		border: 1px dashed var(--color-separator, rgba(148, 163, 184, 0.4));
-		box-sizing: border-box;
-	}
 }
 
 .frame-color-primary {
@@ -1966,189 +2006,6 @@ button.trait-title-btn {
 	fill: none;
 }
 
-.character-sheet
-	.trait-set:is(.trait-set-frame-ring, .trait-set-frame-ellipse, .trait-set-frame-arc)
-	.trait-set-body.trait-set-body-framed:has(.trait-list-framed),
-.trait-set-body-framed:has(.trait-list-framed) {
-	position: relative;
-	padding: 4.5rem 1rem 3.5rem;
-}
-
-.character-sheet .trait-list-framed,
-.trait-list-framed {
-	position: relative;
-	aspect-ratio: 1 / 1;
-	width: 100%;
-	max-width: min(100%, var(--portrait-size, 21.25rem));
-	margin: 0 auto;
-	box-sizing: border-box;
-	overflow: visible;
-
-	&.frame-shape-arc {
-		.trait {
-			max-width: min(230px, 45vw);
-
-			.trait-inner:not(.trait-parts) {
-				display: flex;
-				flex-direction: row-reverse;
-				align-items: center;
-				justify-content: flex-start;
-				gap: 0.45rem;
-			}
-
-			.trait-sfx,
-			.trait-sfx-description {
-				white-space: normal;
-				font-size: 0.8rem;
-				line-height: 1.25;
-			}
-		}
-	}
-
-	.frame-radial-svg {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
-	}
-
-	.trait {
-		position: absolute;
-		z-index: 1;
-		/* small local stacking literal */
-		width: max-content;
-		max-width: min(320px, 90vw);
-		box-sizing: border-box;
-		white-space: normal;
-		border-bottom: none;
-		margin-bottom: 0;
-		padding-bottom: 0;
-		transition:
-			left 0.25s ease,
-			top 0.25s ease;
-
-		.trait-inner {
-			width: max-content;
-			max-width: 100%;
-
-			&.trait-parts {
-				display: grid;
-				row-gap: 0.2rem;
-				align-items: center;
-
-				.trait-part-name {
-					display: inline-flex;
-					align-items: center;
-					padding-right: 0.35rem;
-					min-width: 0;
-				}
-
-				.trait-part-rating {
-					display: inline-flex;
-					align-items: center;
-					min-width: 0;
-				}
-
-				.trait-part-track-label,
-				.trait-part-trackLabel {
-					display: inline-flex;
-					align-items: center;
-					justify-content: flex-end;
-					width: auto;
-					padding-right: 0.35rem;
-					min-width: 0;
-				}
-
-				.trait-part-track {
-					display: inline-flex;
-					align-items: center;
-					min-width: 0;
-				}
-
-				.trait-part-block,
-				.trait-part-description,
-				.trait-part-subtraits {
-					min-width: 0;
-				}
-			}
-		}
-
-		.trait-part-rating,
-		.trait-value,
-		.single-die-value {
-			display: flex;
-			flex-wrap: nowrap;
-			white-space: nowrap;
-		}
-
-		.attached-stress-track {
-			display: flex;
-			flex-wrap: nowrap;
-			white-space: nowrap;
-			width: auto;
-			max-width: none;
-
-			.attached-stress-die {
-				font-size: var(--diecon-scale-size);
-			}
-		}
-
-		&[data-frame-dock='left'] {
-			transform: translate(calc(-100% - 0.375rem), -50%);
-			text-align: right;
-
-			&[data-frame-hemisphere='top'] {
-				transform: translate(calc(-100% - 0.375rem), -75%);
-			}
-
-			&[data-frame-hemisphere='bottom'] {
-				transform: translate(calc(-100% - 0.375rem), -25%);
-			}
-
-			.trait-inner:not(.trait-parts) {
-				justify-content: flex-end;
-			}
-		}
-
-		&[data-frame-dock='right'] {
-			transform: translate(0.375rem, -50%);
-			text-align: left;
-
-			&[data-frame-hemisphere='top'] {
-				transform: translate(0.375rem, -75%);
-			}
-
-			&[data-frame-hemisphere='bottom'] {
-				transform: translate(0.375rem, -25%);
-			}
-
-			.trait-inner:not(.trait-parts) {
-				justify-content: flex-start;
-			}
-		}
-
-		&[data-frame-dock='top'] {
-			transform: translate(-50%, calc(-100% - 0.375rem));
-			text-align: center;
-
-			.trait-inner:not(.trait-parts) {
-				justify-content: center;
-			}
-		}
-
-		&[data-frame-dock='bottom'] {
-			transform: translate(-50%, 0.375rem);
-			text-align: center;
-
-			.trait-inner:not(.trait-parts) {
-				justify-content: center;
-			}
-		}
-	}
-}
-
 .trait-set.trait-set-frame-block {
 	border: none;
 	box-shadow: none;
@@ -2158,14 +2015,10 @@ button.trait-title-btn {
 	.trait-set-header {
 		background: transparent;
 		position: relative;
-		z-index: 1;
-		/* small local stacking literal */
 	}
 
 	.trait-set-body {
 		position: relative;
-		z-index: 1;
-		/* small local stacking literal */
 	}
 }
 

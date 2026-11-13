@@ -17,6 +17,7 @@ import {
 } from './model.ts';
 import { buildParts } from './sheet-grid.ts';
 import { customFontDomId, parseExternalFontUrl, sanitizeFontFamilyName } from './font-url.ts';
+import { DREAMER_ARCHITECT_SHOWCASE, SHOWCASE_TEMPLATES } from './showcase-templates.ts';
 import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
@@ -780,8 +781,13 @@ export const characterCurioFunctions = {
 	},
 
 	findLibraryTemplate: function (id: string) {
-		if (!id || typeof characterCurioLibraryTemplates === 'undefined') return null;
-		return characterCurioLibraryTemplates.find((t: any) => t.id === id) || null;
+		if (!id) return null;
+		if (typeof characterCurioLibraryTemplates !== 'undefined' && Array.isArray(characterCurioLibraryTemplates)) {
+			const found = characterCurioLibraryTemplates.find((t: any) => t.id === id);
+			if (found) return found;
+		}
+		if (id === DREAMER_ARCHITECT_SHOWCASE.id) return DREAMER_ARCHITECT_SHOWCASE as any;
+		return (SHOWCASE_TEMPLATES.find((t: any) => t.id === id) as any) || null;
 	},
 
 	// Resolve the template entry for a character: live store array first
@@ -1947,8 +1953,10 @@ export const characterCurioFunctions = {
 				view: {
 					pillar: 'prime',
 					header: 'top',
+					border: 'none',
 					frame: {
-						shape: 'ring',
+						shape: 'circle',
+						array: 'ring',
 						span: [0, 360],
 						color: 'primary',
 					},
@@ -2014,7 +2022,7 @@ export const characterCurioFunctions = {
 					outIndicator: true,
 					reservedSlots: 2,
 					header: 'top',
-					frame: {
+					border: {
 						shape: 'block',
 						corner: 'cut',
 						color: 'accent',
@@ -2048,7 +2056,7 @@ export const characterCurioFunctions = {
 				traits: [],
 				tags: [],
 				view: {
-					frame: {
+					border: {
 						shape: 'line',
 						color: 'accent',
 					},

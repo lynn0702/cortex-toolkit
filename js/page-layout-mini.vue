@@ -2,7 +2,6 @@
 import { computed, ref, onUnmounted } from 'vue';
 import { getView, ensureView } from './model.ts';
 import { getSheetSections, parsePct, formatPct } from './sheet-grid.ts';
-import TraitSetMini from './trait-set-mini.vue';
 
 // Page-level arrangement: every set on every page as a draggable box on
 // the page grid (the layout engine section walk: grid groups in document
@@ -17,6 +16,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	(e: 'updateCharacter', character: any): void;
+	(e: 'selectElement', selector: any[]): void;
 }>();
 
 const ROW_H = 20;
@@ -27,7 +27,6 @@ const pageCount = computed(() => {
 });
 
 const selected = ref<number | null>(null);
-const editingSetIndex = ref<number | null>(null);
 
 interface Block {
 	kind: 'box' | 'band';
@@ -527,7 +526,7 @@ function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'mo
 function onBoxKeydown(e: KeyboardEvent, b: Block) {
 	if (e.key === 'Enter' || e.key === ' ') {
 		e.preventDefault();
-		openBlockMini(b.index);
+		openSetEditor(b.index);
 		return;
 	}
 	if (!e.key.startsWith('Arrow')) return;
@@ -619,17 +618,9 @@ function onBoxKeydown(e: KeyboardEvent, b: Block) {
 	writePlace(b.index, { left: newLeft, width: newWidth, top: newTop, height: newHeight });
 }
 
-function openBlockMini(index: number) {
+function openSetEditor(index: number) {
 	selected.value = index;
-	editingSetIndex.value = index;
-}
-
-function onApplyBlockMini(updatedSet: any) {
-	if (editingSetIndex.value !== null && props.character?.traitSets?.[editingSetIndex.value]) {
-		props.character.traitSets[editingSetIndex.value] = updatedSet;
-		emit('updateCharacter', props.character);
-	}
-	editingSetIndex.value = null;
+	emit('selectElement', ['traitSet', index]);
 }
 
 onUnmounted(() => {
@@ -673,7 +664,7 @@ function pressBox(index: number, event: PointerEvent) {
 	const onUp = () => {
 		if (settled) return;
 		done();
-		openBlockMini(index);
+		openSetEditor(index);
 	};
 	armCleanup = done;
 	window.addEventListener('pointermove', onMove);
@@ -740,17 +731,17 @@ function pressBox(index: number, event: PointerEvent) {
 						role="button"
 						:aria-label="
 							selected === b.index
-								? b.name + ' — arrows to move, shift+arrows to resize, enter to edit parts'
+								? b.name + ' — arrows to move, shift+arrows to resize, enter to edit set'
 								: b.name +
 									(b.kind === 'band' ? ' (stacked)' : '') +
-									' — click to select, double-click or Enter to edit parts'
+									' — click to select, double-click or Enter to edit set'
 						"
 						:title="
 							selected === b.index
-								? 'Drag to move within and between pages · left, right, and bottom edges resize · double-click or Enter to edit parts'
+								? 'Drag to move within and between pages · left, right, and bottom edges resize · double-click or Enter to edit set'
 								: b.name +
 									(b.kind === 'band' ? ' (stacked)' : '') +
-									' — click to select, double-click or Enter to edit parts'
+									' — click to select, double-click or Enter to edit set'
 						"
 						@pointerdown="onBlockPointerDown($event, b, pg.page, 'move')"
 						@keydown="onBoxKeydown($event, b)"
@@ -809,11 +800,11 @@ function pressBox(index: number, event: PointerEvent) {
 				</button>
 				<button
 					type="button"
-					class="editor-group-btn btn-open-block-mini"
-					@click.stop="openBlockMini(selected as number)"
-					title="Open trait-block mini to edit set parts and layout"
+					class="editor-group-btn btn-open-set-editor"
+					@click.stop="openSetEditor(selected as number)"
+					title="Open set editor"
 				>
-					<i class="fas fa-th"></i> Edit Parts
+					<i class="fas fa-th" aria-hidden="true"></i> Edit Set
 				</button>
 			</div>
 			<div class="editor-row-inline mb-sm">
@@ -880,16 +871,5 @@ function pressBox(index: number, event: PointerEvent) {
 			</div>
 		</div>
 		<div class="editor-field-hint" v-else>Select a set on the miniature to edit its placement.</div>
-
-		<!-- Teleport: Trait Block Mini Handoff -->
-		<teleport to="body">
-			<TraitSetMini
-				v-if="editingSetIndex !== null && props.character?.traitSets?.[editingSetIndex]"
-				:initialSet="props.character.traitSets[editingSetIndex]"
-				:character="props.character"
-				@close="editingSetIndex = null"
-				@applyToSet="onApplyBlockMini"
-			/>
-		</teleport>
 	</div>
 </template>

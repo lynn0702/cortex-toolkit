@@ -7,7 +7,6 @@ import TraitSetEditorDice from './trait-set-editor-dice.vue';
 import TraitSetEditorImage from './trait-set-editor-image.vue';
 import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 import VisibilityEye from './visibility-eye.vue';
-import TraitSetMini from './trait-set-mini.vue';
 import TagEditor from './tag-editor.vue';
 
 const props = defineProps<{
@@ -32,7 +31,6 @@ const {
 	checkScrollPosition,
 	name,
 	traitSetID,
-	isRing,
 	isName,
 	styleBody,
 	styleOptions,
@@ -40,7 +38,6 @@ const {
 	headerMode,
 	headerAlign,
 	verticalAlign,
-	borderless,
 	styleLabel,
 	setStyleLabel,
 	hasLabelContent,
@@ -71,9 +68,7 @@ const {
 	setPillar,
 	resolvedPillar,
 	presetSaved,
-	showBlockMini,
-	openBlockMini,
-	closeBlockMini,
+	saveSetAsPreset,
 	characterCustomPillars,
 	selectElement,
 	promptDeleteTraitSet,
@@ -104,14 +99,6 @@ const selectedPillar = computed<string>({
 		}
 	},
 });
-
-function applyFromMini(updatedSet: any) {
-	if (props.character && props.character.traitSets && props.character.traitSets[props.traitSetID]) {
-		props.character.traitSets[props.traitSetID] = updatedSet;
-		emit('updateCharacter', props.character);
-	}
-	closeBlockMini();
-}
 </script>
 
 <template>
@@ -119,14 +106,9 @@ function applyFromMini(updatedSet: any) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button
-				type="button"
-				@click.stop="openBlockMini"
-				title="Open in Trait Block Mini / Save as Preset"
-				aria-label="Open in Trait Block Mini or Save as Preset"
-			>
+			<button type="button" @click.stop="saveSetAsPreset" title="Save Set Preset" aria-label="Save Set Preset">
 				<i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'" aria-hidden="true"></i>
-				<span class="editor-control-label">{{ presetSaved ? 'Saved' : 'Block Mini' }}</span>
+				<span class="editor-control-label">{{ presetSaved ? 'Saved' : 'Save Preset' }}</span>
 			</button>
 			<button
 				type="button"
@@ -190,8 +172,6 @@ function applyFromMini(updatedSet: any) {
 						</div>
 
 						<!-- STYLE-CONDITIONAL SECTIONS (each exists only for the styles that summon it) -->
-						<TraitSetEditorRing />
-
 						<TraitSetEditorDice />
 
 						<TraitSetEditorImage />
@@ -630,32 +610,9 @@ function applyFromMini(updatedSet: any) {
 							</div>
 						</div>
 
-						<!-- BORDER / BORDERLESS -->
-						<div class="editor-field">
-							<div class="editor-label">Border</div>
-							<div class="editor-button-group">
-								<button
-									type="button"
-									class="editor-group-btn"
-									:class="{ active: !borderless }"
-									:aria-pressed="!borderless"
-									@click.stop="borderless = false"
-								>
-									Bordered
-								</button>
-								<button
-									type="button"
-									class="editor-group-btn"
-									:class="{ active: borderless }"
-									:aria-pressed="borderless"
-									@click.stop="borderless = true"
-								>
-									Borderless
-								</button>
-							</div>
-						</div>
-
 						<TraitSetEditorLayout />
+
+						<TraitSetEditorRing />
 
 						<!-- PILLAR & COLUMNS WITHIN SET -->
 						<div
@@ -767,16 +724,5 @@ function applyFromMini(updatedSet: any) {
 		</div>
 
 		<TraitSetEditorConfirm />
-
-		<teleport to="body">
-			<TraitSetMini
-				v-if="showBlockMini"
-				:initialSet="props.character?.traitSets?.[traitSetID]"
-				:character="props.character"
-				@close="closeBlockMini"
-				@applyToSet="applyFromMini"
-				@saved="presetSaved = true"
-			/>
-		</teleport>
 	</aside>
 </template>

@@ -1489,6 +1489,23 @@
 		background: rgba(2, 132, 199, 0.12);
 	}
 
+	.row-mini-selected {
+		outline: 2px solid var(--color-interactive, #38bdf8);
+		outline-offset: 1px;
+	}
+
+	.row-mini-marker {
+		display: inline-block;
+		margin-right: 0.25rem;
+		padding: 0 0.2rem;
+		border-radius: 2px;
+		background: rgba(255, 255, 255, 0.18);
+		color: #fff;
+		font-size: 0.56rem;
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
 	.row-mini-name {
 		position: absolute;
 		left: 0.25rem;
@@ -1554,6 +1571,77 @@
 			}
 		}
 	}
+}
+
+.row-mini-parts-bar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+	margin-bottom: 0.45rem;
+}
+
+.row-mini-part-chip {
+	appearance: none;
+	background: color-mix(in oklch, currentColor 8%, transparent);
+	color: color-mix(in oklch, currentColor 84%, transparent);
+	border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
+	border-radius: 999px;
+	padding: 0.2rem 0.55rem;
+	font-family: var(--font-primary);
+	font-size: 0.72rem;
+	font-weight: 600;
+	line-height: 1.2;
+	cursor: pointer;
+
+	@media (hover: hover) {
+		&:hover {
+			background: color-mix(in oklch, currentColor 14%, transparent);
+			border-color: color-mix(in oklch, currentColor 38%, transparent);
+			color: currentColor;
+		}
+	}
+
+	&.active,
+	&[aria-pressed='true'] {
+		background: color-mix(in oklch, var(--color-interactive) 26%, transparent);
+		border-color: color-mix(in oklch, var(--color-interactive) 75%, transparent);
+		color: currentColor;
+	}
+}
+
+.row-mini-child-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+	margin-bottom: 0.5rem;
+	padding: 0.45rem;
+	border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
+	border-radius: 0.35rem;
+	background: color-mix(in oklch, currentColor 6%, transparent);
+
+	input,
+	select {
+		flex: 1 1 5rem;
+		min-width: 0;
+	}
+}
+
+.row-mini-behavior-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin-top: 0.45rem;
+}
+
+.row-mini-behavior-label {
+	font-size: 0.75rem;
+	color: color-mix(in oklch, currentColor 84%, transparent);
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .json-editor {

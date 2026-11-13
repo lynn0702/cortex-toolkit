@@ -51,13 +51,12 @@ const {
 	renderDieValue,
 	getCounterLabel,
 	isHiddenIn,
+	resolvedBorder,
 	resolvedFrame,
-	isFrameActive,
-	isFrameForcedOff,
-	frameToggledOff,
-	frameSvgPath,
-	frameStrokeClass,
-	frameStrokeStyle,
+	traitArrayMode,
+	portraitFrameShape,
+	showPortraitHub,
+	ratingDice,
 	traitSetFrameStyle,
 	effectiveImageUrl,
 	effectiveAlignment,
@@ -83,7 +82,7 @@ const hasHeader = computed(
 );
 
 const showRingActions = computed(() => {
-	if (!isRing.value || submode.value !== 'edit') return false;
+	if (!hasTraitArray.value || submode.value !== 'edit') return false;
 	if (!shouldRenderBodyComponent.value) return true;
 	const v = getView(traitSet.value);
 	if (v?.ringNoun) return true;
@@ -106,22 +105,29 @@ const bodyComponent = computed(() => {
 	return (style && BODY_COMPONENTS[style]) || TraitSetList;
 });
 
-const isRing = computed(() => {
-	const shape = resolvedFrame.value?.shape;
-	return shape === 'ring' || getView(traitSet.value)?.style?.body === 'portrait-ring';
-});
+const hasTraitArray = computed(() => traitArrayMode.value !== 'none');
 
 const shouldRenderBodyComponent = computed(() => {
 	if (isName.value) return true;
-	if (resolvedFrame.value?.shape === 'line' && (!traitSet.value.traits || !traitSet.value.traits.length)) {
+	if (
+		resolvedBorder.value.shape === 'line' &&
+		!showPortraitHub.value &&
+		(!traitSet.value?.traits || !traitSet.value.traits.length)
+	) {
 		return false;
 	}
-	if (isRing.value) {
+	if (hasTraitArray.value) {
 		const all = traitSet.value?.traits || [];
 		const hasExplicitRingTraits = all.some((t: any) => Boolean(getView(t)?.ring));
-		const isPureRingWithoutImage = !resolvedFrame.value?.image?.url && !hasExplicitRingTraits;
-		if (isPureRingWithoutImage) return false;
+		if (!hasExplicitRingTraits) return false;
 		return all.some((t: any) => !getView(t)?.ring && t.name?.trim().toLowerCase() !== 'scale');
+	}
+	if (
+		showPortraitHub.value &&
+		(!traitSet.value?.traits || traitSet.value.traits.length === 0) &&
+		submode.value !== 'edit'
+	) {
+		return false;
 	}
 	return true;
 });
@@ -135,11 +141,15 @@ function applyRingImageFile(file: File) {
 	characterCurioFunctions.processImageFile(file, 1280, 0.85).then(
 		(dataURL: string) => {
 			const v = ensureView(traitSet.value);
-			v.imageConfig ??= {};
-			v.imageConfig.url = dataURL;
-			if (v.frame && typeof v.frame === 'object' && v.frame.image) {
-				v.frame.image.url = dataURL;
-			}
+			const f = typeof v.frame === 'object' && v.frame !== null ? (v.frame as any) : {};
+			v.frame = {
+				shape: f.shape && f.shape !== 'block' && f.shape !== 'line' ? f.shape : 'circle',
+				...f,
+				image: {
+					...(f.image || {}),
+					url: dataURL,
+				},
+			};
 			updateCharacter(character.value);
 			selectElement(['traitSet', s.value]);
 		},
@@ -185,23 +195,14 @@ watch(rootEl, (el) => {
 		:data-set-name="traitSet.name || undefined"
 		:aria-label="traitSet.name || 'Trait Set'"
 	>
-		<!-- Block frame SVG enclosing entire trait set (header + body) -->
+		<!-- Block border SVG enclosing entire trait set (header + body) -->
 		<TraitSetFrame
-			v-if="isFrameActive && resolvedFrame?.shape === 'block'"
+			v-if="resolvedBorder.shape === 'block' && resolvedBorder.explicit"
+			mode="border"
 			:trait-set="traitSet"
 			:header-mode="headerMode"
 			:has-header="hasHeader"
 		/>
-
-		<!-- Block frame hero header image -->
-		<div
-			v-if="resolvedFrame?.shape === 'block' && resolvedFrame?.image?.url"
-			class="frame-header-image"
-			:class="'portrait-alignment-' + effectiveAlignment"
-			:style="effectivePortraitStyle"
-		>
-			<img class="sr-only" :src="effectiveImageUrl" alt="" />
-		</div>
 
 		<div class="trait-set-header" v-if="hasHeader && headerMode !== 'bottom'">
 			<transition appear>
@@ -232,6 +233,29 @@ watch(rootEl, (el) => {
 								: null
 						"
 					></span>
+					<span
+						v-else-if="traitSet.rating && getRating(traitSet)?.type === 'Dice' && traitArrayMode === 'none'"
+						class="trait-set-header-dice"
+					>
+						<span
+							v-for="(dieSize, dIdx) in ratingDice(getRating(traitSet))"
+							:key="'hdr-d-' + dIdx"
+							class="trait-set-header-rating diecon-wrapper"
+							v-html="renderDieValue(dieSize, true)"
+							role="button"
+							tabindex="0"
+							:aria-label="`Stage d${dieSize} ${traitSet.name}`"
+							@click.stop="
+								submode === 'play'
+									? emit('addDieToRoller', {
+											size: dieSize,
+											qty: 1,
+											source: traitSet.name,
+										})
+									: null
+							"
+						></span>
+					</span>
 					<div
 						class="trait-set-header-counter"
 						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"
@@ -252,25 +276,40 @@ watch(rootEl, (el) => {
 			</transition>
 		</div>
 
-		<div class="trait-set-body" :class="{ 'trait-set-body-framed': isFrameActive }">
-			<!-- Bare-path divider if line -->
-			<TraitSetFrame v-if="resolvedFrame?.shape === 'line'" :trait-set="traitSet" />
+		<div
+			class="trait-set-body"
+			:class="{ 'trait-set-body-framed': resolvedBorder.explicit || hasTraitArray || portraitFrameShape !== 'none' }"
+		>
+			<!-- Section line border divider -->
+			<TraitSetFrame v-if="resolvedBorder.shape === 'line'" mode="border" :trait-set="traitSet" />
 
-			<!-- Radial frame SVG (ring, ellipse, arc, path) -->
-			<TraitSetFrame
-				v-if="
-					isFrameActive &&
-					!resolvedFrame?.image?.url &&
-					(resolvedFrame?.shape === 'ring' ||
-						resolvedFrame?.shape === 'ellipse' ||
-						resolvedFrame?.shape === 'arc' ||
-						(resolvedFrame?.shape as any) === 'path')
-				"
-				:trait-set="traitSet"
-			/>
+			<!-- Set-level Dice fallback when header is none and Trait Array is None -->
+			<div
+				v-if="!hasHeader && traitSet.rating && getRating(traitSet)?.type === 'Dice' && traitArrayMode === 'none'"
+				class="trait-set-body-dice"
+			>
+				<span
+					v-for="(dieSize, dIdx) in ratingDice(getRating(traitSet))"
+					:key="'body-d-' + dIdx"
+					class="trait-set-header-rating diecon-wrapper"
+					v-html="renderDieValue(dieSize, true)"
+					role="button"
+					tabindex="0"
+					:aria-label="`Stage d${dieSize} ${traitSet.name || 'Trait Set'}`"
+					@click.stop="
+						submode === 'play'
+							? emit('addDieToRoller', {
+									size: dieSize,
+									qty: 1,
+									source: traitSet.name || traitSet.noun || 'Pool',
+								})
+							: null
+					"
+				></span>
+			</div>
 
-			<!-- Ring / Ellipse / Arc / portrait-ring body -->
-			<div class="portrait" v-if="isRing">
+			<!-- Set portrait hub with optional vector frame and optional radial Trait Array -->
+			<div class="portrait" v-if="showPortraitHub" :class="'portrait-shape-' + portraitFrameShape">
 				<div
 					:class="{ 'portrait-inner': true, selected: isSelected(['traitSet', s]) }"
 					@click.stop="submode === 'edit' ? selectElement(['traitSet', s]) : null"
@@ -308,8 +347,10 @@ watch(rootEl, (el) => {
 							/>
 						</template>
 					</div>
+					<TraitSetFrame v-if="portraitFrameShape !== 'none'" mode="portrait" :trait-set="traitSet" />
 				</div>
 				<PortraitRing
+					v-if="hasTraitArray"
 					:character="character"
 					:editing="editing"
 					:submode="submode"
@@ -375,6 +416,29 @@ watch(rootEl, (el) => {
 								: null
 						"
 					></span>
+					<span
+						v-else-if="traitSet.rating && getRating(traitSet)?.type === 'Dice' && traitArrayMode === 'none'"
+						class="trait-set-header-dice"
+					>
+						<span
+							v-for="(dieSize, dIdx) in ratingDice(getRating(traitSet))"
+							:key="'btm-hdr-d-' + dIdx"
+							class="trait-set-header-rating diecon-wrapper"
+							v-html="renderDieValue(dieSize, true)"
+							role="button"
+							tabindex="0"
+							:aria-label="`Stage d${dieSize} ${traitSet.name}`"
+							@click.stop="
+								submode === 'play'
+									? emit('addDieToRoller', {
+											size: dieSize,
+											qty: 1,
+											source: traitSet.name,
+										})
+									: null
+							"
+						></span>
+					</span>
 					<div
 						class="trait-set-header-counter"
 						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"

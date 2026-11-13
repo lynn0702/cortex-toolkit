@@ -12,6 +12,7 @@ export const DREAMER_ARCHITECT_SHOWCASE = {
 	genre: 'Reference / Showcase',
 	pages: 1,
 	listing: {
+		image: 'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
 		genre: 'Reference / Showcase',
 		quote: 'Two minds, one sheet — a tarot-card display with dual circular portraits, leader lines, and shared values.',
 		setting: 'd8',
@@ -26,13 +27,12 @@ export const VANGUARD_FRAME_SHOWCASE = {
 	title: 'Vanguard Frame Showcase',
 	subtitle: 'Phase 3c SVG Frames & Attached Stress Reference',
 	blurb:
-		'Reference character demonstrating SVG frames (ring, arc, ellipse, chamfered block, bare line), attached stress on a ring, and mobile unframed fallback.',
+		'Reference character demonstrating SVG borders (chamfered block, bare line), portrait frames, trait arrays (ring, arc), attached stress on a ring, and mobile unframed fallback.',
 	genre: 'Sci-Fi / Reference',
 	pages: 2,
 	listing: {
 		genre: 'Sci-Fi / Reference',
-		quote:
-			'Horizon Vanguard recon pilot testing experimental frame telemetry across ring, arc, ellipse, and chamfered blocks.',
+		quote: 'Horizon Vanguard recon pilot testing experimental frame telemetry across ring, arc, and chamfered blocks.',
 		setting: 'd8',
 		prep: 'd6',
 		complexity: 'd10',
@@ -69,8 +69,10 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					page: 1,
 					place: { left: '0%', top: 0, width: '100%', height: 1 },
 					header: 'top',
+					border: 'none',
 					frame: {
-						shape: 'ring',
+						shape: 'circle',
+						array: 'ring',
 						span: [0, 360],
 						color: 'primary',
 					},
@@ -124,7 +126,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					pillar: 'prime',
 					page: 1,
 					place: { left: '0%', top: 1, width: '100%', height: 1 },
-					frame: {
+					border: {
 						shape: 'line',
 						color: 'accent',
 					},
@@ -142,8 +144,10 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					features: { sfx: true },
 					ratingDisplay: 'rating',
 					frame: {
-						shape: 'arc',
-						span: [45, 135],
+						shape: 'circle',
+						array: 'arc',
+						span: [0, 360],
+						traitsSpan: [45, 135],
 						color: 'accent',
 					},
 					parts: {
@@ -211,7 +215,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					page: 1,
 					place: { left: '0%', top: 4, width: '50%', height: 1 },
 					header: 'top',
-					frame: {
+					border: {
 						shape: 'block',
 						corner: 'cut',
 						color: 'primary',
@@ -237,9 +241,9 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					page: 1,
 					place: { left: '50%', top: 4, width: '50%', height: 1 },
 					header: 'top',
-					frame: {
-						shape: 'ellipse',
-						span: [0, 360],
+					border: {
+						shape: 'block',
+						corner: 8,
 						color: 'muted',
 						stroke: '1.5px',
 					},
@@ -281,7 +285,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					page: 1,
 					place: { left: '0%', top: 5, width: '100%', height: 1 },
 					header: 'top',
-					frame: {
+					border: {
 						shape: 'block',
 						corner: 12,
 						color: 'primary',
@@ -315,7 +319,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					outIndicator: true,
 					reservedSlots: 2,
 					header: 'top',
-					frame: {
+					border: {
 						shape: 'block',
 						corner: 'cut',
 						color: 'accent',
@@ -340,7 +344,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				name: 'Session Notes',
 				noun: 'Note',
 				notes:
-					'### Telemetry Log\n- **Sector 7 Beacon:** Signal encrypted with pre-launch keys.\n- Try morphing `Attributes` from `ring` to `ellipse` or `block` in the Card Builder (Trait Block Mini)!',
+					'### Telemetry Log\n- **Sector 7 Beacon:** Signal encrypted with pre-launch keys.\n- Try morphing `Attributes` from `ring` to `arc` or a bordered `block` in the Set Editor!',
 				view: {
 					pillar: 'play',
 					page: 2,
@@ -348,7 +352,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					visibility: 'play-only',
 					playMutable: true,
 					style: { body: 'notes' },
-					frame: {
+					border: {
 						shape: 'block',
 						corner: 8,
 						color: 'muted',

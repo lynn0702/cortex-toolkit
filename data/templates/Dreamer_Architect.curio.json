@@ -55,14 +55,16 @@
 			},
 			"traits": [],
 			"view": {
+				"border": "none",
 				"frame": {
+					"array": "arc",
 					"color": "primary",
 					"image": {
 						"alignment": "top-center",
 						"url": "images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg",
 						"zoom": 1
 					},
-					"shape": "ring",
+					"shape": "circle",
 					"size": 190,
 					"span": [
 						0,
@@ -109,8 +111,7 @@
 					"width": "50%"
 				},
 				"ratingDisplay": "rating",
-				"ringNoun": "Boss Die",
-				"borderless": true
+				"ringNoun": "Boss Die"
 			},
 			"id": "the-architect",
 			"description": "",
@@ -159,6 +160,7 @@
 				}
 			],
 			"view": {
+				"border": "none",
 				"header": "none",
 				"page": 1,
 				"pillar": "prime",
@@ -169,7 +171,6 @@
 					"width": "50%"
 				},
 				"ratingDisplay": "rating",
-				"borderless": true,
 				"ratingLadder": [
 					4,
 					6,
@@ -228,13 +229,9 @@
 			"view": {
 				"header": "top",
 				"headerAlign": "center",
-				"frame": {
+				"border": {
 					"color": "primary",
 					"shape": "line",
-					"span": [
-						0,
-						360
-					],
 					"stroke": "1.5px"
 				},
 				"parts": {
@@ -266,7 +263,6 @@
 					"width": "100%"
 				},
 				"ratingDisplay": "rating",
-				"borderless": true,
 				"ratingLadder": [
 					4,
 					6,
@@ -322,7 +318,9 @@
 				}
 			],
 			"view": {
+				"border": "none",
 				"frame": {
+					"array": "none",
 					"color": "primary",
 					"image": {
 						"alignment": "top-center",
@@ -330,7 +328,7 @@
 						"zoom": 1.25
 					},
 					"position": "right",
-					"shape": "ring",
+					"shape": "circle",
 					"size": 290,
 					"span": [
 						0,
@@ -350,7 +348,6 @@
 					"width": "100%"
 				},
 				"ratingDisplay": "rating",
-				"borderless": true,
 				"ratingLadder": [
 					4,
 					6,

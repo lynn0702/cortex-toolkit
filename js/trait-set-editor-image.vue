@@ -7,7 +7,6 @@ import VisibilityEye from './visibility-eye.vue';
 const {
 	styleBody,
 	isName,
-	isRing,
 	imageURL,
 	imageFileInput,
 	uploadError,
@@ -25,7 +24,7 @@ const {
 	traitSetID,
 } = injectTraitSetEditor();
 
-const showImageEditor = computed(() => styleBody.value === 'image' || isName.value || isRing.value);
+const showImageEditor = computed(() => styleBody.value === 'image' || isName.value);
 </script>
 
 <template>
@@ -77,6 +76,9 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 			name="imageURL"
 			v-model.lazy="imageURL"
 			placeholder="Image URL (https://...)"
+			autocorrect="off"
+			autocapitalize="none"
+			spellcheck="false"
 		/>
 	</div>
 
@@ -169,7 +171,7 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 		/>
 	</div>
 
-	<div class="editor-field" v-if="isName || isRing">
+	<div class="editor-field" v-if="isName">
 		<TagEditor v-model="portraitTags" :input-id="'trait-set-' + traitSetID + '-portrait-tags'" label="Portrait Tags" />
 	</div>
 </template>

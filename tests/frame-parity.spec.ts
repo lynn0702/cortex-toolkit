@@ -2,7 +2,14 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetFrame from '../js/trait-set-frame.vue';
-import { resolveFrame, computeFrameAnchors, normalizeZoom, type FrameConfig } from '../js/frame-geometry.ts';
+import {
+	resolveBorder,
+	resolveFrame,
+	computeFrameAnchors,
+	buildPortraitFramePath,
+	normalizeZoom,
+	type FrameConfig,
+} from '../js/frame-geometry.ts';
 import { characterCurioFunctions } from '../js/functions.ts';
 
 describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
@@ -245,6 +252,8 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 		it('distributes ring traits along traitsSpan on the right arc while border uses span', () => {
 			const frameConfig: FrameConfig = {
 				shape: 'ring',
+				portraitShape: 'circle',
+				array: 'arc',
 				span: [0, 360],
 				traitsSpan: [45, 135],
 				corner: 8,
@@ -270,6 +279,8 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 		it('verifies frame anchors distribute equidistantly across 360° for closed ring', () => {
 			const frameConfig: FrameConfig = {
 				shape: 'ring',
+				portraitShape: 'circle',
+				array: 'ring',
 				span: [0, 360],
 				corner: 8,
 				stroke: '2px',
@@ -295,10 +306,12 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			}
 		});
 
-		it('resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+		it('resolves frame defaults: { shape: arc } resolves to portraitShape circle, array arc, color primary, stroke 2px', () => {
 			const res = resolveFrame({ shape: 'arc' });
 			expect(res).toEqual({
 				shape: 'arc',
+				portraitShape: 'circle',
+				array: 'arc',
 				span: [45, 135],
 				corner: 8,
 				stroke: '2px',
@@ -310,7 +323,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect('dash' in res!).toBe(false);
 		});
 
-		it('honors 2D view.parts layout on arc frame (e.g. Rating before Name, Block in row 2)', () => {
+		it('honors 2D view.parts layout alongside orthogonal block border and portrait frame (array: none)', () => {
 			const character = {
 				name: 'Horizon Vanguard',
 				traitSets: [
@@ -318,7 +331,8 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 						name: 'Distinctions',
 						noun: 'Distinction',
 						view: {
-							frame: { shape: 'arc', color: 'primary', stroke: '4px' },
+							border: { shape: 'block', corner: 'cut', color: 'primary', stroke: '4px' },
+							frame: { shape: 'round', array: 'none', color: 'primary', stroke: '4px' },
 							parts: {
 								rating: { left: '0%', width: '30%', top: 0, height: 1 },
 								name: { left: '30%', width: '70%', top: 0, height: 1 },
@@ -340,7 +354,9 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
-			const listEl = wrapper.find('.trait-list-framed.frame-shape-arc');
+			expect(wrapper.find('.frame-block-svg').exists()).toBe(true);
+			expect(wrapper.find('.portrait.portrait-shape-round').exists()).toBe(true);
+			const listEl = wrapper.find('.trait-list');
 			expect(listEl.exists()).toBe(true);
 
 			const traitInner = listEl.find('.trait .trait-inner.trait-parts');
@@ -582,6 +598,79 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				}
 				wrapper.unmount();
 			}
+		});
+
+		it('Orthogonal model: resolveBorder, buildPortraitFramePath, non-exclusive Style presetting, and Dice array off', () => {
+			// 1. resolveBorder handles explicit none/block/line and legacy borderless/frame fallbacks
+			expect(resolveBorder({ view: { border: 'none' } }).shape).toBe('none');
+			expect(resolveBorder({ view: { border: { shape: 'block', corner: 'cut' } } })).toMatchObject({
+				shape: 'block',
+				explicit: true,
+				corner: 'cut',
+			});
+			expect(resolveBorder({ view: { border: { shape: 'line', color: 'strong' } } })).toMatchObject({
+				shape: 'line',
+				explicit: true,
+				color: 'strong',
+			});
+			expect(resolveBorder({ view: { borderless: true } }).shape).toBe('none');
+
+			// 2. buildPortraitFramePath generates distinct geometry for circle, square, round, cut, and none
+			expect(buildPortraitFramePath('none')).toBe('');
+			expect(buildPortraitFramePath('circle', [0, 360])).toContain('A 49 49');
+			expect(buildPortraitFramePath('circle', [45, 135]).endsWith('Z')).toBe(false);
+			expect(buildPortraitFramePath('square')).toContain('L 99,99');
+			expect(buildPortraitFramePath('round')).toContain('Q 99,1 99,15');
+			expect(buildPortraitFramePath('cut')).toContain('L 88,1 L 99,12');
+
+			// 3. Orthogonal Block border + Round portrait + Arc trait array coexist
+			const orthoChar = {
+				name: 'Ortho Test',
+				traitSets: [
+					{
+						name: 'Boss Set',
+						noun: 'Boss Die',
+						rating: { type: 'Dice', value: [10, 8, 6] },
+						view: {
+							header: 'top',
+							border: { shape: 'block', corner: 8, color: 'primary' },
+							frame: {
+								shape: 'round',
+								array: 'arc',
+								color: 'accent',
+								image: { url: 'images/test.jpg', zoom: 1 },
+							},
+						},
+						traits: [],
+					},
+				],
+			};
+			const orthoWrap = mount(TraitSetBlock, {
+				props: { character: orthoChar, traitSetID: 0, submode: 'play', editing: [] },
+			});
+			expect(orthoWrap.find('.frame-block-svg').exists()).toBe(true);
+			expect(orthoWrap.find('.portrait.portrait-shape-round').exists()).toBe(true);
+			expect(orthoWrap.find('.ring-grid').exists()).toBe(true);
+			expect(orthoWrap.findAll('.ring-trait')).toHaveLength(3);
+			expect(orthoWrap.find('.trait-set-header-dice').exists()).toBe(false);
+			orthoWrap.unmount();
+
+			// 4. When Trait Array = none on a set-level Dice set, dice render in header (and body when header=none)
+			orthoChar.traitSets[0].view.frame.array = 'none';
+			const hdrDiceWrap = mount(TraitSetBlock, {
+				props: { character: orthoChar, traitSetID: 0, submode: 'play', editing: [] },
+			});
+			expect(hdrDiceWrap.find('.portrait.portrait-shape-round').exists()).toBe(true);
+			expect(hdrDiceWrap.find('.ring-grid').exists()).toBe(false);
+			expect(hdrDiceWrap.findAll('.trait-set-header-dice .diecon-wrapper')).toHaveLength(3);
+			hdrDiceWrap.unmount();
+
+			orthoChar.traitSets[0].view.header = 'none';
+			const bodyDiceWrap = mount(TraitSetBlock, {
+				props: { character: orthoChar, traitSetID: 0, submode: 'play', editing: [] },
+			});
+			expect(bodyDiceWrap.findAll('.trait-set-body-dice .diecon-wrapper')).toHaveLength(3);
+			bodyDiceWrap.unmount();
 		});
 	});
 });

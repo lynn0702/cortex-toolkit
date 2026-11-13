@@ -26,6 +26,7 @@ const characters = ref<any[]>([]);
 const characterID = ref<string | null>(null);
 const openCharacterIDs = ref<string[]>([]);
 const previewCharacter = ref<any>(null);
+const previewTemplateEntry = ref<any>(null);
 const isPreview = computed(() => Boolean(previewCharacter.value));
 const previewDismissed = ref<boolean>(false);
 const sheetTemplates = ref<any[]>([]);
@@ -296,16 +297,19 @@ function openPreview(showcase: any = DREAMER_ARCHITECT_SHOWCASE) {
 		if (!showcase || !showcase.character) {
 			console.warn('Dreamer & Architect template missing or invalid — falling back to roster');
 			previewCharacter.value = null;
+			previewTemplateEntry.value = null;
 			characterID.value = null;
 			setMode('roster', null, false);
 			return;
 		}
+		previewTemplateEntry.value = showcase;
 		previewCharacter.value = structuredClone(toRaw(showcase.character));
 		characterID.value = previewCharacter.value.id;
 		setMode('character', 'play', false);
 	} catch (err) {
 		console.warn('Failed to load Dreamer & Architect template preview:', err);
 		previewCharacter.value = null;
+		previewTemplateEntry.value = null;
 		characterID.value = null;
 		setMode('roster', null, false);
 	}
@@ -313,15 +317,18 @@ function openPreview(showcase: any = DREAMER_ARCHITECT_SHOWCASE) {
 
 function closePreview() {
 	previewCharacter.value = null;
+	previewTemplateEntry.value = null;
 	characterID.value = null;
 	previewDismissed.value = true;
 	setMode('roster', null, true);
 }
 
 function usePreviewTemplate() {
+	const target = previewTemplateEntry.value || DREAMER_ARCHITECT_SHOWCASE;
 	previewCharacter.value = null;
+	previewTemplateEntry.value = null;
 	previewDismissed.value = true;
-	createFromLibrary(DREAMER_ARCHITECT_SHOWCASE, false, false);
+	createFromLibrary(target, false, false);
 }
 
 function setMode(m: string, sub: string | null, updateHash = true) {
@@ -336,6 +343,7 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 	}
 	if (previewCharacter.value && m !== 'character') {
 		previewCharacter.value = null;
+		previewTemplateEntry.value = null;
 		characterID.value = null;
 		previewDismissed.value = true;
 	}

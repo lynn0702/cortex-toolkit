@@ -50,6 +50,7 @@ const importBuffer = ref<any>(null);
 const importError = ref('');
 const libraryLoading = ref(false);
 const libraryError = ref('');
+const libraryBundleEpoch = ref(0);
 const showDeleteConfirm = ref(false);
 const characterToDelete = ref<any>(null);
 const showDeleteAllConfirm = ref(false);
@@ -104,14 +105,12 @@ const charactersFiltered = computed(() => {
 const customTemplates = computed(() => (props.sheetTemplates || []).filter((t: any) => Boolean(t?.userSaved)));
 
 const libraryTemplates = computed(() => {
+	void libraryBundleEpoch.value;
 	const base = typeof characterCurioLibraryTemplates !== 'undefined' ? characterCurioLibraryTemplates : [];
 	if (typeof characterCurioLibraryTemplates === 'undefined') {
 		loadLibraryTemplates();
 	}
-	const firstRun = !props.characters || props.characters.length === 0;
-	const merged = firstRun
-		? [...customTemplates.value, DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base]
-		: [...customTemplates.value, ...SHOWCASE_TEMPLATES, ...base];
+	const merged = [...customTemplates.value, DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base];
 	const seen = new Set<string>();
 	return merged.filter((t: any) => {
 		const id = t?.id;
@@ -127,7 +126,7 @@ const libraryTemplatesFiltered = computed(() => {
 		const q = librarySearch.value.toLowerCase().trim();
 		list = list.filter(
 			(t: any) =>
-				t.title.toLowerCase().includes(q) ||
+				(t.title || t.name || t.id || '').toLowerCase().includes(q) ||
 				(t.subtitle && t.subtitle.toLowerCase().includes(q)) ||
 				(t.genre && t.genre.toLowerCase().includes(q)) ||
 				(t.listing && t.listing.genre && t.listing.genre.toLowerCase().includes(q)) ||
@@ -191,6 +190,7 @@ function loadLibraryTemplates() {
 	script.src = 'js/templates.bundle.js?v=33';
 	script.onload = () => {
 		libraryLoading.value = false;
+		libraryBundleEpoch.value++;
 		(instance?.proxy as any)?.$forceUpdate();
 	};
 	script.onerror = () => {
@@ -827,6 +827,9 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								v-model="librarySearch"
 								placeholder="Search templates by name, genre, or mechanics..."
 								aria-label="Search templates"
+								autocorrect="off"
+								autocapitalize="none"
+								spellcheck="false"
 							/>
 						</div>
 					</search>
@@ -837,7 +840,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Loading Library…
 					</div>
 					<div class="roster-import-error" v-if="libraryError">{{ libraryError }}</div>
-					<div class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
+					<article class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
 						<div class="library-card-header">
 							<div class="library-card-title-group">
 								<h3 class="library-card-title">
@@ -867,7 +870,12 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						</div>
 						<p class="library-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
 						<div class="library-card-traits">
-							<span class="trait-tag" v-for="ts in tmpl.character.traitSets || []" :key="ts.name">{{ ts.name }}</span>
+							<span
+								class="trait-tag"
+								v-for="ts in (tmpl.character?.traitSets || []).filter((s: any) => s?.name)"
+								:key="ts.name"
+								>{{ ts.name }}</span
+							>
 						</div>
 						<div class="library-card-actions">
 							<button
@@ -913,7 +921,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								<i class="fas fa-trash" aria-hidden="true"></i> Remove
 							</button>
 						</div>
-					</div>
+					</article>
 				</div>
 			</div>
 		</ModalDialog>

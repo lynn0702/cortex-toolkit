@@ -27,7 +27,16 @@ import {
 	resolveSubtraitNoun,
 	resolveSubtraitPlural,
 } from './model.ts';
-import { resolveFrame, normalizeZoom, normalizeRingSize, type FrameConfig } from './frame-geometry.ts';
+import {
+	resolveBorder,
+	resolveFrame,
+	normalizeZoom,
+	normalizeRingSize,
+	type BorderShape,
+	type PortraitFrameShape,
+	type TraitArrayMode,
+	type FrameConfig,
+} from './frame-geometry.ts';
 import { getCharacterColorTokens } from './color-palette.ts';
 import type {
 	Character,
@@ -157,35 +166,28 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return body || 'default';
 		},
 		set: (value: string) => {
+			const view = ensureView(traitSet.value);
+			if (!view.style) view.style = {};
 			if (value === 'portrait-ring') {
-				// 1. Unset ring on any other trait sets in this character
-				props.character.traitSets.forEach((ts: any, idx: number) => {
-					if (idx !== props.traitSetID) {
-						const tsBody = getView(ts)?.style?.body;
-						if (tsBody === 'portrait-ring') {
-							const view = ensureView(ts);
-							if (!view.style) view.style = {};
-							view.style.body = 'default';
-							view.style.header = 'default';
-							delete (view as Record<string, unknown>).location;
-						}
-					}
-				});
-
-				// 2. Set ring on this trait set
-				const view = ensureView(traitSet.value);
-				if (!view.style) view.style = {};
+				// Non-exclusive presetter: presets orthogonal border + portrait circle + ring array
+				// without disturbing other trait sets or wiping an existing portrait/size/position.
 				view.style.body = 'portrait-ring';
 				view.style.header = 'portrait-ring';
 				delete (view as Record<string, unknown>).location;
+				(view as Record<string, unknown>).border = 'none';
+				delete (view as Record<string, unknown>).borderless;
+				const prev = normalizedFrameBase();
+				(view as any).frame = {
+					...prev,
+					shape: 'circle',
+					array: 'ring',
+					span: [0, 360],
+				};
+				delete (view as any).frame.traitsSpan;
+				delete (view as any).frame.box;
 			} else {
-				const view = ensureView(traitSet.value);
-				if (!view.style) view.style = {};
 				view.style.body = value;
 				view.style.header = value;
-				// Preset flex layouts author their own rows: stale part
-				// cells would hide, so re-selecting one clears them; branch
-				// shares only survive on subtrait-columns.
 				if ((FLEX_BODIES as readonly string[]).includes(value)) {
 					delete view.parts;
 				}
@@ -262,9 +264,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function isRingFrame(): boolean {
-		const f = getView(traitSet.value)?.frame;
-		const shape = typeof f === 'string' ? f : f?.shape;
-		return shape === 'ring';
+		const f = resolveFrame(traitSet.value);
+		return Boolean(f && f.array !== 'none');
 	}
 
 	function normalizeEffectiveParts(
@@ -374,8 +375,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// never takes over a bespoke body: arranging one writes only what
 	// that body can render (branch shares for subtrait-columns).
 	// Ladders keep view.ladder (no parts form).
-	const FLEX_BODIES = ['image', 'pips', 'subtrait-columns', 'die-rows', 'dice-count', 'portrait-ring'];
-	const NON_ROW_BODIES = ['image', 'pips', 'portrait-ring'];
+	const FLEX_BODIES = ['image', 'pips', 'subtrait-columns', 'die-rows', 'dice-count'];
+	const NON_ROW_BODIES = ['image', 'pips'];
 	function isPartsDriven() {
 		const body = getView(traitSet.value)?.style?.body;
 		if (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body)) return false;
@@ -472,6 +473,127 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
+	const activePartKeys = computed(() => new Set(effectivePartCells.value.map((c) => c.key)));
+
+	function togglePartCell(partKey: string) {
+		if (!traitSet.value) return;
+		if (partKey === 'track') {
+			hasTrackPart.value = !hasTrackPart.value;
+			return;
+		}
+		const view = ensureView(traitSet.value);
+		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
+		const cells = view.parts as Record<string, any>;
+		if (cells[partKey]) {
+			if (Object.keys(cells).length <= 1) return;
+			delete cells[partKey];
+			updateCharacter(props.character);
+			return;
+		}
+		const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+		if (partKey === 'rating' && cells.name && Number(cells.name.top || 0) === 0 && parsePct(cells.name.width) === 100) {
+			cells.name.width = '65%';
+			cells.rating = {
+				left: '65%',
+				top: 0,
+				width: '35%',
+				height: 1,
+				ratingType: 'Die',
+				range: ratingLadder.value,
+			};
+		} else {
+			const cell: Record<string, unknown> = { left: '0%', top: maxTop + 1, width: '100%', height: 1 };
+			if (partKey === 'name' || partKey === 'badge') {
+				cell.marker = 'L';
+			} else if (partKey === 'description' || partKey === 'block') {
+				cell.marker = 'T';
+			} else if (partKey === 'rating') {
+				cell.ratingType = 'Die';
+				cell.range = ratingLadder.value;
+			}
+			cells[partKey] = cell;
+		}
+		updateCharacter(props.character);
+	}
+
+	function getPartMarker(key: string): 'L' | 'T' | null {
+		if (!key) return null;
+		const textCapable =
+			key === 'name' ||
+			key === 'description' ||
+			key === 'block' ||
+			key === 'badge' ||
+			key === 'trackLabel' ||
+			(key.startsWith('child:') && !key.endsWith(':rating'));
+		if (!textCapable) return null;
+		const rawParts = getView(traitSet.value)?.parts as Record<string, any> | undefined;
+		const cell = rawParts?.[key];
+		if (cell?.marker === 'L' || cell?.marker === 'T') return cell.marker;
+		return key === 'description' || key === 'block' || key.startsWith('child:') ? 'T' : 'L';
+	}
+
+	function setPartMarker(key: string, marker: 'L' | 'T') {
+		if (!traitSet.value || !key) return;
+		const view = ensureView(traitSet.value);
+		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
+		const cells = view.parts as Record<string, any>;
+		if (!cells[key]) return;
+		cells[key].marker = marker;
+		updateCharacter(props.character);
+	}
+
+	function addChildPartSlot(
+		rawNoun: string,
+		kind: 'both' | 'label' | 'rating' = 'both',
+		ratingType: 'Pip' | 'Die' | 'Counter' = 'Pip',
+	) {
+		if (!traitSet.value) return;
+		const noun = String(rawNoun || '')
+			.trim()
+			.replace(/:/g, '');
+		if (!noun) return;
+		const view = ensureView(traitSet.value);
+		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
+		const cells = view.parts as Record<string, any>;
+		const nextTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1) + 1;
+		if (kind === 'both') {
+			cells[`child:${noun}:label`] = { left: '0%', top: nextTop, width: '75%', height: 1, marker: 'T' };
+			cells[`child:${noun}:rating`] = { left: '75%', top: nextTop, width: '25%', height: 1, ratingType };
+		} else if (kind === 'label') {
+			cells[`child:${noun}:label`] = { left: '0%', top: nextTop, width: '100%', height: 1, marker: 'T' };
+		} else {
+			cells[`child:${noun}:rating`] = { left: '0%', top: nextTop, width: '100%', height: 1, ratingType };
+		}
+		if (Array.isArray(traitSet.value.traits)) {
+			const lower = noun.toLowerCase();
+			for (const tr of traitSet.value.traits as any[]) {
+				if (!tr || typeof tr !== 'object') continue;
+				if (!Array.isArray(tr.traits)) tr.traits = [];
+				const hasMatch = tr.traits.some(
+					(st: any) =>
+						st &&
+						typeof st === 'object' &&
+						(String(st.noun || '')
+							.trim()
+							.toLowerCase() === lower ||
+							String(st.name || '')
+								.trim()
+								.toLowerCase() === lower),
+				);
+				if (!hasMatch) {
+					const defaultRating =
+						ratingType === 'Pip'
+							? { type: 'Pip', value: [false] }
+							: ratingType === 'Counter'
+								? { type: 'Counter', value: [0] }
+								: { type: 'Die', value: [8], range: ratingLadder.value };
+					tr.traits.push({ name: '', noun, rating: defaultRating });
+				}
+			}
+		}
+		updateCharacter(props.character);
+	}
+
 	// Branch column shares (subtrait-columns split rows): the three fr
 	// shares around the fixed 2rem link column. Absent means the CSS
 	// default (1.4 / 1 / 1.4); stored shares render wherever a split
@@ -540,13 +662,37 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		characterCurioFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID),
 	);
 
+	function syncArcTraitsSpan(ctk: CharacterCurioCustom, angle: number, spread: number) {
+		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : null;
+		if (!frameObj || frameObj.array !== 'arc') return;
+		const centerClock = angle + 180;
+		const totalSpan = Math.max(15, (spread / 100) * 360);
+		const nextSpan: [number, number] = [
+			Math.round(centerClock - totalSpan / 2),
+			Math.round(centerClock + totalSpan / 2),
+		];
+		frameObj.traitsSpan = nextSpan;
+		if (Array.isArray(frameObj.span) && Math.abs((frameObj.span[1] ?? 360) - (frameObj.span[0] ?? 0)) < 360) {
+			frameObj.span = [...nextSpan];
+		}
+	}
+
 	const ringSpread = computed({
 		get: () => {
+			const res = resolveFrame(traitSet.value);
+			if (res?.array === 'arc' && res.traitsSpan) {
+				const raw = ((res.traitsSpan[1] - res.traitsSpan[0]) / 360) * 100;
+				return Math.max(10, Math.min(100, Math.round(raw)));
+			}
 			const view = getView(traitSet.value);
 			return (view?.frame as any)?.ring?.arcSpread ?? view?.ringConfig?.arcSpread ?? 100;
 		},
 		set: (val: number) => {
-			setRingConfig('arcSpread', Number(val));
+			const num = Number(val);
+			setRingConfig('arcSpread', num);
+			const ctk = ctkFor(props.traitSetID);
+			syncArcTraitsSpan(ctk, ringAngle.value, num);
+			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
 
@@ -562,12 +708,23 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const ringAngle = computed({
 		get: () => {
+			const res = resolveFrame(traitSet.value);
+			if (res?.array === 'arc' && res.traitsSpan) {
+				let a = Math.round((res.traitsSpan[0] + res.traitsSpan[1]) / 2 - 180);
+				while (a > 180) a -= 360;
+				while (a < -180) a += 360;
+				return a;
+			}
 			const view = getView(traitSet.value);
 			const cfg = (view?.frame as any)?.ring ?? view?.ringConfig;
 			return cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
 		},
 		set: (val: number) => {
-			setRingConfig('arcAngle', Number(val));
+			const num = Number(val);
+			setRingConfig('arcAngle', num);
+			const ctk = ctkFor(props.traitSetID);
+			syncArcTraitsSpan(ctk, num, ringSpread.value);
+			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
 
@@ -706,10 +863,45 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
+	function normalizedFrameBase(): Record<string, any> {
+		const raw = getView(traitSet.value)?.frame;
+		const res = resolveFrame(traitSet.value);
+		if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+			const copy = structuredClone(toRaw(raw)) as Record<string, any>;
+			if (res) {
+				copy.shape = res.portraitShape;
+				copy.array = res.array;
+			}
+			delete copy.box;
+			return copy;
+		}
+		if (res) {
+			return {
+				shape: res.portraitShape,
+				array: res.array,
+				span: [...res.span],
+				...(res.traitsSpan ? { traitsSpan: [...res.traitsSpan] } : {}),
+				color: res.color,
+				stroke: res.stroke,
+				...(res.size !== undefined ? { size: res.size } : {}),
+				...(res.position ? { position: res.position } : {}),
+				...(res.image ? { image: structuredClone(res.image) } : {}),
+				...(res.ringConfig ? { ring: structuredClone(res.ringConfig) } : {}),
+			};
+		}
+		return {
+			shape: 'none',
+			array: 'none',
+			span: [0, 360],
+			color: 'primary',
+			stroke: '2px',
+		};
+	}
+
 	const frameImageUrl = computed({
 		get: () => {
-			const f = getView(traitSet.value)?.frame;
-			return typeof f === 'object' && f !== null ? ((f as any)?.image?.url ?? '') : '';
+			const res = resolveFrame(traitSet.value);
+			return res?.image?.url || getView(traitSet.value)?.imageConfig?.url || '';
 		},
 		set: (val: string) => {
 			setFrameImage('url', val);
@@ -718,8 +910,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const frameImageAlignment = computed({
 		get: () => {
-			const f = getView(traitSet.value)?.frame;
-			return typeof f === 'object' && f !== null ? ((f as any)?.image?.alignment ?? 'center') : 'center';
+			const res = resolveFrame(traitSet.value);
+			return res?.image?.alignment || getView(traitSet.value)?.imageConfig?.alignment || 'center';
 		},
 		set: (val: string) => {
 			setFrameImage('alignment', val);
@@ -728,8 +920,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const frameImageZoom = computed({
 		get: () => {
-			const f = getView(traitSet.value)?.frame;
-			const z = typeof f === 'object' && f !== null ? normalizeZoom((f as any)?.image?.zoom) : undefined;
+			const res = resolveFrame(traitSet.value);
+			const z = normalizeZoom(res?.image?.zoom ?? getView(traitSet.value)?.imageConfig?.zoom);
 			return typeof z === 'number' ? z : 1;
 		},
 		set: (val: number) => {
@@ -738,21 +930,42 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	function setFrameImage(key: 'url' | 'alignment' | 'zoom', value: any) {
-		let s = props.traitSetID;
+		const s = props.traitSetID;
 		const ctk = ctkFor(s);
-		ctk.frame ??= { shape: 'block' };
-		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : { shape: ctk.frame };
-		ctk.frame = frameObj;
+		const frameObj = normalizedFrameBase();
+		if (key === 'url' && value && (!frameObj.shape || frameObj.shape === 'none')) {
+			frameObj.shape = 'circle';
+		}
 		frameObj.image ??= {};
 		if (value === '' || value === undefined) {
 			delete frameObj.image[key];
+			if (key === 'url' && ctk.imageConfig && typeof ctk.imageConfig === 'object') {
+				delete ctk.imageConfig.url;
+			}
 			if (Object.keys(frameObj.image).length === 0) {
 				delete frameObj.image;
 			}
 		} else {
 			frameObj.image[key] = value;
 		}
+		ctk.frame = frameObj as any;
 		updateCharacter(props.character);
+	}
+
+	function uploadPortraitImageProcess(event: any) {
+		uploadError.value = '';
+		const files = event?.target?.files;
+		if (!files || !files.length) return;
+		characterCurioFunctions.processImageFile(files[0], 1280, 0.85).then(
+			(dataURL: string) => {
+				frameImageUrl.value = dataURL;
+				event.target.value = null;
+			},
+			(error: any) => {
+				uploadError.value = error?.message || 'Could not process that image.';
+				event.target.value = null;
+			},
+		);
 	}
 
 	const namePortraitVisibility = computed<Visibility>(() => {
@@ -952,14 +1165,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		setTimeout(() => {
 			presetSaved.value = false;
 		}, 1600);
-	}
-
-	const showBlockMini = ref(false);
-	function openBlockMini() {
-		showBlockMini.value = true;
-	}
-	function closeBlockMini() {
-		showBlockMini.value = false;
 	}
 
 	const characterCustomPillars = computed<string[]>(() => {
@@ -1323,114 +1528,100 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
-	const frameOptions = [
+	const frameColorTokens = computed(() => getCharacterColorTokens(props.character, 'frame'));
+
+	// ---------- Section Border (None | Block | Line) ----------
+	const borderOptions = [
 		{ id: 'none', label: 'None' },
 		{ id: 'block', label: 'Block' },
-		{ id: 'ring', label: 'Ring' },
-		{ id: 'ellipse', label: 'Ellipse' },
-		{ id: 'arc', label: 'Arc' },
 		{ id: 'line', label: 'Line' },
 	];
 
-	const frameShape = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.shape ?? 'none';
-		},
-		set: (shape: string) => {
-			setFrameShape(shape);
-		},
+	const resolvedBorder = computed(() => resolveBorder(traitSet.value));
+
+	const borderShape = computed<BorderShape>({
+		get: () => resolvedBorder.value.shape,
+		set: (shape: BorderShape) => setBorderShape(shape),
 	});
 
-	function setFrameShape(shape: string) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		if (shape === 'none' || !shape) {
-			delete ctk.frame;
+	function normalizedBorderObj(defaultShape: BorderShape): Record<string, any> {
+		const cur = resolveBorder(props.character.traitSets[props.traitSetID]);
+		const obj: Record<string, any> = {
+			shape: defaultShape,
+			color: cur.color || (defaultShape === 'line' ? 'strong' : 'primary'),
+			stroke: cur.stroke || '2px',
+		};
+		if (defaultShape === 'block') {
+			obj.corner = cur.corner === 'cut' ? 'cut' : cur.corner === 0 ? 0 : 8;
+		}
+		if (cur.dash) {
+			obj.dash = cur.dash;
+		}
+		return obj;
+	}
+
+	function setBorderShape(shape: BorderShape) {
+		const ctk = ctkFor(props.traitSetID);
+		delete (ctk as Record<string, unknown>).borderless;
+		if (shape === 'none') {
+			ctk.border = 'none';
+			if (ctk.frame && typeof ctk.frame === 'object') {
+				delete (ctk.frame as any).box;
+				if ((ctk.frame as any).shape === 'block' || (ctk.frame as any).shape === 'line') {
+					(ctk.frame as any).shape = (ctk.frame as any).image?.url ? 'circle' : 'none';
+				}
+			}
 		} else {
-			const existing = resolveFrame(props.character.traitSets[s]);
-			const defaultSpan: [number, number] = shape === 'arc' ? [45, 135] : [0, 360];
-			if (existing) {
-				const hasFullSpan = Math.abs(existing.span[1] - existing.span[0]) >= 360;
-				ctk.frame = {
-					...existing,
-					shape: shape as any,
-					span: shape === 'arc' && hasFullSpan ? defaultSpan : existing.span,
-				};
-			} else {
-				ctk.frame = {
-					shape: shape as any,
-					span: defaultSpan,
-					corner: 8,
-					color: 'primary',
-					stroke: '2px',
-					path: null,
-				};
+			ctk.border = normalizedBorderObj(shape) as any;
+			if (ctk.frame && typeof ctk.frame === 'object') {
+				delete (ctk.frame as any).box;
+				if ((ctk.frame as any).shape === 'block' || (ctk.frame as any).shape === 'line') {
+					(ctk.frame as any).shape = (ctk.frame as any).image?.url ? 'circle' : 'none';
+				}
 			}
 		}
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
-	const defaultEditorFrame: FrameConfig = {
-		shape: 'block',
-		span: [0, 360],
-		corner: 8,
-		color: 'primary',
-		stroke: '2px',
-		box: false,
-	};
+	const borderWidth = computed({
+		get: () => resolvedBorder.value.stroke || '2px',
+		set: (stroke: string) => setBorderProp('stroke', stroke && stroke.trim() ? stroke.trim() : '2px'),
+	});
 
-	const frameWidth = computed({
+	const borderColor = computed({
+		get: () => resolvedBorder.value.color || 'primary',
+		set: (color: string) => setBorderProp('color', color || 'primary'),
+	});
+
+	const borderCorner = computed<'square' | 'round' | 'cut'>({
 		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.stroke ?? '2px';
+			const c = resolvedBorder.value.corner;
+			if (c === 'cut') return 'cut';
+			if (c === 0) return 'square';
+			return 'round';
 		},
-		set: (stroke: string) => {
-			setFrameWidth(stroke);
+		set: (val: 'square' | 'round' | 'cut') => {
+			const mapped = val === 'cut' ? 'cut' : val === 'square' ? 0 : 8;
+			setBorderProp('corner', mapped);
 		},
 	});
 
-	function setFrameWidth(stroke: string) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const existing = resolveFrame(props.character.traitSets[s]);
-		const f: any = {
-			...(existing || defaultEditorFrame),
-		};
-		if (stroke && stroke.trim() && stroke.trim() !== '2px') {
-			f.stroke = stroke.trim();
-		} else {
-			delete f.stroke;
-		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const frameColor = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.color ?? 'primary';
-		},
-		set: (color: string) => {
-			setFrameColor(color);
-		},
+	const borderDash = computed({
+		get: () => resolvedBorder.value.dash || '',
+		set: (dash: string) => setBorderProp('dash', dash.trim() || undefined),
 	});
 
-	const frameColorTokens = computed(() => getCharacterColorTokens(props.character, 'frame'));
-
-	function setFrameColor(color: string) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const existing = resolveFrame(props.character.traitSets[s]);
-		const f: any = {
-			...(existing || defaultEditorFrame),
-		};
-		if (color && color !== 'primary') {
-			f.color = color as any;
+	function setBorderProp(key: string, value: any) {
+		const ctk = ctkFor(props.traitSetID);
+		delete (ctk as Record<string, unknown>).borderless;
+		const shape = resolvedBorder.value.shape === 'none' ? 'block' : resolvedBorder.value.shape;
+		const obj = normalizedBorderObj(shape);
+		if (value === undefined || value === '') {
+			delete obj[key];
 		} else {
-			delete f.color;
+			obj[key] = value;
 		}
-		ctk.frame = f;
+		ctk.border = obj as any;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1445,8 +1636,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	function setFrameTint(tint: string) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
+		const ctk = ctkFor(props.traitSetID);
 		const trimmed = String(tint || '').trim();
 		if (trimmed) {
 			ctk.tint = trimmed;
@@ -1456,55 +1646,136 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
-	const frameDash = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.dash ?? '';
-		},
-		set: (dash: string) => {
-			setFrameDash(dash);
+	// ---------- Portrait & Portrait Frame + Trait Array ----------
+	const portraitFrameOptions = [
+		{ id: 'none', label: 'None' },
+		{ id: 'circle', label: 'Circle' },
+		{ id: 'square', label: 'Square' },
+		{ id: 'round', label: 'Round' },
+		{ id: 'cut', label: 'Cut' },
+	];
+
+	const traitArrayOptions = [
+		{ id: 'none', label: 'None' },
+		{ id: 'ring', label: 'Ring' },
+		{ id: 'arc', label: 'Arc' },
+	];
+
+	const portraitFrameShape = computed<PortraitFrameShape>({
+		get: () => resolveFrame(traitSet.value)?.portraitShape ?? 'none',
+		set: (shape: PortraitFrameShape) => {
+			const ctk = ctkFor(props.traitSetID);
+			const f = normalizedFrameBase();
+			f.shape = shape;
+			if (!f.array) f.array = 'none';
+			ctk.frame = f as any;
+			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
 
+	const traitArrayMode = computed<TraitArrayMode>({
+		get: () => resolveFrame(traitSet.value)?.array ?? 'none',
+		set: (mode: TraitArrayMode) => {
+			const ctk = ctkFor(props.traitSetID);
+			const f = normalizedFrameBase();
+			f.array = mode;
+			if (mode === 'ring') {
+				if (!f.shape || f.shape === 'block' || f.shape === 'line') {
+					f.shape = 'circle';
+				}
+				f.span = [0, 360];
+				delete f.traitsSpan;
+			} else if (mode === 'arc') {
+				if (!f.shape || f.shape === 'block' || f.shape === 'line') {
+					f.shape = 'circle';
+				}
+				if (!Array.isArray(f.traitsSpan) || f.traitsSpan.length < 2) {
+					f.traitsSpan = [45, 135];
+				}
+				f.ring ??= {};
+				let a = Math.round((f.traitsSpan[0] + f.traitsSpan[1]) / 2 - 180);
+				while (a > 180) a -= 360;
+				while (a < -180) a += 360;
+				f.ring.arcAngle = a;
+				f.ring.arcSpread = Math.max(10, Math.min(100, Math.round(((f.traitsSpan[1] - f.traitsSpan[0]) / 360) * 100)));
+				f.span ??= [0, 360];
+			} else {
+				if (f.shape === 'ring' || f.shape === 'arc') {
+					f.shape = 'circle';
+				}
+			}
+			ctk.frame = f as any;
+			updateCharacter(structuredClone(toRaw(props.character)));
+		},
+	});
+
+	const arcStrokeMode = computed<'full' | 'arc'>({
+		get: () => {
+			const res = resolveFrame(traitSet.value);
+			return res && Math.abs((res.span?.[1] ?? 360) - (res.span?.[0] ?? 0)) < 360 ? 'arc' : 'full';
+		},
+		set: (val: 'full' | 'arc') => {
+			const ctk = ctkFor(props.traitSetID);
+			const f = normalizedFrameBase();
+			if (val === 'arc') {
+				const tSpan = Array.isArray(f.traitsSpan) && f.traitsSpan.length >= 2 ? f.traitsSpan : [45, 135];
+				f.span = [Number(tSpan[0]) || 45, Number(tSpan[1]) || 135];
+			} else {
+				f.span = [0, 360];
+			}
+			ctk.frame = f as any;
+			updateCharacter(structuredClone(toRaw(props.character)));
+		},
+	});
+
+	const frameWidth = computed({
+		get: () => resolveFrame(traitSet.value)?.stroke ?? '2px',
+		set: (stroke: string) => setFrameWidth(stroke),
+	});
+
+	function setFrameWidth(stroke: string) {
+		const ctk = ctkFor(props.traitSetID);
+		const f = normalizedFrameBase();
+		if (stroke && stroke.trim() && stroke.trim() !== '2px') {
+			f.stroke = stroke.trim();
+		} else {
+			delete f.stroke;
+		}
+		ctk.frame = f as any;
+		updateCharacter(structuredClone(toRaw(props.character)));
+	}
+
+	const frameColor = computed({
+		get: () => resolveFrame(traitSet.value)?.color ?? 'primary',
+		set: (color: string) => setFrameColor(color),
+	});
+
+	function setFrameColor(color: string) {
+		const ctk = ctkFor(props.traitSetID);
+		const f = normalizedFrameBase();
+		if (color && color !== 'primary') {
+			f.color = color;
+		} else {
+			delete f.color;
+		}
+		ctk.frame = f as any;
+		updateCharacter(structuredClone(toRaw(props.character)));
+	}
+
+	const frameDash = computed({
+		get: () => resolveFrame(traitSet.value)?.dash ?? '',
+		set: (dash: string) => setFrameDash(dash),
+	});
+
 	function setFrameDash(dash: string) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const existing = resolveFrame(props.character.traitSets[s]);
-		const f: any = {
-			...(existing || defaultEditorFrame),
-		};
+		const ctk = ctkFor(props.traitSetID);
+		const f = normalizedFrameBase();
 		if (dash && dash.trim()) {
 			f.dash = dash.trim();
 		} else {
 			delete f.dash;
 		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const frameBox = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return Boolean(res?.box);
-		},
-		set: (box: boolean) => {
-			setFrameBox(box);
-		},
-	});
-
-	function setFrameBox(box: boolean) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const existing = resolveFrame(props.character.traitSets[s]);
-		const f: any = {
-			...(existing || { ...defaultEditorFrame, shape: 'ring' }),
-		};
-		if (box) {
-			f.box = true;
-		} else {
-			delete f.box;
-		}
-		ctk.frame = f;
+		ctk.frame = f as any;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1513,25 +1784,19 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const res = resolveFrame(traitSet.value);
 			return typeof res?.size === 'number' ? res.size : null;
 		},
-		set: (size: number | null) => {
-			setFrameSize(size);
-		},
+		set: (size: number | null) => setFrameSize(size),
 	});
 
 	function setFrameSize(size: number | null) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const existing = resolveFrame(props.character.traitSets[s]);
-		const f: any = {
-			...(existing || { ...defaultEditorFrame, shape: 'ring' }),
-		};
+		const ctk = ctkFor(props.traitSetID);
+		const f = normalizedFrameBase();
 		const normalized = size === null ? undefined : normalizeRingSize(size);
 		if (normalized !== undefined) {
 			f.size = normalized;
 		} else {
 			delete f.size;
 		}
-		ctk.frame = f;
+		ctk.frame = f as any;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1540,26 +1805,28 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const res = resolveFrame(traitSet.value);
 			return res?.position === 'center' || res?.position === 'right' ? res.position : 'left';
 		},
-		set: (pos: 'left' | 'center' | 'right') => {
-			setFramePosition(pos);
-		},
+		set: (pos: 'left' | 'center' | 'right') => setFramePosition(pos),
 	});
 
 	function setFramePosition(pos: 'left' | 'center' | 'right') {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const existing = resolveFrame(props.character.traitSets[s]);
-		const f: any = {
-			...(existing || { ...defaultEditorFrame, shape: 'ring' }),
-		};
+		const ctk = ctkFor(props.traitSetID);
+		const f = normalizedFrameBase();
 		if (pos === 'center' || pos === 'right') {
 			f.position = pos;
 		} else {
 			delete f.position;
 		}
-		ctk.frame = f;
+		ctk.frame = f as any;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
+
+	const hasPortraitOrArray = computed(
+		() =>
+			portraitFrameShape.value !== 'none' ||
+			Boolean(frameImageUrl.value) ||
+			traitArrayMode.value !== 'none' ||
+			styleBody.value === 'portrait-ring',
+	);
 
 	const pipsFilled = computed({
 		get: () => {
@@ -1600,13 +1867,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (val: 'sidebar' | 'top' | 'bottom' | 'none') => {
 			setCustomProperty('header', val === 'top' || val === 'bottom' || val === 'none' ? val : 'sidebar');
-		},
-	});
-
-	const borderless = computed<boolean>({
-		get: () => Boolean(getView(traitSet.value)?.borderless),
-		set: (val: boolean) => {
-			setCustomProperty('borderless', Boolean(val));
 		},
 	});
 
@@ -1712,11 +1972,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function setRingConfig(key: keyof RingConfig, value: any) {
-		let s = props.traitSetID;
-		const ctk = ctkFor(s);
-		ctk.frame ??= { shape: 'ring' };
-		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : { shape: ctk.frame };
-		ctk.frame = frameObj;
+		const ctk = ctkFor(props.traitSetID);
+		const frameObj = normalizedFrameBase();
 		const existingRing = frameObj.ring || ctk.ringConfig;
 		frameObj.ring ??= {
 			arcAngle: existingRing?.arcAngle ?? (existingRing?.arcSlide !== undefined ? existingRing.arcSlide * 3 : -90),
@@ -1729,15 +1986,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			arcSlide: existingRing?.arcSlide ?? 0,
 		};
 		frameObj.ring[key] = value;
+		ctk.frame = frameObj as any;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
 	function resetRingPlacement() {
-		let s = props.traitSetID;
-		const ctk = ctkFor(s);
-		ctk.frame ??= { shape: 'ring' };
-		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : { shape: ctk.frame };
-		ctk.frame = frameObj;
+		const ctk = ctkFor(props.traitSetID);
+		const frameObj = normalizedFrameBase();
 		frameObj.ring = {
 			arcAngle: -90,
 			arcSpread: 100,
@@ -1748,6 +2003,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			scaleDieY: 0,
 			arcSlide: 0,
 		};
+		ctk.frame = frameObj as any;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -2012,6 +2268,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		isRowBody,
 		hasParts,
 		hasCustomParts,
+		activePartKeys,
+		togglePartCell,
+		getPartMarker,
+		setPartMarker,
+		addChildPartSlot,
 		setPartCell,
 		removePartCell,
 		resetParts,
@@ -2054,9 +2315,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		resolvedPillar,
 		presetSaved,
 		saveSetAsPreset,
-		showBlockMini,
-		openBlockMini,
-		closeBlockMini,
 		characterCustomPillars,
 		hasTrackPart,
 		setSubtraits,
@@ -2072,20 +2330,29 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		pipsConnected,
 		pipsFilled,
 		pipLabels,
-		frameOptions,
-		frameShape,
-		setFrameShape,
+		frameColorTokens,
+		borderOptions,
+		resolvedBorder,
+		borderShape,
+		setBorderShape,
+		borderWidth,
+		borderColor,
+		borderCorner,
+		borderDash,
+		frameTint,
+		setFrameTint,
+		portraitFrameOptions,
+		traitArrayOptions,
+		portraitFrameShape,
+		traitArrayMode,
+		arcStrokeMode,
+		hasPortraitOrArray,
 		frameWidth,
 		setFrameWidth,
 		frameColor,
-		frameColorTokens,
 		setFrameColor,
-		frameTint,
-		setFrameTint,
 		frameDash,
 		setFrameDash,
-		frameBox,
-		setFrameBox,
 		frameSize,
 		setFrameSize,
 		framePosition,
@@ -2094,6 +2361,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		frameImageAlignment,
 		frameImageZoom,
 		setFrameImage,
+		uploadPortraitImageProcess,
 		imageZoom,
 		scrollable,
 		needsDiceUI,
@@ -2103,7 +2371,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		headerMode,
 		headerAlign,
 		verticalAlign,
-		borderless,
 		cssClass,
 		selectElement,
 		focusFirstInput,

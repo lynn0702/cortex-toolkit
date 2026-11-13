@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onUnmounted } from 'vue';
+import { computed, ref, watch, onUnmounted } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import { partsGrid, formatPct, parsePct } from './sheet-grid.ts';
@@ -18,7 +18,51 @@ const {
 	imageHeight,
 	branchShares,
 	setBranchShare,
+	activePartKeys,
+	togglePartCell,
+	getPartMarker,
+	setPartMarker,
+	addChildPartSlot,
 } = injectTraitSetEditor();
+
+const selectedPartKey = ref<string | null>(null);
+watch(activePartKeys, (keys) => {
+	if (selectedPartKey.value && !keys.has(selectedPartKey.value)) {
+		selectedPartKey.value = null;
+	}
+});
+
+const STANDARD_PART_CHIPS = [
+	{ key: 'name', label: 'Name' },
+	{ key: 'rating', label: 'Rating' },
+	{ key: 'description', label: 'Description' },
+	{ key: 'block', label: 'SFX' },
+	{ key: 'badge', label: 'Badge' },
+	{ key: 'track', label: 'Track' },
+	{ key: 'subtraits', label: 'Subtraits' },
+];
+
+function isPartChipActive(key: string): boolean {
+	if (key === 'track') return activePartKeys.value.has('track') || activePartKeys.value.has('trackLabel');
+	return activePartKeys.value.has(key);
+}
+
+const activeChildPartKeys = computed(() => Array.from(activePartKeys.value).filter((k) => k.startsWith('child:')));
+
+const showChildForm = ref(false);
+const childNoun = ref('');
+const childKind = ref<'both' | 'label' | 'rating'>('both');
+const childRatingType = ref<'Pip' | 'Die' | 'Counter'>('Pip');
+
+function submitChildPart() {
+	const n = childNoun.value.trim();
+	if (!n) return;
+	addChildPartSlot(n, childKind.value, childRatingType.value);
+	childNoun.value = '';
+	showChildForm.value = false;
+}
+
+const selectedMarker = computed(() => (selectedPartKey.value ? getPartMarker(selectedPartKey.value) : null));
 
 const PART_TITLES: Record<string, string> = {
 	name: 'Name',
@@ -59,7 +103,7 @@ function partBoxLabel(key: string): string {
 	return `${setNoun} · ${PART_TITLES[key] || key}`;
 }
 
-const NON_ROW = ['image', 'pips', 'portrait-ring'];
+const NON_ROW = ['image', 'pips'];
 
 const bodyOf = computed(() => getView(traitSet.value)?.style?.body);
 const isBranchBody = computed(() => bodyOf.value === 'subtrait-columns');
@@ -526,55 +570,72 @@ function onBranchDividerKeydown(event: KeyboardEvent, leftKey: 'left' | 'center'
 </script>
 
 <template>
-	<div
-		ref="sectionEl"
-		class="row-mini-section"
-		role="application"
-		aria-label="Section layout miniature: drag parts or remove them; drag the header between top, bottom, and side slots"
-	>
-		<div v-if="isTop" class="row-mini-headerbar">
-			<div
-				class="row-mini-headerbox"
-				:class="['align-' + align, { 'is-dragging': !!headerDrag }]"
-				:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
-				tabindex="0"
-				role="group"
-				aria-label="Header position — use Arrow keys to move"
-				@keydown.self="onHeaderKeydown"
-				@mousedown="startHeaderDrag($event)"
-				@touchstart="startHeaderDrag($event)"
-				:title="headerTitle"
+	<div class="row-mini-editor">
+		<div v-if="!isNonRowBody && !isBranchBody" class="row-mini-parts-bar">
+			<button
+				v-for="chip in STANDARD_PART_CHIPS"
+				:key="chip.key"
+				type="button"
+				class="row-mini-part-chip"
+				:class="{ active: isPartChipActive(chip.key) }"
+				:aria-pressed="isPartChipActive(chip.key)"
+				@click.stop="togglePartCell(chip.key)"
 			>
-				<span class="row-mini-headername">{{ setName }}</span>
-				<button
-					type="button"
-					class="row-mini-remove row-mini-header-remove"
-					aria-label="Remove header"
-					title="Remove header"
-					@mousedown.stop
-					@touchstart.stop
-					@click.stop="headerMode = 'none'"
-				>
-					&times;
-				</button>
-			</div>
-		</div>
-		<div v-else-if="isNone" class="row-mini-header-off">
+				{{ chip.label }}
+			</button>
+			<button
+				v-for="ckey in activeChildPartKeys"
+				:key="ckey"
+				type="button"
+				class="row-mini-part-chip active"
+				aria-pressed="true"
+				:title="'Remove ' + partBoxLabel(ckey)"
+				@click.stop="removePartCell(ckey)"
+			>
+				{{ partBoxLabel(ckey) }}
+			</button>
 			<button
 				type="button"
-				class="row-mini-restore-header"
-				aria-label="Restore header"
-				title="Restore header"
-				@click.stop="headerMode = 'top'"
+				class="row-mini-part-chip row-mini-child-add"
+				:class="{ active: showChildForm }"
+				:aria-expanded="showChildForm"
+				@click.stop="showChildForm = !showChildForm"
 			>
-				+ Header
+				+ Child Part
 			</button>
 		</div>
-		<div class="row-mini-main" :class="{ 'row-mini-main-sideways': isSidebar }">
-			<div v-if="isSidebar" class="row-mini-side">
+
+		<div v-if="showChildForm && !isNonRowBody && !isBranchBody" class="row-mini-child-form">
+			<input
+				type="text"
+				v-model="childNoun"
+				placeholder="Noun"
+				aria-label="Child part noun"
+				@keydown.enter.prevent="submitChildPart"
+			/>
+			<select v-model="childKind" aria-label="Child part fields">
+				<option value="both">Both</option>
+				<option value="label">Label</option>
+				<option value="rating">Rating</option>
+			</select>
+			<select v-if="childKind !== 'label'" v-model="childRatingType" aria-label="Child part rating">
+				<option value="Pip">Pip</option>
+				<option value="Die">Die</option>
+				<option value="Counter">Counter</option>
+			</select>
+			<button type="button" class="editor-group-btn" @click.stop="submitChildPart">Add</button>
+		</div>
+
+		<div
+			ref="sectionEl"
+			class="row-mini-section"
+			role="application"
+			aria-label="Section layout miniature: drag parts or remove them; drag the header between top, bottom, and side slots"
+		>
+			<div v-if="isTop" class="row-mini-headerbar">
 				<div
-					class="row-mini-headerbox row-mini-vertical"
-					:class="{ 'is-dragging': !!headerDrag }"
+					class="row-mini-headerbox"
+					:class="['align-' + align, { 'is-dragging': !!headerDrag }]"
 					:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
 					tabindex="0"
 					role="group"
@@ -598,202 +659,279 @@ function onBranchDividerKeydown(event: KeyboardEvent, leftKey: 'left' | 'center'
 					</button>
 				</div>
 			</div>
-			<div class="row-mini-bodycol">
-				<div
-					v-if="isBranchBody"
-					class="branch-mini"
-					role="application"
-					aria-label="Branch columns: drag dividers to share the row"
+			<div v-else-if="isNone" class="row-mini-header-off">
+				<button
+					type="button"
+					class="row-mini-restore-header"
+					aria-label="Restore header"
+					title="Restore header"
+					@click.stop="headerMode = 'top'"
 				>
+					+ Header
+				</button>
+			</div>
+			<div class="row-mini-main" :class="{ 'row-mini-main-sideways': isSidebar }">
+				<div v-if="isSidebar" class="row-mini-side">
 					<div
-						class="branch-box"
-						:style="'width: ' + branchShown('left') + '%;'"
-						:title="'Left subtraits' + (branchView.implicit ? ' (preset)' : '')"
+						class="row-mini-headerbox row-mini-vertical"
+						:class="{ 'is-dragging': !!headerDrag }"
+						:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
+						tabindex="0"
+						role="group"
+						aria-label="Header position — use Arrow keys to move"
+						@keydown.self="onHeaderKeydown"
+						@mousedown="startHeaderDrag($event)"
+						@touchstart="startHeaderDrag($event)"
+						:title="headerTitle"
 					>
-						<span class="branch-name">Left</span>
-						<span class="branch-dims">{{ branchView.implicit ? '' : branchView.left + 'fr' }}</span>
-					</div>
-					<div
-						class="branch-divider"
-						tabindex="0"
-						role="separator"
-						aria-orientation="vertical"
-						aria-label="Subtrait column split"
-						:aria-valuenow="Math.round(branch.left)"
-						aria-valuemin="20"
-						aria-valuemax="80"
-						@keydown="onBranchDividerKeydown($event, 'left', 'center')"
-						@mousedown="startBranchDivider($event, 'left', 'center')"
-						@touchstart="startBranchDivider($event, 'left', 'center')"
-					></div>
-					<div class="branch-box" :style="'width: ' + branchShown('center') + '%;'" :title="'Center column'">
-						<span class="branch-name">Trait</span>
-					</div>
-					<div
-						class="branch-divider"
-						tabindex="0"
-						role="separator"
-						aria-orientation="vertical"
-						aria-label="Subtrait column split"
-						:aria-valuenow="Math.round(branch.left + branch.center)"
-						aria-valuemin="20"
-						aria-valuemax="80"
-						@keydown="onBranchDividerKeydown($event, 'center', 'right')"
-						@mousedown="startBranchDivider($event, 'center', 'right')"
-						@touchstart="startBranchDivider($event, 'center', 'right')"
-					></div>
-					<div class="branch-box" :style="'width: ' + branchShown('right') + '%;'" :title="'Right subtraits'">
-						<span class="branch-name">Right</span>
-						<span class="branch-dims">{{ branchView.implicit ? '' : branchView.right + 'fr' }}</span>
-					</div>
-				</div>
-				<div
-					v-else-if="showGenericBoxes"
-					ref="rootEl"
-					class="row-mini"
-					:style="'grid-template-columns: ' + gridTemplate + '; min-height: ' + (boxes.rows * ROW_H + 8) + 'px;'"
-				>
-					<div
-						v-for="b in boxes.boxes"
-						:key="b.key"
-						class="row-mini-box"
-						:class="{ 'row-mini-implicit': b.implicit }"
-						:style="cellPlace(b.key)"
-						tabindex="0"
-						:aria-label="partBoxLabel(b.key) + ' — Arrow keys to reorder, Shift+Left/Right to resize'"
-						@keydown.self="onBoxKeydown($event, b.key)"
-						@mousedown="startBoxDrag($event, b.key, 'move')"
-						@touchstart="startBoxDrag($event, b.key, 'move')"
-						:title="partBoxLabel(b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height"
-					>
-						<span class="row-mini-name">{{ partBoxLabel(b.key) }}</span>
-						<span class="row-mini-dims">{{ b.width }}%</span>
+						<span class="row-mini-headername">{{ setName }}</span>
 						<button
 							type="button"
-							class="row-mini-remove"
-							:aria-label="'Remove ' + partBoxLabel(b.key)"
-							:title="'Remove ' + partBoxLabel(b.key)"
+							class="row-mini-remove row-mini-header-remove"
+							aria-label="Remove header"
+							title="Remove header"
 							@mousedown.stop
 							@touchstart.stop
-							@click.stop="removePartCell(b.key)"
+							@click.stop="headerMode = 'none'"
 						>
 							&times;
 						</button>
-						<span
-							class="row-mini-edge row-mini-edge-e"
-							@mousedown.stop="startBoxDrag($event, b.key, 'w')"
-							@touchstart.stop="startBoxDrag($event, b.key, 'w')"
-						></span>
-						<span
-							class="row-mini-edge row-mini-edge-s"
-							@mousedown.stop="startBoxDrag($event, b.key, 'h')"
-							@touchstart.stop="startBoxDrag($event, b.key, 'h')"
-						></span>
 					</div>
 				</div>
-				<div v-else-if="isImageBody" ref="imageHostEl" class="row-mini-imagehost">
+				<div class="row-mini-bodycol">
 					<div
-						class="row-mini-box row-mini-imagebox"
-						tabindex="0"
-						role="group"
-						aria-label="Image size — Left/Right for width, Up/Down for height"
-						:style="
-							'width: ' +
-							(imageDrag ? imageDrag.width : imageWidthPct) +
-							'%; height: ' +
-							(imageDrag ? imageDrag.height : imageHeightPx) +
-							'px;'
-						"
-						:title="
-							'Image ' +
-							(imageDrag ? imageDrag.width : imageWidthPct) +
-							'% × ' +
-							(imageDrag ? imageDrag.height : imageHeightPx) +
-							'px'
-						"
-						@keydown.self="onImageKeydown"
+						v-if="isBranchBody"
+						class="branch-mini"
+						role="application"
+						aria-label="Branch columns: drag dividers to share the row"
 					>
-						<span class="row-mini-name">Image</span>
-						<span class="row-mini-dims">
-							{{ imageDrag ? imageDrag.width : imageWidthPct }}% × {{ imageDrag ? imageDrag.height : imageHeightPx }}px
-						</span>
-						<span
-							class="row-mini-edge row-mini-edge-e"
-							@mousedown.stop="startImageDrag($event, 'w')"
-							@touchstart.stop="startImageDrag($event, 'w')"
-						></span>
-						<span
-							class="row-mini-edge row-mini-edge-s"
-							@mousedown.stop="startImageDrag($event, 'h')"
-							@touchstart.stop="startImageDrag($event, 'h')"
-						></span>
+						<div
+							class="branch-box"
+							:style="'width: ' + branchShown('left') + '%;'"
+							:title="'Left subtraits' + (branchView.implicit ? ' (preset)' : '')"
+						>
+							<span class="branch-name">Left</span>
+							<span class="branch-dims">{{ branchView.implicit ? '' : branchView.left + 'fr' }}</span>
+						</div>
+						<div
+							class="branch-divider"
+							tabindex="0"
+							role="separator"
+							aria-orientation="vertical"
+							aria-label="Subtrait column split"
+							:aria-valuenow="Math.round(branch.left)"
+							aria-valuemin="20"
+							aria-valuemax="80"
+							@keydown="onBranchDividerKeydown($event, 'left', 'center')"
+							@mousedown="startBranchDivider($event, 'left', 'center')"
+							@touchstart="startBranchDivider($event, 'left', 'center')"
+						></div>
+						<div class="branch-box" :style="'width: ' + branchShown('center') + '%;'" :title="'Center column'">
+							<span class="branch-name">Trait</span>
+						</div>
+						<div
+							class="branch-divider"
+							tabindex="0"
+							role="separator"
+							aria-orientation="vertical"
+							aria-label="Subtrait column split"
+							:aria-valuenow="Math.round(branch.left + branch.center)"
+							aria-valuemin="20"
+							aria-valuemax="80"
+							@keydown="onBranchDividerKeydown($event, 'center', 'right')"
+							@mousedown="startBranchDivider($event, 'center', 'right')"
+							@touchstart="startBranchDivider($event, 'center', 'right')"
+						></div>
+						<div class="branch-box" :style="'width: ' + branchShown('right') + '%;'" :title="'Right subtraits'">
+							<span class="branch-name">Right</span>
+							<span class="branch-dims">{{ branchView.implicit ? '' : branchView.right + 'fr' }}</span>
+						</div>
 					</div>
-				</div>
-				<div v-else class="row-mini-norows">
-					{{
-						isNonRowBody
-							? 'No trait rows to arrange.'
-							: hasCustomParts
-								? 'All trait elements removed — Reset to restore.'
-								: 'Column arrangement for this row style is not adjustable here.'
-					}}
+					<div
+						v-else-if="showGenericBoxes"
+						ref="rootEl"
+						class="row-mini"
+						:style="'grid-template-columns: ' + gridTemplate + '; min-height: ' + (boxes.rows * ROW_H + 8) + 'px;'"
+					>
+						<div
+							v-for="b in boxes.boxes"
+							:key="b.key"
+							class="row-mini-box"
+							:class="{ 'row-mini-implicit': b.implicit, 'row-mini-selected': selectedPartKey === b.key }"
+							:style="cellPlace(b.key)"
+							tabindex="0"
+							:aria-label="partBoxLabel(b.key) + ' — Arrow keys to reorder, Shift+Left/Right to resize'"
+							@keydown.self="onBoxKeydown($event, b.key)"
+							@focus="selectedPartKey = b.key"
+							@click.stop="selectedPartKey = b.key"
+							@mousedown="
+								selectedPartKey = b.key;
+								startBoxDrag($event, b.key, 'move');
+							"
+							@touchstart="
+								selectedPartKey = b.key;
+								startBoxDrag($event, b.key, 'move');
+							"
+							:title="partBoxLabel(b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height"
+						>
+							<span v-if="getPartMarker(b.key)" class="row-mini-marker">{{ getPartMarker(b.key) }}</span>
+							<span class="row-mini-name">{{ partBoxLabel(b.key) }}</span>
+							<span class="row-mini-dims">{{ b.width }}%</span>
+							<button
+								type="button"
+								class="row-mini-remove"
+								:aria-label="'Remove ' + partBoxLabel(b.key)"
+								:title="'Remove ' + partBoxLabel(b.key)"
+								@mousedown.stop
+								@touchstart.stop
+								@click.stop="removePartCell(b.key)"
+							>
+								&times;
+							</button>
+							<span
+								class="row-mini-edge row-mini-edge-e"
+								@mousedown.stop="startBoxDrag($event, b.key, 'w')"
+								@touchstart.stop="startBoxDrag($event, b.key, 'w')"
+							></span>
+							<span
+								class="row-mini-edge row-mini-edge-s"
+								@mousedown.stop="startBoxDrag($event, b.key, 'h')"
+								@touchstart.stop="startBoxDrag($event, b.key, 'h')"
+							></span>
+						</div>
+					</div>
+					<div v-else-if="isImageBody" ref="imageHostEl" class="row-mini-imagehost">
+						<div
+							class="row-mini-box row-mini-imagebox"
+							tabindex="0"
+							role="group"
+							aria-label="Image size — Left/Right for width, Up/Down for height"
+							:style="
+								'width: ' +
+								(imageDrag ? imageDrag.width : imageWidthPct) +
+								'%; height: ' +
+								(imageDrag ? imageDrag.height : imageHeightPx) +
+								'px;'
+							"
+							:title="
+								'Image ' +
+								(imageDrag ? imageDrag.width : imageWidthPct) +
+								'% × ' +
+								(imageDrag ? imageDrag.height : imageHeightPx) +
+								'px'
+							"
+							@keydown.self="onImageKeydown"
+						>
+							<span class="row-mini-name">Image</span>
+							<span class="row-mini-dims">
+								{{ imageDrag ? imageDrag.width : imageWidthPct }}% ×
+								{{ imageDrag ? imageDrag.height : imageHeightPx }}px
+							</span>
+							<span
+								class="row-mini-edge row-mini-edge-e"
+								@mousedown.stop="startImageDrag($event, 'w')"
+								@touchstart.stop="startImageDrag($event, 'w')"
+							></span>
+							<span
+								class="row-mini-edge row-mini-edge-s"
+								@mousedown.stop="startImageDrag($event, 'h')"
+								@touchstart.stop="startImageDrag($event, 'h')"
+							></span>
+						</div>
+					</div>
+					<div v-else class="row-mini-norows">
+						{{
+							isNonRowBody
+								? 'No trait rows to arrange.'
+								: hasCustomParts
+									? 'All trait elements removed — Reset to restore.'
+									: 'Column arrangement for this row style is not adjustable here.'
+						}}
+					</div>
 				</div>
 			</div>
+			<div v-if="isBottom" class="row-mini-headerbar row-mini-headerbar-bottom">
+				<div
+					class="row-mini-headerbox"
+					:class="['align-' + align, { 'is-dragging': !!headerDrag }]"
+					:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
+					tabindex="0"
+					role="group"
+					aria-label="Header position — use Arrow keys to move"
+					@keydown.self="onHeaderKeydown"
+					@mousedown="startHeaderDrag($event)"
+					@touchstart="startHeaderDrag($event)"
+					:title="headerTitle"
+				>
+					<span class="row-mini-headername">{{ setName }}</span>
+					<button
+						type="button"
+						class="row-mini-remove row-mini-header-remove"
+						aria-label="Remove header"
+						title="Remove header"
+						@mousedown.stop
+						@touchstart.stop
+						@click.stop="headerMode = 'none'"
+					>
+						&times;
+					</button>
+				</div>
+			</div>
+			<div v-if="headerDrag" class="row-mini-slots" aria-hidden="true">
+				<div class="row-mini-slot-top" :class="{ active: headerDrag.zone === 'top' }">
+					<div
+						class="row-mini-third"
+						:class="{ active: headerDrag.zone === 'top' && headerDrag.third === 'left' }"
+					></div>
+					<div
+						class="row-mini-third"
+						:class="{ active: headerDrag.zone === 'top' && headerDrag.third === 'center' }"
+					></div>
+					<div
+						class="row-mini-third"
+						:class="{ active: headerDrag.zone === 'top' && headerDrag.third === 'right' }"
+					></div>
+				</div>
+				<div class="row-mini-slot-bottom" :class="{ active: headerDrag.zone === 'bottom' }">
+					<div
+						class="row-mini-third"
+						:class="{ active: headerDrag.zone === 'bottom' && headerDrag.third === 'left' }"
+					></div>
+					<div
+						class="row-mini-third"
+						:class="{ active: headerDrag.zone === 'bottom' && headerDrag.third === 'center' }"
+					></div>
+					<div
+						class="row-mini-third"
+						:class="{ active: headerDrag.zone === 'bottom' && headerDrag.third === 'right' }"
+					></div>
+				</div>
+				<div class="row-mini-slot-side" :class="{ active: headerDrag.zone === 'side' }"></div>
+			</div>
 		</div>
-		<div v-if="isBottom" class="row-mini-headerbar row-mini-headerbar-bottom">
-			<div
-				class="row-mini-headerbox"
-				:class="['align-' + align, { 'is-dragging': !!headerDrag }]"
-				:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
-				tabindex="0"
-				role="group"
-				aria-label="Header position — use Arrow keys to move"
-				@keydown.self="onHeaderKeydown"
-				@mousedown="startHeaderDrag($event)"
-				@touchstart="startHeaderDrag($event)"
-				:title="headerTitle"
-			>
-				<span class="row-mini-headername">{{ setName }}</span>
+
+		<div v-if="selectedMarker && selectedPartKey" class="row-mini-behavior-bar">
+			<span class="row-mini-behavior-label">{{ partBoxLabel(selectedPartKey) }}</span>
+			<div class="editor-button-group">
 				<button
 					type="button"
-					class="row-mini-remove row-mini-header-remove"
-					aria-label="Remove header"
-					title="Remove header"
-					@mousedown.stop
-					@touchstart.stop
-					@click.stop="headerMode = 'none'"
+					class="editor-group-btn"
+					:class="{ active: selectedMarker === 'L' }"
+					:aria-pressed="selectedMarker === 'L'"
+					@click.stop="setPartMarker(selectedPartKey, 'L')"
 				>
-					&times;
+					Label
+				</button>
+				<button
+					type="button"
+					class="editor-group-btn"
+					:class="{ active: selectedMarker === 'T' }"
+					:aria-pressed="selectedMarker === 'T'"
+					@click.stop="setPartMarker(selectedPartKey, 'T')"
+				>
+					Text
 				</button>
 			</div>
-		</div>
-		<div v-if="headerDrag" class="row-mini-slots" aria-hidden="true">
-			<div class="row-mini-slot-top" :class="{ active: headerDrag.zone === 'top' }">
-				<div class="row-mini-third" :class="{ active: headerDrag.zone === 'top' && headerDrag.third === 'left' }"></div>
-				<div
-					class="row-mini-third"
-					:class="{ active: headerDrag.zone === 'top' && headerDrag.third === 'center' }"
-				></div>
-				<div
-					class="row-mini-third"
-					:class="{ active: headerDrag.zone === 'top' && headerDrag.third === 'right' }"
-				></div>
-			</div>
-			<div class="row-mini-slot-bottom" :class="{ active: headerDrag.zone === 'bottom' }">
-				<div
-					class="row-mini-third"
-					:class="{ active: headerDrag.zone === 'bottom' && headerDrag.third === 'left' }"
-				></div>
-				<div
-					class="row-mini-third"
-					:class="{ active: headerDrag.zone === 'bottom' && headerDrag.third === 'center' }"
-				></div>
-				<div
-					class="row-mini-third"
-					:class="{ active: headerDrag.zone === 'bottom' && headerDrag.third === 'right' }"
-				></div>
-			</div>
-			<div class="row-mini-slot-side" :class="{ active: headerDrag.zone === 'side' }"></div>
 		</div>
 	</div>
 </template>

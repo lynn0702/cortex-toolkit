@@ -876,7 +876,6 @@
 			background: var(--bg-surface-card, #ffffff);
 
 			&.trait-set-frame-ring,
-			&.trait-set-frame-ellipse,
 			&.trait-set-frame-arc {
 				border: 2px solid #111;
 				background: var(--bg-surface-card, #ffffff);
@@ -896,12 +895,10 @@
 				.trait-set-header {
 					background: transparent;
 					position: relative;
-					z-index: 1; /* small local stacking literal */
 				}
 
 				.trait-set-body {
 					position: relative;
-					z-index: 1; /* small local stacking literal */
 				}
 			}
 		}
@@ -4368,7 +4365,6 @@ body:has(.character-sheet.submode-print) .main {
 		.trait-set:not(.trait-set-style-name):not(.trait-set-borderless),
 		.trait-set.trait-set-framed:not(.trait-set-frame-line):not(.trait-set-borderless),
 		.trait-set.trait-set-framed.trait-set-frame-ring:not(.trait-set-borderless),
-		.trait-set.trait-set-framed.trait-set-frame-ellipse:not(.trait-set-borderless),
 		.trait-set.trait-set-framed.trait-set-frame-arc:not(.trait-set-borderless) {
 			background: var(--bg-surface-card);
 			border-color: var(--border-strong);
@@ -4508,41 +4504,6 @@ body:has(.character-sheet.submode-print) .main {
 		.desc-blank-line {
 			border-color: var(--border-subtle);
 		}
-	}
-}
-
-/* Phase 3c: SVG Frames in Print */
-.character-sheet .trait-list-framed,
-.trait-list-framed {
-	min-height: 240px;
-	overflow: visible;
-
-	.trait {
-		border-bottom: none;
-		margin-bottom: 0;
-		padding-bottom: 0;
-		width: max-content;
-		max-width: min(320px, 90vw);
-
-		.trait-inner {
-			border-bottom: none;
-		}
-
-		.trait-title {
-			border-bottom: none;
-			margin-bottom: 0;
-			padding-bottom: 0;
-		}
-	}
-}
-
-.character-sheet.submode-print .trait-list-framed .trait-set-frame-svg {
-	stroke: #000000;
-}
-
-@media print {
-	.trait-list-framed .trait-set-frame-svg {
-		stroke: #000000;
 	}
 }
 

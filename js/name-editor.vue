@@ -1229,7 +1229,11 @@ function updateCharacter(character: any) {
 
 						<div class="editor-field">
 							<div class="editor-label">Page Layout</div>
-							<PageLayoutMini :character="props.character" @updateCharacter="updateCharacter" />
+							<PageLayoutMini
+								:character="props.character"
+								@updateCharacter="updateCharacter"
+								@selectElement="emit('selectElement', $event)"
+							/>
 						</div>
 					</template>
 

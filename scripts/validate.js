@@ -336,6 +336,9 @@ function checkViewRetired(bag, where) {
 		if (bag[k] !== undefined) err(`${where}: retired column/band key ${k} (place supersedes it)`);
 	}
 	if (bag.frame && typeof bag.frame === 'object') {
+		if (bag.frame.shape === 'ellipse') {
+			err(`${where}: retired ellipse frame shape`);
+		}
 		if (bag.frame.traitsSpan !== undefined) {
 			if (
 				!Array.isArray(bag.frame.traitsSpan) ||

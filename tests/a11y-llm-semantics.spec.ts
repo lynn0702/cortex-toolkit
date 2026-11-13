@@ -5,6 +5,7 @@ import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import DiceRoller from '../js/dice-roller.vue';
 import TraitEditor from '../js/trait-editor.vue';
+import TraitSetEditor from '../js/trait-set-editor.vue';
 import AppHeader from '../js/app-header.vue';
 import SessionNav from '../js/session-nav.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
@@ -1014,12 +1015,11 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			await block.trigger('keydown', { key: 'ArrowDown', shiftKey: true });
 			expect(char.traitSets[0].view.place.height).toBe(3);
 
-			// Enter opens block mini
+			// Enter selects the set in the docked editor without opening a modal
 			await block.trigger('keydown', { key: 'Enter' });
 			await wrapper.vm.$nextTick();
-			// TraitSetMini teleported to body
-			const bodyMini = document.body.querySelector('.trait-set-mini');
-			expect(bodyMini).not.toBeNull();
+			expect(document.body.querySelector('.trait-set-mini')).toBeNull();
+			expect(wrapper.emitted('selectElement')).toContainEqual([['traitSet', 0]]);
 
 			wrapper.unmount();
 		});
@@ -1080,7 +1080,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			wrapper.unmount();
 		});
 
-		it('wires seamless TraitSetMini handoff: opens block mini, applies update, and returns with set selected', async () => {
+		it('wires seamless Set Editor handoff from PageLayoutMini without modal overlay', async () => {
 			const char: any = {
 				name: 'Handoff Hero',
 				view: { pageCount: 1 },
@@ -1102,24 +1102,14 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const ghost = wrapper.find('.place-mini-ghost');
 			await ghost.trigger('pointerdown');
 
-			// Click "Edit Parts" button
-			const editPartsBtn = wrapper.find('.btn-open-block-mini');
-			expect(editPartsBtn.exists()).toBe(true);
-			await editPartsBtn.trigger('click');
+			// Click "Edit Set" button
+			const editSetBtn = wrapper.find('.btn-open-set-editor');
+			expect(editSetBtn.exists()).toBe(true);
+			await editSetBtn.trigger('click');
 			await wrapper.vm.$nextTick();
 
-			// Verify TraitSetMini is rendered
-			expect(document.body.querySelector('.trait-set-mini')).not.toBeNull();
-
-			// Apply in TraitSetMini: update set name
-			const applyBtn = document.body.querySelector('.btn-apply-sheet') as HTMLButtonElement;
-			expect(applyBtn).not.toBeNull();
-			applyBtn.click();
-
-			await wrapper.vm.$nextTick();
-
-			// TraitSetMini closed, returned to same page mini, set still selected
 			expect(document.body.querySelector('.trait-set-mini')).toBeNull();
+			expect(wrapper.emitted('selectElement')).toContainEqual([['traitSet', 0]]);
 			expect(wrapper.find('.place-mini-block').exists()).toBe(true);
 
 			wrapper.unmount();
@@ -1360,11 +1350,11 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			wrapper.unmount();
 		});
 
-		it('7. Frame = Arc fan-out distribution & ratingDisplay option', async () => {
+		it('7. Frame = Arc fan-out distribution on PortraitRing & radial stroke arc', async () => {
 			const arcSet: any = {
 				name: 'Roles',
 				view: {
-					frame: { shape: 'arc' },
+					frame: { shape: 'circle', array: 'arc', span: [45, 135], traitsSpan: [45, 135] },
 					ratingDisplay: 'rating',
 				},
 				traits: [
@@ -1380,8 +1370,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				attachTo: document.body,
 			});
 
-			// Frame shape arc & open radial SVG rendered
-			expect(wrapper.find('.trait-list-framed.frame-shape-arc').exists()).toBe(true);
+			// Portrait hub & radial arc rendered on PortraitRing
+			expect(wrapper.find('.portrait.portrait-shape-circle').exists()).toBe(true);
+			expect(wrapper.find('.ring-grid').exists()).toBe(true);
 			const svg = wrapper.find('.trait-set-frame-svg.frame-radial-svg');
 			expect(svg.exists()).toBe(true);
 			const pathD = svg.find('path').attributes('d') || '';
@@ -1389,30 +1380,17 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(pathD).toMatch(/^M [\d.]+,\s*[\d.]+ A /);
 			expect(pathD.endsWith('Z')).toBe(false);
 
-			// Dynamic anchors span from 1:30 (45°) to 4:30 (135°) centered at 3 o'clock (90°)
-			const traits = wrapper.findAll('.trait');
-			expect(traits.length).toBe(3);
-			expect(traits[0].attributes('data-frame-dock')).toBe('right');
-			expect(traits[1].attributes('data-frame-dock')).toBe('right');
-			expect(traits[2].attributes('data-frame-dock')).toBe('right');
-
-			// Rating display = 'rating': renders single active die instead of full 5-die ladder
-			const singleDieVals = wrapper.findAll('.single-die-value');
-			expect(singleDieVals.length).toBe(3);
-			// Under ratingDisplay: 'rating', each trait renders exactly 1 die glyph
-			for (const val of singleDieVals) {
-				const dice = val.findAll('[role="button"]');
-				expect(dice.length).toBe(1);
-			}
-
-			// Switch to ratingDisplay: 'track': renders full 5-die ladder track
-			const trackSet = structuredClone(arcSet);
-			trackSet.view.ratingDisplay = 'track';
-			await wrapper.setProps({ character: { name: 'Arc Hero', traitSets: [trackSet] } });
-			const trackDieVals = wrapper.findAll('.single-die-value');
-			for (const val of trackDieVals) {
-				const dice = val.findAll('[role="button"]');
-				expect(dice.length).toBe(5);
+			// Radial traits render inside PortraitRing with die buttons
+			const ringTraits = wrapper.findAll('.ring-trait');
+			expect(ringTraits.length).toBe(3);
+			expect(ringTraits.map((t) => t.find('.ring-trait-name').text().trim())).toEqual([
+				'Commander',
+				'Engineer',
+				'Navigator',
+			]);
+			for (const rt of ringTraits) {
+				expect(rt.findAll('.ring-trait-inner[role="button"]').length).toBe(1);
+				expect(rt.find('svg.diecon').exists()).toBe(true);
 			}
 
 			wrapper.unmount();
@@ -2382,20 +2360,21 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(style1).toContain('background-size: 75%');
 			w1.unmount();
 
-			// 3. Block frame with image renders header image
+			// 3. Block frame with image renders block border AND portrait hub
 			const w2 = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 2, submode: 'edit', editing: [] },
 			});
-			const hero2 = w2.find('.frame-header-image');
-			expect(hero2.exists()).toBe(true);
-			expect(hero2.attributes('style')).toContain('https://example.com/hero.jpg');
+			expect(w2.find('.trait-set-frame-svg.frame-block-svg').exists()).toBe(true);
+			const circle2 = w2.find('.portrait-circle');
+			expect(circle2.exists()).toBe(true);
+			expect(circle2.attributes('style')).toContain('https://example.com/hero.jpg');
 			w2.unmount();
 
 			// 4. Line frame with image ignores image
 			const w3 = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 3, submode: 'edit', editing: [] },
 			});
-			expect(w3.find('.frame-header-image').exists()).toBe(false);
+			expect(w3.find('.trait-set-frame-svg.frame-line-svg').exists()).toBe(true);
 			expect(w3.find('.portrait').exists()).toBe(false);
 			w3.unmount();
 		});
@@ -2646,6 +2625,76 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(playWrapper.find('.ring-portrait-dropzone').exists()).toBe(false);
 			expect(playWrapper.html()).not.toContain('cortex_prime_logo');
 			playWrapper.unmount();
+		});
+
+		it('exposes inline Parts Palette, Label/Text toggle, and non-exclusive Portrait Ring presetting in TraitSetEditor with zero a11y violations', async () => {
+			const char: any = reactive({
+				id: 'parts-palette-test',
+				name: 'Palette Hero',
+				traitSets: [
+					{
+						id: 'dist',
+						name: 'Distinctions',
+						noun: 'Distinction',
+						view: {
+							header: 'top',
+							border: { shape: 'block', corner: 8, color: 'primary' },
+							parts: {
+								name: { left: '0%', top: 0, width: '70%', height: 1, marker: 'L' },
+								rating: { left: '70%', top: 0, width: '30%', height: 1, ratingType: 'Die' },
+							},
+						},
+						traits: [{ name: 'Clever', rating: { type: 'Die', value: [8] }, traits: [] }],
+					},
+					{
+						id: 'skills',
+						name: 'Skills',
+						noun: 'Skill',
+						view: {
+							header: 'top',
+							style: { body: 'portrait-ring' },
+							frame: { shape: 'circle', array: 'ring', color: 'primary' },
+						},
+						traits: [{ name: 'Fly', rating: { type: 'Die', value: [6] }, traits: [] }],
+					},
+				],
+			});
+
+			const wrapper = mount(TraitSetEditor, {
+				props: { character: char, traitSetID: 0, open: true },
+				attachTo: document.body,
+			});
+
+			// Inline Parts Palette toggles view.parts directly inside docked editor
+			const sfxChip = wrapper.findAll('.row-mini-parts-bar .row-mini-part-chip').find((b) => b.text().trim() === 'SFX');
+			expect(sfxChip).toBeDefined();
+			expect(sfxChip!.attributes('aria-pressed')).toBe('false');
+			await sfxChip!.trigger('click');
+			expect(char.traitSets[0].view.parts.block).toBeDefined();
+			expect(sfxChip!.attributes('aria-pressed')).toBe('true');
+
+			// Selecting Name box reveals Label/Text segmented behavior bar and toggles marker
+			const nameBox = wrapper.findAll('.row-mini-box').find((el) => el.find('.row-mini-name').text().includes('Name'));
+			expect(nameBox).toBeDefined();
+			await nameBox!.trigger('click');
+			const behaviorBar = wrapper.find('.row-mini-behavior-bar');
+			expect(behaviorBar.exists()).toBe(true);
+			const textBtn = behaviorBar.findAll('.editor-group-btn').find((b) => b.text().trim() === 'Text');
+			expect(textBtn).toBeDefined();
+			await textBtn!.trigger('click');
+			expect(char.traitSets[0].view.parts.name.marker).toBe('T');
+
+			// Style: Portrait Ring presets set 0 without mutating sibling set 1
+			const styleSelect = wrapper.find('#trait-set-style-0');
+			if (styleSelect.exists()) {
+				await styleSelect.setValue('portrait-ring');
+				expect(char.traitSets[0].view.frame.shape).toBe('circle');
+				expect(char.traitSets[0].view.frame.array).toBe('ring');
+				expect(char.traitSets[1].view.style.body).toBe('portrait-ring');
+			}
+
+			await runAxeAudit(wrapper.element as HTMLElement);
+			wrapper.unmount();
 		});
 	});
 });

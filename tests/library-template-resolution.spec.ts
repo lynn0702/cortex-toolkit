@@ -123,7 +123,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(architect.rating.value).toEqual([10, 10, 10]);
 		expect(architect.traits).toHaveLength(0);
 		expect(architect.view.ringNoun).toBe('Boss Die');
-		expect(architect.view.borderless).toBe(true);
+		expect(architect.view.border).toBe('none');
 
 		// Architect Distinctions are full phrases without Pip children
 		expect(archDistinctions.name).toBe('Architect Distinctions');
@@ -138,7 +138,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		// Values have descriptions
 		expect(values.name).toBe('Values');
 		expect(values.traits).toHaveLength(3);
-		expect(values.view.borderless).toBe(true);
+		expect(values.view.border?.shape ?? values.view.border).toBe('line');
 		expect(values.traits[0].name).toBe('Data');
 		expect(values.traits[0].description).toBe('belongs to the people, not the builders');
 		expect(values.traits[0].traits).toHaveLength(0);
@@ -146,7 +146,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		// Dreamer distinctions are also simple label traits
 		expect(dreamer.name).toBe('The Dreamer');
 		expect(dreamer.traits).toHaveLength(3);
-		expect(dreamer.view.borderless).toBe(true);
+		expect(dreamer.view.border).toBe('none');
 		expect(dreamer.view.header).toBe('bottom');
 		expect(dreamer.traits[0].name).toBe('Beauty is all around us');
 		expect(dreamer.traits[0].traits).toHaveLength(0);
@@ -181,6 +181,10 @@ describe('Character Curio Branding & Resolution Suite', () => {
 	it('surfaces Dreamer & Architect as showcase template with tarot-card layout details', () => {
 		expect(DREAMER_ARCHITECT_SHOWCASE.id).toBe('dreamer-architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.title).toBe('The Dreamer & the Architect');
+		expect(DREAMER_ARCHITECT_SHOWCASE.listing.image).toBe(
+			'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
+		);
+		expect(characterCurioFunctions.findLibraryTemplate('dreamer-architect')?.id).toBe('dreamer-architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.character.name).toBe('The Dreamer & the Architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.character.traitSets).toHaveLength(4);
 		// Vanguard remains index 0 of SHOWCASE_TEMPLATES
@@ -207,23 +211,43 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		wrapper.unmount();
 	});
 
-	it('roster fades Dreamer & Architect once characters are saved', () => {
+	it('roster keeps Dreamer & Architect in Library and search results with Dreamer portrait when characters are saved', async () => {
 		const wrapper = mount(Roster, {
 			props: {
-				characters: [{ id: 'hero-1', name: 'My Hero' }],
+				characters: [
+					{
+						id: 'hero-1',
+						name: 'My Hero',
+						dateCreated: '2026-11-13T00:00:00Z',
+						dateModified: '2026-11-13T00:00:00Z',
+						dateTouched: '2026-11-13T00:00:00Z',
+					},
+				],
 			},
 		});
 		const vm = wrapper.vm as any;
 		expect(vm.libraryTemplates).toBeDefined();
-		expect(vm.libraryTemplates[0].id).toBe('vanguard-frame-showcase');
-		const found = vm.libraryTemplates.find((t: any) => t.id === 'dreamer-architect');
-		expect(found).toBeUndefined();
+		expect(vm.libraryTemplates[0].id).toBe('dreamer-architect');
+		expect(vm.libraryTemplates[1].id).toBe('vanguard-frame-showcase');
 
 		const select = wrapper.find('#roster-template-picker');
 		expect(select.exists()).toBe(true);
 		const options = select.findAll('option');
 		const values = options.map((o) => o.attributes('value'));
-		expect(values).not.toContain('library:dreamer-architect');
+		expect(values).toContain('library:dreamer-architect');
+
+		await wrapper.find('.roster-button-library').trigger('click');
+		const searchInput = wrapper.find('#library-search');
+		expect(searchInput.exists()).toBe(true);
+		await searchInput.setValue('arch');
+
+		const cards = wrapper.findAll('article.library-card');
+		expect(cards.length).toBeGreaterThanOrEqual(1);
+		const dreamerCard = cards.find((card) => card.text().includes('The Dreamer & the Architect'));
+		expect(dreamerCard).toBeDefined();
+		const portraitStyle = dreamerCard!.find('.library-card-hero .portrait-circle').attributes('style') || '';
+		expect(portraitStyle).toContain('images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg');
+		expect(dreamerCard!.findAll('.library-card-hero .ring-trait')).toHaveLength(3);
 		wrapper.unmount();
 	});
 
