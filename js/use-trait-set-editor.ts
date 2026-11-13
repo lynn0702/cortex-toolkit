@@ -27,7 +27,7 @@ import {
 	resolveSubtraitNoun,
 	resolveSubtraitPlural,
 } from './model.ts';
-import { resolveFrame, normalizeZoom, type FrameConfig } from './frame-geometry.ts';
+import { resolveFrame, normalizeZoom, normalizeRingSize, type FrameConfig } from './frame-geometry.ts';
 import { getCharacterColorTokens } from './color-palette.ts';
 import type {
 	Character,
@@ -1508,6 +1508,59 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
+	const frameSize = computed<number | null>({
+		get: () => {
+			const res = resolveFrame(traitSet.value);
+			return typeof res?.size === 'number' ? res.size : null;
+		},
+		set: (size: number | null) => {
+			setFrameSize(size);
+		},
+	});
+
+	function setFrameSize(size: number | null) {
+		const s = props.traitSetID;
+		const ctk = ctkFor(s);
+		const existing = resolveFrame(props.character.traitSets[s]);
+		const f: any = {
+			...(existing || { ...defaultEditorFrame, shape: 'ring' }),
+		};
+		const normalized = size === null ? undefined : normalizeRingSize(size);
+		if (normalized !== undefined) {
+			f.size = normalized;
+		} else {
+			delete f.size;
+		}
+		ctk.frame = f;
+		updateCharacter(structuredClone(toRaw(props.character)));
+	}
+
+	const framePosition = computed<'left' | 'center' | 'right'>({
+		get: () => {
+			const res = resolveFrame(traitSet.value);
+			return res?.position === 'center' || res?.position === 'right' ? res.position : 'left';
+		},
+		set: (pos: 'left' | 'center' | 'right') => {
+			setFramePosition(pos);
+		},
+	});
+
+	function setFramePosition(pos: 'left' | 'center' | 'right') {
+		const s = props.traitSetID;
+		const ctk = ctkFor(s);
+		const existing = resolveFrame(props.character.traitSets[s]);
+		const f: any = {
+			...(existing || { ...defaultEditorFrame, shape: 'ring' }),
+		};
+		if (pos === 'center' || pos === 'right') {
+			f.position = pos;
+		} else {
+			delete f.position;
+		}
+		ctk.frame = f;
+		updateCharacter(structuredClone(toRaw(props.character)));
+	}
+
 	const pipsFilled = computed({
 		get: () => {
 			const rating = getRating(traitSet.value);
@@ -1554,13 +1607,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		get: () => Boolean(getView(traitSet.value)?.borderless),
 		set: (val: boolean) => {
 			setCustomProperty('borderless', Boolean(val));
-		},
-	});
-
-	const hideRingNames = computed<boolean>({
-		get: () => Boolean(getView(traitSet.value)?.hideRingNames),
-		set: (val: boolean) => {
-			setCustomProperty('hideRingNames', Boolean(val));
 		},
 	});
 
@@ -1824,8 +1870,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		ratingLadder.value = current;
 	}
 
-	function getDieDisplayValue(value: any) {
-		return characterCurioFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
+	function getDieDisplayValue(value: any, isFilled = false) {
+		return characterCurioFunctions.renderDieconSVG(value, isFilled, '', getView(props.character)?.diceConfig);
 	}
 
 	function updateCharacter(character?: any) {
@@ -2040,6 +2086,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		setFrameDash,
 		frameBox,
 		setFrameBox,
+		frameSize,
+		setFrameSize,
+		framePosition,
+		setFramePosition,
 		frameImageUrl,
 		frameImageAlignment,
 		frameImageZoom,
@@ -2054,7 +2104,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		headerAlign,
 		verticalAlign,
 		borderless,
-		hideRingNames,
 		cssClass,
 		selectElement,
 		focusFirstInput,

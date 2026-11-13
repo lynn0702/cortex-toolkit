@@ -119,8 +119,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	const frameStrokeClass = frameColorClass;
 
 	const traitSetFrameStyle = computed(() => {
+		const style: Record<string, string> = {};
 		const c = frameColorPresentation.value.customColor;
-		return c ? { '--frame-color': c } : undefined;
+		if (c) style['--frame-color'] = c;
+		const sz = resolvedFrame.value?.size;
+		if (typeof sz === 'number' && sz > 0) {
+			style['--portrait-size'] = `${Math.round((sz / 16) * 1000) / 1000}rem`;
+		}
+		return Object.keys(style).length > 0 ? style : undefined;
 	});
 
 	const frameStrokeStyle = computed(() => {
@@ -286,9 +292,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 		if ((ctk?.pips as any) === false) {
 			classes['trait-set-no-pips'] = true;
-		}
-		if (ctk?.hideRingNames) {
-			classes['hide-ring-names'] = true;
 		}
 
 		const frameCfg = resolveFrame(traitSetArg);

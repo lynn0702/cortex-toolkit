@@ -1507,8 +1507,8 @@ function checkScrollPosition() {
 	scrollPosition.value = 'middle';
 }
 
-function getDieDisplayValue(val: any) {
-	return characterCurioFunctions.renderDieconSVG(val, false, '', getView(props.character)?.diceConfig);
+function getDieDisplayValue(val: any, isFilled = false) {
+	return characterCurioFunctions.renderDieconSVG(val, isFilled, '', getView(props.character)?.diceConfig);
 }
 </script>
 
@@ -1517,8 +1517,14 @@ function getDieDisplayValue(val: any) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" @click.stop="selectElement([])" title="Done" aria-label="Close trait editor">
-				<i class="fas fa-times"></i>
+			<button
+				type="button"
+				class="editor-close"
+				@click.stop="selectElement([])"
+				title="Done"
+				aria-label="Close trait editor"
+			>
+				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<button
 				v-if="!isPlay"
@@ -1822,6 +1828,7 @@ function getDieDisplayValue(val: any) {
 								:key="'rating-type-' + rt"
 								class="editor-group-btn"
 								:class="{ active: ratingType === rt }"
+								:aria-pressed="ratingType === rt"
 								@click.stop="requestRatingType(rt)"
 							>
 								{{ rt }}
@@ -1830,24 +1837,26 @@ function getDieDisplayValue(val: any) {
 
 						<!-- SINGLE DIE SELECTOR (EDIT MODE) -->
 						<div class="rating-scale-container editor-rating-chips" v-if="ratingType === 'Die' && !isPlay">
-							<div class="rating-scale-chips">
+							<div class="rating-scale-chips" :class="{ 'has-out-chip': shouldShowTrackOut }">
 								<button
 									type="button"
 									v-for="val in dieRange"
 									:key="'rating-die-' + val"
 									class="rating-scale-chip"
 									:class="{ active: isDieActiveOf(trait, val) && !isOut }"
+									:aria-pressed="isDieActiveOf(trait, val) && !isOut"
+									:aria-label="(isDieActiveOf(trait, val) && !isOut ? 'Clear d' : 'Set d') + val"
 									@click.stop="toggleTraitValue(val)"
 									:title="(isDieActiveOf(trait, val) ? 'Clear d' : 'Set d') + val"
 								>
-									<span v-html="getDieDisplayValue(val)"></span>
-									<span class="chip-label">d{{ val }}</span>
+									<span v-html="getDieDisplayValue(val, isDieActiveOf(trait, val) && !isOut)"></span>
 								</button>
 								<button
 									type="button"
 									v-if="shouldShowTrackOut"
 									class="rating-scale-chip rating-scale-chip-out"
 									:class="{ active: isOut }"
+									:aria-pressed="isOut"
 									@click.stop="toggleOutValue"
 									title="Out"
 								>
@@ -1869,7 +1878,7 @@ function getDieDisplayValue(val: any) {
 								-
 							</button>
 							<div class="die-rating-current">
-								<span v-html="getDieDisplayValue(firstDieOf(trait))"></span>
+								<span v-html="getDieDisplayValue(firstDieOf(trait), firstDieOf(trait) > 0)"></span>
 								<span class="die-rating-text">d{{ firstDieOf(trait) }}</span>
 							</div>
 							<button
@@ -1900,31 +1909,44 @@ function getDieDisplayValue(val: any) {
 						<!-- DICE LIST EDITOR -->
 						<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
 							<div class="editor-die-steppers" v-if="!isPlay">
-								<div v-for="size in dieRange" :key="'stepper-' + size" class="die-stepper-item">
-									<span v-html="getDieDisplayValue(size)"></span>
-									<span class="stepper-label">d{{ size }}</span>
+								<div
+									v-for="size in dieRange"
+									:key="'stepper-' + size"
+									class="die-stepper-item"
+									:class="{ active: getDieCount(size) > 0 }"
+								>
+									<span v-html="getDieDisplayValue(size, getDieCount(size) > 0)"></span>
 									<div class="stepper-controls">
 										<button
 											type="button"
 											class="btn-step"
 											@click.stop="removeDieFromTrait(size)"
 											:disabled="getDieCount(size) === 0"
+											:aria-label="'Remove d' + size"
+											:title="'Remove d' + size"
 										>
 											-
 										</button>
 										<span class="stepper-count">{{ getDieCount(size) }}</span>
-										<button type="button" class="btn-step" @click.stop="addDieToTrait(size)">+</button>
+										<button
+											type="button"
+											class="btn-step"
+											@click.stop="addDieToTrait(size)"
+											:aria-label="'Add d' + size"
+											:title="'Add d' + size"
+										>
+											+
+										</button>
 									</div>
 								</div>
 							</div>
 
 							<!-- CURRENT DICE IN POOL -->
 							<div class="multidie-active-list" v-if="dice.length > 0">
-								<span class="sub-label">Current Dice ({{ dice.length }}):</span>
+								<span class="sub-label">Pool ({{ dice.length }})</span>
 								<div class="multidie-chips">
 									<div v-for="(dieSize, dIdx) in dice" :key="dIdx" class="multidie-chip">
-										<span v-html="getDieDisplayValue(dieSize)"></span>
-										<span class="chip-text">d{{ dieSize }}</span>
+										<span v-html="getDieDisplayValue(dieSize, true)"></span>
 										<template v-if="isPlay">
 											<button
 												type="button"

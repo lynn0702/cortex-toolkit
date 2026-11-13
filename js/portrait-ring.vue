@@ -153,8 +153,6 @@ const isOtherEditorOpen = computed(() =>
 	Boolean(props.editing && props.editing.length > 0 && !isSelected(['scaleDie'])),
 );
 
-const hideRingNames = computed(() => Boolean(getView(ringSet.value)?.hideRingNames));
-
 const ringConfig = computed(() => {
 	const setNode = ringSet.value;
 	const frameCfg = resolveFrame(setNode);
@@ -184,8 +182,8 @@ function updateCharacter(character: any) {
 	emit('updateCharacter', character);
 }
 
-function renderDieValue(value: any) {
-	return characterCurioFunctions.renderDieconSVG(value, true, '', getView(props.character)?.diceConfig);
+function renderDieValue(value: any, isFilled = true) {
+	return characterCurioFunctions.renderDieconSVG(value, isFilled, '', getView(props.character)?.diceConfig);
 }
 
 function getTraitAngle(t: number | string) {
@@ -613,7 +611,15 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 				<aside class="editor scale-die-editor open" v-show="submode === 'edit' && isSelected(['scaleDie'])" @click.stop>
 					<div class="editor-arrow"></div>
 					<div class="editor-controls">
-						<button type="button" @click.stop="selectElement([])"><i class="fas fa-times"></i></button>
+						<button
+							type="button"
+							class="editor-close"
+							@click.stop="selectElement([])"
+							title="Done"
+							aria-label="Close ring scale editor"
+						>
+							<i class="fas fa-times" aria-hidden="true"></i>
+						</button>
 						<button
 							type="button"
 							class="editor-delete"
@@ -622,8 +628,9 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 								selectElement([]);
 							"
 							title="Remove Scale Die"
+							aria-label="Remove Scale Die"
 						>
-							<i class="fas fa-trash"></i>
+							<i class="fas fa-trash" aria-hidden="true"></i>
 						</button>
 					</div>
 					<div class="editor-fields">
@@ -636,10 +643,12 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 									type="button"
 									class="btn-step"
 									:class="{ active: scaleDieValue === s }"
+									:aria-pressed="scaleDieValue === s"
+									:aria-label="'Scale d' + s"
+									:title="'Scale d' + s"
 									@click.stop="setScaleDieValue(s)"
 								>
-									<span v-html="renderDieValue(s)"></span>
-									<span class="step-label">d{{ s }}</span>
+									<span v-html="renderDieValue(s, scaleDieValue === s)"></span>
 								</button>
 							</div>
 						</div>

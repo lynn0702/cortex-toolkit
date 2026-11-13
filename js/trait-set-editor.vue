@@ -47,7 +47,6 @@ const {
 	description,
 	tags,
 	includeOut,
-	endWord,
 	hasCounterTrait,
 	allowsTraitColumns,
 	traitColumns,
@@ -120,18 +119,34 @@ function applyFromMini(updatedSet: any) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" @click.stop="openBlockMini" title="Open in Trait Block Mini / Save as Preset">
-				<i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'"></i>
+			<button
+				type="button"
+				@click.stop="openBlockMini"
+				title="Open in Trait Block Mini / Save as Preset"
+				aria-label="Open in Trait Block Mini or Save as Preset"
+			>
+				<i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'" aria-hidden="true"></i>
+				<span class="editor-control-label">{{ presetSaved ? 'Saved' : 'Block Mini' }}</span>
 			</button>
-			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
+			<button
+				type="button"
+				class="editor-close"
+				@click.stop="selectElement([])"
+				title="Done"
+				aria-label="Close trait set editor"
+			>
+				<i class="fas fa-times" aria-hidden="true"></i>
+			</button>
 			<button
 				v-if="!isName"
 				type="button"
 				class="editor-delete"
 				@click.stop="promptDeleteTraitSet"
 				title="Delete trait set"
+				aria-label="Delete trait set"
 			>
-				<i class="fas fa-trash"></i>
+				<i class="fas fa-trash" aria-hidden="true"></i>
+				<span class="editor-control-label">Delete</span>
 			</button>
 		</div>
 
@@ -290,73 +305,63 @@ function applyFromMini(updatedSet: any) {
 							</div>
 						</div>
 
+						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
+							<div class="editor-row-between">
+								<label :for="'trait-set-reserved-slots-' + traitSetID" class="m-0">Print Slots</label>
+								<div class="num-stepper">
+									<button
+										type="button"
+										class="btn-step"
+										@click.stop="
+											reservedSlots = Math.max(
+												0,
+												(reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1,
+											)
+										"
+										:disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0"
+										title="Fewer reserved slots"
+										aria-label="Fewer reserved slots"
+									>
+										-
+									</button>
+									<input
+										type="number"
+										:id="'trait-set-reserved-slots-' + traitSetID"
+										name="reservedSlots"
+										min="0"
+										max="25"
+										v-model.number="reservedSlots"
+										placeholder="Auto"
+										inputmode="numeric"
+										aria-label="Reserved slots for print"
+									/>
+									<button
+										type="button"
+										class="btn-step"
+										@click.stop="
+											reservedSlots = (reservedSlots === '' || reservedSlots === null ? 0 : reservedSlots) + 1
+										"
+										title="More reserved slots"
+										aria-label="More reserved slots"
+									>
+										+
+									</button>
+								</div>
+							</div>
+						</div>
+
 						<div class="editor-field">
 							<label :for="'trait-set-desc-' + traitSetID">Description</label>
 							<textarea
 								:id="'trait-set-desc-' + traitSetID"
 								name="traitSetDescription"
 								v-model="description"
+								rows="2"
 							></textarea>
 						</div>
 
 						<div class="editor-field" v-if="!isName">
 							<TagEditor v-model="tags" :input-id="'trait-set-tags-' + traitSetID" label="Tags" />
-						</div>
-
-						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
-							<label :for="'trait-set-reserved-slots-' + traitSetID"
-								><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label
-							>
-							<div class="num-stepper">
-								<button
-									type="button"
-									class="btn-step"
-									@click.stop="
-										reservedSlots = Math.max(
-											0,
-											(reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1,
-										)
-									"
-									:disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0"
-									title="Fewer reserved slots"
-									aria-label="Fewer reserved slots"
-								>
-									-
-								</button>
-								<input
-									type="number"
-									:id="'trait-set-reserved-slots-' + traitSetID"
-									name="reservedSlots"
-									min="0"
-									max="25"
-									v-model.number="reservedSlots"
-									placeholder="Auto"
-									inputmode="numeric"
-									aria-label="Reserved slots for print"
-								/>
-								<button
-									type="button"
-									class="btn-step"
-									@click.stop="reservedSlots = (reservedSlots === '' || reservedSlots === null ? 0 : reservedSlots) + 1"
-									title="More reserved slots"
-									aria-label="More reserved slots"
-								>
-									+
-								</button>
-							</div>
-						</div>
-
-						<!-- END WORD (active when Out marker is enabled) -->
-						<div class="editor-field" v-if="includeOut">
-							<label :for="'trait-set-' + traitSetID + '-end-word'" class="editor-sub-label">End Word</label>
-							<input
-								type="text"
-								:id="'trait-set-' + traitSetID + '-end-word'"
-								name="endWord"
-								v-model="endWord"
-								placeholder="OUT"
-								class="editor-input-short"
-							/>
 						</div>
 
 						<!-- COUNTER COLUMN HEADER (shown when set has Counter traits) -->
@@ -520,37 +525,41 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerMode === 'sidebar' }"
+									:aria-pressed="headerMode === 'sidebar'"
 									@click.stop="headerMode = 'sidebar'"
 									title="Sidebar header"
 								>
-									<i class="fas fa-grip-lines-vertical"></i> Sidebar
+									<i class="fas fa-grip-lines-vertical" aria-hidden="true"></i> Sidebar
 								</button>
 								<button
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerMode === 'top' }"
+									:aria-pressed="headerMode === 'top'"
 									@click.stop="headerMode = 'top'"
 									title="Top bar header"
 								>
-									<i class="fas fa-grip-lines"></i> Top Bar
+									<i class="fas fa-grip-lines" aria-hidden="true"></i> Top
 								</button>
 								<button
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerMode === 'bottom' }"
+									:aria-pressed="headerMode === 'bottom'"
 									@click.stop="headerMode = 'bottom'"
 									title="Bottom bar header"
 								>
-									<i class="fas fa-grip-lines"></i> Bottom Bar
+									<i class="fas fa-grip-lines" aria-hidden="true"></i> Bottom
 								</button>
 								<button
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerMode === 'none' }"
+									:aria-pressed="headerMode === 'none'"
 									@click.stop="headerMode = 'none'"
 									title="Remove header"
 								>
-									<i class="fas fa-eye-slash"></i> None
+									<i class="fas fa-eye-slash" aria-hidden="true"></i> None
 								</button>
 							</div>
 							<div class="editor-button-group mt-sm">
@@ -558,28 +567,31 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerAlign === 'left' }"
+									:aria-pressed="headerAlign === 'left'"
 									@click.stop="headerAlign = 'left'"
 									title="Align left"
 								>
-									<i class="fas fa-align-left"></i> Left
+									<i class="fas fa-align-left" aria-hidden="true"></i> Left
 								</button>
 								<button
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerAlign === 'center' }"
+									:aria-pressed="headerAlign === 'center'"
 									@click.stop="headerAlign = 'center'"
 									title="Align center"
 								>
-									<i class="fas fa-align-center"></i> Center
+									<i class="fas fa-align-center" aria-hidden="true"></i> Center
 								</button>
 								<button
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: headerAlign === 'right' }"
+									:aria-pressed="headerAlign === 'right'"
 									@click.stop="headerAlign = 'right'"
 									title="Align right"
 								>
-									<i class="fas fa-align-right"></i> Right
+									<i class="fas fa-align-right" aria-hidden="true"></i> Right
 								</button>
 							</div>
 						</div>
@@ -592,6 +604,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: verticalAlign === 'top' }"
+									:aria-pressed="verticalAlign === 'top'"
 									@click.stop="verticalAlign = 'top'"
 								>
 									Top
@@ -600,6 +613,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: verticalAlign === 'center' }"
+									:aria-pressed="verticalAlign === 'center'"
 									@click.stop="verticalAlign = 'center'"
 								>
 									Center
@@ -608,6 +622,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: verticalAlign === 'bottom' }"
+									:aria-pressed="verticalAlign === 'bottom'"
 									@click.stop="verticalAlign = 'bottom'"
 								>
 									Bottom
@@ -623,6 +638,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: !borderless }"
+									:aria-pressed="!borderless"
 									@click.stop="borderless = false"
 								>
 									Bordered
@@ -631,6 +647,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: borderless }"
+									:aria-pressed="borderless"
 									@click.stop="borderless = true"
 								>
 									Borderless
@@ -640,14 +657,23 @@ function applyFromMini(updatedSet: any) {
 
 						<TraitSetEditorLayout />
 
-						<!-- PILLAR (DROPDOWN + EXPLICIT CUSTOM TEXT ENTRY) -->
-						<div class="editor-field">
-							<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
-							<div class="editor-row-inline">
+						<!-- PILLAR & COLUMNS WITHIN SET -->
+						<div
+							class="editor-grid-2"
+							v-if="
+								allowsTraitColumns &&
+								styleBody !== 'image' &&
+								styleBody !== 'pips' &&
+								selectedPillar !== '__custom__' &&
+								!isCustomPillar
+							"
+						>
+							<div class="editor-field">
+								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
 								<select
 									:id="'trait-set-' + traitSetID + '-pillar-select'"
 									v-model="selectedPillar"
-									class="editor-select flex-1"
+									class="editor-select"
 									aria-label="Pillar"
 								>
 									<option value="prime">Prime</option>
@@ -659,28 +685,57 @@ function applyFromMini(updatedSet: any) {
 									</option>
 									<option value="__custom__">Custom...</option>
 								</select>
-								<input
-									v-if="selectedPillar === '__custom__' || isCustomPillar"
-									type="text"
-									:id="'trait-set-' + traitSetID + '-pillar-custom'"
-									name="setPillarCustom"
-									v-model="setPillar"
-									placeholder="Custom pillar name..."
-									class="flex-1"
-									aria-label="Custom pillar name"
-								/>
+							</div>
+							<div class="editor-field">
+								<label :for="'trait-set-' + traitSetID + '-columns'">Columns</label>
+								<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
+									<option :value="1">1 Column</option>
+									<option :value="2">2 Columns</option>
+									<option :value="3">3 Columns</option>
+								</select>
 							</div>
 						</div>
+						<template v-else>
+							<div class="editor-field">
+								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
+								<div class="editor-row-inline">
+									<select
+										:id="'trait-set-' + traitSetID + '-pillar-select'"
+										v-model="selectedPillar"
+										class="editor-select flex-1"
+										aria-label="Pillar"
+									>
+										<option value="prime">Prime</option>
+										<option value="plus">Plus</option>
+										<option value="play">Play</option>
+										<option value="identity">Identity</option>
+										<option v-for="cp in characterCustomPillars" :key="cp" :value="cp">
+											{{ cp.charAt(0).toUpperCase() + cp.slice(1) }}
+										</option>
+										<option value="__custom__">Custom...</option>
+									</select>
+									<input
+										v-if="selectedPillar === '__custom__' || isCustomPillar"
+										type="text"
+										:id="'trait-set-' + traitSetID + '-pillar-custom'"
+										name="setPillarCustom"
+										v-model="setPillar"
+										placeholder="Custom pillar name..."
+										class="flex-1"
+										aria-label="Custom pillar name"
+									/>
+								</div>
+							</div>
 
-						<!-- COLUMNS WITHIN SET -->
-						<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips'">
-							<label :for="'trait-set-' + traitSetID + '-columns'">Columns Within Set</label>
-							<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
-								<option :value="1">1 Column</option>
-								<option :value="2">2 Columns</option>
-								<option :value="3">3 Columns</option>
-							</select>
-						</div>
+							<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips'">
+								<label :for="'trait-set-' + traitSetID + '-columns'">Columns</label>
+								<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
+									<option :value="1">1 Column</option>
+									<option :value="2">2 Columns</option>
+									<option :value="3">3 Columns</option>
+								</select>
+							</div>
+						</template>
 
 						<!-- LABEL POSITION (ladder rung names, horizontal or rotated vertical) -->
 						<div class="editor-field" v-if="styleBody === 'die-rows'">
@@ -690,6 +745,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: labelPosition === 'horizontal' }"
+									:aria-pressed="labelPosition === 'horizontal'"
 									@click.stop="labelPosition = 'horizontal'"
 								>
 									Horizontal
@@ -698,6 +754,7 @@ function applyFromMini(updatedSet: any) {
 									type="button"
 									class="editor-group-btn"
 									:class="{ active: labelPosition === 'vertical' }"
+									:aria-pressed="labelPosition === 'vertical'"
 									@click.stop="labelPosition = 'vertical'"
 								>
 									Vertical

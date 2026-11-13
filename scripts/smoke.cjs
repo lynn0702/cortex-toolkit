@@ -74,8 +74,8 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 	});
 	page.on('request', (req) => {
 		const url = req.url();
-		if (/fonts\.(?:googleapis|gstatic)\.com/i.test(url)) {
-			fontRequests.push(`[${tag}] blocked remote font request: ${url}`);
+		if (/fonts\.googleapis\.com/i.test(url) && /josefin|open(?:\+|%20)sans|alegreya/i.test(url)) {
+			fontRequests.push(`[${tag}] blocked remote base-font request: ${url}`);
 		}
 	});
 

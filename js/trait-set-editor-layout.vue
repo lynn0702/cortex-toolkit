@@ -26,6 +26,10 @@ const {
 	setFrameDash,
 	frameBox,
 	setFrameBox,
+	frameSize,
+	setFrameSize,
+	framePosition,
+	setFramePosition,
 	frameImageUrl,
 	frameImageAlignment,
 	frameImageZoom,
@@ -67,6 +71,7 @@ const {
 				type="button"
 				class="editor-group-btn"
 				:class="{ active: (frameShape || 'none') === opt.id }"
+				:aria-pressed="(frameShape || 'none') === opt.id"
 				@click.stop="setFrameShape(opt.id)"
 			>
 				{{ opt.label }}
@@ -85,6 +90,7 @@ const {
 					type="button"
 					class="editor-group-btn"
 					:class="{ active: frameWidth === w }"
+					:aria-pressed="frameWidth === w"
 					@click.stop="setFrameWidth(w)"
 				>
 					{{ w }}
@@ -128,12 +134,73 @@ const {
 		</div>
 
 		<div class="editor-field" v-if="['ring', 'ellipse', 'arc'].includes(frameShape)">
+			<div class="editor-row-between">
+				<div class="editor-label m-0">Ring Size</div>
+				<div class="editor-row-actions">
+					<span class="slider-val">{{ frameSize ? frameSize + 'px' : 'Auto' }}</span>
+					<button
+						v-if="frameSize !== null"
+						type="button"
+						class="editor-group-btn"
+						@click.stop="setFrameSize(null)"
+						aria-label="Reset ring size"
+					>
+						Auto
+					</button>
+				</div>
+			</div>
+			<input
+				type="range"
+				min="120"
+				max="360"
+				step="10"
+				:value="frameSize ?? 240"
+				@input="setFrameSize(Number(($event.target as HTMLInputElement).value))"
+				aria-label="Ring Size"
+			/>
+		</div>
+
+		<div class="editor-field" v-if="frameShape === 'ring'">
+			<div class="editor-label">Ring Position</div>
+			<div class="editor-button-group">
+				<button
+					type="button"
+					class="editor-group-btn"
+					:class="{ active: framePosition === 'left' }"
+					:aria-pressed="framePosition === 'left'"
+					@click.stop="setFramePosition('left')"
+				>
+					Left
+				</button>
+				<button
+					type="button"
+					class="editor-group-btn"
+					:class="{ active: framePosition === 'center' }"
+					:aria-pressed="framePosition === 'center'"
+					@click.stop="setFramePosition('center')"
+				>
+					Center
+				</button>
+				<button
+					type="button"
+					class="editor-group-btn"
+					:class="{ active: framePosition === 'right' }"
+					:aria-pressed="framePosition === 'right'"
+					@click.stop="setFramePosition('right')"
+				>
+					Right
+				</button>
+			</div>
+		</div>
+
+		<div class="editor-field" v-if="['ring', 'ellipse', 'arc'].includes(frameShape)">
 			<div class="editor-label">Frame Box</div>
 			<div class="editor-button-group">
 				<button
 					type="button"
 					class="editor-group-btn"
 					:class="{ active: frameBox }"
+					:aria-pressed="frameBox"
 					@click.stop="setFrameBox(!frameBox)"
 				>
 					{{ frameBox ? 'Box On' : 'Box Off' }}
@@ -154,57 +221,46 @@ const {
 			</div>
 
 			<div class="editor-field" v-if="frameImageUrl">
-				<div class="editor-label">Frame Image Focus</div>
-				<div class="editor-portrait-alignment">
-					<div
-						@click.stop="frameImageAlignment = 'top-left'"
-						:class="{ active: frameImageAlignment === 'top-left' }"
-					></div>
-					<div
-						@click.stop="frameImageAlignment = 'top-center'"
-						:class="{ active: frameImageAlignment === 'top-center' }"
-					></div>
-					<div
-						@click.stop="frameImageAlignment = 'top-right'"
-						:class="{ active: frameImageAlignment === 'top-right' }"
-					></div>
-					<div
-						@click.stop="frameImageAlignment = 'center-left'"
-						:class="{ active: frameImageAlignment === 'center-left' }"
-					></div>
-					<div @click.stop="frameImageAlignment = 'center'" :class="{ active: frameImageAlignment === 'center' }"></div>
-					<div
-						@click.stop="frameImageAlignment = 'center-right'"
-						:class="{ active: frameImageAlignment === 'center-right' }"
-					></div>
-					<div
-						@click.stop="frameImageAlignment = 'bottom-left'"
-						:class="{ active: frameImageAlignment === 'bottom-left' }"
-					></div>
-					<div
-						@click.stop="frameImageAlignment = 'bottom-center'"
-						:class="{ active: frameImageAlignment === 'bottom-center' }"
-					></div>
-					<div
-						@click.stop="frameImageAlignment = 'bottom-right'"
-						:class="{ active: frameImageAlignment === 'bottom-right' }"
-					></div>
+				<div class="editor-focus-zoom-row">
+					<div>
+						<div class="editor-label">Image Focus</div>
+						<div class="editor-portrait-alignment">
+							<button
+								v-for="pos in [
+									'top-left',
+									'top-center',
+									'top-right',
+									'center-left',
+									'center',
+									'center-right',
+									'bottom-left',
+									'bottom-center',
+									'bottom-right',
+								]"
+								:key="pos"
+								type="button"
+								:aria-label="'Align ' + pos.replace('-', ' ')"
+								:aria-pressed="frameImageAlignment === pos"
+								:class="{ active: frameImageAlignment === pos }"
+								@click.stop="frameImageAlignment = pos"
+							></button>
+						</div>
+					</div>
+					<div class="editor-focus-zoom-slider">
+						<div class="editor-row-between">
+							<div class="editor-label m-0">Image Zoom</div>
+							<span class="slider-val">{{ Math.round((frameImageZoom ?? 1) * 100) }}%</span>
+						</div>
+						<input
+							type="range"
+							min="0.5"
+							max="2"
+							step="0.05"
+							v-model.number="frameImageZoom"
+							aria-label="Frame Image Zoom"
+						/>
+					</div>
 				</div>
-			</div>
-
-			<div class="editor-field" v-if="frameImageUrl">
-				<div class="editor-row-between">
-					<div class="editor-label m-0">Frame Image Zoom</div>
-					<span class="slider-val">{{ Math.round((frameImageZoom ?? 1) * 100) }}%</span>
-				</div>
-				<input
-					type="range"
-					min="0.5"
-					max="2"
-					step="0.05"
-					v-model.number="frameImageZoom"
-					aria-label="Frame Image Zoom"
-				/>
 			</div>
 		</template>
 	</template>

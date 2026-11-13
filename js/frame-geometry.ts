@@ -29,6 +29,7 @@ export interface FrameConfig {
 	shape: FrameShape;
 	span: [number, number];
 	traitsSpan?: [number, number];
+	size?: number;
 	corner: number | 'cut';
 	stroke: string;
 	color: FrameColor;
@@ -59,6 +60,14 @@ export function normalizeZoom(value: unknown): number | undefined {
 }
 
 /**
+ * Normalizes a ring or radial frame diameter in px.
+ */
+export function normalizeRingSize(value: unknown): number | undefined {
+	if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+	return Math.min(520, Math.max(80, Math.round(value)));
+}
+
+/**
  * Normalizes traitSet.view.frame (or direct frame config / shorthand) to full FrameConfig.
  */
 export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
@@ -74,6 +83,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 					: traitSetOrFrame;
 
 	const rawObj = typeof raw === 'object' && raw ? (raw as any) : null;
+	const ringSize = normalizeRingSize(rawObj?.size ?? (view?.frame as any)?.size);
 	const rawImage = rawObj?.image || (view?.frame as any)?.image;
 	const imageZoom = normalizeZoom(rawImage?.zoom);
 	const frameImage: FrameImageConfig | null =
@@ -107,6 +117,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			return {
 				shape: 'ring',
 				span: [0, 360],
+				...(ringSize !== undefined ? { size: ringSize } : {}),
 				corner: 8,
 				stroke: '2px',
 				color: 'primary',
@@ -197,6 +208,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			shape,
 			span,
 			...(traitsSpan ? { traitsSpan } : {}),
+			...(ringSize !== undefined ? { size: ringSize } : {}),
 			corner: raw.corner === 'cut' ? 'cut' : Number.isFinite(Number(raw.corner)) ? Number(raw.corner) : 8,
 			stroke,
 			color,

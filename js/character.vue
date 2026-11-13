@@ -255,20 +255,22 @@ function openDiceEditor() {
 function applyFonts() {
 	const ctk = getView(props.character);
 	if (!ctk || typeof characterCurioFunctions === 'undefined') return;
-	if (ctk.theme?.fonts) {
-		if (ctk.theme.fonts.heading && characterCurioFunctions.loadGoogleFont)
-			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.heading);
-		if (ctk.theme.fonts.primary && characterCurioFunctions.loadGoogleFont)
-			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.primary);
-		if (ctk.theme.fonts.secondary && characterCurioFunctions.loadGoogleFont)
-			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.secondary);
-	}
+	const customNames = new Set<string>();
 	if (Array.isArray(ctk.customFonts) && characterCurioFunctions.applyCustomFont) {
 		ctk.customFonts.forEach((f) => {
-			if (f.name && f.data) {
-				characterCurioFunctions.applyCustomFont(f.name, f.data);
+			if (f.name && f.url && characterCurioFunctions.applyCustomFont(f.name, f.url)) {
+				customNames.add(f.name.trim().toLowerCase());
 			}
 		});
+	}
+	if (ctk.theme?.fonts) {
+		const isCustom = (name?: string) => Boolean(name && customNames.has(name.trim().toLowerCase()));
+		if (ctk.theme.fonts.heading && !isCustom(ctk.theme.fonts.heading) && characterCurioFunctions.loadGoogleFont)
+			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.heading);
+		if (ctk.theme.fonts.primary && !isCustom(ctk.theme.fonts.primary) && characterCurioFunctions.loadGoogleFont)
+			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.primary);
+		if (ctk.theme.fonts.secondary && !isCustom(ctk.theme.fonts.secondary) && characterCurioFunctions.loadGoogleFont)
+			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.secondary);
 	}
 	if (ctk.diceConfig && typeof window !== 'undefined') {
 		(window as any).__characterCurioActiveDiceConfig = ctk.diceConfig;

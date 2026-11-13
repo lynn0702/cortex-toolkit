@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Fetches and subsets the default sheet fonts (Josefin Sans, Open Sans,
- * Alegreya Sans SC) into fonts/*.woff2 (latin + latin-ext) and writes css/fonts.css.
+ * Alegreya Sans SC, EB Garamond) into fonts/*.woff2 (latin + latin-ext) and writes css/fonts.css.
  */
 import fs from 'fs';
 import path from 'path';
@@ -13,7 +13,7 @@ const fontsDir = path.join(root, 'fonts');
 const cssOut = path.join(root, 'css', 'fonts.css');
 
 const CSS_URL =
-	'https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,400..800;1,400..700&family=Alegreya+Sans+SC:wght@400;500;700;800;900&display=swap';
+	'https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,400..800;1,400..700&family=Alegreya+Sans+SC:wght@400;500;700;800;900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap';
 const UA =
 	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 const KEEP_SUBSETS = new Set(['latin', 'latin-ext']);

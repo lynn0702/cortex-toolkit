@@ -165,9 +165,13 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(architect.view.frame.stroke).toBe('2px');
 		expect(architect.view.frame.traitsSpan).toEqual([45, 135]);
 		expect(architect.view.frame.image.zoom).toBe(1);
+		expect(architect.view.frame.size).toBe(190);
 		expect(dreamer.view.frame.stroke).toBe('2px');
 		expect(dreamer.view.frame.position).toBe('right');
-		expect(dreamer.view.frame.image.zoom).toBe(1);
+		expect(dreamer.view.frame.image.zoom).toBe(1.25);
+		expect(dreamer.view.frame.image.alignment).toBe('top-center');
+		expect(dreamer.view.frame.size).toBe(290);
+		expect(dreamer.view.frame.size).toBeGreaterThan(architect.view.frame.size);
 
 		// header
 		expect(architect.view.header).toBe('top');

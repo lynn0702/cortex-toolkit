@@ -328,6 +328,10 @@ remain fully legible in print and economy print modes.
 - Trait ownership metadata (`usableBy`, `UsableBy`, `Party`) is retired. Various SFX allow players or opposition to pull dice from any trait, and there is no intuitive way to pre-assign ownership routing cleanly in Play mode.
 - The Play-mode roller keeps explicit Player vs Opposition pool targets; schemas and helpers must not carry `usableBy` fields or ownership helpers.
 
+### Retire `hideRingNames` in favor of multi-die ring spread (2026-11-12)
+- `view.hideRingNames` and the ring editor's "Hide Ring Labels" toggle are retired.
+- Ring label visibility follows trait/set rating structure: a set-level `Dice` rating or a single multi-die trait on a portrait ring spreads its dice across the ring arc without repeating labels, while multi-trait rings display each trait's label.
+
 ## Open (decisions needed)
 
 - (none pending)

@@ -5,6 +5,7 @@ import ColorPicker from '../js/color-picker.vue';
 import NameEditor from '../js/name-editor.vue';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetFrame from '../js/trait-set-frame.vue';
+import TraitSetEditor from '../js/trait-set-editor.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import {
 	CURIO_PALETTE,
@@ -13,7 +14,9 @@ import {
 	getCharacterColorTokens,
 	resolveFrameColorPresentation,
 } from '../js/color-palette.ts';
-import { VANGUARD_FRAME_SHOWCASE } from '../js/showcase-templates.ts';
+import { normalizeRingSize, resolveFrame } from '../js/frame-geometry.ts';
+import { DREAMER_ARCHITECT_SHOWCASE, VANGUARD_FRAME_SHOWCASE } from '../js/showcase-templates.ts';
+import { inferFontFamilyFromUrl, parseExternalFontUrl, sanitizeFontFamilyName } from '../js/font-url.ts';
 
 function cloneSampleCharacter(): any {
 	return structuredClone(VANGUARD_FRAME_SHOWCASE.character);
@@ -148,6 +151,9 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 
 		expect(wrapper.text()).not.toMatch(bannedAiPhrases);
 		expect(wrapper.text()).not.toContain('Match Sheet');
+		expect(wrapper.find('.editor-dice-preview-card').exists()).toBe(false);
+		expect(wrapper.text()).not.toContain('Live Dice Appearance Preview');
+		expect(wrapper.find('.font-picker-preview').exists()).toBe(false);
 		expect(wrapper.find('#char-primary-color-picker').exists()).toBe(true);
 		expect(wrapper.find('#char-accent-color-picker').exists()).toBe(true);
 		expect(wrapper.find('#char-secondary-color-picker').exists()).toBe(true);
@@ -225,6 +231,308 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(character.traitSets[0].traits[0].view.badge.color).toBe('primary');
 		expect(wrapper.find('#trait-0-0-badge-color-picker').exists()).toBe(false);
 
+		wrapper.unmount();
+	});
+
+	it('provides unified FontPicker comboboxes that preserve backspacing, filter options, apply custom Google fonts, and pass axe-core', async () => {
+		const character = cloneSampleCharacter();
+		const wrapper = mount(NameEditor, {
+			props: { character, open: true, tab: 'theme' },
+		});
+
+		expect(wrapper.find('.editor-dice-preview-card').exists()).toBe(false);
+		expect(wrapper.find('.font-picker-preview').exists()).toBe(false);
+
+		const headingInput = wrapper.find('#char-field-heading-font');
+		const bodyInput = wrapper.find('#char-field-body-font');
+		const secondaryInput = wrapper.find('#char-field-secondary-font');
+		expect(headingInput.attributes('role')).toBe('combobox');
+		expect(bodyInput.attributes('role')).toBe('combobox');
+		expect(secondaryInput.attributes('role')).toBe('combobox');
+
+		// Focus opens unfiltered catalog showing all fonts even while "Open Sans" is in the input
+		await bodyInput.trigger('focus');
+		expect(bodyInput.attributes('aria-expanded')).toBe('true');
+		const bodyListbox = wrapper.find('#char-field-body-font-listbox');
+		expect(bodyListbox.attributes('hidden')).toBeUndefined();
+		const initialOptionCount = bodyListbox.findAll('[role="option"]').length;
+		expect(initialOptionCount).toBeGreaterThan(20);
+
+		// Audit accessibility while dropdown listbox is expanded
+		await runAxeAudit(wrapper.element as HTMLElement);
+
+		// Backspacing must NOT snap back to "Open Sans"
+		await bodyInput.setValue('Open San');
+		expect((bodyInput.element as HTMLInputElement).value).toBe('Open San');
+		await bodyInput.setValue('Open');
+		expect((bodyInput.element as HTMLInputElement).value).toBe('Open');
+		await bodyInput.setValue('');
+		expect((bodyInput.element as HTMLInputElement).value).toBe('');
+		expect(bodyListbox.findAll('[role="option"]').length).toBe(initialOptionCount);
+
+		// Filtering narrows options and mousedown selects the font
+		await bodyInput.setValue('Cin');
+		const cinOptions = bodyListbox.findAll('[role="option"]');
+		expect(cinOptions.some((o) => o.text().includes('Cinzel'))).toBe(true);
+		const cinzelOpt = cinOptions.find((o) => o.text().includes('Cinzel'));
+		await cinzelOpt!.trigger('mousedown');
+		expect(character.view.theme.fonts.primary).toBe('Cinzel');
+		expect((bodyInput.element as HTMLInputElement).value).toBe('Cinzel');
+		expect(bodyInput.attributes('aria-expanded')).toBe('false');
+
+		// Typing an arbitrary Google Font and pressing Enter applies it
+		await bodyInput.trigger('focus');
+		await bodyInput.setValue('MedievalSharp');
+		await bodyInput.trigger('keydown', { key: 'Enter', isComposing: false });
+		expect(character.view.theme.fonts.primary).toBe('MedievalSharp');
+		expect((bodyInput.element as HTMLInputElement).value).toBe('MedievalSharp');
+
+		// Reset button restores the default font and clears theme.fonts.primary
+		const resetBtn = wrapper.find('button[aria-label="Reset Body Font to Open Sans"]');
+		expect(resetBtn.exists()).toBe(true);
+		await resetBtn.trigger('click');
+		expect(character.view.theme.fonts.primary).toBeUndefined();
+		expect((bodyInput.element as HTMLInputElement).value).toBe('Open Sans');
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+		wrapper.unmount();
+	});
+
+	it('parses HTTPS external font URLs, infers non-Google families, and rejects unsafe schemes', () => {
+		expect(parseExternalFontUrl('https://cdn.example.com/fonts/Beleren-Bold.woff2')).toMatchObject({
+			kind: 'file',
+			format: 'woff2',
+			shortFormat: 'woff2',
+			host: 'cdn.example.com',
+		});
+		expect(parseExternalFontUrl('https://cdn.example.com/font.woff')?.format).toBe('woff');
+		expect(parseExternalFontUrl('https://cdn.example.com/font.ttf')?.format).toBe('truetype');
+		expect(parseExternalFontUrl('https://cdn.example.com/font.otf')?.format).toBe('opentype');
+		expect(inferFontFamilyFromUrl('https://cdn.example.com/fonts/Beleren-Bold.woff2')).toBe('Beleren Bold');
+
+		expect(parseExternalFontUrl('https://api.fontshare.com/v2/css?f[]=clash-display@400,700&display=swap')?.kind).toBe(
+			'stylesheet',
+		);
+		expect(inferFontFamilyFromUrl('https://api.fontshare.com/v2/css?f[]=clash-display@400,700&display=swap')).toBe(
+			'Clash Display',
+		);
+		expect(inferFontFamilyFromUrl('https://fonts.bunny.net/css?family=cinzel-decorative:400')).toBe(
+			'Cinzel Decorative',
+		);
+		expect(inferFontFamilyFromUrl('https://fonts.cdnfonts.com/css/futura-pt')).toBe('Futura Pt');
+		expect(inferFontFamilyFromUrl('https://use.typekit.net/abc1234.css')).toBe('');
+
+		expect(parseExternalFontUrl('http://insecure.example.com/font.woff2')).toBeNull();
+		expect(parseExternalFontUrl('data:font/woff2;base64,AAAA')).toBeNull();
+		expect(parseExternalFontUrl('javascript:alert(1)')).toBeNull();
+		expect(sanitizeFontFamilyName(`My "Evil"; {Font}\n`)).toBe('My Evil Font');
+	});
+
+	it('replaces font upload with HTTPS External Fonts URL retrieval, picker integration, removal, and axe-core compliance', async () => {
+		document.head
+			.querySelectorAll('style[id^="cfont-"], link[id^="cfont-"], link[id^="gfont-"]')
+			.forEach((el) => el.remove());
+
+		const character = cloneSampleCharacter();
+		const wrapper = mount(NameEditor, {
+			props: { character, open: true, tab: 'theme' },
+		});
+
+		expect(wrapper.find('#char-field-font-upload').exists()).toBe(false);
+		expect(wrapper.text()).not.toContain('Choose Font File');
+		expect(wrapper.text()).not.toContain('Upload Custom Font');
+
+		const urlInput = wrapper.find('#char-field-font-url');
+		const nameInput = wrapper.find('#char-field-font-url-name');
+		const addBtn = wrapper.find('.external-font-add-btn');
+
+		// Unsafe scheme rejected with accessible alert
+		await urlInput.setValue('http://insecure.example.com/font.woff2');
+		await addBtn.trigger('click');
+		expect(wrapper.find('[role="alert"]').text()).toContain('https://');
+		expect(urlInput.attributes('aria-invalid')).toBe('true');
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+
+		// Valid direct webfont file URL auto-infers family name and injects @font-face style
+		await urlInput.setValue('https://cdn.example.com/fonts/Beleren-Bold.woff2');
+		expect(wrapper.find('[role="alert"]').exists()).toBe(false);
+		expect((nameInput.element as HTMLInputElement).value).toBe('Beleren Bold');
+		await addBtn.trigger('click');
+
+		expect(character.view.customFonts).toEqual([
+			{ name: 'Beleren Bold', url: 'https://cdn.example.com/fonts/Beleren-Bold.woff2' },
+		]);
+		const styleEl = document.head.querySelector('#cfont-beleren-bold');
+		expect(styleEl?.tagName).toBe('STYLE');
+		expect(styleEl?.textContent).toContain("format('woff2')");
+		expect(wrapper.findAll('.external-font-item')).toHaveLength(1);
+
+		// Valid non-Google CSS stylesheet URL injects <link rel="stylesheet">
+		await urlInput.setValue('https://api.fontshare.com/v2/css?f[]=clash-display@400,700&display=swap');
+		expect((nameInput.element as HTMLInputElement).value).toBe('Clash Display');
+		await addBtn.trigger('click');
+
+		const linkEl = document.head.querySelector('#cfont-clash-display') as HTMLLinkElement | null;
+		expect(linkEl?.tagName).toBe('LINK');
+		expect(linkEl?.rel).toBe('stylesheet');
+		expect(linkEl?.href).toContain('api.fontshare.com');
+
+		// Selecting Clash Display in Heading Font sets theme.fonts.heading WITHOUT requesting Google Fonts
+		const headingInput = wrapper.find('#char-field-heading-font');
+		await headingInput.trigger('focus');
+		const headingListbox = wrapper.find('#char-field-heading-font-listbox');
+		const clashOpt = headingListbox.findAll('[role="option"]').find((o) => o.text().includes('Clash Display'));
+		expect(clashOpt).toBeDefined();
+		expect(clashOpt!.text()).toContain('URL');
+		await clashOpt!.trigger('mousedown');
+		expect(character.view.theme.fonts.heading).toBe('Clash Display');
+		expect(document.head.querySelector('#gfont-clash-display')).toBeNull();
+
+		// Pasting an HTTPS URL directly into a FontPicker combobox and pressing Enter registers & applies it
+		const bodyInput = wrapper.find('#char-field-body-font');
+		await bodyInput.trigger('focus');
+		await bodyInput.setValue('https://fonts.bunny.net/css?family=alegreya:400,700');
+		await bodyInput.trigger('keydown', { key: 'Enter', isComposing: false });
+		expect(character.view.theme.fonts.primary).toBe('Alegreya');
+		expect(character.view.customFonts.some((f: any) => f.name === 'Alegreya')).toBe(true);
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+
+		// Removing Clash Display removes view.customFonts entry, head <link>, and resets Heading Font slot
+		const removeClashBtn = wrapper.find('button[aria-label="Remove external font Clash Display"]');
+		await removeClashBtn.trigger('click');
+		expect(character.view.customFonts.some((f: any) => f.name === 'Clash Display')).toBe(false);
+		expect(document.head.querySelector('#cfont-clash-display')).toBeNull();
+		expect(character.view.theme.fonts.heading).toBeUndefined();
+
+		wrapper.unmount();
+		document.head
+			.querySelectorAll('style[id^="cfont-"], link[id^="cfont-"], link[id^="gfont-"]')
+			.forEach((el) => el.remove());
+	});
+
+	it('normalizes frame.size and emits --portrait-size on TraitSetBlock for The Architect vs The Dreamer', () => {
+		expect(normalizeRingSize(50)).toBe(80);
+		expect(normalizeRingSize(600)).toBe(520);
+		expect(normalizeRingSize(289.6)).toBe(290);
+		expect(normalizeRingSize('bad')).toBeUndefined();
+		expect(normalizeRingSize(null)).toBeUndefined();
+
+		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
+		const architectIdx = character.traitSets.findIndex((s: any) => s.name === 'The Architect');
+		const dreamerIdx = character.traitSets.findIndex((s: any) => s.name === 'The Dreamer');
+		expect(resolveFrame(character.traitSets[architectIdx])?.size).toBe(190);
+		expect(resolveFrame(character.traitSets[dreamerIdx])?.size).toBe(290);
+
+		const architectBlock = mount(TraitSetBlock, {
+			props: { character, traitSetID: architectIdx, submode: 'edit', editing: [] },
+		});
+		expect((architectBlock.element as HTMLElement).style.getPropertyValue('--portrait-size')).toBe('11.875rem');
+		architectBlock.unmount();
+
+		const dreamerBlock = mount(TraitSetBlock, {
+			props: { character, traitSetID: dreamerIdx, submode: 'edit', editing: [] },
+		});
+		expect((dreamerBlock.element as HTMLElement).style.getPropertyValue('--portrait-size')).toBe('18.125rem');
+		dreamerBlock.unmount();
+	});
+
+	it('exposes Ring Size, Ring Position, Bookmark vs .editor-close, filled/unfilled die chips, and passes axe-core in TraitSetEditor', async () => {
+		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
+		const dreamerIdx = character.traitSets.findIndex((s: any) => s.name === 'The Dreamer');
+
+		const wrapper = mount(TraitSetEditor, {
+			props: { character, traitSetID: dreamerIdx, open: true },
+		});
+
+		// Bookmark action stays separate from .editor-close so studio panel hides only Close
+		const bookmarkBtn = wrapper.find(
+			'.editor-controls button[aria-label*="Bookmark"], .editor-controls button[aria-label*="Preset"]',
+		);
+		const closeBtn = wrapper.find('.editor-controls button.editor-close');
+		expect(bookmarkBtn.exists()).toBe(true);
+		expect(bookmarkBtn.classes()).not.toContain('editor-close');
+		expect(closeBtn.exists()).toBe(true);
+
+		// Range and Single Die chips expose aria-pressed, omit redundant d4-d12 text, and render filled/unfilled SVGs
+		const rangeBtns = wrapper.findAll('.editor-field .rating-scale-chips button[aria-pressed]');
+		expect(rangeBtns.length).toBeGreaterThanOrEqual(6);
+		const d4Include = wrapper.find('button[aria-label$=" d4"]');
+		expect(d4Include.attributes('aria-pressed')).toBe('true');
+		expect(d4Include.text()).not.toContain('d4');
+		expect(d4Include.find('.diecon-filled').exists()).toBe(true);
+
+		await d4Include.trigger('click');
+		expect(d4Include.attributes('aria-pressed')).toBe('false');
+		expect(d4Include.find('.diecon-unfilled').exists()).toBe(true);
+
+		// Ring Size slider updates view.frame.size and Auto resets it
+		const sizeInput = wrapper.find('input[type="range"][aria-label="Ring Size"]');
+		expect(sizeInput.exists()).toBe(true);
+		await sizeInput.setValue('310');
+		await sizeInput.trigger('input');
+		expect(character.traitSets[dreamerIdx].view.frame.size).toBe(310);
+
+		const autoResetBtn = wrapper.find('button[aria-label="Reset ring size"]');
+		expect(autoResetBtn.exists()).toBe(true);
+		await autoResetBtn.trigger('click');
+		expect(character.traitSets[dreamerIdx].view.frame.size).toBeUndefined();
+
+		// Ring Position switches between Left, Center, Right with aria-pressed
+		const ringPosField = wrapper
+			.findAll('.editor-field')
+			.find((f) => f.find('.editor-label').exists() && f.find('.editor-label').text().trim() === 'Ring Position');
+		expect(ringPosField).toBeDefined();
+		const posButtons = ringPosField!.findAll('.editor-group-btn');
+		const leftPosBtn = posButtons.find((b) => b.text().trim() === 'Left');
+		const centerPosBtn = posButtons.find((b) => b.text().trim() === 'Center');
+		const rightPosBtn = posButtons.find((b) => b.text().trim() === 'Right');
+		expect(leftPosBtn).toBeDefined();
+		expect(centerPosBtn).toBeDefined();
+		expect(rightPosBtn?.attributes('aria-pressed')).toBe('true');
+		await centerPosBtn!.trigger('click');
+		expect(character.traitSets[dreamerIdx].view.frame.position).toBe('center');
+		expect(centerPosBtn!.attributes('aria-pressed')).toBe('true');
+		await leftPosBtn!.trigger('click');
+		expect(character.traitSets[dreamerIdx].view.frame.position).toBeUndefined();
+		expect(leftPosBtn!.attributes('aria-pressed')).toBe('true');
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+		wrapper.unmount();
+	});
+
+	it('renders multi-die pool tray, compact rows, and portrait ring controls on The Architect', async () => {
+		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
+		const architectIdx = character.traitSets.findIndex((s: any) => s.name === 'The Architect');
+		const wrapper = mount(TraitSetEditor, {
+			props: { character, traitSetID: architectIdx, open: true, viewY: 0 },
+		});
+
+		expect(wrapper.findAll('.editor-die-steppers .die-stepper-item').length).toBeGreaterThanOrEqual(5);
+		expect(wrapper.findAll('.multidie-chip').length).toBe(3);
+		expect(wrapper.text()).toContain('Pool (3)');
+
+		const subtraitBtn = wrapper.findAll('button.editor-button').find((b) => b.text().includes('Create subtrait'));
+		expect(subtraitBtn).toBeDefined();
+
+		const optionChecks = wrapper.findAll('.editor-checkbox-row input[type="checkbox"]');
+		expect(optionChecks.length).toBeGreaterThanOrEqual(3);
+
+		const printSlotsInput = wrapper.find('input[aria-label="Reserved slots for print"]');
+		expect(printSlotsInput.exists()).toBe(true);
+		const printSlotsRow = wrapper
+			.findAll('.editor-row-between')
+			.find((r) => r.find('label').exists() && r.find('label').text().trim() === 'Print Slots');
+		expect(printSlotsRow).toBeDefined();
+
+		const hitchesRow = wrapper
+			.findAll('.editor-row-between')
+			.find((r) => r.find('label').exists() && r.find('label').text().trim() === 'Hitches on');
+		expect(hitchesRow).toBeDefined();
+		expect(hitchesRow!.find('input[aria-label="Hitches on"]').exists()).toBe(true);
+
+		await runAxeAudit(wrapper.element as HTMLElement);
 		wrapper.unmount();
 	});
 });

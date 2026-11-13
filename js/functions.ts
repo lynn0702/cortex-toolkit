@@ -16,6 +16,7 @@ import {
 	isHiddenIn,
 } from './model.ts';
 import { buildParts } from './sheet-grid.ts';
+import { customFontDomId, parseExternalFontUrl, sanitizeFontFamilyName } from './font-url.ts';
 import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
@@ -72,16 +73,46 @@ export const characterCurioFunctions = {
 		document.head.appendChild(link);
 	},
 
-	applyCustomFont: function (fontName: string, base64Data: string) {
-		if (!fontName || !base64Data || typeof document === 'undefined') return;
-		const safeId = 'cfont-' + fontName.toLowerCase().replace(/[^a-z0-9]/g, '-');
-		let style = document.getElementById(safeId);
-		if (!style) {
-			style = document.createElement('style');
-			style.id = safeId;
-			document.head.appendChild(style);
+	applyCustomFont: function (fontName: string, fontUrl: string): boolean {
+		const name = sanitizeFontFamilyName(fontName);
+		const parsed = parseExternalFontUrl(fontUrl);
+		if (!name || !parsed || typeof document === 'undefined') return false;
+		const safeId = customFontDomId(name);
+		if (safeId === 'cfont-') return false;
+
+		const existing = document.getElementById(safeId);
+		const targetTag = parsed.kind === 'file' ? 'STYLE' : 'LINK';
+		if (existing && existing.tagName !== targetTag) {
+			existing.remove();
 		}
-		style.textContent = `@font-face { font-family: '${fontName}'; src: url('${base64Data}') format('woff2'), url('${base64Data}') format('woff'), url('${base64Data}') format('truetype'); font-weight: normal; font-style: normal; }`;
+
+		if (parsed.kind === 'file') {
+			const safeCssUrl = parsed.url.replace(/[\\'()]/g, '\\$&');
+			let style = document.getElementById(safeId) as HTMLStyleElement | null;
+			if (!style) {
+				style = document.createElement('style');
+				style.id = safeId;
+				document.head.appendChild(style);
+			}
+			style.textContent = `@font-face { font-family: '${name}'; src: url('${safeCssUrl}') format('${parsed.format}'); font-weight: 100 900; font-style: normal; font-display: swap; }`;
+		} else {
+			let link = document.getElementById(safeId) as HTMLLinkElement | null;
+			if (!link) {
+				link = document.createElement('link');
+				link.id = safeId;
+				link.rel = 'stylesheet';
+				document.head.appendChild(link);
+			}
+			link.href = parsed.url;
+		}
+		return true;
+	},
+
+	removeCustomFont: function (fontName: string): void {
+		if (!fontName || typeof document === 'undefined') return;
+		const safeId = customFontDomId(fontName);
+		if (safeId === 'cfont-') return;
+		document.getElementById(safeId)?.remove();
 	},
 
 	renderDieconSVG: function (

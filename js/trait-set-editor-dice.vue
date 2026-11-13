@@ -31,6 +31,7 @@ const {
 	setHitches,
 	traitSetID,
 	includeOut,
+	endWord,
 	ratingDisplay,
 } = injectTraitSetEditor();
 
@@ -304,22 +305,35 @@ function commitPipBubbleCount(event: Event) {
 					:key="size"
 					class="rating-scale-chip"
 					:class="{ active: isRatingIncluded(size) }"
+					:aria-pressed="isRatingIncluded(size)"
+					:aria-label="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
 					@click.stop="toggleRatingOption(size)"
 					:title="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
 				>
-					<span v-html="getDieDisplayValue(size)"></span>
-					<span class="chip-label">d{{ size }}</span>
+					<span v-html="getDieDisplayValue(size, isRatingIncluded(size))"></span>
 				</button>
 				<button
 					type="button"
 					class="rating-scale-chip rating-scale-chip-out"
 					:class="{ active: includeOut }"
+					:aria-pressed="includeOut"
 					@click.stop="includeOut = !includeOut"
 					:title="(includeOut ? 'Disable' : 'Enable') + ' Out marker'"
 				>
 					<span class="chip-label chip-out-label">OUT</span>
 				</button>
 			</div>
+		</div>
+		<div class="editor-row-between mt-sm" v-if="includeOut">
+			<label :for="'trait-set-' + traitSetID + '-end-word'" class="m-0">End Word</label>
+			<input
+				type="text"
+				:id="'trait-set-' + traitSetID + '-end-word'"
+				name="endWord"
+				v-model="endWord"
+				placeholder="OUT"
+				class="editor-input-short"
+			/>
 		</div>
 	</div>
 
@@ -350,6 +364,7 @@ function commitPipBubbleCount(event: Event) {
 				:key="'set-rating-type-' + rt"
 				class="editor-group-btn"
 				:class="{ active: ratingType === rt }"
+				:aria-pressed="ratingType === rt"
 				@click.stop="requestRatingType(rt)"
 			>
 				{{ rt }}
@@ -358,11 +373,12 @@ function commitPipBubbleCount(event: Event) {
 
 		<!-- SINGLE DIE SELECTOR -->
 		<div class="rating-scale-container" v-if="ratingType === 'Die' || ratingType === null">
-			<div class="rating-scale-chips set-rating-die-chips">
+			<div class="rating-scale-chips set-rating-die-chips" :class="{ 'has-out-chip': shouldShowSetOut }">
 				<button
 					type="button"
 					class="rating-scale-chip set-rating-die-none"
 					:class="{ active: ratingType === null }"
+					:aria-pressed="ratingType === null"
 					@click.stop="toggleSetRating(null)"
 					title="No rating"
 				>
@@ -374,6 +390,8 @@ function commitPipBubbleCount(event: Event) {
 					:key="size"
 					class="rating-scale-chip"
 					:class="{ active: ratingType === 'Die' && setRating === size && !isSetOut }"
+					:aria-pressed="ratingType === 'Die' && setRating === size && !isSetOut"
+					:aria-label="(setRating === size && !isSetOut ? 'Clear d' : 'Set d') + size"
 					@click.stop="toggleSetRating(size)"
 					:title="
 						(setRating === size && !isSetOut ? 'Clear the rating (was d' : 'Set the rating to d') +
@@ -381,14 +399,14 @@ function commitPipBubbleCount(event: Event) {
 						(setRating === size && !isSetOut ? ')' : '')
 					"
 				>
-					<span v-html="getDieDisplayValue(size)"></span>
-					<span class="chip-label">d{{ size }}</span>
+					<span v-html="getDieDisplayValue(size, ratingType === 'Die' && setRating === size && !isSetOut)"></span>
 				</button>
 				<button
 					type="button"
 					v-if="shouldShowSetOut"
 					class="rating-scale-chip rating-scale-chip-out"
 					:class="{ active: isSetOut }"
+					:aria-pressed="isSetOut"
 					@click.stop="toggleSetOutValue"
 					title="Out"
 				>
@@ -400,39 +418,59 @@ function commitPipBubbleCount(event: Event) {
 		<!-- DICE LIST EDITOR -->
 		<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
 			<div class="editor-die-steppers">
-				<div v-for="size in setDieRange" :key="'set-stepper-' + size" class="die-stepper-item">
-					<span v-html="getDieDisplayValue(size)"></span>
-					<span class="stepper-label">d{{ size }}</span>
+				<div
+					v-for="size in setDieRange"
+					:key="'set-stepper-' + size"
+					class="die-stepper-item"
+					:class="{ active: getSetDieCount(size) > 0 }"
+				>
+					<span v-html="getDieDisplayValue(size, getSetDieCount(size) > 0)"></span>
 					<div class="stepper-controls">
 						<button
 							type="button"
 							class="btn-step"
 							@click.stop="removeDieFromSet(size)"
 							:disabled="getSetDieCount(size) === 0"
+							:aria-label="'Remove d' + size"
+							:title="'Remove d' + size"
 						>
 							-
 						</button>
 						<span class="stepper-count">{{ getSetDieCount(size) }}</span>
-						<button type="button" class="btn-step" @click.stop="addDieToSet(size)">+</button>
+						<button
+							type="button"
+							class="btn-step"
+							@click.stop="addDieToSet(size)"
+							:aria-label="'Add d' + size"
+							:title="'Add d' + size"
+						>
+							+
+						</button>
 					</div>
 				</div>
 			</div>
 
 			<div class="multidie-active-list" v-if="setDiceList.length > 0">
-				<span class="sub-label">Current Dice ({{ setDiceList.length }}):</span>
+				<span class="sub-label">Pool ({{ setDiceList.length }})</span>
 				<div class="multidie-chips">
 					<div v-for="(dieSize, dIdx) in setDiceList" :key="dIdx" class="multidie-chip">
-						<span v-html="getDieDisplayValue(dieSize)"></span>
-						<span class="chip-text">d{{ dieSize }}</span>
+						<span v-html="getDieDisplayValue(dieSize, true)"></span>
 						<button
 							type="button"
 							class="btn-step-down"
 							@click.stop="stepDownSetDieAtIndex(dIdx)"
 							title="Step down die size"
+							:aria-label="'Step down d' + dieSize"
 						>
 							-2
 						</button>
-						<button type="button" class="btn-remove-die" @click.stop="removeSetDieAtIndex(dIdx)" title="Remove die">
+						<button
+							type="button"
+							class="btn-remove-die"
+							@click.stop="removeSetDieAtIndex(dIdx)"
+							title="Remove die"
+							:aria-label="'Remove d' + dieSize"
+						>
 							×
 						</button>
 					</div>
@@ -545,6 +583,7 @@ function commitPipBubbleCount(event: Event) {
 				type="button"
 				class="editor-group-btn"
 				:class="{ active: (ratingDisplay || 'track') === 'track' }"
+				:aria-pressed="(ratingDisplay || 'track') === 'track'"
 				@click.stop="ratingDisplay = 'track'"
 			>
 				Full Track
@@ -553,6 +592,7 @@ function commitPipBubbleCount(event: Event) {
 				type="button"
 				class="editor-group-btn"
 				:class="{ active: ratingDisplay === 'rating' }"
+				:aria-pressed="ratingDisplay === 'rating'"
 				@click.stop="ratingDisplay = 'rating'"
 			>
 				Single Die
@@ -562,8 +602,13 @@ function commitPipBubbleCount(event: Event) {
 
 	<!-- SUBTRAITS -->
 	<div class="editor-field" v-if="needsDiceUI">
-		<div class="editor-label" v-if="setSubtraits.length > 0">Subtraits</div>
-		<div class="editor-subtrait-list" v-if="setSubtraits.length > 0">
+		<div class="editor-row-between">
+			<div class="editor-label m-0">Subtraits</div>
+			<button type="button" class="editor-button" @click.stop="createSubtrait">
+				<span><i class="fas fa-plus" aria-hidden="true"></i> Create subtrait</span>
+			</button>
+		</div>
+		<div class="editor-subtrait-list mt-sm" v-if="setSubtraits.length > 0">
 			<div
 				v-for="(item, itemIdx) in setSubtraits"
 				:key="'set-sub-' + item.idx + '-' + (item.sfxIdx ?? itemIdx)"
@@ -592,19 +637,12 @@ function commitPipBubbleCount(event: Event) {
 				</button>
 			</div>
 		</div>
-		<div class="editor-button-container">
-			<div class="editor-button-container-inner">
-				<button type="button" class="editor-button" @click.stop="createSubtrait">
-					<span><i class="fas fa-plus"></i> Create subtrait</span>
-				</button>
-			</div>
-		</div>
 	</div>
 
 	<!-- OPTIONS -->
 	<div class="editor-field" v-if="needsDiceUI">
 		<div class="editor-label">Options</div>
-		<div class="editor-row-inline flex-wrap mb-md">
+		<div class="editor-row-inline flex-wrap">
 			<div class="editor-checkbox-row">
 				<input
 					type="checkbox"
@@ -643,7 +681,7 @@ function commitPipBubbleCount(event: Event) {
 			</div>
 		</div>
 
-		<div class="editor-row-between mt-sm">
+		<div class="editor-row-between mt-md">
 			<label :for="'trait-set-' + traitSetID + '-hitches'" class="m-0">Hitches on</label>
 			<div class="num-stepper">
 				<button

@@ -573,7 +573,6 @@ export interface CharacterCurioCustom {
 
 	/** When true, trait is placed on the set's ring rather than the trait list. */
 	ring?: boolean;
-	hideRingNames?: boolean;
 	pipSeparator?: string;
 	/** Remove borders, backgrounds, and box-shadows around the section. */
 	borderless?: boolean;
@@ -640,7 +639,7 @@ export interface CharacterCurioCustom {
 			secondary?: string;
 		};
 	};
-	customFonts?: Array<{ name?: string; data?: string }>;
+	customFonts?: Array<{ name?: string; url?: string }>;
 	nickname?: string;
 	hasNickname?: boolean;
 	accentColor?: string;

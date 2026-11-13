@@ -17,6 +17,13 @@ import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 import TagEditor from './tag-editor.vue';
 import ColorPicker from './color-picker.vue';
+import FontPicker from './font-picker.vue';
+import {
+	describeExternalFontUrl,
+	inferFontFamilyFromUrl,
+	parseExternalFontUrl,
+	sanitizeFontFamilyName,
+} from './font-url.ts';
 import {
 	SHEET_THEME_PRESETS,
 	DICE_PRESETS,
@@ -44,19 +51,19 @@ const emit = defineEmits<{
 }>();
 
 const currentTab = computed(() => props.tab);
-const fontPreview = ref<{ heading: string; primary: string; secondary: string }>({
-	heading: '',
-	primary: '',
-	secondary: '',
-});
 const watermarkError = ref('');
-const fontUploadError = ref('');
+const externalFontUrlDraft = ref('');
+const externalFontNameDraft = ref('');
+const externalFontNameTouched = ref(false);
+const fontUrlError = ref('');
+const fontUrlFieldError = ref<'url' | 'name' | ''>('');
 const dicePresets = DICE_PRESETS;
 const sheetThemePresets = SHEET_THEME_PRESETS;
 
 const inputName = ref<HTMLInputElement | null>(null);
 const watermarkFileInput = ref<HTMLInputElement | null>(null);
-const fontFileInput = ref<HTMLInputElement | null>(null);
+const fontUrlInput = ref<HTMLInputElement | null>(null);
+const fontUrlNameInput = ref<HTMLInputElement | null>(null);
 
 function targetValue(e: Event) {
 	return (e.target as HTMLInputElement).value;
@@ -362,7 +369,12 @@ const secondaryFont = computed({
 	},
 });
 
-const customFontsList = computed(() => (getView(props.character)?.customFonts || []).map((f: any) => f.name));
+const customFontEntries = computed(() =>
+	(getView(props.character)?.customFonts || []).filter((f): f is { name: string; url: string } =>
+		Boolean(f?.name && f?.url && parseExternalFontUrl(f.url)),
+	),
+);
+const customFontsList = computed(() => customFontEntries.value.map((f) => f.name));
 
 const diceConfig = computed({
 	get() {
@@ -584,51 +596,125 @@ function setThemeFont(target: string, fontName: string) {
 	if (!view.theme) view.theme = {};
 	if (!view.theme.fonts) view.theme.fonts = {};
 	(view.theme.fonts as any)[target] = fontName;
-	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.loadGoogleFont) {
+	const isCustom = customFontEntries.value.some((f) => f.name.trim().toLowerCase() === fontName.trim().toLowerCase());
+	if (!isCustom && typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.loadGoogleFont) {
 		characterCurioFunctions.loadGoogleFont(fontName);
 	}
 	emit('updateCharacter', props.character);
 }
 
-function previewFont(target: 'heading' | 'primary' | 'secondary', fontName: string) {
-	fontPreview.value[target] = fontName;
-	const clean = (fontName || '').trim();
-	if (clean && typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.loadGoogleFont) {
-		characterCurioFunctions.loadGoogleFont(clean);
+function resetThemeFont(target: 'heading' | 'primary' | 'secondary') {
+	if (!props.character) return;
+	const view = getView(props.character);
+	if (view?.theme?.fonts && target in view.theme.fonts) {
+		delete (view.theme.fonts as Record<string, unknown>)[target];
+		emit('updateCharacter', props.character);
 	}
 }
 
-function triggerFontUpload() {
-	fontFileInput.value?.click();
-}
-
-function handleFontUpload(event: Event) {
-	const input = event.target as HTMLInputElement;
-	const file = input.files?.[0];
-	if (!file) return;
-	fontUploadError.value = '';
-	if (file.size > 2 * 1024 * 1024) {
-		fontUploadError.value = 'Font files must be under 2 MB.';
-		input.value = null as any;
+function onExternalFontUrlInput() {
+	fontUrlError.value = '';
+	fontUrlFieldError.value = '';
+	if (!externalFontUrlDraft.value.trim()) {
+		externalFontNameTouched.value = false;
+		externalFontNameDraft.value = '';
 		return;
 	}
-	const fontName = file.name
-		.replace(/\.[^/.]+$/, '')
-		.replace(/[^a-zA-Z0-9_-]/g, ' ')
-		.trim();
-	const reader = new FileReader();
-	reader.onload = (e) => {
-		const base64Data = (e.target as FileReader).result as string;
-		if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.applyCustomFont) {
-			characterCurioFunctions.applyCustomFont(fontName, base64Data);
+	if (!externalFontNameTouched.value) {
+		const inferred = inferFontFamilyFromUrl(externalFontUrlDraft.value);
+		if (inferred) {
+			externalFontNameDraft.value = inferred;
 		}
-		const view = ensureView(props.character);
-		if (!view.customFonts) view.customFonts = [];
-		view.customFonts.push({ name: fontName, data: base64Data });
-		headingFont.value = fontName;
+	}
+}
+
+function onExternalFontNameInput() {
+	fontUrlError.value = '';
+	fontUrlFieldError.value = '';
+	externalFontNameTouched.value = externalFontNameDraft.value.trim().length > 0;
+}
+
+function upsertCustomFontEntry(name: string, url: string): boolean {
+	if (!props.character) return false;
+	const cleanName = sanitizeFontFamilyName(name);
+	const parsed = parseExternalFontUrl(url);
+	if (!cleanName || !parsed) return false;
+
+	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.applyCustomFont) {
+		characterCurioFunctions.applyCustomFont(cleanName, parsed.url);
+	}
+	const view = ensureView(props.character);
+	const existing = Array.isArray(view.customFonts)
+		? view.customFonts.filter((f) => f?.name && f?.url && f.name.trim().toLowerCase() !== cleanName.toLowerCase())
+		: [];
+	existing.push({ name: cleanName, url: parsed.url });
+	view.customFonts = existing;
+	emit('updateCharacter', props.character);
+	return true;
+}
+
+function addExternalFont() {
+	const parsed = parseExternalFontUrl(externalFontUrlDraft.value);
+	if (!parsed) {
+		fontUrlError.value = 'Enter an https:// font or stylesheet URL.';
+		fontUrlFieldError.value = 'url';
+		fontUrlInput.value?.focus();
+		return;
+	}
+	const cleanName = sanitizeFontFamilyName(externalFontNameDraft.value || inferFontFamilyFromUrl(parsed.url));
+	if (!cleanName) {
+		fontUrlError.value = 'Enter the font family name.';
+		fontUrlFieldError.value = 'name';
+		fontUrlNameInput.value?.focus();
+		return;
+	}
+	if (upsertCustomFontEntry(cleanName, parsed.url)) {
+		externalFontUrlDraft.value = '';
+		externalFontNameDraft.value = '';
+		externalFontNameTouched.value = false;
+		fontUrlError.value = '';
+		fontUrlFieldError.value = '';
+	}
+}
+
+function onExternalFontEnter(e: KeyboardEvent) {
+	if (e.isComposing) return;
+	e.preventDefault();
+	addExternalFont();
+}
+
+function removeExternalFont(fontName: string) {
+	if (!props.character) return;
+	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.removeCustomFont) {
+		characterCurioFunctions.removeCustomFont(fontName);
+	}
+	const view = getView(props.character);
+	if (view && Array.isArray(view.customFonts)) {
+		const target = fontName.trim().toLowerCase();
+		const remaining = view.customFonts.filter((f) => (f?.name || '').trim().toLowerCase() !== target);
+		if (remaining.length) {
+			view.customFonts = remaining;
+		} else {
+			delete view.customFonts;
+		}
+		if (view.theme?.fonts) {
+			for (const slot of ['heading', 'primary', 'secondary'] as const) {
+				if ((view.theme.fonts[slot] || '').trim().toLowerCase() === target) {
+					delete view.theme.fonts[slot];
+				}
+			}
+		}
 		emit('updateCharacter', props.character);
-	};
-	reader.readAsDataURL(file);
+	}
+}
+
+function handlePrefillExternalUrl(url: string) {
+	externalFontUrlDraft.value = url;
+	externalFontNameTouched.value = false;
+	externalFontNameDraft.value = inferFontFamilyFromUrl(url);
+	fontUrlError.value = '';
+	fontUrlFieldError.value = '';
+	nextTick(() => fontUrlNameInput.value?.focus());
 }
 
 function updateDiceProp(key: string, val: any) {
@@ -716,7 +802,7 @@ function updateCharacter(character: any) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" aria-label="Close" @click.stop="selectElement([])" title="Close">
+			<button type="button" class="editor-close" aria-label="Close" @click.stop="selectElement([])" title="Close">
 				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 		</div>
@@ -1224,145 +1310,147 @@ function updateCharacter(character: any) {
 						<!-- TYPOGRAPHY PICKERS WITH LIVE PREVIEW -->
 						<div class="editor-field">
 							<label for="char-field-heading-font">Heading Font</label>
-							<div
-								class="font-picker-preview"
-								:style="{ fontFamily: '\'' + (fontPreview.heading || headingFont) + '\', sans-serif' }"
-							>
-								<span class="font-picker-sample">Ag</span>
-								<span class="font-picker-name">{{ fontPreview.heading || headingFont }}</span>
-							</div>
-							<input
-								type="text"
-								id="char-field-heading-font"
+							<FontPicker
+								v-model="headingFont"
+								default-font="Josefin Sans"
+								input-id="char-field-heading-font"
 								name="headingFont"
-								:value="headingFont"
-								@input="previewFont('heading', targetValue($event))"
-								@change="headingFont = targetValue($event)"
-								placeholder="Google Font family"
+								label="Heading Font"
+								:custom-fonts="customFontsList"
+								@reset="resetThemeFont('heading')"
+								@add-external-font="({ name, url }) => upsertCustomFontEntry(name, url)"
+								@prefill-external-url="handlePrefillExternalUrl"
 							/>
-							<div class="font-picker-custom" v-if="customFontsList.length">
-								<button
-									type="button"
-									v-for="cf in customFontsList"
-									:key="cf"
-									class="btn-scale-preset"
-									@click.stop="headingFont = cf"
-								>
-									{{ cf }}
-								</button>
-							</div>
 						</div>
 
 						<div class="editor-field">
 							<label for="char-field-body-font">Body Font</label>
-							<div
-								class="font-picker-preview"
-								:style="{ fontFamily: '\'' + (fontPreview.primary || primaryFont) + '\', sans-serif' }"
-							>
-								<span class="font-picker-sample">Ag</span>
-								<span class="font-picker-name">{{ fontPreview.primary || primaryFont }}</span>
-							</div>
-							<input
-								type="text"
-								id="char-field-body-font"
+							<FontPicker
+								v-model="primaryFont"
+								default-font="Open Sans"
+								input-id="char-field-body-font"
 								name="bodyFont"
-								:value="primaryFont"
-								@input="previewFont('primary', targetValue($event))"
-								@change="primaryFont = targetValue($event)"
-								placeholder="Google Font family"
+								label="Body Font"
+								:custom-fonts="customFontsList"
+								@reset="resetThemeFont('primary')"
+								@add-external-font="({ name, url }) => upsertCustomFontEntry(name, url)"
+								@prefill-external-url="handlePrefillExternalUrl"
 							/>
-							<div class="font-picker-custom" v-if="customFontsList.length">
-								<button
-									type="button"
-									v-for="cf in customFontsList"
-									:key="cf"
-									class="btn-scale-preset"
-									@click.stop="primaryFont = cf"
-								>
-									{{ cf }}
-								</button>
-							</div>
 						</div>
 
 						<div class="editor-field">
 							<label for="char-field-secondary-font">Trait / Label Font</label>
-							<div
-								class="font-picker-preview"
-								:style="{ fontFamily: '\'' + (fontPreview.secondary || secondaryFont) + '\', sans-serif' }"
-							>
-								<span class="font-picker-sample">Ag</span>
-								<span class="font-picker-name">{{ fontPreview.secondary || secondaryFont }}</span>
-							</div>
-							<input
-								type="text"
-								id="char-field-secondary-font"
+							<FontPicker
+								v-model="secondaryFont"
+								default-font="Alegreya Sans SC"
+								input-id="char-field-secondary-font"
 								name="secondaryFont"
-								:value="secondaryFont"
-								@input="previewFont('secondary', targetValue($event))"
-								@change="secondaryFont = targetValue($event)"
-								placeholder="Google Font family"
+								label="Trait / Label Font"
+								:custom-fonts="customFontsList"
+								described-by="char-font-picker-hint"
+								@reset="resetThemeFont('secondary')"
+								@add-external-font="({ name, url }) => upsertCustomFontEntry(name, url)"
+								@prefill-external-url="handlePrefillExternalUrl"
 							/>
-							<div class="font-picker-custom" v-if="customFontsList.length">
-								<button
-									type="button"
-									v-for="cf in customFontsList"
-									:key="cf"
-									class="btn-scale-preset"
-									@click.stop="secondaryFont = cf"
-								>
-									{{ cf }}
-								</button>
-							</div>
-							<span class="editor-field-hint">
-								Any family name from fonts.google.com works — it loads and previews as you type, and applies on Enter.
+							<span id="char-font-picker-hint" class="editor-field-hint">
+								Pick a font, type a Google Fonts name, or paste an HTTPS font URL.
 							</span>
 						</div>
 
-						<!-- CUSTOM FONT UPLOAD -->
-						<div class="editor-field editor-box-inset">
-							<label for="char-field-font-upload"><i class="fas fa-file-arrow-up"></i> Upload Custom Font</label>
-							<input
-								type="file"
-								id="char-field-font-upload"
-								name="fontUpload"
-								ref="fontFileInput"
-								class="sr-only"
-								@change="handleFontUpload"
-								accept=".woff,.woff2,.ttf,.otf"
-							/>
-							<button type="button" class="editor-tab-btn editor-full-btn mt-xs" @click.stop="triggerFontUpload">
-								<i class="fas fa-upload"></i> Choose Font File
-							</button>
-							<div class="editor-upload-error" v-if="fontUploadError">{{ fontUploadError }}</div>
-							<span class="editor-field-hint">
-								Uploaded fonts are embedded into the character JSON and available immediately.
+						<!-- EXTERNAL FONTS (NON-GOOGLE HTTPS URLS) -->
+						<div class="editor-field editor-box-inset external-fonts-box">
+							<div class="editor-label">External Fonts</div>
+
+							<ul v-if="customFontEntries.length" class="external-font-list" role="list">
+								<li v-for="entry in customFontEntries" :key="entry.name" class="external-font-item">
+									<span
+										class="external-font-ag"
+										aria-hidden="true"
+										:style="{ fontFamily: '\'' + entry.name.replace(/'/g, '') + '\', \'Open Sans\', sans-serif' }"
+									>
+										Ag
+									</span>
+									<div class="external-font-meta">
+										<span
+											class="external-font-name"
+											:style="{ fontFamily: '\'' + entry.name.replace(/'/g, '') + '\', \'Open Sans\', sans-serif' }"
+										>
+											{{ entry.name }}
+										</span>
+										<span class="external-font-host" :title="entry.url">
+											{{ describeExternalFontUrl(entry.url) }}
+										</span>
+									</div>
+									<button
+										type="button"
+										class="font-picker-icon-btn external-font-remove-btn"
+										:title="'Remove ' + entry.name"
+										:aria-label="'Remove external font ' + entry.name"
+										@click.stop="removeExternalFont(entry.name)"
+									>
+										<i class="fas fa-xmark" aria-hidden="true"></i>
+									</button>
+								</li>
+							</ul>
+
+							<div class="external-font-form">
+								<label for="char-field-font-url" class="editor-sub-label">Font or Stylesheet URL</label>
+								<input
+									ref="fontUrlInput"
+									type="url"
+									id="char-field-font-url"
+									name="externalFontUrl"
+									class="external-font-input"
+									v-model="externalFontUrlDraft"
+									placeholder="https://..."
+									inputmode="url"
+									autocomplete="off"
+									autocorrect="off"
+									autocapitalize="none"
+									spellcheck="false"
+									enterkeyhint="next"
+									:aria-invalid="fontUrlFieldError === 'url' ? 'true' : undefined"
+									:aria-describedby="fontUrlError ? 'char-font-url-error char-font-url-hint' : 'char-font-url-hint'"
+									@input="onExternalFontUrlInput"
+									@keydown.enter="onExternalFontEnter"
+								/>
+
+								<label for="char-field-font-url-name" class="editor-sub-label mt-xs">Font Family</label>
+								<div class="external-font-name-row">
+									<input
+										ref="fontUrlNameInput"
+										type="text"
+										id="char-field-font-url-name"
+										name="externalFontName"
+										class="external-font-input"
+										v-model="externalFontNameDraft"
+										placeholder="Family name"
+										autocomplete="off"
+										autocorrect="off"
+										autocapitalize="none"
+										spellcheck="false"
+										enterkeyhint="done"
+										:aria-invalid="fontUrlFieldError === 'name' ? 'true' : undefined"
+										:aria-describedby="fontUrlError ? 'char-font-url-error char-font-url-hint' : 'char-font-url-hint'"
+										@input="onExternalFontNameInput"
+										@keydown.enter="onExternalFontEnter"
+									/>
+									<button type="button" class="editor-tab-btn external-font-add-btn" @click.stop="addExternalFont">
+										<i class="fas fa-plus" aria-hidden="true"></i> Add
+									</button>
+								</div>
+							</div>
+
+							<div v-if="fontUrlError" id="char-font-url-error" class="editor-upload-error" role="alert">
+								{{ fontUrlError }}
+							</div>
+							<span id="char-font-url-hint" class="editor-field-hint">
+								Supports HTTPS .woff2, .woff, .ttf, .otf files or CSS stylesheet URLs.
 							</span>
 						</div>
 
 						<!-- DIE STYLE & GEOMETRY -->
 						<div id="die-style-anchor" class="editor-section-divider">Die Style &amp; Geometry</div>
-
-						<!-- LIVE SVG PREVIEW OF ALL 5 DICE -->
-						<div class="editor-field editor-dice-preview-card">
-							<div class="editor-label font-bold mb-sm">Live Dice Appearance Preview</div>
-							<div class="editor-dice-preview-row">
-								<span
-									v-for="d in [4, 6, 8, 10, 12]"
-									:key="'filled-' + d"
-									v-html="renderDicePreview(d, true)"
-									:title="'d' + d + ' (Active / Filled)'"
-								></span>
-							</div>
-							<div class="editor-field-hint font-semibold">Unfilled / Reserved Slots Preview:</div>
-							<div class="editor-dice-preview-row is-unfilled">
-								<span
-									v-for="d in [4, 6, 8, 10, 12]"
-									:key="'unfilled-' + d"
-									v-html="renderDicePreview(d, false)"
-									:title="'d' + d + ' (Unfilled / Inactive)'"
-								></span>
-							</div>
-						</div>
 
 						<!-- DICE THEMES -->
 						<div class="editor-field">

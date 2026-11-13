@@ -455,6 +455,14 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				'Will',
 			]);
 			vanguardWrapper.unmount();
+
+			// Ring editor no longer exposes a manual Hide Ring Labels toggle
+			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
+			const ringEditor = mount(TraitSetEditor, {
+				props: { character, traitSetID: 0 },
+			});
+			expect(ringEditor.text()).not.toContain('Hide Ring Labels');
+			ringEditor.unmount();
 		});
 
 		it('Item 4: renders leader lines for Architect and Dreamer, but none for Vanguard', async () => {

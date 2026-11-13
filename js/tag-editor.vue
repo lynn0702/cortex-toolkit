@@ -70,10 +70,7 @@ function onInput() {
 
 <template>
 	<div class="tag-editor">
-		<label :for="inputId">
-			<i class="fas fa-tags" aria-hidden="true"></i>
-			<span>{{ label }}</span>
-		</label>
+		<label :for="inputId">{{ label }}</label>
 		<ul class="tag-chip-list" v-if="tags.length > 0">
 			<li class="tag-chip" v-for="(tag, idx) in tags" :key="tag + '-' + idx">
 				<span>{{ tag }}</span>
@@ -94,7 +91,7 @@ function onInput() {
 				@input="onInput"
 			/>
 			<button type="button" class="editor-button tag-add-btn" @click.stop="addTag()">
-				<span><i class="fas fa-tag" aria-hidden="true"></i> Add</span>
+				<span><i class="fas fa-plus" aria-hidden="true"></i> Add</span>
 			</button>
 		</div>
 		<div class="tag-editor-error" role="alert" v-if="errorMsg">{{ errorMsg }}</div>

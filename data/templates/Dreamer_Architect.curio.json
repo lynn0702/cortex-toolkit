@@ -10,6 +10,30 @@
 		"tags": []
 	},
 	"pronouns": "they/them",
+	"view": {
+		"accentColor": "#f59e0b",
+		"diceConfig": {
+			"style": "custom",
+			"backgroundType": "gradient",
+			"backgroundColor1": "#10b981",
+			"backgroundColor2": "#047857",
+			"gradientAngle": 135,
+			"numeralColor": "#ffffff",
+			"borderColor": "#059669",
+			"borderWidth": 1.6,
+			"unfilledBackground": "none",
+			"unfilledNumeral": "#059669",
+			"unfilledBorder": "#059669",
+			"name": "Forest"
+		},
+		"primaryColor": "#c26a08",
+		"secondaryColor": "#fef3c7",
+		"theme": {
+			"fonts": {
+				"heading": "EB Garamond"
+			}
+		}
+	},
 	"traitSets": [
 		{
 			"name": "The Architect",
@@ -34,11 +58,12 @@
 				"frame": {
 					"color": "primary",
 					"image": {
-						"alignment": "center",
+						"alignment": "top-center",
 						"url": "images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg",
 						"zoom": 1
 					},
 					"shape": "ring",
+					"size": 190,
 					"span": [
 						0,
 						360
@@ -50,6 +75,8 @@
 					]
 				},
 				"header": "top",
+				"headerAlign": "center",
+				"verticalAlign": "center",
 				"page": 1,
 				"parts": {
 					"name": {
@@ -132,7 +159,7 @@
 				}
 			],
 			"view": {
-				"header": "top",
+				"header": "none",
 				"page": 1,
 				"pillar": "prime",
 				"place": {
@@ -200,6 +227,36 @@
 			],
 			"view": {
 				"header": "top",
+				"headerAlign": "center",
+				"frame": {
+					"color": "primary",
+					"shape": "line",
+					"span": [
+						0,
+						360
+					],
+					"stroke": "1.5px"
+				},
+				"parts": {
+					"name": {
+						"height": 1,
+						"left": "0%",
+						"top": 0,
+						"width": "22%"
+					},
+					"description": {
+						"height": 1,
+						"left": "22%",
+						"top": 0,
+						"width": "64%"
+					},
+					"rating": {
+						"height": 1,
+						"left": "86%",
+						"top": 0,
+						"width": "14%"
+					}
+				},
 				"page": 1,
 				"pillar": "prime",
 				"place": {
@@ -268,12 +325,13 @@
 				"frame": {
 					"color": "primary",
 					"image": {
-						"alignment": "center",
+						"alignment": "top-center",
 						"url": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
-						"zoom": 1
+						"zoom": 1.25
 					},
 					"position": "right",
 					"shape": "ring",
+					"size": 290,
 					"span": [
 						0,
 						360
@@ -281,6 +339,8 @@
 					"stroke": "2px"
 				},
 				"header": "bottom",
+				"headerAlign": "center",
+				"verticalAlign": "center",
 				"page": 1,
 				"pillar": "prime",
 				"place": {
