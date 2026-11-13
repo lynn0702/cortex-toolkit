@@ -372,7 +372,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// else, which the list renderer draws from the parts grid. The grid
 	// never takes over a bespoke body: arranging one writes only what
 	// that body can render (branch shares for subtrait-columns).
-	// Ladders keep the legacy flag (no parts form).
+	// Ladders keep view.ladder (no parts form).
 	const FLEX_BODIES = ['image', 'pips', 'subtrait-columns', 'die-rows', 'dice-count', 'portrait-ring'];
 	const NON_ROW_BODIES = ['image', 'pips', 'portrait-ring'];
 	function isPartsDriven() {
@@ -978,7 +978,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	// Rebuild this set's trait-part layout, preserving its track setup,
 	// dice counts, features, and statement mode. Vertical ladders keep
-	// the legacy flag (no parts form); bespoke bodies are left alone.
+	// view.ladder (no parts form); bespoke bodies are left alone.
 	// Pass track true/false to force the track on/off (the toggle);
 	// otherwise the current setup carries over.
 	function rebuildParts(rating: 'inline' | 'above' | 'below' | 'none', track?: boolean) {

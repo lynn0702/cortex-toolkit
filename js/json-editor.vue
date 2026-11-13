@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, toRaw } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { cloneDeep } from './clone-deep.ts';
 import { toLayeredEntity } from './layered-materialize.ts';
 
 const props = defineProps<{
@@ -27,7 +28,7 @@ function fill() {
 	// The stored layered shape (name-keyed maps, dice-string ratings):
 	// no materialized slot objects, no internal ids — the document a
 	// person can actually hand-edit.
-	const raw = JSON.parse(JSON.stringify(toRaw(props.character)));
+	const raw = cloneDeep(props.character);
 	let doc: any = null;
 	try {
 		doc = toLayeredEntity(raw as Record<string, unknown>);

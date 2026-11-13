@@ -22,10 +22,9 @@ const layered = toLayeredEntity(curio);
 const getDice = (t) => {
 	const r = t && typeof t === 'object' ? t.rating : undefined;
 	if (r && typeof r === 'object' && !Array.isArray(r) && Array.isArray(r.value)) {
-		const nums = r.value.filter((x) => typeof x === 'number' && x > 0);
-		if (nums.length) return nums;
+		return r.value.filter((x) => typeof x === 'number' && x > 0);
 	}
-	return Array.isArray(t.dice) && t.dice.length ? t.dice : typeof t.value === 'number' && t.value > 0 ? [t.value] : [];
+	return [];
 };
 const byName = (arr, n) => (Array.isArray(arr) ? arr.find((x) => x && x.name === n) : undefined);
 const named = (arr) =>

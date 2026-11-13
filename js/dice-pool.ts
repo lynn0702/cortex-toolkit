@@ -170,7 +170,7 @@ function cleanWordBankLabel(raw: string): string {
 		.trim();
 }
 
-function formatDiceNotation(dice: number[]): string {
+export function formatDiceNotation(dice: number[]): string {
 	if (!dice || dice.length === 0) return '';
 	if (dice.length === 1) return `d${dice[0]}`;
 	const first = dice[0];
@@ -224,8 +224,8 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 	for (let sIdx = 0; sIdx < character.traitSets.length; sIdx++) {
 		const ts = character.traitSets[sIdx];
 		if (!ts) continue;
-		const styleLayout = ts.view?.style?.layout;
-		if (ts.id === 'name' || styleLayout === 'identity' || styleLayout === 'name') continue;
+		const styleBody = ts.view?.style?.body;
+		if (ts.id === 'name' || styleBody === 'name') continue;
 
 		const setKey = ts.id || `set-${sIdx}`;
 		const setNoun = String(ts.noun || '').trim();
@@ -282,12 +282,22 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 
 			const trDice = extractValidDice(tr.rating);
 			const children = Array.isArray(tr.traits) ? tr.traits : [];
-			const hasHinderChild = children.some(
-				(c: any) =>
-					String(c?.name || '')
-						.trim()
-						.toLowerCase() === 'hinder',
-			);
+			const hasHinderChild = children.some((c: any) => {
+				const cname = String(c?.name || '')
+					.trim()
+					.toLowerCase();
+				if (cname === 'hinder') return true;
+				return (
+					cname === 'sfx' &&
+					Array.isArray(c?.traits) &&
+					c.traits.some(
+						(g: any) =>
+							String(g?.name || '')
+								.trim()
+								.toLowerCase() === 'hinder',
+					)
+				);
+			});
 			const canHinder = isDistinctionSet || hasHinderChild;
 			const trHitches = resolveNumericHitches(tr, setHitches);
 			const trKeepsExtra = resolveNumericKeepsExtra(tr, setKeepsExtra);
@@ -310,7 +320,8 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 				const sub = children[subIdx];
 				if (!sub || sub.spent === true) continue;
 				const subName = String(sub.name || '').trim();
-				if (!subName || subName.toLowerCase() === 'hinder' || sub.type === 'sfx') continue;
+				const subLower = subName.toLowerCase();
+				if (!subName || subLower === 'hinder' || subLower === 'sfx' || subLower === 'statement') continue;
 				const subDice = extractValidDice(sub.rating);
 				if (subDice.length === 0) continue;
 				results.push({

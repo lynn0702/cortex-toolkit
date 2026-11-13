@@ -27,7 +27,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
-			// Check framed suppression classes (disables legacy CSS border)
+			// Check framed suppression classes (disables box CSS border)
 			expect(wrapper.classes()).toContain('trait-set-framed');
 			expect(wrapper.classes()).toContain('trait-set-frame-block');
 
@@ -208,19 +208,19 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(resolved?.ringConfig?.arcSpread).toBe(100);
 		});
 
-		it('normalizes legacy percentage image zoom to a multiplier', () => {
-			expect(normalizeZoom(100)).toBe(1);
-			expect(normalizeZoom(150)).toBe(1.5);
-			expect(normalizeZoom(50)).toBe(0.5);
-			expect(normalizeZoom(1.25)).toBe(1.25);
+		it('normalizes image zoom multiplier to three decimal places', () => {
+			expect(normalizeZoom(1)).toBe(1);
+			expect(normalizeZoom(1.5)).toBe(1.5);
+			expect(normalizeZoom(0.5)).toBe(0.5);
+			expect(normalizeZoom(1.23456)).toBe(1.235);
 			expect(normalizeZoom(undefined)).toBeUndefined();
-			expect(normalizeZoom('100' as unknown as number)).toBeUndefined();
+			expect(normalizeZoom('1' as unknown as number)).toBeUndefined();
 
-			const legacySet = {
+			const frameSet = {
 				name: 'Portrait',
-				view: { frame: { shape: 'ring', image: { url: 'x.png', zoom: 100 } } },
+				view: { frame: { shape: 'ring', image: { url: 'x.png', zoom: 1.25 } } },
 			};
-			expect(resolveFrame(legacySet)?.image?.zoom).toBe(1);
+			expect(resolveFrame(frameSet)?.image?.zoom).toBe(1.25);
 		});
 
 		it('resolves frame carrying traitsSpan separate from border span', () => {

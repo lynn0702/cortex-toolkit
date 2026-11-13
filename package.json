@@ -30,7 +30,7 @@
 		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",
 		"smoke": "node scripts/smoke.cjs",
-		"test": "vitest run && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/run-legacy-tests.js"
+		"test": "vitest run && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/run-node-tests.js"
 	},
 	"engines": {
 		"node": ">=24.0.0"

@@ -102,9 +102,18 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 			await page.screenshot({ path: path.join(SHOT_DIR, `edit-${tag}.png`) });
 		}
 
-		// 2. Switch to Play -> open Roller (mobile pill expand if collapsed) -> stage a die -> Roll -> verify Roll Log
+		// 2. Switch to Play -> open Command Palette on desktop -> open Roller -> stage a die -> Roll -> verify Roll Log
 		await page.locator('button[aria-label="Play"]').first().click();
 		await page.waitForSelector('.character-sheet.submode-play', { timeout: 5000 });
+
+		if (width >= 1024) {
+			await page.keyboard.press('Control+k');
+			const paletteInput = page.locator('#command-palette-input');
+			await paletteInput.waitFor({ state: 'visible', timeout: 5000 });
+			await paletteInput.fill('Data');
+			await page.keyboard.press('Escape');
+			await paletteInput.waitFor({ state: 'hidden', timeout: 5000 });
+		}
 
 		const expandPill = page.locator('.btn-pill-expand');
 		if ((await expandPill.count()) > 0 && (await expandPill.first().isVisible())) {

@@ -467,11 +467,11 @@ function setFrameShape(shape: FrameShape) {
 	}
 	const prev = resolveFrame(workingSet.value);
 	const defaultSpan: [number, number] = shape === 'arc' ? [45, 135] : [0, 360];
-	const hasLegacySpan =
+	const hasDomeSpan =
 		shape === 'arc' && (prev ? Math.abs(prev.span[1] - prev.span[0]) > 180 || prev.span[0] < 0 : false);
 	const f: any = {
 		shape,
-		span: hasLegacySpan ? defaultSpan : prev ? prev.span : defaultSpan,
+		span: hasDomeSpan ? defaultSpan : prev ? prev.span : defaultSpan,
 		corner: prev ? prev.corner : 8,
 	};
 	if (prev?.color && prev.color !== 'primary') f.color = prev.color;

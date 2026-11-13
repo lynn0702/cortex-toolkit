@@ -14,6 +14,7 @@ const emit = defineEmits<{
 	(e: 'undo'): void;
 	(e: 'redo'): void;
 	(e: 'toggleTheme'): void;
+	(e: 'openPalette'): void;
 }>();
 </script>
 
@@ -106,6 +107,15 @@ const emit = defineEmits<{
 				</ul>
 			</nav>
 			<div class="header-actions">
+				<button
+					type="button"
+					class="header-btn-search"
+					@click.stop="emit('openPalette')"
+					aria-label="Quick search and command palette"
+					title="Quick search (Ctrl+K)"
+				>
+					<i class="fas fa-search" aria-hidden="true"></i>
+				</button>
 				<button
 					type="button"
 					class="header-btn-theme"

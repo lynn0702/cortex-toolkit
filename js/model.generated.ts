@@ -13,7 +13,7 @@ export type View = {
 } | null;
 
 /**
- * A JSON schema for a Cortex Prime player character sheet.
+ * A JSON schema for a Character Curio player character sheet.
  */
 export interface Character {
   /**
@@ -165,14 +165,6 @@ export interface Trait {
    * Display label for the trait. Name-block traits render this instead of the name.
    */
   label?: string | null;
-  /**
-   * Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating.
-   */
-  value?: number | null;
-  /**
-   * Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating.
-   */
-  dice?: number[] | null;
   rating?: Rating;
   /**
    * Staging behaviour: adding the node to the roller stages its whole array of available dice.

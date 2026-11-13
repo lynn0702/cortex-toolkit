@@ -51,14 +51,11 @@ export interface FrameAnchor {
 }
 
 /**
- * Normalizes a stored image zoom to a multiplier. Legacy files stored zoom as
- * a percentage (100 = 1x), which rendered as 10000%. Values above 10 are
- * treated as percentages.
+ * Normalizes a stored image zoom multiplier.
  */
 export function normalizeZoom(value: unknown): number | undefined {
 	if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
-	const zoom = value > 10 ? value / 100 : value;
-	return Math.round(zoom * 1000) / 1000;
+	return Math.round(value * 1000) / 1000;
 }
 
 /**
@@ -155,14 +152,14 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			Array.isArray(raw.traitsSpan) && raw.traitsSpan.length >= 2
 				? [parseNum(raw.traitsSpan[0], defaultSpan[0]), parseNum(raw.traitsSpan[1], defaultSpan[1])]
 				: undefined;
-		// For open arc shape, prevent 360° full-circle collapse and normalize legacy dome spans (e.g. [-110, 110])
-		const isLegacyArcSpan =
+		// For open arc shape, prevent 360° full-circle collapse and normalize dome spans (e.g. [-110, 110])
+		const isDomeSpan =
 			shape === 'arc' &&
 			(Math.abs(rawSpan[1] - rawSpan[0]) > 180 ||
 				rawSpan[0] < 0 ||
 				(rawSpan[0] === -110 && rawSpan[1] === 110) ||
 				(rawSpan[0] === -120 && rawSpan[1] === 120));
-		const span: [number, number] = isLegacyArcSpan ? defaultSpan : (rawSpan as [number, number]);
+		const span: [number, number] = isDomeSpan ? defaultSpan : (rawSpan as [number, number]);
 		const effectiveRingConfig =
 			shape === 'ring' || view?.style?.body === 'portrait-ring'
 				? rawObj?.ring || rawObj?.ringConfig || ringConfig || null

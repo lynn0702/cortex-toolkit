@@ -732,12 +732,6 @@ function checkSetPlacement(where, setName, set, pageOf) {
 	const view = set.view;
 	const hasParts =
 		view && typeof view === 'object' && view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts);
-	const legacyRating =
-		(set.ratingPosition !== undefined && set.ratingPosition !== null) ||
-		(view && view.ratingPosition !== undefined && view.ratingPosition !== null);
-	if (hasParts && legacyRating) {
-		err(`${where}/${setName}: carries parts and legacy ratingPosition, never both`);
-	}
 	let rect = null;
 	if (view && view.place !== undefined) {
 		rect = checkCell(where, view.place, `place (${setName})`);

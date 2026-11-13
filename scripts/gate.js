@@ -28,7 +28,7 @@ run('2. Code Style (prettier)', 'npx prettier --check --cache .');
 run('3. Type Check (vue-tsc)', 'npm run check');
 
 // 4. Test Suites
-run('4. Test Suites (vitest + 8 legacy suites)', 'npm test');
+run('4. Test Suites (vitest + 8 node suites)', 'npm test');
 
 // 5. Schema & Data Validation
 run('5. Schema & Corpus Validation', 'npm run validate');

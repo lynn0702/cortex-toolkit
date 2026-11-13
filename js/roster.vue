@@ -13,9 +13,11 @@ const props = withDefaults(
 	defineProps<{
 		characters: any[];
 		openCharacterIDs?: string[];
+		sheetTemplates?: any[];
 	}>(),
 	{
 		openCharacterIDs: () => [],
+		sheetTemplates: () => [],
 	},
 );
 
@@ -32,6 +34,7 @@ const emit = defineEmits<{
 	(e: 'deleteCharacter', id: string): void;
 	(e: 'deleteAllCharacters'): void;
 	(e: 'importSheetTemplate', char: any): void;
+	(e: 'deleteSheetTemplate', id: string): void;
 	(e: 'importCharacter', character: any): void;
 }>();
 
@@ -98,13 +101,24 @@ const charactersFiltered = computed(() => {
 	return list;
 });
 
+const customTemplates = computed(() => (props.sheetTemplates || []).filter((t: any) => Boolean(t?.userSaved)));
+
 const libraryTemplates = computed(() => {
 	const base = typeof characterCurioLibraryTemplates !== 'undefined' ? characterCurioLibraryTemplates : [];
 	if (typeof characterCurioLibraryTemplates === 'undefined') {
 		loadLibraryTemplates();
 	}
 	const firstRun = !props.characters || props.characters.length === 0;
-	return firstRun ? [DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base] : [...SHOWCASE_TEMPLATES, ...base];
+	const merged = firstRun
+		? [...customTemplates.value, DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base]
+		: [...customTemplates.value, ...SHOWCASE_TEMPLATES, ...base];
+	const seen = new Set<string>();
+	return merged.filter((t: any) => {
+		const id = t?.id;
+		if (!id || seen.has(id)) return false;
+		seen.add(id);
+		return true;
+	});
 });
 
 const libraryTemplatesFiltered = computed(() => {
@@ -146,21 +160,15 @@ function cardRingCharacter(tmpl: any) {
 				traits: [
 					{
 						name: 'Setting',
-						value: sizeOf(listing.setting),
 						rating: { type: 'Die', value: [sizeOf(listing.setting)] },
-						dice: [],
 					},
 					{
 						name: 'Prep',
-						value: sizeOf(listing.prep),
 						rating: { type: 'Die', value: [sizeOf(listing.prep)] },
-						dice: [],
 					},
 					{
 						name: 'Complexity',
-						value: sizeOf(listing.complexity),
 						rating: { type: 'Die', value: [sizeOf(listing.complexity)] },
-						dice: [],
 					},
 				],
 			},
@@ -302,10 +310,10 @@ function importGetUploads(event: Event) {
 				}
 				let added = 0;
 				let templatesAdded = 0;
-				let legacySkipped = 0;
+				let invalidSkipped = 0;
 				candidates.forEach((char: any) => {
-					if (characterCurioFunctions.isLegacyFile(char)) {
-						legacySkipped++;
+					if (!characterCurioFunctions.isValidCurrentCharacter(char)) {
+						invalidSkipped++;
 						return;
 					}
 					// Standalone layout template files reuse the
@@ -334,7 +342,9 @@ function importGetUploads(event: Event) {
 						file.name +
 						'”.';
 				}
-				if (legacySkipped) importError.value = characterCurioFunctions.LEGACY_FILE_MESSAGE;
+				if (invalidSkipped && added === 0 && templatesAdded === 0) {
+					importError.value = characterCurioFunctions.INVALID_FILE_MESSAGE;
+				}
 				importNextQueueItem();
 			} catch (error) {
 				importError.value = 'Could not read “' + file.name + '” as a character file.';
@@ -839,7 +849,9 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								<div class="library-card-subtitle">{{ tmpl.subtitle }}</div>
 							</div>
 							<div class="library-card-badges">
-								<span class="badge-genre">{{ (tmpl.listing && tmpl.listing.genre) || tmpl.genre }}</span>
+								<span class="badge-genre">{{
+									(tmpl.listing && tmpl.listing.genre) || tmpl.genre || (tmpl.userSaved ? 'Custom' : '')
+								}}</span>
 							</div>
 						</div>
 						<div class="library-card-hero" v-if="tmpl.listing && tmpl.listing.image">
@@ -890,6 +902,15 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								title="Open in Print Tab"
 							>
 								<i class="fas fa-print" aria-hidden="true"></i> Print
+							</button>
+							<button
+								v-if="tmpl.userSaved"
+								type="button"
+								class="btn-library secondary"
+								@click="emit('deleteSheetTemplate', tmpl.id)"
+								title="Remove saved template"
+							>
+								<i class="fas fa-trash" aria-hidden="true"></i> Remove
 							</button>
 						</div>
 					</div>

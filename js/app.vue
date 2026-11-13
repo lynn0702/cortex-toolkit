@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { characterCurioStorage } from './storage.ts';
+import { cloneDeep } from './clone-deep.ts';
 import { dicePool as dicePoolModel } from './dice-pool.ts';
 import Roster from './roster.vue';
 import Character from './character.vue';
@@ -12,6 +13,7 @@ import AppFooter from './app-footer.vue';
 import SessionNav from './session-nav.vue';
 import AddCharacterModal from './add-character-modal.vue';
 import ModalDialog from './modal-dialog.vue';
+import CommandPalette from './command-palette.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
@@ -30,6 +32,7 @@ const sheetTemplates = ref<any[]>([]);
 const prefs = ref<any>({ version: 1, global: {}, characters: {} });
 const playViewMode = ref('split');
 const isAddCharacterModalOpen = ref(false);
+const isPaletteOpen = ref(false);
 const sessionCharacterSearch = ref('');
 const mode = ref('roster');
 const submode = ref<string | null>(null);
@@ -907,10 +910,10 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 				version: 1,
 				title: template.game || template.name || 'Template',
 			});
-			sheetTemplates.value = characterCurioStorage.upsertTemplate(
-				sheetTemplates.value,
-				JSON.parse(JSON.stringify(entry)),
-			);
+			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
+				...cloneDeep(entry),
+				userSaved: true,
+			});
 
 			const now = new Date().toISOString();
 			const entity = {
@@ -1005,10 +1008,7 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 	characterCurioFunctions.assignLids(characterData);
 	// D16: snapshot the exact pinned base now — a later bundle
 	// update must never move this character unasked.
-	sheetTemplates.value = characterCurioStorage.upsertTemplate(
-		sheetTemplates.value,
-		JSON.parse(JSON.stringify(libraryItem)),
-	);
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, cloneDeep(libraryItem));
 	recordCharOrder(characterData);
 
 	characters.value.push(characterData);
@@ -1079,7 +1079,7 @@ function duplicateCharacter(id: string) {
 	const original = characters.value.find((characterData: any) => characterData.id === id);
 	if (!original) return;
 
-	const characterData = JSON.parse(JSON.stringify(original));
+	const characterData = cloneDeep(original);
 	characterData.id = characterCurioFunctions.generateUUID();
 	characterData.name = characterData.name && characterData.name.length ? `${characterData.name} (Copy)` : 'Copy';
 	characterCurioFunctions.stripInternalIds(characterData);
@@ -1109,13 +1109,23 @@ function loadCharacter(id: string) {
 
 function importSheetTemplate(entry: any) {
 	if (!entry || !entry.id) return;
-	if (characterCurioFunctions.isLegacyFile(entry)) {
-		showToast(characterCurioFunctions.LEGACY_FILE_MESSAGE);
+	if (!characterCurioFunctions.isValidCurrentCharacter(entry)) {
+		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE);
 		return;
 	}
-	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, entry);
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
+		...cloneDeep(entry),
+		userSaved: true,
+	});
 	saveLocalData();
 	showToast(`Saved layout template “${entry.title || entry.id}”`);
+}
+
+function deleteSheetTemplate(id: string) {
+	if (!id) return;
+	sheetTemplates.value = (sheetTemplates.value || []).filter((t: any) => t?.id !== id);
+	saveLocalData();
+	showToast('Removed saved template');
 }
 
 // D16 switch: rebase pure overrides (strip vs pinned snapshot)
@@ -1130,7 +1140,7 @@ async function applyTemplateUpdate() {
 	if (!newEntry) return;
 	const stripped = oldEntry
 		? characterCurioFunctions.stripCharacterToDeltas(character.value, oldEntry)
-		: JSON.parse(JSON.stringify(character.value));
+		: cloneDeep(character.value);
 	const rebased = characterCurioFunctions.mergeTemplateIntoCharacter(stripped, newEntry);
 	rebased.sheet = { template: { id: u.id, version: newEntry.version || 1 } };
 	characterCurioFunctions.assignLids(rebased);
@@ -1153,8 +1163,8 @@ function stayOnTemplateSnapshot() {
 }
 
 function importCharacter(characterData: any) {
-	if (characterCurioFunctions.isLegacyFile(characterData)) {
-		showToast(characterCurioFunctions.LEGACY_FILE_MESSAGE);
+	if (!characterCurioFunctions.isValidCurrentCharacter(characterData)) {
+		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE);
 		return;
 	}
 	// Embedded template travels with the file: upsert by static
@@ -1258,9 +1268,7 @@ async function exportCharacter(id: string) {
 
 	await ensureLibraryTemplates();
 	const entry = sheetTemplateForExport(characterData);
-	const out = entry
-		? characterCurioFunctions.stripCharacterForExport(characterData, entry)
-		: JSON.parse(JSON.stringify(characterData));
+	const out = entry ? characterCurioFunctions.stripCharacterForExport(characterData, entry) : cloneDeep(characterData);
 	// Arrangement travels name-keyed (D18 same-user-new-device).
 	const filePrefs = characterCurioFunctions.prefsForExport(
 		prefs.value && prefs.value.characters ? prefs.value.characters[characterData.id] : null,
@@ -1294,7 +1302,10 @@ function saveSheetTemplate() {
 		version: reuse ? ((prev && prev.version) || 1) + 1 : 1,
 		title: (characterData.game || characterData.name || 'Custom') + ' Layout',
 	});
-	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, entry);
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
+		...cloneDeep(entry),
+		userSaved: true,
+	});
 	characterData.sheet = { template: { id: entry.id, version: entry.version } };
 	saveLocalData();
 	showToast(`Saved layout as reusable template`);
@@ -1322,7 +1333,7 @@ async function exportAllCharacters() {
 	await ensureLibraryTemplates();
 	const out = (characters.value || []).map((c: any) => {
 		const entry = sheetTemplateForExport(c);
-		const o = entry ? characterCurioFunctions.stripCharacterForExport(c, entry) : JSON.parse(JSON.stringify(c));
+		const o = entry ? characterCurioFunctions.stripCharacterForExport(c, entry) : cloneDeep(c);
 		const filePrefs = characterCurioFunctions.prefsForExport(
 			prefs.value && prefs.value.characters ? prefs.value.characters[c.id] : null,
 			c,
@@ -1387,9 +1398,34 @@ function updateCharacter(characterData: any) {
 // now lives in use-history.ts
 
 function handleGlobalKeydown(event: KeyboardEvent) {
+	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+		event.preventDefault();
+		isPaletteOpen.value = !isPaletteOpen.value;
+		return;
+	}
+
+	const el = event.target as HTMLElement | null;
+	const target = el ? el.tagName : '';
+	const isTypingTarget =
+		target === 'INPUT' || target === 'TEXTAREA' || target === 'SELECT' || Boolean(el?.isContentEditable);
+
+	if (
+		event.key === '/' &&
+		!event.ctrlKey &&
+		!event.metaKey &&
+		!event.altKey &&
+		!isTypingTarget &&
+		!isPaletteOpen.value
+	) {
+		event.preventDefault();
+		isPaletteOpen.value = true;
+		return;
+	}
+
 	if (mode.value !== 'character' || submode.value !== 'edit') return;
 
 	if (event.key === 'Escape') {
+		if (isPaletteOpen.value) return;
 		if (editing.value && editing.value.length) {
 			event.preventDefault();
 			if (event.target && typeof (event.target as any).blur === 'function') {
@@ -1400,9 +1436,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 		}
 	}
 
-	const el = event.target as HTMLElement | null;
-	const target = el ? el.tagName : '';
-	if (target === 'INPUT' || target === 'TEXTAREA' || target === 'SELECT' || el?.isContentEditable) return;
+	if (isTypingTarget) return;
 
 	if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === 'z') {
 		event.preventDefault();
@@ -1622,7 +1656,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 				out = characterCurioFunctions.toLayeredEntity(delta);
 			} else {
 				// Standalone / no template: keep the array form.
-				out = JSON.parse(JSON.stringify(c));
+				out = cloneDeep(c);
 			}
 			// Storage form keeps a pinned { id, version } reference —
 			// the full template object lives in the template store
@@ -1632,15 +1666,13 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 			} else delete out.sheet;
 			return out;
 		});
-		session = JSON.parse(
-			JSON.stringify({
-				openCharacterIDs: openCharacterIDs.value,
-				playViewMode: playViewMode.value,
-				rollerPosition: rollerPosition.value,
-				templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
-				preferences: prefs.value,
-			}),
-		);
+		session = cloneDeep({
+			openCharacterIDs: openCharacterIDs.value,
+			playViewMode: playViewMode.value,
+			rollerPosition: rollerPosition.value,
+			templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
+			preferences: prefs.value,
+		});
 		// Dirty diff against the last save: whole entries by id, never
 		// field-merged. New ids are upserts; vanished ids are deletes.
 		const curr: Record<string, string> = {};
@@ -1720,7 +1752,7 @@ function saveLocalData() {
 	return persist();
 }
 
-// The mounted proxy is the documented debug/test handle (legacy.md). With
+// The mounted proxy is the documented debug/test handle. With
 // `<script setup>` bindings are closed by default, so expose them explicitly.
 defineExpose({
 	localData,
@@ -1736,6 +1768,7 @@ defineExpose({
 	prefs,
 	playViewMode,
 	isAddCharacterModalOpen,
+	isPaletteOpen,
 	sessionCharacterSearch,
 	mode,
 	submode,
@@ -1851,6 +1884,7 @@ defineExpose({
 		@undo="undo"
 		@redo="redo"
 		@toggleTheme="toggleDarkMode"
+		@openPalette="isPaletteOpen = true"
 	/>
 
 	<!-- PLAY SHELL: STUDIO PANEL (INSPECTOR + ROLLER) + SHEET VIEWPORT -->
@@ -1942,6 +1976,7 @@ defineExpose({
 				<roster
 					v-if="mode === 'roster'"
 					:characters="characters"
+					:sheetTemplates="sheetTemplates"
 					@createCharacter="createCharacter"
 					@createFromTemplate="createFromTemplate"
 					@toggleTemplate="toggleTemplate"
@@ -1953,6 +1988,7 @@ defineExpose({
 					@deleteAllCharacters="deleteAllCharacters"
 					@importCharacter="importCharacter"
 					@importSheetTemplate="importSheetTemplate"
+					@deleteSheetTemplate="deleteSheetTemplate"
 					@createFromLibrary="createFromLibrary"
 					@previewTemplate="openPreview"
 				></roster>
@@ -2155,6 +2191,27 @@ defineExpose({
 			isAddCharacterModalOpen = false;
 			setMode('roster', null);
 		"
+	/>
+
+	<CommandPalette
+		:open="isPaletteOpen"
+		:character="character"
+		:characters="characters"
+		:mode="mode"
+		:submode="submode"
+		:activePoolSide="activeRollerSide"
+		:playerPoolCount="dicePool.items.length"
+		:oppositionPoolCount="oppositionPool.items.length"
+		:isDarkMode="isDarkMode"
+		@close="isPaletteOpen = false"
+		@addDie="addDieToRoller"
+		@rollPool="triggerRollFromPill"
+		@clearPools="triggerClearFromPill"
+		@togglePoolSide="activeRollerSide = activeRollerSide === 'opposition' ? 'player' : 'opposition'"
+		@selectElement="selectElement"
+		@navigate="setMode"
+		@loadCharacter="loadCharacter"
+		@toggleTheme="toggleDarkMode"
 	/>
 
 	<!-- PLAY-SAVE CONFIRMATION MODAL -->

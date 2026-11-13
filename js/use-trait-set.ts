@@ -335,7 +335,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return (traitSetArg as any)?.ratingDisplay || getView(traitSetArg)?.ratingDisplay || 'track';
 	}
 
-	// Trait-part layout (view.parts), or null for legacy flex rows.
+	// Trait-part layout (view.parts), or null for flex rows.
 	// Unknown part names never reach the grid: validation rejects them.
 	function getParts(traitSetArg: TraitSet) {
 		const raw = getView(traitSetArg)?.parts;
@@ -1123,7 +1123,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// Pip-with-label rows (the unified pips style): row i pairs the count
 	// grid with the i-th trait, if any. Named traits render beside their
 	// bubble; blank rows render bare. Filled prefers the trait's own Pip
-	// rating, then its legacy checked flag, then the filled count.
+	// rating, then its checked flag, then the filled count.
 	function isPipLabels(traitSetArg: TraitSet) {
 		return getPipConfig(traitSetArg).labels === true;
 	}

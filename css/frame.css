@@ -158,11 +158,13 @@
 .header-actions {
 	display: flex;
 	align-items: center;
+	gap: 0.5rem;
 	margin-left: auto;
 	padding-right: 0.75rem;
 }
 
-.header-btn-theme {
+.header-btn-theme,
+.header-btn-search {
 	background: transparent;
 	border: 1px solid var(--border-subtle);
 	color: var(--text-secondary);

@@ -25,8 +25,6 @@ import { cloneDeep } from './clone-deep.ts';
 
 export interface RenderTrait {
 	name?: string;
-	value?: number | null;
-	dice?: number[] | null;
 	description?: string;
 	traits?: RenderTrait[];
 	tags?: unknown[];
@@ -55,7 +53,7 @@ export interface RenderCharacter {
 
 const clone = cloneDeep;
 
-// render trait -> dice ints (rating-first; day-1 numeric keys read through)
+// render trait -> dice ints
 const traitDice = (t: RenderTrait): number[] => {
 	const r = (t as Record<string, unknown>).rating;
 	if (r && typeof r === 'object' && !Array.isArray(r)) {
@@ -65,11 +63,7 @@ const traitDice = (t: RenderTrait): number[] => {
 			if (nums.length) return nums;
 		}
 	}
-	return Array.isArray(t.dice) && t.dice.length
-		? t.dice.filter((x) => typeof x === 'number' && x > 0)
-		: typeof t.value === 'number' && t.value > 0
-			? [t.value]
-			: [];
+	return [];
 };
 
 // rating object for ints (canonical layered emit)
@@ -330,42 +324,22 @@ function layeredTraitFrom(t: RenderTrait): TraitObject {
 	} else {
 		const dice = traitDice(t);
 		if (dice.length) node.rating = ratingForDice(dice);
-		else if (t.dice !== undefined || t.value !== undefined) node.rating = null; // explicitly unrated
 	}
 	for (const [k, v] of Object.entries(t)) {
-		if (
-			k === 'name' ||
-			k === 'traits' ||
-			k === 'dice' ||
-			k === 'value' ||
-			k === 'rating' ||
-			k === '_lid' ||
-			k === 'id' ||
-			k === 'removedTraits'
-		)
+		if (k === 'name' || k === 'traits' || k === 'rating' || k === '_lid' || k === 'id' || k === 'removedTraits')
 			continue;
-		// Retired trait-level statement/questioned pair: the sentence lives
-		// as a child trait now. Drop the old keys plus their app-side homes.
-		if (k === 'statement' || k === 'questioned') continue;
 		// Canonical emit: empty custom/tags stay out (absence carries the
 		// same meaning). description "" is KEPT: in a delta it is an
 		// explicit clear of an inherited description. Explicit nulls
 		// (removals, unrated) are kept.
 		if (k === 'custom' && v && typeof v === 'object' && !Array.isArray(v)) {
 			const bag = clone(v) as Record<string, unknown>;
-			delete bag.questioned;
-			const ctk = bag.characterCurio;
-			if (ctk && typeof ctk === 'object' && !Array.isArray(ctk)) {
-				delete (ctk as Record<string, unknown>).questioned;
-				if (!Object.keys(ctk as Record<string, unknown>).length) delete bag.characterCurio;
-			}
 			if (!Object.keys(bag).length) continue;
 			(node as Record<string, unknown>).custom = bag;
 			continue;
 		}
 		if (k === 'view' && v && typeof v === 'object' && !Array.isArray(v)) {
 			const bag = clone(v) as Record<string, unknown>;
-			delete bag.questioned;
 			if (!Object.keys(bag).length) continue;
 			(node as Record<string, unknown>).view = bag;
 			continue;

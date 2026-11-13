@@ -6,4 +6,8 @@ scratch/
 repo-context.txt
 .prettiercache
 .agents/skills/modern-web-guidance/
+.venv/
+screenshots/
+smoke-shots/
+*.zip
 

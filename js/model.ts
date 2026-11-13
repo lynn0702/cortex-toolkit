@@ -55,8 +55,6 @@ export const DEFAULT_HITCHES = 1;
 type RatedNode =
 	| {
 			rating?: unknown;
-			value?: unknown;
-			dice?: unknown;
 			hitches?: unknown;
 			pool?: unknown;
 			spendable?: unknown;
@@ -93,14 +91,6 @@ export function getRating(node: unknown): Rating | undefined {
 			};
 		}
 		return undefined;
-	}
-	// Defensive read of pre-rating encodings.
-	const dice = Array.isArray(n.dice) ? n.dice.filter((d): d is number => typeof d === 'number' && d > 0) : [];
-	if (dice.length > 0) {
-		return { type: dice.length > 1 ? 'Dice' : 'Die', value: dice, range: [...DIE_LADDER] };
-	}
-	if (typeof n.value === 'number' && n.value > 0) {
-		return { type: 'Die', value: [n.value], range: [...DIE_LADDER] };
 	}
 	return undefined;
 }
@@ -270,7 +260,7 @@ export function isOutDie(node: unknown, fallbacks?: Array<unknown>): boolean {
  * the same Die/Dice type, otherwise on the set's view.ratingLadder. The
  * source trait's own range is then cleared: it now equals the set level,
  * so stating it again would only re-densify the file. Counter bounds have
- * no set-level carrier, so they keep the legacy sibling stamp (values
+ * no set-level carrier, so they keep the sibling stamp (values
  * preserved verbatim, subtraits included). No-op for Pip, unrated
  * sources, or Die/Dice sources that state no range of their own.
  */
@@ -562,7 +552,7 @@ export interface CharacterCurioCustom {
 	// A set carries view.place {left, top, width, height} (percent-of-
 	// parent "%" strings + relative row units) and view.parts places
 	// trait parts as cells in the trait's grid. Both are sparse: omitted
-	// for full-width document-order stacking (place) and legacy flex
+	// for full-width document-order stacking (place) and flex
 	// trait rows (parts).
 	place?: PlaceRect;
 	ladder?: boolean;

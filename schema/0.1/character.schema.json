@@ -1,8 +1,8 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://characters.lynnjones.rocks/schema/0.1/character.schema.json",
-	"title": "Cortex Prime character",
-	"description": "A JSON schema for a Cortex Prime player character sheet.",
+	"title": "Character Curio character",
+	"description": "A JSON schema for a Character Curio player character sheet.",
 	"type": "object",
 	"$defs": {
 		"traitSet": {
@@ -103,23 +103,6 @@
 						"null"
 					],
 					"description": "Display label for the trait. Name-block traits render this instead of the name."
-				},
-				"value": {
-					"type": [
-						"integer",
-						"null"
-					],
-					"description": "Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating."
-				},
-				"dice": {
-					"type": [
-						"array",
-						"null"
-					],
-					"description": "Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating.",
-					"items": {
-						"type": "integer"
-					}
 				},
 				"rating": {
 					"$ref": "#/$defs/rating"

@@ -76,10 +76,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 	it('uses Character Curio database name and storage keys (clean break)', () => {
 		expect(characterCurioStorage.DB_NAME).toBe('character-curio');
 		expect(characterCurioStorage.FALLBACK_KEY).toBe('characterCurioFallback');
-		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioData');
-		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioOpenCharacterIDs');
-		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioPlayViewMode');
-		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioRollerPosition');
+		expect(characterCurioStorage.RECORD_KEY).toBe('app');
 	});
 
 	it('renders the tarot World mark (favicon.ico) in the footer colophon', () => {

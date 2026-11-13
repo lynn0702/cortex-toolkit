@@ -40,10 +40,3 @@ Check all new or edited JSON, schemas, templates, and example payloads against t
 - `view.features`
 - Set-level `statement` / `hasQuestionedPip`
 
-## Retired & validation-rejected (`scripts/validate.js` fails)
-
-Do **not** emit any of these keys or style IDs in new templates, presets, tests, or examples:
-
-- **Rejected data keys**: `usableBy`, `cost`, `trait.sfx`, `set.sfx`, `trait.statement`, `trait.questioned`, `trait.value`, `trait.dice`, `ratingPosition`.
-- **Rejected `view` keys**: `view.style.sheet`, `view.sheetStyle`, `view.style.hasAttributes`, `view.spotlight`, `view.attachedStress`, `view.stressConfig`, `view.setDie`, `view.pool`, `view.hidden`, `view.challengePool`, `view.isChallengePool`, `view.headerRight`, and set-level `location` / `track` / `span` / `colSpan` / `columnSpan` / `widths` / `rowBreak` / `colWidth` / `rowSpan` / `row`.
-- **Rejected `style.body` IDs**: `sfx-rows`, `boxed-rows`, `notes`, `paired-slots`, `three-column-table`, `labeled-fields`, `dice-ladder`, `session-record`, `angled-lines`, `distinctions`, `attributes`, `assets`, `resources`, `stress`.

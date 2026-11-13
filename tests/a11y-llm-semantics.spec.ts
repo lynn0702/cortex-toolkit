@@ -2314,12 +2314,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					},
 					// Set 1: style alias portrait-ring without frame
 					{
-						name: 'Legacy Roles',
+						name: 'Alias Roles',
 						noun: 'Role',
 						view: {
 							style: { body: 'portrait-ring' },
 							ringConfig: { arcAngle: -90, arcSpread: 100 },
-							imageConfig: { url: 'https://example.com/legacy-hub.jpg', zoom: 0.75 },
+							imageConfig: { url: 'https://example.com/alias-hub.jpg', zoom: 0.75 },
 						},
 						traits: [{ name: 'Gunner', rating: { type: 'Die', value: [8] } }],
 					},
@@ -2378,7 +2378,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(w1.find('.portrait').exists()).toBe(true);
 			const circle1 = w1.find('.portrait-circle');
 			const style1 = circle1.attributes('style') || '';
-			expect(style1).toContain('https://example.com/legacy-hub.jpg');
+			expect(style1).toContain('https://example.com/alias-hub.jpg');
 			expect(style1).toContain('background-size: 75%');
 			w1.unmount();
 

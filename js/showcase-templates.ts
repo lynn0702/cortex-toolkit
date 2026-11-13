@@ -1,4 +1,4 @@
-import dreamerArchitectJson from '../data/templates/Dreamer_Architect.curio.json';
+import dreamerArchitectJson from '../data/templates/Dreamer_Architect.curio.json' with { type: 'json' };
 
 /**
  * Showcase Templates (Phase 3c).

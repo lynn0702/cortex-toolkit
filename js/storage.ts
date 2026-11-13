@@ -2,10 +2,10 @@
  * Character Curio persistent storage. TypeScript leaf.
  *
  * Primary backend is IndexedDB (large quota, structured data, eviction-safe
- * when persistence is granted). First run migrates any legacy localStorage
- * payload, then the legacy keys are removed. If IndexedDB is unavailable,
- * falls back to localStorage with quota errors surfaced to the caller.
+ * when persistence is granted). If IndexedDB is unavailable, falls back to
+ * localStorage with quota errors surfaced to the caller.
  */
+import { cloneDeep } from './clone-deep.ts';
 
 export interface StorageState {
 	characters: unknown[];
@@ -39,7 +39,6 @@ export interface CharacterCurioStorage {
 	DB_VERSION: number;
 	STORE_NAME: string;
 	RECORD_KEY: string;
-	LEGACY_KEYS: string[];
 	FALLBACK_KEY: string;
 	_dbPromise: Promise<IDBDatabase> | null;
 	_useIDB: boolean;
@@ -52,8 +51,6 @@ export interface CharacterCurioStorage {
 	normalizePreferences(prefs: any): any;
 	openDB(): Promise<IDBDatabase>;
 	normalizeCharacters(characters: any): any[];
-	readLegacy(): { error: unknown; state: any };
-	clearLegacy(): void;
 	fallbackRecord(): any;
 	readRecord(): Promise<any>;
 	writeRecord(record: any): Promise<{ backend: string }>;
@@ -75,16 +72,9 @@ export const characterCurioStorage: CharacterCurioStorage = {
 	STORE_NAME: 'state',
 	RECORD_KEY: 'app',
 
-	LEGACY_KEYS: [
-		'characterCurioData',
-		'characterCurioOpenCharacterIDs',
-		'characterCurioPlayViewMode',
-		'characterCurioRollerPosition',
-	],
-
 	// localStorage fallback holding the FULL record (same shape as the IDB
-	// record) when IndexedDB is unavailable. Unlike the legacy split keys
-	// it keeps snapshots and preferences, so a fallback save loses nothing.
+	// record) when IndexedDB is unavailable, keeping snapshots and
+	// preferences intact across saves.
 	FALLBACK_KEY: 'characterCurioFallback',
 
 	_dbPromise: null as Promise<IDBDatabase> | null,
@@ -123,14 +113,13 @@ export const characterCurioStorage: CharacterCurioStorage = {
 		entry.version ??= 1;
 		const key = this.templateKey(entry);
 		const i = list.findIndex((t) => this.templateKey(t) === key);
-		const clean = JSON.parse(JSON.stringify(entry));
+		const clean = cloneDeep(entry);
 		if (i === -1) list.push(clean);
 		else list[i] = clean;
 		return list;
 	},
 
-	// Drop stored snapshots no character pins. Keeps the registry (and
-	// future switch prompts) exact across bundle updates.
+	// Drop stored snapshots no character pins unless explicitly user-saved.
 	pruneTemplates(templates, characters) {
 		const list = this.normalizeTemplates(templates);
 		const pinned = new Set();
@@ -141,7 +130,7 @@ export const characterCurioStorage: CharacterCurioStorage = {
 			const ver = (t && typeof t === 'object' && t.version) || 1;
 			pinned.add(id + '@' + ver);
 		});
-		return list.filter((t) => pinned.has(this.templateKey(t)));
+		return list.filter((t) => Boolean(t && (t as any).userSaved) || pinned.has(this.templateKey(t)));
 	},
 
 	// Preference layer (brief D11): per-character arrangement + declines.
@@ -239,62 +228,6 @@ export const characterCurioStorage: CharacterCurioStorage = {
 				return c;
 			})
 			.filter(Boolean);
-	},
-
-	readLegacy() {
-		let characters: any = [];
-		let openCharacterIDs: any = [];
-		let playViewMode = 'split';
-		let rollerPosition = 'left';
-		let found = false;
-		try {
-			const raw = localStorage.getItem('characterCurioData');
-			if (raw && raw.length) {
-				const parsed = JSON.parse(raw);
-				if (parsed && parsed['0.1'] && Array.isArray(parsed['0.1'].characters)) {
-					characters = parsed['0.1'].characters;
-					found = true;
-				}
-			}
-			const idsRaw = localStorage.getItem('characterCurioOpenCharacterIDs');
-			if (idsRaw) {
-				const ids = JSON.parse(idsRaw);
-				if (Array.isArray(ids)) {
-					openCharacterIDs = ids;
-					found = true;
-				}
-			}
-			const pvm = localStorage.getItem('characterCurioPlayViewMode');
-			if (pvm === 'split' || pvm === 'tabs') {
-				playViewMode = pvm;
-				found = true;
-			}
-			const rp = localStorage.getItem('characterCurioRollerPosition');
-			if (rp === 'left' || rp === 'right') {
-				rollerPosition = rp;
-				found = true;
-			}
-		} catch (err) {
-			return { error: err, state: null };
-		}
-		if (!found) return { error: null, state: null };
-		return {
-			error: null,
-			state: {
-				characters: this.normalizeCharacters(characters),
-				openCharacterIDs: openCharacterIDs,
-				playViewMode: playViewMode,
-				rollerPosition: rollerPosition,
-			},
-		};
-	},
-
-	clearLegacy() {
-		try {
-			this.LEGACY_KEYS.forEach((k) => localStorage.removeItem(k));
-		} catch (err) {
-			// Best effort; legacy keys are inert once migrated.
-		}
 	},
 
 	// Synchronous full-record read of the localStorage fallback. The fallback
@@ -466,33 +399,6 @@ export const characterCurioStorage: CharacterCurioStorage = {
 			const state = fromRecord(pick);
 			if (state) return state;
 		}
-		const legacy = this.readLegacy();
-		if (legacy.error) {
-			return {
-				characters: [],
-				openCharacterIDs: [],
-				playViewMode: 'split',
-				rollerPosition: 'left',
-				templates: [],
-				preferences: this.normalizePreferences(null),
-				loadError: legacy.error,
-				migrated: false,
-			};
-		}
-		if (legacy.state) {
-			const state = legacy.state;
-			state.templates = [];
-			state.preferences = this.normalizePreferences(null);
-			try {
-				await this.save(state);
-				this.clearLegacy();
-				state.migrated = true;
-			} catch (err) {
-				state.migrated = false;
-				state.migrationError = err;
-			}
-			return state;
-		}
 		return empty();
 	},
 
@@ -594,7 +500,7 @@ export const characterCurioStorage: CharacterCurioStorage = {
 					tx.objectStore(this.STORE_NAME).delete(this.RECORD_KEY);
 				});
 			} catch (err) {
-				// Continue to legacy cleanup below.
+				// Continue to localStorage cleanup below.
 			}
 		}
 		try {
@@ -602,7 +508,6 @@ export const characterCurioStorage: CharacterCurioStorage = {
 		} catch (err) {
 			// Best effort; a stale fallback is ignored while IDB reads back.
 		}
-		this.clearLegacy();
 	},
 
 	async requestPersistence() {

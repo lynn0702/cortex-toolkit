@@ -258,7 +258,7 @@ async function scenario(name, fn) {
 		ok(!!err && !!err.isQuotaError, 'quota flagged on total failure', err && err.name);
 	});
 
-	// 5. clear() removes IDB record, fallback, and legacy keys.
+	// 5. clear() removes IDB record and fallback key.
 	await scenario('clear', async () => {
 		globalThis.indexedDB = makeIDB({ open: 'ok', put: 'ok' });
 		const ls = makeLS(5 * 1024 * 1024);
@@ -266,12 +266,10 @@ async function scenario(name, fn) {
 		globalThis.navigator = {};
 		const S = freshStore();
 		await S.save(demoState());
-		ls.setItem('characterCurioData', '{}');
 		await S.clear();
 		const loaded = await S.load();
 		ok(loaded.characters.length === 0, 'IDB record cleared');
 		ok(ls.getItem('characterCurioFallback') === null, 'fallback key cleared');
-		ok(ls.getItem('characterCurioData') === null, 'legacy keys cleared');
 	});
 
 	// 6. Newest record wins between stale IDB and newer fallback.

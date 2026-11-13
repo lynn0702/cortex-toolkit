@@ -388,11 +388,11 @@ function tpl() {
 	);
 }
 
-// ---- Legacy: no template → untouched.
+// ---- Unlinked character (no template): untouched.
 {
-	const ch = { id: 'legacy', name: 'Old', traitSets: [{ id: 's1', name: 'S', traits: [] }] };
-	ok(eq(F.mergeTemplateIntoCharacter(ch, null), ch), 'legacy merge skipped');
-	ok(eq(F.stripCharacterToDeltas(ch, null), ch), 'legacy strip untouched');
+	const ch = { id: 'unlinked', name: 'Standalone', traitSets: [{ id: 's1', name: 'S', traits: [] }] };
+	ok(eq(F.mergeTemplateIntoCharacter(ch, null), ch), 'unlinked merge skipped');
+	ok(eq(F.stripCharacterToDeltas(ch, null), ch), 'unlinked strip untouched');
 }
 
 // ---- Store dedupe by static id.
@@ -512,7 +512,7 @@ function tpl() {
 	ok(back && back.traitOrders.distinctions.length === 1, 'prefs resolve back to fresh lids');
 }
 
-// ---- Legacy import shape: upstream envelope unwraps with fresh id, no linkage.
+// ---- Envelope import shape: upstream envelope unwraps with fresh id, no linkage.
 {
 	const up = { version: 2, data: { name: 'Up', traitSets: [] } };
 	const c = F.sanitizeImportedCharacter(up);

@@ -8,7 +8,7 @@ import '../css/app.css';
 
 function mount() {
 	// The mounted proxy is the documented handle for browser-driven tests and
-	// debugging (see legacy.md environment gotchas). Components are imported by
+	// debugging. Components are imported by
 	// their consumers (`<script setup>` SFCs), so no global registration is needed.
 	window.app = createApp(App).mount('#character-curio');
 

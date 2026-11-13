@@ -50,9 +50,6 @@ function ok(cond, name, extra) {
 	ok(t.rating.type === 'Die' && JSON.stringify(t.rating.value) === '[8]', 'step sets the die');
 	setRatingDie(t, null);
 	ok(!isRated(t), 'step to null unrates');
-	// Legacy reads through (import compat), never writes.
-	ok(JSON.stringify(ratingDice(getRating({ value: 8 }))) === '[8]', 'legacy single reads');
-	ok(JSON.stringify(ratingDice(getRating({ dice: [8, 6] }))) === '[8,6]', 'legacy multi reads');
 }
 
 // ---- 2. Canonical readings exist exactly as written.
