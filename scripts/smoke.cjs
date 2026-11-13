@@ -1,6 +1,6 @@
 // Portable desktop (1440x900) + mobile (390x844) real-browser smoke check.
 // Usage: node scripts/smoke.cjs [--shots]  (screenshots to ./smoke-shots/)
-const { spawn } = require('child_process');
+const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -167,6 +167,13 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 }
 
 async function main() {
+	if (
+		!fs.existsSync(path.join(ROOT, 'js/app.min.js')) ||
+		!fs.existsSync(path.join(ROOT, 'css/app.min.css')) ||
+		!fs.existsSync(path.join(ROOT, 'js/templates.bundle.js'))
+	) {
+		execSync('npm run build', { cwd: ROOT, stdio: 'inherit' });
+	}
 	const { chromium } = resolvePlaywrightCore();
 	const executablePath = resolveChromeExecutable();
 	const server = spawn(process.execPath, [path.join(__dirname, 'serve.js')], {

@@ -6,7 +6,7 @@ import { getView } from './model.ts';
 
 export type FrameShape = 'ring' | 'ellipse' | 'arc' | 'block' | 'line' | 'none';
 
-export type FrameColor = 'primary' | 'accent' | 'muted' | 'strong' | 'black';
+export type FrameColor = 'primary' | 'secondary' | 'accent' | 'muted' | 'strong' | 'black' | (string & {});
 
 export interface RingConfig {
 	arcAngle?: number;

@@ -59,7 +59,7 @@ const server = http.createServer((req, res) => {
 				res.end('500 Internal Server Error');
 				return;
 			}
-			res.writeHead(200, { 'Content-Type': contentType });
+			res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-cache' });
 			res.end(content);
 		});
 	});
@@ -97,6 +97,9 @@ server.listen(PORT, () => {
 
 	const shouldWatch = !process.env.NO_WATCH && !process.argv.includes('--no-watch');
 	if (shouldWatch) {
+		if (!fs.existsSync(path.join(ROOT, 'js/templates.bundle.js'))) {
+			require('./combine-templates.js');
+		}
 		const viteBin = path.join(ROOT, 'node_modules', 'vite', 'bin', 'vite.js');
 		if (fs.existsSync(viteBin)) {
 			console.log(`  > Watcher: starting vite build --watch...\n`);

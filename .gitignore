@@ -10,4 +10,9 @@ repo-context.txt
 screenshots/
 smoke-shots/
 *.zip
+js/app.min.js
+js/app.min.js.map
+js/templates.bundle.js
+css/app.min.css
+_site/
 

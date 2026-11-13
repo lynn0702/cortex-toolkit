@@ -16,106 +16,14 @@ import {
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 import TagEditor from './tag-editor.vue';
-
-interface DicePreset {
-	name: string;
-	style: string;
-	backgroundType: string;
-	backgroundColor1: string;
-	backgroundColor2: string;
-	numeralColor: string;
-	borderColor: string;
-	borderWidth: number;
-	gradientAngle?: number;
-	unfilledBackground: string;
-	unfilledNumeral: string;
-	unfilledBorder: string;
-}
-
-const DICE_PRESETS: DicePreset[] = [
-	{
-		name: 'Classic Ink',
-		style: 'custom',
-		backgroundType: 'solid',
-		backgroundColor1: '#ffffff',
-		backgroundColor2: '#f1f5f9',
-		numeralColor: '#000000',
-		borderColor: '#000000',
-		borderWidth: 1,
-		unfilledBackground: 'none',
-		unfilledNumeral: '#000000',
-		unfilledBorder: '#000000',
-	},
-	{
-		name: 'Inverted Noir',
-		style: 'custom',
-		backgroundType: 'solid',
-		backgroundColor1: '#000000',
-		backgroundColor2: '#0f172a',
-		numeralColor: '#ffffff',
-		borderColor: '#ffffff',
-		borderWidth: 1.7,
-		unfilledBackground: 'none',
-		unfilledNumeral: '#334155',
-		unfilledBorder: '#334155',
-	},
-	{
-		name: 'Cyberpunk Neon',
-		style: 'custom',
-		backgroundType: 'gradient',
-		backgroundColor1: '#06b6d4',
-		backgroundColor2: '#d946ef',
-		gradientAngle: 135,
-		numeralColor: '#ffffff',
-		borderColor: '#06b6d4',
-		borderWidth: 2,
-		unfilledBackground: 'none',
-		unfilledNumeral: '#0284c7',
-		unfilledBorder: '#0284c7',
-	},
-	{
-		name: 'Solar Flare',
-		style: 'custom',
-		backgroundType: 'gradient',
-		backgroundColor1: '#f59e0b',
-		backgroundColor2: '#dc2626',
-		gradientAngle: 135,
-		numeralColor: '#ffffff',
-		borderColor: '#f59e0b',
-		borderWidth: 1.8,
-		unfilledBackground: 'none',
-		unfilledNumeral: '#d97706',
-		unfilledBorder: '#d97706',
-	},
-	{
-		name: 'Arcane Violet',
-		style: 'custom',
-		backgroundType: 'gradient',
-		backgroundColor1: '#8b5cf6',
-		backgroundColor2: '#3b82f6',
-		gradientAngle: 135,
-		numeralColor: '#ffffff',
-		borderColor: '#c084fc',
-		borderWidth: 1.8,
-		unfilledBackground: 'none',
-		unfilledNumeral: '#7c3aed',
-		unfilledBorder: '#7c3aed',
-	},
-	{
-		name: 'Emerald Forge',
-		style: 'custom',
-		backgroundType: 'gradient',
-		backgroundColor1: '#10b981',
-		backgroundColor2: '#047857',
-		gradientAngle: 135,
-		numeralColor: '#ffffff',
-		borderColor: '#34d399',
-		borderWidth: 1.8,
-		unfilledBackground: 'none',
-		unfilledNumeral: '#059669',
-		unfilledBorder: '#059669',
-	},
-];
+import ColorPicker from './color-picker.vue';
+import {
+	SHEET_THEME_PRESETS,
+	DICE_PRESETS,
+	expandHex6,
+	type DicePreset,
+	type SheetThemePreset,
+} from './color-palette.ts';
 
 const props = withDefaults(
 	defineProps<{
@@ -144,16 +52,7 @@ const fontPreview = ref<{ heading: string; primary: string; secondary: string }>
 const watermarkError = ref('');
 const fontUploadError = ref('');
 const dicePresets = DICE_PRESETS;
-const presetColors = [
-	{ name: 'Curio Sky', hex: '#0ea5e9' },
-	{ name: 'Crimson Ruby', hex: '#e11d48' },
-	{ name: 'Emerald', hex: '#10b981' },
-	{ name: 'Indigo Purple', hex: '#6366f1' },
-	{ name: 'Amber Gold', hex: '#f59e0b' },
-	{ name: 'Rose Coral', hex: '#f43f5e' },
-	{ name: 'Teal Cyan', hex: '#14b8a6' },
-	{ name: 'Slate Dark', hex: '#475569' },
-];
+const sheetThemePresets = SHEET_THEME_PRESETS;
 
 const inputName = ref<HTMLInputElement | null>(null);
 const watermarkFileInput = ref<HTMLInputElement | null>(null);
@@ -426,27 +325,15 @@ const pageJustification = computed({
 	},
 });
 
-const accentColor = computed({
-	get() {
-		return getView(props.character)?.accentColor || '#0ea5e9';
-	},
-	set(val: string) {
-		if (!props.character) return;
-		ensureView(props.character).accentColor = val;
-		emit('updateCharacter', props.character);
-	},
-});
-
-const primaryColor = computed({
-	get() {
-		return getView(props.character)?.primaryColor || accentColor.value;
-	},
-	set(val: string) {
-		if (!props.character) return;
-		ensureView(props.character).primaryColor = val;
-		emit('updateCharacter', props.character);
-	},
-});
+const rawAccentColor = computed(() => getView(props.character)?.accentColor || '');
+const rawPrimaryColor = computed(() => getView(props.character)?.primaryColor || '');
+const rawSecondaryColor = computed(() => getView(props.character)?.secondaryColor || '');
+const effectivePrimaryHex = computed(() => expandHex6(rawPrimaryColor.value || rawAccentColor.value || '#e11d48'));
+const effectiveAccentHex = computed(() => expandHex6(rawAccentColor.value || '#0ea5e9'));
+const effectiveSecondaryHex = computed(() => expandHex6(rawSecondaryColor.value || '#d0efda'));
+const hasCustomSheetTheme = computed(() =>
+	Boolean(rawPrimaryColor.value || rawAccentColor.value || rawSecondaryColor.value),
+);
 
 const headingFont = computed({
 	get() {
@@ -628,13 +515,66 @@ function removeWatermark() {
 	watermarkEnabled.value = false;
 }
 
-function setAccent(hex: string) {
-	accentColor.value = hex;
+function setPrimaryColor(hex: string) {
+	if (!props.character) return;
+	ensureView(props.character).primaryColor = hex;
+	emit('updateCharacter', props.character);
+}
+
+function resetPrimary() {
+	if (!props.character) return;
+	delete ensureView(props.character).primaryColor;
+	emit('updateCharacter', props.character);
+}
+
+function setAccentColor(hex: string) {
+	if (!props.character) return;
+	ensureView(props.character).accentColor = hex;
+	emit('updateCharacter', props.character);
 }
 
 function resetAccent() {
 	if (!props.character) return;
 	delete ensureView(props.character).accentColor;
+	emit('updateCharacter', props.character);
+}
+
+function setSecondaryColor(hex: string) {
+	if (!props.character) return;
+	ensureView(props.character).secondaryColor = hex;
+	emit('updateCharacter', props.character);
+}
+
+function resetSecondary() {
+	if (!props.character) return;
+	delete ensureView(props.character).secondaryColor;
+	emit('updateCharacter', props.character);
+}
+
+function isPaletteActive(p: SheetThemePreset): boolean {
+	if (!rawPrimaryColor.value && !rawAccentColor.value && !rawSecondaryColor.value) return false;
+	return (
+		expandHex6(rawPrimaryColor.value) === p.primary &&
+		expandHex6(rawAccentColor.value) === p.accent &&
+		expandHex6(rawSecondaryColor.value) === p.secondary
+	);
+}
+
+function applySheetPalette(p: SheetThemePreset) {
+	if (!props.character) return;
+	const v = ensureView(props.character);
+	v.primaryColor = p.primary;
+	v.accentColor = p.accent;
+	v.secondaryColor = p.secondary;
+	emit('updateCharacter', props.character);
+}
+
+function resetSheetPalette() {
+	if (!props.character) return;
+	const v = ensureView(props.character);
+	delete v.primaryColor;
+	delete v.accentColor;
+	delete v.secondaryColor;
 	emit('updateCharacter', props.character);
 }
 
@@ -696,9 +636,32 @@ function updateDiceProp(key: string, val: any) {
 	diceConfig.value = newCfg;
 }
 
-function applyDicePreset(preset: any) {
-	const newCfg = { ...diceConfig.value, ...preset, style: 'custom' };
+function applyDicePreset(preset: DicePreset) {
+	const resolved = presetWithMode(preset);
+	const newCfg = { ...diceConfig.value, ...resolved, style: 'custom' };
 	diceConfig.value = newCfg;
+}
+
+const presetFillMode = ref<'solid' | 'gradient'>(
+	diceConfig.value?.backgroundType === 'gradient' ? 'gradient' : 'solid',
+);
+
+watch(
+	() => diceConfig.value?.backgroundType,
+	(bgType) => {
+		presetFillMode.value = bgType === 'gradient' ? 'gradient' : 'solid';
+	},
+);
+
+function presetWithMode(p: DicePreset, mode: 'solid' | 'gradient' = presetFillMode.value): DicePreset {
+	return { ...p, backgroundType: mode };
+}
+
+function setPresetFillMode(mode: 'solid' | 'gradient') {
+	presetFillMode.value = mode;
+	if (diceConfig.value?.style === 'custom') {
+		updateDiceProp('backgroundType', mode);
+	}
 }
 
 function resetDiceConfig() {
@@ -718,11 +681,29 @@ function resetDiceConfig() {
 	diceConfig.value = defaultCfg;
 }
 
-function renderDicePreview(size: any, isFilled: any) {
+function renderDicePreview(size: any, isFilled: any, cfgOverride?: any) {
 	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.renderDieconSVG) {
-		return characterCurioFunctions.renderDieconSVG(size, isFilled, '', diceConfig.value);
+		return characterCurioFunctions.renderDieconSVG(size, isFilled, '', cfgOverride ?? diceConfig.value);
 	}
 	return size;
+}
+
+const DICE_PREVIEW_SIZES = [4, 6, 8, 10, 12] as const;
+
+function isDicePresetActive(p: DicePreset): boolean {
+	const resolved = presetWithMode(p);
+	const cfg = diceConfig.value;
+	if (!cfg || cfg.style !== 'custom') return false;
+	return (
+		cfg.backgroundType === resolved.backgroundType &&
+		expandHex6(cfg.backgroundColor1) === expandHex6(resolved.backgroundColor1) &&
+		(resolved.backgroundType !== 'gradient' ||
+			expandHex6(cfg.backgroundColor2) === expandHex6(resolved.backgroundColor2)) &&
+		expandHex6(cfg.numeralColor) === expandHex6(resolved.numeralColor) &&
+		expandHex6(cfg.borderColor) === expandHex6(resolved.borderColor) &&
+		expandHex6(cfg.unfilledBorder) === expandHex6(resolved.unfilledBorder) &&
+		expandHex6(cfg.unfilledNumeral) === expandHex6(resolved.unfilledNumeral)
+	);
 }
 
 function updateCharacter(character: any) {
@@ -1169,44 +1150,75 @@ function updateCharacter(character: any) {
 					<!-- ================= TAB 3: THEME & DICE ================= -->
 					<template v-else-if="currentTab === 'theme'">
 						<div class="editor-field">
-							<label for="char-field-accent-color">Theme Accent Color</label>
-							<div class="theme-accent-swatches">
+							<div class="editor-row-between mb-sm">
+								<div class="editor-label m-0">Sheet Palettes</div>
 								<button
-									v-for="swatch in presetColors"
-									:key="swatch.hex"
-									type="button"
-									class="color-swatch-btn"
-									:class="{ active: accentColor === swatch.hex }"
-									:style="{ backgroundColor: swatch.hex }"
-									:title="swatch.name + ' (' + swatch.hex + ')'"
-									@click.stop="setAccent(swatch.hex)"
-								></button>
-							</div>
-							<div class="editor-row-inline mt-sm">
-								<input
-									type="color"
-									id="char-field-accent-color"
-									name="accentColorPicker"
-									v-model="accentColor"
-									class="editor-color-swatch-input"
-								/>
-								<input
-									type="text"
-									id="char-field-accent-hex"
-									name="accentColorHex"
-									v-model="accentColor"
-									placeholder="#0ea5e9"
-									class="editor-hex-input"
-								/>
-								<button
+									v-if="hasCustomSheetTheme"
 									type="button"
 									class="editor-tab-btn editor-border-subtle"
-									@click.stop="resetAccent"
-									title="Reset"
+									@click.stop="resetSheetPalette"
 								>
 									Reset
 								</button>
 							</div>
+							<div class="sheet-palette-grid" role="group" aria-label="Sheet palettes">
+								<button
+									v-for="pal in sheetThemePresets"
+									:key="pal.name"
+									type="button"
+									class="sheet-palette-btn"
+									:class="{ active: isPaletteActive(pal) }"
+									:aria-pressed="isPaletteActive(pal)"
+									@click.stop="applySheetPalette(pal)"
+								>
+									<span class="sheet-palette-dots" aria-hidden="true">
+										<span class="sheet-palette-dot" :style="{ '--swatch-color': pal.primary }"></span>
+										<span class="sheet-palette-dot" :style="{ '--swatch-color': pal.accent }"></span>
+										<span class="sheet-palette-dot" :style="{ '--swatch-color': pal.secondary }"></span>
+									</span>
+									<span class="sheet-palette-name">{{ pal.name }}</span>
+									<i v-if="isPaletteActive(pal)" class="fas fa-check sheet-palette-check" aria-hidden="true"></i>
+								</button>
+							</div>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Primary Color</div>
+							<ColorPicker
+								:model-value="rawPrimaryColor"
+								input-id="char-primary-color"
+								label="Primary Color"
+								:fallback-hex="effectivePrimaryHex"
+								:allow-clear="true"
+								@update:model-value="setPrimaryColor"
+								@clear="resetPrimary"
+							/>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Accent Color</div>
+							<ColorPicker
+								:model-value="rawAccentColor"
+								input-id="char-accent-color"
+								label="Accent Color"
+								:fallback-hex="effectiveAccentHex"
+								:allow-clear="true"
+								@update:model-value="setAccentColor"
+								@clear="resetAccent"
+							/>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Secondary Color</div>
+							<ColorPicker
+								:model-value="rawSecondaryColor"
+								input-id="char-secondary-color"
+								label="Secondary Color"
+								:fallback-hex="effectiveSecondaryHex"
+								:allow-clear="true"
+								@update:model-value="setSecondaryColor"
+								@clear="resetSecondary"
+							/>
 						</div>
 
 						<!-- TYPOGRAPHY PICKERS WITH LIVE PREVIEW -->
@@ -1331,8 +1343,8 @@ function updateCharacter(character: any) {
 						<div id="die-style-anchor" class="editor-section-divider">Die Style &amp; Geometry</div>
 
 						<!-- LIVE SVG PREVIEW OF ALL 5 DICE -->
-						<div class="editor-field editor-box-white">
-							<div class="editor-label font-bold text-dark mb-sm">Live Dice Appearance Preview</div>
+						<div class="editor-field editor-dice-preview-card">
+							<div class="editor-label font-bold mb-sm">Live Dice Appearance Preview</div>
 							<div class="editor-dice-preview-row">
 								<span
 									v-for="d in [4, 6, 8, 10, 12]"
@@ -1352,25 +1364,50 @@ function updateCharacter(character: any) {
 							</div>
 						</div>
 
-						<!-- PRESET PALETTES -->
+						<!-- DICE THEMES -->
 						<div class="editor-field">
-							<div class="editor-label">Dice Themes &amp; Presets</div>
-							<div class="editor-grid-2 mt-xs">
+							<div class="editor-row-between">
+								<div class="editor-label">Dice Themes</div>
+								<div class="editor-dice-mode-toggle" role="group" aria-label="Dice theme fill style">
+									<button
+										type="button"
+										class="editor-dice-mode-btn"
+										:class="{ active: presetFillMode === 'solid' }"
+										:aria-pressed="presetFillMode === 'solid'"
+										@click.stop="setPresetFillMode('solid')"
+									>
+										Solid
+									</button>
+									<button
+										type="button"
+										class="editor-dice-mode-btn"
+										:class="{ active: presetFillMode === 'gradient' }"
+										:aria-pressed="presetFillMode === 'gradient'"
+										@click.stop="setPresetFillMode('gradient')"
+									>
+										Gradient
+									</button>
+								</div>
+							</div>
+							<div class="editor-dice-preset-grid mt-xs" role="group" aria-label="Dice themes">
 								<button
 									v-for="p in dicePresets"
 									:key="p.name"
 									type="button"
-									class="editor-tab-btn editor-dice-preset-btn"
+									class="editor-dice-preset-btn"
+									:class="{ active: isDicePresetActive(p) }"
+									:title="p.name"
+									:aria-label="p.name"
+									:aria-pressed="isDicePresetActive(p)"
 									@click.stop="applyDicePreset(p)"
 								>
 									<span
-										class="editor-dice-preset-swatch"
-										:style="{
-											backgroundColor: p.backgroundColor1,
-											borderColor: p.borderColor,
-										}"
+										v-for="d in DICE_PREVIEW_SIZES"
+										:key="p.name + '-' + presetFillMode + '-d' + d"
+										class="editor-dice-preset-die"
+										aria-hidden="true"
+										v-html="renderDicePreview(d, d !== 4 && d !== 12, presetWithMode(p))"
 									></span>
-									{{ p.name }}
 								</button>
 							</div>
 						</div>
@@ -1398,50 +1435,30 @@ function updateCharacter(character: any) {
 							</div>
 
 							<div class="flex-col gap-sm">
-								<div class="editor-row-between">
-									<label for="char-field-dice-bg1" class="editor-sub-label m-0">{{
-										diceConfig.backgroundType === 'gradient' ? 'Start Color' : 'Fill Color'
-									}}</label>
-									<div class="editor-row-inline">
-										<input
-											type="color"
-											id="char-field-dice-bg1"
-											name="diceBgColor1"
-											:value="diceConfig.backgroundColor1 || '#ffffff'"
-											@input="updateDiceProp('backgroundColor1', targetValue($event))"
-											class="editor-color-swatch-input"
-										/>
-										<input
-											type="text"
-											id="char-field-dice-bg1-text"
-											name="diceBgColor1Text"
-											:value="diceConfig.backgroundColor1 || '#ffffff'"
-											@input="updateDiceProp('backgroundColor1', targetValue($event))"
-											class="editor-hex-input"
-										/>
+								<div>
+									<div class="editor-sub-label">
+										{{ diceConfig.backgroundType === 'gradient' ? 'Start Color' : 'Fill Color' }}
 									</div>
+									<ColorPicker
+										compact
+										:model-value="diceConfig.backgroundColor1 || '#ffffff'"
+										input-id="char-field-dice-bg1"
+										:label="diceConfig.backgroundType === 'gradient' ? 'Die Fill Start Color' : 'Die Fill Color'"
+										fallback-hex="#ffffff"
+										@update:model-value="updateDiceProp('backgroundColor1', $event)"
+									/>
 								</div>
 
-								<div v-if="diceConfig.backgroundType === 'gradient'" class="editor-row-between">
-									<label for="char-field-dice-bg2" class="editor-sub-label m-0">End Color</label>
-									<div class="editor-row-inline">
-										<input
-											type="color"
-											id="char-field-dice-bg2"
-											name="diceBgColor2"
-											:value="diceConfig.backgroundColor2 || '#f1f5f9'"
-											@input="updateDiceProp('backgroundColor2', targetValue($event))"
-											class="editor-color-swatch-input"
-										/>
-										<input
-											type="text"
-											id="char-field-dice-bg2-text"
-											name="diceBgColor2Text"
-											:value="diceConfig.backgroundColor2 || '#f1f5f9'"
-											@input="updateDiceProp('backgroundColor2', targetValue($event))"
-											class="editor-hex-input"
-										/>
-									</div>
+								<div v-if="diceConfig.backgroundType === 'gradient'">
+									<div class="editor-sub-label">End Color</div>
+									<ColorPicker
+										compact
+										:model-value="diceConfig.backgroundColor2 || '#f1f5f9'"
+										input-id="char-field-dice-bg2"
+										label="Die Fill End Color"
+										fallback-hex="#f1f5f9"
+										@update:model-value="updateDiceProp('backgroundColor2', $event)"
+									/>
 								</div>
 
 								<div v-if="diceConfig.backgroundType === 'gradient'" class="slider-row">
@@ -1465,53 +1482,29 @@ function updateCharacter(character: any) {
 
 						<!-- NUMERAL COLOR -->
 						<div class="editor-field">
-							<div class="editor-row-between">
-								<label for="char-field-dice-numeral-color" class="m-0">Numeral / Text Color</label>
-								<div class="editor-row-inline">
-									<input
-										type="color"
-										id="char-field-dice-numeral-color"
-										name="diceNumeralColor"
-										:value="diceConfig.numeralColor || '#000000'"
-										@input="updateDiceProp('numeralColor', targetValue($event))"
-										class="editor-color-swatch-input"
-									/>
-									<input
-										type="text"
-										id="char-field-dice-numeral-color-text"
-										name="diceNumeralColorText"
-										:value="diceConfig.numeralColor || '#000000'"
-										@input="updateDiceProp('numeralColor', targetValue($event))"
-										class="editor-hex-input"
-									/>
-								</div>
-							</div>
+							<div class="editor-label">Numeral Color</div>
+							<ColorPicker
+								compact
+								:model-value="diceConfig.numeralColor || '#000000'"
+								input-id="char-field-dice-numeral-color"
+								label="Die Numeral Color"
+								fallback-hex="#000000"
+								@update:model-value="updateDiceProp('numeralColor', $event)"
+							/>
 						</div>
 
 						<!-- BORDER COLOR & WIDTH -->
 						<div class="editor-field">
-							<div class="editor-row-between mb-sm">
-								<label for="char-field-dice-border-color" class="m-0">Border Color</label>
-								<div class="editor-row-inline">
-									<input
-										type="color"
-										id="char-field-dice-border-color"
-										name="diceBorderColor"
-										:value="diceConfig.borderColor || '#000000'"
-										@input="updateDiceProp('borderColor', targetValue($event))"
-										class="editor-color-swatch-input"
-									/>
-									<input
-										type="text"
-										id="char-field-dice-border-color-text"
-										name="diceBorderColorText"
-										:value="diceConfig.borderColor || '#000000'"
-										@input="updateDiceProp('borderColor', targetValue($event))"
-										class="editor-hex-input"
-									/>
-								</div>
-							</div>
-							<div class="slider-row">
+							<div class="editor-label">Border Color</div>
+							<ColorPicker
+								compact
+								:model-value="diceConfig.borderColor || '#000000'"
+								input-id="char-field-dice-border-color"
+								label="Die Border Color"
+								fallback-hex="#000000"
+								@update:model-value="updateDiceProp('borderColor', $event)"
+							/>
+							<div class="slider-row mt-sm">
 								<div class="slider-header">
 									<label for="char-field-dice-border-width">Border Width</label>
 									<span>{{ diceConfig.borderWidth || 1 }}px</span>
@@ -1529,10 +1522,43 @@ function updateCharacter(character: any) {
 							</div>
 						</div>
 
+						<!-- UNFILLED OUTLINE & NUMERAL -->
+						<div class="editor-field">
+							<div class="editor-label">Unfilled Outline</div>
+							<ColorPicker
+								compact
+								:model-value="
+									typeof diceConfig.unfilledBorder === 'string' && diceConfig.unfilledBorder
+										? diceConfig.unfilledBorder
+										: '#000000'
+								"
+								input-id="char-field-dice-unfilled-border"
+								label="Unfilled Die Outline"
+								fallback-hex="#000000"
+								@update:model-value="updateDiceProp('unfilledBorder', $event)"
+							/>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Unfilled Numeral</div>
+							<ColorPicker
+								compact
+								:model-value="
+									typeof diceConfig.unfilledNumeral === 'string' && diceConfig.unfilledNumeral
+										? diceConfig.unfilledNumeral
+										: '#000000'
+								"
+								input-id="char-field-dice-unfilled-numeral"
+								label="Unfilled Die Numeral"
+								fallback-hex="#000000"
+								@update:model-value="updateDiceProp('unfilledNumeral', $event)"
+							/>
+						</div>
+
 						<!-- RESET DICE BUTTON -->
 						<div class="editor-field mt-md">
 							<button type="button" class="editor-tab-btn editor-full-btn" @click.stop="resetDiceConfig">
-								<i class="fas fa-undo"></i> Reset to Default Dice Appearance
+								<i class="fas fa-undo"></i> Reset Dice
 							</button>
 						</div>
 					</template>

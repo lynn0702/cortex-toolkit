@@ -22,7 +22,7 @@ Whenever you modify one half of a paired corpus, schema, asset manifest, or comp
 3. **Icons, fonts, and cache-busted HTML**
    - `fa-*` icon classes used in `js/*.vue` / `js/*.ts` ↔ `scripts/generate-fa-subset.py` (`css/fontawesome.css` + `fonts/fa-*.woff2`).
    - Self-hosted fonts: `css/fonts.css` + `fonts/*.woff2` (managed via `scripts/fetch-fonts.mjs`).
-   - Built outputs: `js/app.min.js`, `js/templates.bundle.js`, `css/app.min.css`, and `?v=` query hashes stamped into `index.html` by `scripts/version-assets.js`. Never hand-edit compiled bundles.
+   - Built outputs: `js/app.min.js`, `js/templates.bundle.js`, and `css/app.min.css` are gitignored build outputs rebuilt locally and in CI; `scripts/version-assets.js` stamps the template chunk hash into `js/app.min.js` on build and stamps `?v=` query hashes into `_site/index.html` during CI staging (`--site _site`). Never hand-edit compiled bundles.
 
 4. **Vite module graph**
    - `js/app.js` is the Vite entry point. Components are `.vue` SFCs imported explicitly by their consumers (no global registration). Any new `.ts` or `.vue` file must be imported into the Vite module graph or Rollup/Vite will tree-shake it away silently.

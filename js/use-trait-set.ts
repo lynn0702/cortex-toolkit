@@ -1,6 +1,7 @@
 import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath, normalizeZoom } from './frame-geometry.ts';
+import { resolveFrameColorPresentation } from './color-palette.ts';
 import {
 	getView,
 	ensureView,
@@ -107,21 +108,28 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return buildFrameSvgPath(resolvedFrame.value);
 	});
 
-	const VALID_COLORS = ['primary', 'accent', 'muted', 'strong', 'black'];
+	const frameColorPresentation = computed(() => resolveFrameColorPresentation(resolvedFrame.value?.color));
 	const frameColorClass = computed(() => {
-		const raw = resolvedFrame.value?.color || 'primary';
-		if (VALID_COLORS.includes(raw)) {
-			return 'frame-color-' + raw;
+		const res = frameColorPresentation.value;
+		if (res.unknownToken) {
+			console.warn(`[frame] Unrecognized color token "${res.unknownToken}", falling back to "primary"`);
 		}
-		console.warn(`[frame] Unrecognized color token "${raw}", falling back to "primary"`);
-		return 'frame-color-primary';
+		return res.className;
 	});
 	const frameStrokeClass = frameColorClass;
+
+	const traitSetFrameStyle = computed(() => {
+		const c = frameColorPresentation.value.customColor;
+		return c ? { '--frame-color': c } : undefined;
+	});
 
 	const frameStrokeStyle = computed(() => {
 		const f = resolvedFrame.value;
 		if (!f) return undefined;
 		const style: Record<string, string> = {};
+		if (frameColorPresentation.value.customColor) {
+			style['--frame-color'] = frameColorPresentation.value.customColor;
+		}
 		if (f.stroke) {
 			style['--frame-stroke-width'] = f.stroke;
 		}
@@ -1706,6 +1714,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		frameColorClass,
 		frameStrokeClass,
 		frameStrokeStyle,
+		traitSetFrameStyle,
 		frameAnchors,
 		getTraitAnchorStyle,
 		getTraitAnchorDock,

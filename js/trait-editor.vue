@@ -24,6 +24,8 @@ import {
 import { buildParts } from './sheet-grid.ts';
 import TagEditor from './tag-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
+import ColorPicker from './color-picker.vue';
+import { getCharacterColorTokens } from './color-palette.ts';
 
 const props = defineProps<{
 	character: Character;
@@ -55,6 +57,7 @@ const confirmDelete = ref(false);
 const nameBeforeEdit = ref('');
 
 const traitSet = computed(() => props.character?.traitSets?.[props.traitSetID]);
+const badgeColorTokens = computed(() => getCharacterColorTokens(props.character, 'badge'));
 
 const resolvedPath = computed<number[]>(() => {
 	if (Array.isArray(props.traitPath) && props.traitPath.length > 0) {
@@ -2261,15 +2264,18 @@ function getDieDisplayValue(val: any) {
 									<option value="chamfer">Chamfer</option>
 								</select>
 							</div>
-							<div class="min-w-7rem">
-								<label class="editor-sub-label">Color</label>
-								<select :value="badgeValue('color') || 'black'" @change="setBadgeValue('color', targetValue($event))">
-									<option value="black">Black</option>
-									<option value="primary">Primary</option>
-									<option value="secondary">Secondary</option>
-									<option value="interactive">Interactive</option>
-									<option value="muted">Muted</option>
-								</select>
+							<div class="w-full">
+								<div class="editor-sub-label">Color</div>
+								<ColorPicker
+									compact
+									:allow-custom="false"
+									:show-swatches="false"
+									:model-value="badgeValue('color') || 'black'"
+									:input-id="'trait-' + traitSetID + '-' + traitID + '-badge-color'"
+									label="Badge Color"
+									:tokens="badgeColorTokens"
+									@update:model-value="setBadgeValue('color', $event)"
+								/>
 							</div>
 							<div class="flex-1 min-w-8rem">
 								<label class="editor-sub-label">Icon</label>

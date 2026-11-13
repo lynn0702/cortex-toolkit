@@ -886,6 +886,7 @@ function pressBox(index: number, event: PointerEvent) {
 			<TraitSetMini
 				v-if="editingSetIndex !== null && props.character?.traitSets?.[editingSetIndex]"
 				:initialSet="props.character.traitSets[editingSetIndex]"
+				:character="props.character"
 				@close="editingSetIndex = null"
 				@applyToSet="onApplyBlockMini"
 			/>

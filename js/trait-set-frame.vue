@@ -2,6 +2,7 @@
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { getView } from './model.ts';
 import { resolveFrame, buildBlockPath, buildRadialShapePath, type FrameConfig } from './frame-geometry.ts';
+import { resolveFrameColorPresentation } from './color-palette.ts';
 
 const props = withDefaults(
 	defineProps<{
@@ -108,20 +109,23 @@ const hasHeaderComputed = computed(() => {
 	return Boolean(props.traitSet?.name) && getView(props.traitSet)?.header !== 'none';
 });
 
-const VALID_COLORS = ['primary', 'accent', 'muted', 'strong', 'black'];
+const frameColorPresentation = computed(() => resolveFrameColorPresentation(resolvedFrame.value?.color));
+
 const frameColorClass = computed(() => {
-	const raw = resolvedFrame.value?.color || 'primary';
-	if (VALID_COLORS.includes(raw)) {
-		return 'frame-color-' + raw;
+	const res = frameColorPresentation.value;
+	if (res.unknownToken) {
+		console.warn(`[frame] Unrecognized color token "${res.unknownToken}", falling back to "primary"`);
 	}
-	console.warn(`[frame] Unrecognized color token "${raw}", falling back to "primary"`);
-	return 'frame-color-primary';
+	return res.className;
 });
 
 const frameStrokeStyle = computed(() => {
 	const f = resolvedFrame.value;
 	if (!f) return undefined;
 	const style: Record<string, string> = {};
+	if (frameColorPresentation.value.customColor) {
+		style['--frame-color'] = frameColorPresentation.value.customColor;
+	}
 	if (f.stroke) {
 		style['--frame-stroke-width'] = f.stroke;
 	}
