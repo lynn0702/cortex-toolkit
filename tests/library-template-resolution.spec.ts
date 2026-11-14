@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import axe from 'axe-core';
 import { characterCurioFunctions } from '../js/functions.ts';
 import { characterCurioStorage } from '../js/storage.ts';
 import AppFooter from '../js/app-footer.vue';
@@ -511,5 +512,64 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(getView(ch)?.listing).toBeUndefined();
 
 		wrapper.unmount();
+	});
+
+	it('renders empty Roster featured showcases, populated card fallbacks/badges, filter reset, and passes axe-core WCAG 2.2 AA', async () => {
+		const emptyWrapper = mount(Roster, {
+			attachTo: document.body,
+			props: { characters: [] },
+		});
+
+		expect(emptyWrapper.find('.roster-onboarding').exists()).toBe(true);
+		expect(emptyWrapper.findAll('article.roster-starter-card')).toHaveLength(2);
+		expect(emptyWrapper.findAll('article.library-card')).toHaveLength(0);
+
+		const starterCards = emptyWrapper.findAll('article.roster-starter-card');
+		expect(starterCards[0].text()).toContain('The Dreamer & the Architect');
+		expect(starterCards[1].text()).toContain('Vanguard Frame Showcase');
+
+		await starterCards[0].find('.roster-starter-btn.secondary').trigger('click');
+		expect((emptyWrapper.emitted('previewTemplate')?.[0]?.[0] as any)?.id).toBe('dreamer-architect');
+
+		await starterCards[1].find('.roster-starter-btn.primary').trigger('click');
+		expect((emptyWrapper.emitted('createFromLibrary')?.[0]?.[0] as any)?.id).toBe('vanguard-frame-showcase');
+
+		const emptyAxe = await axe.run(emptyWrapper.element);
+		expect(emptyAxe.violations).toHaveLength(0);
+		emptyWrapper.unmount();
+
+		const populatedWrapper = mount(Roster, {
+			attachTo: document.body,
+			props: {
+				openCharacterIDs: ['unnamed-1'],
+				characters: [
+					{
+						id: 'unnamed-1',
+						name: '',
+						game: 'Solar Drift',
+						description: 'Courier on the outer ring.',
+						tags: ['pilot'],
+						dateCreated: '2026-11-14T00:00:00Z',
+						dateModified: '2026-11-14T00:00:00Z',
+						dateTouched: '2026-11-14T00:00:00Z',
+					},
+				],
+			},
+		});
+
+		expect(populatedWrapper.find('.roster-item-name-btn').text()).toBe('Solar Drift');
+		expect(populatedWrapper.find('.roster-badge-active').exists()).toBe(true);
+
+		await populatedWrapper.find('.roster-button-play').trigger('click');
+		expect(populatedWrapper.emitted('playCharacter')?.[0]).toEqual(['unnamed-1']);
+
+		await populatedWrapper.find('#roster-search').setValue('nomatch');
+		expect(populatedWrapper.find('.roster-empty').exists()).toBe(true);
+		await populatedWrapper.find('.roster-empty-reset').trigger('click');
+		expect(populatedWrapper.findAll('.roster-item')).toHaveLength(1);
+
+		const populatedAxe = await axe.run(populatedWrapper.element);
+		expect(populatedAxe.violations).toHaveLength(0);
+		populatedWrapper.unmount();
 	});
 });

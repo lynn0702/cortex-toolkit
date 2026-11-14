@@ -72,6 +72,9 @@ const showLibrary = ref(false);
 const showTraitSetMini = ref(false);
 const librarySearch = ref('');
 const libraryCategory = ref<'all' | 'official' | 'reference' | 'saved'>('all');
+const isDragOver = ref(false);
+
+const starterShowcases = computed(() => [DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES]);
 
 const inputFile = ref<HTMLInputElement | null>(null);
 
@@ -435,21 +438,24 @@ function confirmDeleteAll() {
 	emit('deleteAllCharacters');
 }
 
+function resetRosterFilters() {
+	rosterSearch.value = '';
+	filterMode.value = 'all';
+}
+
 function importStart() {
 	inputFile.value?.click();
 }
 
-function importGetUploads(event: Event) {
-	const input = event.target as HTMLInputElement;
-
-	if (!input.files || !input.files.length) {
+function processImportFiles(files: FileList | null | undefined) {
+	if (!files || !files.length) {
 		return;
 	}
 
 	importError.value = '';
 
-	for (let i = 0; i < input.files.length; i++) {
-		const file = input.files[i];
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
 
 		if (file.size > 25 * 1024 * 1024) {
 			importError.value = '“' + file.name + '” is larger than 25 MB and was skipped.';
@@ -527,6 +533,31 @@ function importGetUploads(event: Event) {
 	}
 }
 
+function importGetUploads(event: Event) {
+	const input = event.target as HTMLInputElement;
+	processImportFiles(input.files);
+}
+
+function onRosterDragOver(event: DragEvent) {
+	if (!event.dataTransfer?.types?.includes('Files')) return;
+	event.preventDefault();
+	isDragOver.value = true;
+}
+
+function onRosterDragLeave(event: DragEvent) {
+	const current = event.currentTarget as HTMLElement | null;
+	const related = event.relatedTarget as Node | null;
+	if (current && related && current.contains(related)) return;
+	isDragOver.value = false;
+}
+
+function onRosterDrop(event: DragEvent) {
+	isDragOver.value = false;
+	if (!event.dataTransfer?.files?.length) return;
+	event.preventDefault();
+	processImportFiles(event.dataTransfer.files);
+}
+
 function importNextQueueItem() {
 	if (!importQueue.value.length || importBuffer.value !== null) return;
 
@@ -598,252 +629,360 @@ function getRelativeDateLabel(date1: any, date2: any) {
 </script>
 
 <template>
-	<section class="roster">
+	<section
+		class="roster"
+		:class="{ 'is-drag-over': isDragOver }"
+		@dragover="onRosterDragOver"
+		@dragleave="onRosterDragLeave"
+		@drop="onRosterDrop"
+	>
 		<div class="roster-inner">
 			<h1 class="sr-only">Character Roster</h1>
-			<!-- BUTTON: ADD/IMPORT CHARACTER -->
+			<!-- COMMAND BAR: CREATE / LIBRARY / UTILITIES -->
 			<div class="roster-button-container">
 				<div class="roster-button-container-inner">
-					<button type="button" class="roster-button" @click.stop="createCharacter">
-						<span><i class="fas fa-plus" aria-hidden="true"></i> New Sheet</span>
-					</button>
+					<div class="roster-primary-actions">
+						<button type="button" class="roster-button roster-button-library" @click.stop="openLibrary">
+							<span><i class="fas fa-layer-group" aria-hidden="true"></i> Library</span>
+						</button>
 
-					<label class="roster-template-picker">
-						<span class="picker-label">Template</span>
-						<select
-							id="roster-template-picker"
-							name="selectedTemplateId"
-							v-model="selectedTemplateId"
-							class="picker-select"
-							aria-label="Template"
-						>
-							<option value="">None</option>
-							<optgroup v-if="templateSheets.length" label="Saved Templates">
-								<option v-for="tmpl in templateSheets" :key="tmpl.id" :value="tmpl.id">
-									{{ tmpl.name || 'Unnamed Template' }}
-								</option>
-							</optgroup>
-							<optgroup label="Library Templates">
-								<option v-for="tmpl in libraryTemplates" :key="tmpl.id" :value="'library:' + tmpl.id">
-									{{ getTemplateTitle(tmpl) }}
-								</option>
-							</optgroup>
-						</select>
-					</label>
+						<button type="button" class="roster-button roster-button-new" @click.stop="createCharacter">
+							<span><i class="fas fa-plus" aria-hidden="true"></i> New Sheet</span>
+						</button>
 
-					<button type="button" class="roster-button roster-button-library" @click.stop="openLibrary">
-						<span><i class="fas fa-layer-group" aria-hidden="true"></i> Library</span>
-					</button>
-
-					<button type="button" class="roster-button roster-button-card-builder" @click.stop="showTraitSetMini = true">
-						<span><i class="fas fa-th-large" aria-hidden="true"></i> Card Builder</span>
-					</button>
-
-					<button type="button" class="roster-button roster-button-import" @click.stop="importStart">
-						<span><i class="fas fa-upload" aria-hidden="true"></i> Import</span>
-					</button>
-
-					<div class="roster-import-error" v-if="importError">{{ importError }}</div>
-
-					<button
-						type="button"
-						class="roster-button roster-button-export"
-						@click.stop="exportAll"
-						v-if="characters.length > 0"
-					>
-						<span><i class="fas fa-file-export" aria-hidden="true"></i> Export All</span>
-					</button>
-
-					<button
-						type="button"
-						class="roster-button roster-button-delete-all"
-						@click.stop="showDeleteAllConfirm = true"
-						v-if="characters.length > 0"
-					>
-						<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Delete All</span>
-					</button>
-				</div>
-			</div>
-
-			<!-- SEARCH -->
-			<search class="roster-search" v-if="characters.length > 0">
-				<div class="roster-search-input">
-					<i class="fas fa-search" aria-hidden="true"></i>
-					<input
-						type="text"
-						id="roster-search"
-						name="rosterSearch"
-						v-model="rosterSearch"
-						placeholder="Search"
-						aria-label="Search characters"
-					/>
-				</div>
-			</search>
-
-			<!-- FILTER TABS -->
-			<div class="roster-filter-tabs" v-if="characters.length > 0">
-				<button
-					type="button"
-					:class="{ active: filterMode === 'all' }"
-					:aria-pressed="filterMode === 'all'"
-					@click="filterMode = 'all'"
-				>
-					All <span class="tab-count">({{ allCount }})</span>
-				</button>
-				<button
-					type="button"
-					:class="{ active: filterMode === 'characters' }"
-					:aria-pressed="filterMode === 'characters'"
-					@click="filterMode = 'characters'"
-				>
-					Characters <span class="tab-count">({{ characterCount }})</span>
-				</button>
-				<button
-					type="button"
-					:class="{ active: filterMode === 'templates' }"
-					:aria-pressed="filterMode === 'templates'"
-					@click="filterMode = 'templates'"
-				>
-					Templates <span class="tab-count">({{ templateCount }})</span>
-				</button>
-			</div>
-
-			<div class="roster-empty" v-if="charactersFiltered.length === 0">No sheets found.</div>
-
-			<!-- CHARACTER LIST -->
-			<ul class="roster-list">
-				<transition-group appear>
-					<li class="roster-item" v-for="character in charactersFiltered" :key="character.id">
-						<div>
-							<button
-								type="button"
-								:class="'roster-item-portrait alignment-' + (getView(character.portrait)?.alignment || 'center')"
-								:aria-label="'Open ' + (character.name || 'Unnamed')"
-								@click.stop="loadCharacter(character.id)"
+						<label class="roster-template-picker">
+							<span class="picker-label">Template</span>
+							<select
+								id="roster-template-picker"
+								name="selectedTemplateId"
+								v-model="selectedTemplateId"
+								class="picker-select"
+								aria-label="Template"
 							>
-								<img
-									v-if="character.portrait?.url?.length"
-									:src="safeImageUrl(character.portrait.url)"
-									alt=""
-									width="160"
-									height="160"
-									loading="lazy"
-									decoding="async"
-								/>
-								<span class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length">
-									<i class="fas fa-user" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
+								<option value="">None</option>
+								<optgroup v-if="templateSheets.length" label="Saved Templates">
+									<option v-for="tmpl in templateSheets" :key="tmpl.id" :value="tmpl.id">
+										{{ tmpl.name || 'Unnamed Template' }}
+									</option>
+								</optgroup>
+								<optgroup label="Library Templates">
+									<option v-for="tmpl in libraryTemplates" :key="tmpl.id" :value="'library:' + tmpl.id">
+										{{ getTemplateTitle(tmpl) }}
+									</option>
+								</optgroup>
+							</select>
+						</label>
+					</div>
 
-						<div>
-							<div class="roster-item-title-row">
-								<h2 class="roster-item-name">
-									<button
-										type="button"
-										class="roster-item-name-btn"
-										@click.stop="loadCharacter(character.id)"
-										v-text="character.name"
-									></button>
-								</h2>
-								<span class="roster-badge-template" v-if="character.isTemplate"
-									><i class="fas fa-bookmark" aria-hidden="true"></i> Template</span
-								>
+					<div class="roster-utility-actions">
+						<button type="button" class="roster-button roster-button-import" @click.stop="importStart">
+							<span><i class="fas fa-upload" aria-hidden="true"></i> Import</span>
+						</button>
+
+						<button
+							type="button"
+							class="roster-button roster-button-card-builder"
+							@click.stop="showTraitSetMini = true"
+						>
+							<span><i class="fas fa-th-large" aria-hidden="true"></i> Card Builder</span>
+						</button>
+
+						<button
+							type="button"
+							class="roster-button roster-button-export"
+							@click.stop="exportAll"
+							v-if="characters.length > 0"
+						>
+							<span><i class="fas fa-file-export" aria-hidden="true"></i> Export All</span>
+						</button>
+
+						<button
+							type="button"
+							class="roster-button roster-button-delete-all"
+							@click.stop="showDeleteAllConfirm = true"
+							v-if="characters.length > 0"
+						>
+							<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Delete All</span>
+						</button>
+					</div>
+
+					<div class="roster-import-error" role="alert" v-if="importError">{{ importError }}</div>
+				</div>
+			</div>
+
+			<!-- SEARCH & FILTER CONTROLS -->
+			<div class="roster-controls-bar" v-if="characters.length > 0">
+				<search class="roster-search">
+					<div class="roster-search-input">
+						<i class="fas fa-search" aria-hidden="true"></i>
+						<input
+							type="text"
+							id="roster-search"
+							name="rosterSearch"
+							v-model="rosterSearch"
+							placeholder="Search"
+							aria-label="Search characters"
+							autocorrect="off"
+							autocapitalize="none"
+							spellcheck="false"
+						/>
+						<button
+							v-if="rosterSearch"
+							type="button"
+							class="roster-search-clear"
+							aria-label="Clear search"
+							@click="rosterSearch = ''"
+						>
+							<i class="fas fa-times" aria-hidden="true"></i>
+						</button>
+					</div>
+				</search>
+
+				<div class="roster-filter-tabs" role="group" aria-label="Filter sheets">
+					<button
+						type="button"
+						:class="{ active: filterMode === 'all' }"
+						:aria-pressed="filterMode === 'all'"
+						@click="filterMode = 'all'"
+					>
+						All <span class="tab-count">({{ allCount }})</span>
+					</button>
+					<button
+						type="button"
+						:class="{ active: filterMode === 'characters' }"
+						:aria-pressed="filterMode === 'characters'"
+						@click="filterMode = 'characters'"
+					>
+						Characters <span class="tab-count">({{ characterCount }})</span>
+					</button>
+					<button
+						type="button"
+						:class="{ active: filterMode === 'templates' }"
+						:aria-pressed="filterMode === 'templates'"
+						@click="filterMode = 'templates'"
+					>
+						Templates <span class="tab-count">({{ templateCount }})</span>
+					</button>
+				</div>
+			</div>
+
+			<!-- EMPTY ROSTER ONBOARDING & STARTER SHOWCASES -->
+			<section class="roster-onboarding" aria-label="Featured templates" v-if="characters.length === 0">
+				<div class="roster-onboarding-header">
+					<div>
+						<h2 class="roster-onboarding-title">Featured Templates</h2>
+						<p class="roster-onboarding-sub">No saved sheets yet. Pick a template, start blank, or import JSON.</p>
+					</div>
+					<button type="button" class="roster-onboarding-browse" @click="openLibrary">
+						<span>All ({{ libraryTemplates.length }})</span>
+						<i class="fas fa-arrow-right" aria-hidden="true"></i>
+					</button>
+				</div>
+
+				<div class="roster-starter-grid">
+					<article class="roster-starter-card" v-for="tmpl in starterShowcases" :key="String(tmpl.id)">
+						<div class="roster-starter-top">
+							<img
+								v-if="cardHeroImage(tmpl)"
+								class="roster-starter-thumb"
+								:src="safeImageUrl(cardHeroImage(tmpl))"
+								alt=""
+								width="64"
+								height="64"
+								loading="lazy"
+								decoding="async"
+							/>
+							<div v-else class="roster-starter-schematic" aria-hidden="true">
+								<span
+									v-for="(kind, idx) in cardSchematicBlocks(tmpl).slice(0, 4)"
+									:key="idx"
+									class="starter-schematic-block"
+									:class="'is-' + kind"
+								></span>
 							</div>
 
-							<div class="roster-description" v-text="character.description"></div>
-
-							<div class="roster-tags" v-if="Array.isArray(character.tags) && character.tags.length > 0">
-								<button
-									type="button"
-									class="roster-tag-chip"
-									v-for="(tag, tIdx) in character.tags"
-									:key="character.id + '-tag-' + tIdx"
-									@click.stop="rosterSearch = tag"
-									:title="'Filter by tag ' + tag"
-								>
-									<i class="fas fa-tag" aria-hidden="true"></i>
-									<span>{{ tag }}</span>
-								</button>
-							</div>
-
-							<div class="roster-date">
-								<span class="roster-date-label">Last modified: </span>
-								<span v-html="renderDate(character.dateModified)"></span>
-							</div>
-
-							<div class="roster-item-button-container">
-								<div class="roster-item-button-container-inner">
-									<!-- USE TEMPLATE (IF TEMPLATE) -->
-									<button
-										type="button"
-										class="roster-item-button roster-button-use-template"
-										v-if="character.isTemplate"
-										@click.stop="createFromTemplate(character.id)"
-										title="Create a new character from this template"
-									>
-										<span><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Use</span>
-									</button>
-
-									<!-- PLAY (IF CHARACTER) -->
-									<button
-										type="button"
-										class="roster-item-button roster-button-play"
-										v-if="!character.isTemplate"
-										@click.stop="playCharacter(character.id)"
-									>
-										<span><i class="fas fa-dice" aria-hidden="true"></i> Play</span>
-									</button>
-
-									<!-- LOAD -->
-									<button type="button" class="roster-item-button" @click.stop="loadCharacter(character.id)">
-										<span><i class="fas fa-eye" aria-hidden="true"></i> Open</span>
-									</button>
-
-									<!-- DUPLICATE -->
-									<button
-										type="button"
-										class="roster-item-button roster-button-duplicate"
-										@click.stop="duplicateCharacter(character.id)"
-									>
-										<span><i class="fas fa-copy" aria-hidden="true"></i> Duplicate</span>
-									</button>
-
-									<!-- TOGGLE TEMPLATE -->
-									<button
-										type="button"
-										class="roster-item-button roster-button-toggle-template"
-										@click.stop="toggleTemplate(character.id)"
-										:title="character.isTemplate ? 'Convert to regular character' : 'Save as template'"
-									>
-										<span
-											><i :class="character.isTemplate ? 'fas fa-bookmark' : 'far fa-bookmark'" aria-hidden="true"></i>
-											{{ character.isTemplate ? 'Template' : 'Set Template' }}</span
-										>
-									</button>
-
-									<!-- EXPORT -->
-									<button
-										type="button"
-										class="roster-item-button roster-button-export"
-										@click.stop="exportCharacter(character.id)"
-									>
-										<span><i class="fas fa-download" aria-hidden="true"></i> Export</span>
-									</button>
-
-									<!-- DELETE -->
-									<button
-										type="button"
-										class="roster-item-button roster-button-delete"
-										@click.stop="promptDeleteCharacter(character)"
-									>
-										<span><i class="fas fa-trash" aria-hidden="true"></i> Delete</span>
-									</button>
+							<div class="roster-starter-meta">
+								<span class="roster-starter-genre" v-if="getTemplateGenre(tmpl)">{{ getTemplateGenre(tmpl) }}</span>
+								<h3 class="roster-starter-title">{{ getTemplateTitle(tmpl) }}</h3>
+								<div class="roster-starter-subtitle" v-if="getTemplateSubtitle(tmpl)">
+									{{ getTemplateSubtitle(tmpl) }}
 								</div>
 							</div>
 						</div>
-					</li>
-				</transition-group>
+
+						<p class="roster-starter-desc" v-if="cardDescription(tmpl)">{{ cardDescription(tmpl) }}</p>
+
+						<footer class="roster-starter-actions">
+							<button
+								type="button"
+								class="roster-starter-btn secondary"
+								v-if="tmpl.character"
+								@click="emit('previewTemplate', tmpl)"
+							>
+								<i class="fas fa-eye" aria-hidden="true"></i> Preview
+							</button>
+							<button type="button" class="roster-starter-btn primary" @click="useLibrary(tmpl, false, false)">
+								<i class="fas fa-plus" aria-hidden="true"></i> Use
+							</button>
+						</footer>
+					</article>
+				</div>
+			</section>
+
+			<!-- FILTERED EMPTY STATE -->
+			<div class="roster-empty" v-else-if="charactersFiltered.length === 0">
+				<p>No matching sheets.</p>
+				<button type="button" class="roster-empty-reset" @click="resetRosterFilters">Reset</button>
+			</div>
+
+			<!-- CHARACTER LIST -->
+			<ul class="roster-list" v-if="charactersFiltered.length > 0">
+				<li class="roster-item" v-for="character in charactersFiltered" :key="character.id">
+					<div class="roster-item-media">
+						<button
+							type="button"
+							:class="'roster-item-portrait alignment-' + (getView(character.portrait)?.alignment || 'center')"
+							:aria-label="'Open ' + (character.name || character.game || 'Unnamed')"
+							@click.stop="loadCharacter(character.id)"
+						>
+							<img
+								v-if="character.portrait?.url?.length"
+								:src="safeImageUrl(character.portrait.url)"
+								alt=""
+								width="160"
+								height="160"
+								loading="lazy"
+								decoding="async"
+							/>
+							<span class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length">
+								<i class="fas fa-user" aria-hidden="true"></i>
+							</span>
+						</button>
+					</div>
+
+					<div class="roster-item-header">
+						<div class="roster-item-title-row">
+							<h2 class="roster-item-name">
+								<button
+									type="button"
+									class="roster-item-name-btn"
+									:class="{ 'is-unnamed': !character.name }"
+									@click.stop="loadCharacter(character.id)"
+									v-text="character.name || character.game || 'Unnamed'"
+								></button>
+							</h2>
+							<span class="roster-badge-template" v-if="character.isTemplate"
+								><i class="fas fa-bookmark" aria-hidden="true"></i> Template</span
+							>
+							<span class="roster-badge-active" v-if="openCharacterIDs.includes(character.id)">Active</span>
+						</div>
+
+						<div
+							class="roster-item-game"
+							v-if="character.game && character.name && character.game !== character.name"
+							v-text="character.game"
+						></div>
+
+						<div class="roster-date">
+							<span class="roster-date-label">Updated </span>
+							<span v-html="renderDate(character.dateModified)"></span>
+						</div>
+					</div>
+
+					<div class="roster-item-body">
+						<div class="roster-description" v-if="character.description" v-text="character.description"></div>
+
+						<div class="roster-tags" v-if="Array.isArray(character.tags) && character.tags.length > 0">
+							<button
+								type="button"
+								class="roster-tag-chip"
+								v-for="(tag, tIdx) in character.tags"
+								:key="character.id + '-tag-' + tIdx"
+								@click.stop="rosterSearch = tag"
+								:title="'Filter by tag ' + tag"
+							>
+								<i class="fas fa-tag" aria-hidden="true"></i>
+								<span>{{ tag }}</span>
+							</button>
+						</div>
+
+						<div class="roster-item-button-container">
+							<div class="roster-item-actions-primary">
+								<!-- USE TEMPLATE (IF TEMPLATE) -->
+								<button
+									type="button"
+									class="roster-item-button roster-button-use-template"
+									v-if="character.isTemplate"
+									@click.stop="createFromTemplate(character.id)"
+									title="Create a new character from this template"
+								>
+									<span><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Use</span>
+								</button>
+
+								<!-- PLAY (IF CHARACTER) -->
+								<button
+									type="button"
+									class="roster-item-button roster-button-play"
+									v-if="!character.isTemplate"
+									@click.stop="playCharacter(character.id)"
+								>
+									<span><i class="fas fa-dice" aria-hidden="true"></i> Play</span>
+								</button>
+
+								<!-- LOAD / OPEN -->
+								<button
+									type="button"
+									class="roster-item-button roster-button-open"
+									@click.stop="loadCharacter(character.id)"
+								>
+									<span><i class="fas fa-eye" aria-hidden="true"></i> Open</span>
+								</button>
+							</div>
+
+							<div class="roster-item-actions-utility">
+								<!-- DUPLICATE -->
+								<button
+									type="button"
+									class="roster-item-button is-utility roster-button-duplicate"
+									@click.stop="duplicateCharacter(character.id)"
+								>
+									<span><i class="fas fa-copy" aria-hidden="true"></i> Duplicate</span>
+								</button>
+
+								<!-- TOGGLE TEMPLATE -->
+								<button
+									type="button"
+									class="roster-item-button is-utility roster-button-toggle-template"
+									@click.stop="toggleTemplate(character.id)"
+									:title="character.isTemplate ? 'Convert to regular character' : 'Save as template'"
+								>
+									<span
+										><i :class="character.isTemplate ? 'fas fa-bookmark' : 'far fa-bookmark'" aria-hidden="true"></i>
+										{{ character.isTemplate ? 'Template' : 'Set Template' }}</span
+									>
+								</button>
+
+								<!-- EXPORT -->
+								<button
+									type="button"
+									class="roster-item-button is-utility roster-button-export"
+									@click.stop="exportCharacter(character.id)"
+								>
+									<span><i class="fas fa-download" aria-hidden="true"></i> Export</span>
+								</button>
+
+								<!-- DELETE -->
+								<button
+									type="button"
+									class="roster-item-button is-utility roster-button-delete"
+									@click.stop="promptDeleteCharacter(character)"
+								>
+									<span><i class="fas fa-trash" aria-hidden="true"></i> Delete</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</li>
 			</ul>
 
 			<!-- FILE INPUT -->

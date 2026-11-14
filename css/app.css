@@ -229,8 +229,7 @@ textarea:focus-visible {
 .button-container,
 .preview-button-container,
 .editor-button-container,
-.modal-button-container,
-.roster-button-container {
+.modal-button-container {
 	--button-font-size: 0.75rem;
 	--button-container-height: 2.4em;
 	font-size: var(--button-font-size);
@@ -271,8 +270,7 @@ textarea:focus-visible {
 .button,
 .preview-button,
 .editor-button,
-.modal-button,
-.roster-button {
+.modal-button {
 	display: flex;
 	justify-content: center;
 	align-items: center;

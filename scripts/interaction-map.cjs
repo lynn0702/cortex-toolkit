@@ -1052,6 +1052,36 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 		await measureJourney('J08', 'Print -> Roster -> Library -> Preview Template', 3, async (act) => {
 			await act.click('.header button[aria-label="Roster"]', 'Navigate to Roster');
 			await page.waitForSelector('section.roster', { timeout: 5000 });
+			const rosterGeom = await page.evaluate((mobile) => {
+				const box = document.querySelector('.roster-button-container');
+				const lib = document.querySelector('.roster-button-library');
+				const create = document.querySelector('.roster-button-new');
+				const picker = document.querySelector('.roster-template-picker');
+				const imp = document.querySelector('.roster-button-import');
+				if (!box || !lib || !create || !picker || !imp) return { ok: false, reason: 'missing roster controls' };
+				const bRect = box.getBoundingClientRect();
+				for (const [name, el] of [
+					['library', lib],
+					['new', create],
+					['picker', picker],
+					['import', imp],
+				]) {
+					const r = el.getBoundingClientRect();
+					if (r.width < 40 || r.height < (mobile ? 43 : 36)) {
+						return { ok: false, reason: `${name} undersized (${r.width}x${r.height})` };
+					}
+					if (r.bottom > bRect.bottom + 2 || r.top < bRect.top - 2) {
+						return { ok: false, reason: `${name} clipped outside container` };
+					}
+				}
+				if (box.scrollHeight > box.clientHeight + 2) {
+					return { ok: false, reason: `container clipped (${box.scrollHeight} > ${box.clientHeight})` };
+				}
+				return { ok: true, reason: '' };
+			}, isMobile);
+			if (!rosterGeom.ok) {
+				throw new Error(`[${tag}] Roster toolbar geometry check failed: ${rosterGeom.reason}`);
+			}
 			await act.click('.roster-button-library', 'Open Template Library');
 			await page.waitForSelector('dialog.modal-library .library-card', { timeout: 10000 });
 			await act.click('dialog.modal-library .library-card .btn-library.secondary', 'Preview first library template');
