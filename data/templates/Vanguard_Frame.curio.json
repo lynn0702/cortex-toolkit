@@ -103,7 +103,8 @@
 							12
 						]
 					}
-				}
+				},
+				"fixedNames": true
 			},
 			"traits": [
 				{
@@ -335,22 +336,19 @@
 					},
 					"traits": [
 						{
-							"name": "SFX",
-							"traits": [
-								{
-									"name": "Hinder",
-									"rating": {
-										"type": "Die",
-										"value": [
-											4
-										],
-										"range": [
-											4
-										]
-									},
-									"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-								}
-							]
+							"name": "Hinder",
+							"rating": {
+								"type": "Die",
+								"value": [
+									4
+								],
+								"range": [
+									4
+								]
+							},
+							"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+							"noun": "SFX",
+							"ppDelta": 1
 						}
 					]
 				},
@@ -368,22 +366,19 @@
 					},
 					"traits": [
 						{
-							"name": "SFX",
-							"traits": [
-								{
-									"name": "Hinder",
-									"rating": {
-										"type": "Die",
-										"value": [
-											4
-										],
-										"range": [
-											4
-										]
-									},
-									"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-								}
-							]
+							"name": "Hinder",
+							"rating": {
+								"type": "Die",
+								"value": [
+									4
+								],
+								"range": [
+									4
+								]
+							},
+							"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+							"noun": "SFX",
+							"ppDelta": 1
 						}
 					]
 				},
@@ -401,22 +396,19 @@
 					},
 					"traits": [
 						{
-							"name": "SFX",
-							"traits": [
-								{
-									"name": "Hinder",
-									"rating": {
-										"type": "Die",
-										"value": [
-											4
-										],
-										"range": [
-											4
-										]
-									},
-									"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-								}
-							]
+							"name": "Hinder",
+							"rating": {
+								"type": "Die",
+								"value": [
+									4
+								],
+								"range": [
+									4
+								]
+							},
+							"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+							"noun": "SFX",
+							"ppDelta": 1
 						}
 					]
 				}
@@ -462,7 +454,8 @@
 							12
 						]
 					}
-				}
+				},
+				"fixedNames": true
 			},
 			"traits": [
 				{
@@ -600,7 +593,8 @@
 						"width": "100%",
 						"height": 1
 					}
-				}
+				},
+				"fixedNames": true
 			},
 			"traits": [
 				{
@@ -626,7 +620,8 @@
 								"value": [
 									false
 								]
-							}
+							},
+							"noun": "Statement"
 						}
 					]
 				},
@@ -653,7 +648,8 @@
 								"value": [
 									true
 								]
-							}
+							},
+							"noun": "Statement"
 						}
 					]
 				},
@@ -680,7 +676,8 @@
 								"value": [
 									false
 								]
-							}
+							},
+							"noun": "Statement"
 						}
 					]
 				},
@@ -707,7 +704,8 @@
 								"value": [
 									false
 								]
-							}
+							},
+							"noun": "Statement"
 						}
 					]
 				}

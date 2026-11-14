@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, toRaw, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
-import { ensureView, getView, ratingDice, resolveRating, resolveSubtraitNoun } from './model.ts';
+import {
+	ensureView,
+	getView,
+	isRingBadgeTrait,
+	keepsExtraDice,
+	ratingDice,
+	resolveRating,
+	resolveSubtraitNoun,
+} from './model.ts';
 import TraitEditor from './trait-editor.vue';
 import TraitSetEditor from './trait-set-editor.vue';
 import NameEditor from './name-editor.vue';
@@ -160,8 +168,7 @@ const scaleRingSetIndex = computed<number>(() => {
 	if (!Array.isArray(sets)) return -1;
 	return sets.findIndex(
 		(s: any) =>
-			Number(getView(s)?.scaleDie) > 0 ||
-			(Array.isArray(s?.traits) && s.traits.some((t: any) => t?.name?.trim().toLowerCase() === 'scale')),
+			Number(getView(s)?.scaleDie) > 0 || (Array.isArray(s?.traits) && s.traits.some((t: any) => isRingBadgeTrait(t))),
 	);
 });
 
@@ -169,11 +176,19 @@ const scaleRingSet = computed(() =>
 	scaleRingSetIndex.value >= 0 ? (props.character?.traitSets?.[scaleRingSetIndex.value] ?? null) : null,
 );
 
+const ringBadgeTrait = computed(() => {
+	const setNode = scaleRingSet.value;
+	return Array.isArray(setNode?.traits) ? (setNode.traits.find((t: any) => isRingBadgeTrait(t)) ?? null) : null;
+});
+
+const ringBadgeLabel = computed(() => {
+	const st = ringBadgeTrait.value;
+	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Scale';
+});
+
 const scaleDieValue = computed<number>(() => {
 	const setNode = scaleRingSet.value;
-	const st = Array.isArray(setNode?.traits)
-		? setNode.traits.find((t: any) => t?.name?.trim().toLowerCase() === 'scale')
-		: null;
+	const st = ringBadgeTrait.value;
 	if (st) return ratingDice(resolveRating(st, [setNode]))[0] || 8;
 	if (getView(setNode)?.scaleDie) return Number(getView(setNode)?.scaleDie);
 	if (getView(props.character)?.scale) return Number(getView(props.character)?.scale);
@@ -187,13 +202,13 @@ function setScaleDieValue(val: number): void {
 	if (ringSetNode) {
 		ensureView(ringSetNode).scaleDie = num;
 		const traitsList = Array.isArray(ringSetNode.traits) ? ringSetNode.traits : [];
-		const stIndex = traitsList.findIndex((t: any) => t?.name?.trim().toLowerCase() === 'scale');
+		const stIndex = traitsList.findIndex((t: any) => isRingBadgeTrait(t));
 		if (num === 0) {
 			if (stIndex !== -1) traitsList.splice(stIndex, 1);
 		} else if (stIndex !== -1) {
 			const st = traitsList[stIndex] as Record<string, any>;
 			st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
-			st.keepsExtra = 1;
+			if (!keepsExtraDice(st)) st.keepsExtra = 1;
 		}
 	}
 	ensureView(props.character).scale = num;
@@ -333,7 +348,7 @@ const crumbs = computed<Crumb[]>(() => {
 				selector: canNavigate.value ? ['traitSet', scaleRingSetIndex.value] : null,
 			});
 		}
-		list.push({ label: 'Scale Die', selector: null });
+		list.push({ label: `${ringBadgeLabel.value} Die`, selector: null });
 	}
 	return list;
 });
@@ -528,25 +543,25 @@ defineExpose({
 						<p>Tap any trait on the sheet to inspect or adjust its rating.</p>
 					</div>
 
-					<!-- SCALE DIE EDITOR -->
+					<!-- RING BADGE DIE EDITOR -->
 					<aside v-else-if="editingType === 'scaleDie'" class="editor open" @click.stop>
 						<div class="editor-controls">
 							<button
 								type="button"
 								class="editor-delete"
 								@click.stop="setScaleDieValue(0)"
-								title="Remove Scale Die"
-								aria-label="Remove Scale Die"
+								:title="`Remove ${ringBadgeLabel} Die`"
+								:aria-label="`Remove ${ringBadgeLabel} Die`"
 							>
 								<i class="fas fa-trash" aria-hidden="true"></i>
-								<span class="editor-control-label">Remove Scale</span>
+								<span class="editor-control-label">Remove {{ ringBadgeLabel }}</span>
 							</button>
 						</div>
 						<div class="editor-inner">
 							<div>
 								<div class="editor-fields">
 									<div class="editor-field">
-										<span class="editor-label">Scale Die Rating</span>
+										<span class="editor-label">{{ ringBadgeLabel }} Die Rating</span>
 										<div class="rating-scale-chips">
 											<button
 												v-for="s in [4, 6, 8, 10, 12]"
@@ -555,8 +570,8 @@ defineExpose({
 												class="rating-scale-chip"
 												:class="{ active: scaleDieValue === s }"
 												:aria-pressed="scaleDieValue === s"
-												:aria-label="'Scale d' + s"
-												:title="'Scale d' + s"
+												:aria-label="`${ringBadgeLabel} d${s}`"
+												:title="`${ringBadgeLabel} d${s}`"
 												@click.stop="setScaleDieValue(s)"
 											>
 												<span v-html="getDieDisplayValue(s, scaleDieValue === s)"></span>

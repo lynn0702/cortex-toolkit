@@ -426,6 +426,10 @@
 	outline: none;
 }
 
+:is(.shorthand-preview, .presearch-dice, .roller-adhoc-btn, .pool-die, .contest-side-effect, .pill-die) .diecon {
+	color: inherit;
+}
+
 .shorthand-preview {
 	display: inline-flex;
 	align-items: center;

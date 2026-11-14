@@ -144,7 +144,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Attribute",
 				"plural": "Attributes",
@@ -175,7 +176,13 @@
 						"width": "72%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					},
+					"notes": "Gain a PP when you trade out your distinction's d8 rating for a d4."
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -225,7 +232,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",

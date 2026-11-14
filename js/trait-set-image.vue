@@ -1,81 +1,33 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getView, ensureView, isNameSet, resolveVisibility } from './model.ts';
-import { characterCurioFunctions } from './functions.ts';
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
-const {
-	traitSet,
-	character,
-	s,
-	submode,
-	selectElement,
-	updateCharacter,
-	getImageSetContainerStyle,
-	getImageSetGraphicStyle,
-} = injectTraitSet();
+const { traitSet, s, submode, selectElement, getImageSetContainerStyle, getImageSetGraphicStyle } = injectTraitSet();
 
-const isName = computed(() => isNameSet(traitSet.value));
+const effectiveUrl = computed(() => getView(traitSet.value)?.imageConfig?.url || '');
 
-const effectiveUrl = computed(() => {
-	const cfgUrl = getView(traitSet.value)?.imageConfig?.url;
-	if (cfgUrl) return cfgUrl;
-	if (isName.value) return character.value?.portrait?.url || '';
-	return '';
+const effectiveAlignment = computed(() => getView(traitSet.value)?.imageConfig?.alignment || 'center');
+
+const alignmentClass = computed(() => {
+	const a = effectiveAlignment.value;
+	return typeof a === 'string' && /^(top|center|bottom)(-(left|center|right))?$/.test(a)
+		? `portrait-alignment-${a}`
+		: undefined;
 });
 
-const effectiveAlignment = computed(() => {
-	return (
-		getView(traitSet.value)?.imageConfig?.alignment ||
-		(isName.value ? getView(character.value?.portrait)?.alignment : undefined) ||
-		'center'
-	);
-});
+const effectiveCaption = computed(() => getView(traitSet.value)?.imageConfig?.caption ?? '');
 
-const effectiveCaption = computed(() => {
-	const cfgCap = getView(traitSet.value)?.imageConfig?.caption;
-	if (cfgCap !== undefined) return cfgCap;
-	if (isName.value) {
-		const t = characterCurioFunctions.getNameTrait(character.value, 'caption');
-		return typeof t?.label === 'string' ? t.label : '';
-	}
-	return '';
-});
-
-const isCaptionShown = computed(() => {
-	if (!effectiveCaption.value) return false;
-	if (!isName.value) return true;
-	const t = characterCurioFunctions.getNameTrait(character.value, 'caption');
-	if (!t) return true;
-	const vis = resolveVisibility(t);
-	if (vis === 'hidden') return false;
-	if (vis === 'play-only') return submode.value !== 'print';
-	if (vis === 'editor-only') return submode.value === 'edit';
-	return true;
-});
-
-function clearImage() {
-	const v = ensureView(traitSet.value);
-	if (v.imageConfig) {
-		v.imageConfig.url = '';
-	}
-	if (isName.value && character.value) {
-		if (!character.value.portrait) character.value.portrait = {};
-		character.value.portrait.url = '';
-	}
-	if (character.value) {
-		updateCharacter(character.value);
-	}
-}
+const isCaptionShown = computed(() => Boolean(effectiveCaption.value));
 </script>
 
 <template>
 	<div
 		class="trait-image-body"
-		v-if="getView(traitSet)?.style?.body === 'image' || isName"
-		:role="submode === 'edit' && !(isName && effectiveUrl) ? 'button' : undefined"
-		:tabindex="submode === 'edit' && !(isName && effectiveUrl) ? 0 : undefined"
-		:aria-label="submode === 'edit' && !(isName && effectiveUrl) ? 'Edit image settings' : undefined"
+		v-if="getView(traitSet)?.style?.body === 'image'"
+		:role="submode === 'edit' ? 'button' : undefined"
+		:tabindex="submode === 'edit' ? 0 : undefined"
+		:aria-label="submode === 'edit' ? 'Edit image settings' : undefined"
 		@click.stop="selectElement(['traitSet', s])"
 		@keydown.enter.self.prevent="submode === 'edit' && selectElement(['traitSet', s])"
 		@keydown.space.self.prevent="submode === 'edit' && selectElement(['traitSet', s])"
@@ -83,35 +35,20 @@ function clearImage() {
 	>
 		<div
 			class="image-set-container"
-			:class="{ 'sheet-header-portrait-box': isName, 'has-image': Boolean(effectiveUrl) }"
+			:class="{ 'has-image': Boolean(effectiveUrl) }"
 			:style="getImageSetContainerStyle(traitSet)"
 		>
 			<div
 				v-if="effectiveUrl"
 				class="image-set-graphic"
-				:class="'portrait-alignment-' + effectiveAlignment"
+				:class="alignmentClass"
 				:style="getImageSetGraphicStyle(traitSet)"
-				:role="submode === 'edit' && isName ? 'button' : undefined"
-				:tabindex="submode === 'edit' && isName ? 0 : undefined"
-				:aria-label="submode === 'edit' && isName ? 'Edit image settings' : undefined"
-				@keydown.enter.stop.prevent="submode === 'edit' && isName && selectElement(['traitSet', s])"
-				@keydown.space.stop.prevent="submode === 'edit' && isName && selectElement(['traitSet', s])"
 			></div>
-			<div v-else-if="!isName" class="image-set-placeholder">
+			<div v-else class="image-set-placeholder">
 				<i class="fas fa-image" aria-hidden="true"></i>
 				<span>Click to add illustration or image</span>
 			</div>
-			<button
-				v-if="isName && effectiveUrl && submode === 'edit'"
-				type="button"
-				class="btn-remove-header-portrait"
-				@click.stop="clearImage"
-				title="Remove image"
-				aria-label="Remove image"
-			>
-				<i class="fas fa-trash-alt" aria-hidden="true"></i>
-			</button>
-			<div class="image-set-caption" :class="{ 'sheet-portrait-caption': isName }" v-if="isCaptionShown">
+			<div class="image-set-caption" v-if="isCaptionShown">
 				{{ effectiveCaption }}
 			</div>
 		</div>

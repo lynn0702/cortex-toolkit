@@ -30,6 +30,10 @@ import {
 	rangeTop,
 	isOutDie,
 	isNameSet,
+	resolveAltRoll,
+	resolvePpDelta,
+	resolveSubtraitNoun,
+	type AltRollOption,
 } from './model.ts';
 import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './sheet-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
@@ -191,32 +195,19 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return undefined;
 	}
 
-	const effectiveImageUrl = computed(() => {
-		if (setOwnImageUrl.value) return setOwnImageUrl.value;
-		if (traitArrayMode.value !== 'none' || getView(traitSet.value)?.style?.body === 'portrait-ring') {
-			return props.character?.portrait?.url || '';
-		}
-		return '';
-	});
+	const effectiveImageUrl = computed(() => setOwnImageUrl.value);
 
 	const effectiveAlignment = computed(() => {
 		const fAlign = resolvedFrame.value?.image?.alignment;
-		const view = getView(traitSet.value);
-		const sAlign = view?.imageConfig?.alignment;
-		const charAlign =
-			(getView(props.character?.portrait)?.alignment as string | undefined) ||
-			(props.character?.portrait as any)?.alignment;
-		return fAlign || sAlign || charAlign || 'center';
+		const sAlign = getView(traitSet.value)?.imageConfig?.alignment;
+		return fAlign || sAlign || 'center';
 	});
 
 	const effectiveZoom = computed(() => {
 		const fZoom = normalizeZoom(resolvedFrame.value?.image?.zoom);
 		if (typeof fZoom === 'number') return fZoom;
-		const view = getView(traitSet.value);
-		const sZoom = normalizeZoom(view?.imageConfig?.zoom);
+		const sZoom = normalizeZoom(getView(traitSet.value)?.imageConfig?.zoom);
 		if (typeof sZoom === 'number') return sZoom;
-		const charZoom = normalizeZoom(getView(props.character?.portrait)?.zoom);
-		if (typeof charZoom === 'number') return charZoom;
 		return 1;
 	});
 
@@ -392,22 +383,27 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			}
 		> = { ...raw };
 
-		const hasStatementPip =
-			Array.isArray(traitSetArg?.traits) &&
-			traitSetArg.traits.some(
-				(t: any) =>
-					Array.isArray(t?.traits) && t.traits.some((sub: any) => resolveRating(sub, [t, traitSetArg])?.type === 'Pip'),
-			);
+		let pipChildNoun = '';
+		if (Array.isArray(traitSetArg?.traits)) {
+			for (const t of traitSetArg.traits) {
+				if (!Array.isArray(t?.traits)) continue;
+				const match = t.traits.find((sub: any) => resolveRating(sub, [t, traitSetArg])?.type === 'Pip');
+				if (match) {
+					pipChildNoun = String(match.noun || match.name || 'Pip').trim() || 'Pip';
+					break;
+				}
+			}
+		}
+
+		const hasExistingChildPart = Object.keys(parts).some((k) => k.startsWith('child:') || k.startsWith('child_'));
 
 		if (
-			hasStatementPip &&
+			pipChildNoun &&
 			parts.name &&
 			parts.rating &&
 			Number(parts.name.top || 0) === 0 &&
 			Number(parts.rating.top || 0) === 0 &&
-			!parts['child:Statement:rating'] &&
-			!parts['child:Statement:label'] &&
-			!parts['child:Statement']
+			!hasExistingChildPart
 		) {
 			let nextTop = 1;
 			for (const k of Object.keys(parts)) {
@@ -419,9 +415,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				}
 			}
 			parts.name = { ...parts.name, left: '0%', top: 0, width: '40%', height: 1 };
-			parts['child:Statement:rating'] = { left: '40%', top: 0, width: '10%', height: 1 };
+			parts[`child:${pipChildNoun}:rating`] = { left: '40%', top: 0, width: '10%', height: 1 };
 			parts.rating = { ...parts.rating, left: '50%', top: 0, width: '50%', height: 1 };
-			parts['child:Statement:label'] = { left: '0%', top: nextTop, width: '100%', height: 1 };
+			parts[`child:${pipChildNoun}:label`] = { left: '0%', top: nextTop, width: '100%', height: 1 };
 		}
 		return parts;
 	}
@@ -442,16 +438,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function getPipChild(node: any): Trait | undefined {
 		if (!node || !Array.isArray(node.traits)) return undefined;
-		for (const ch of node.traits) {
-			if (!ch || typeof ch !== 'object') continue;
+		return node.traits.find((ch: any) => {
+			if (!ch || typeof ch !== 'object') return false;
 			const r = resolveTraitRating(ch, [node]);
-			if (r && r.type === 'Pip') return ch;
-			if (Array.isArray(ch.traits)) {
-				const nested = ch.traits.find((sub: any) => resolveTraitRating(sub, [ch, node])?.type === 'Pip');
-				if (nested) return nested;
-			}
-		}
-		return undefined;
+			return Boolean(r && r.type === 'Pip');
+		});
 	}
 
 	function isChildPipFilled(node: any): boolean {
@@ -548,8 +539,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function getTraitClasses(trait: Trait) {
 		const classes: Record<string, boolean> = { trait: true };
 		if (trait?.description?.length) classes['trait-has-description'] = true;
-		if (characterCurioFunctions.sfxChildren(trait).length) classes['trait-has-sfx'] = true;
-		if (nonSfxSubtraits(trait).length) classes['trait-has-subtraits'] = true;
+		if (characterCurioFunctions.blockChildren(trait, traitSet.value).length) classes['trait-has-sfx'] = true;
+		if (characterCurioFunctions.ratedSubtraits(trait, traitSet.value).length) classes['trait-has-subtraits'] = true;
 		const vis = resolveVisibility(trait);
 		if (vis === 'play-only') classes['trait-play-only'] = true;
 		if (vis === 'editor-only') classes['trait-editor-only'] = true;
@@ -638,16 +629,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			: traitSetArg?.traits && typeof traitSetArg.traits === 'object'
 				? Object.values(traitSetArg.traits)
 				: [];
-		const hasSubtraits = traits.some((t: any) => {
-			const subs = Array.isArray(t?.traits)
-				? t.traits
-				: t?.traits && typeof t.traits === 'object'
-					? Object.values(t.traits)
-					: [];
-			return subs.some(
-				(s: any) => !characterCurioFunctions.isSfxContainer(s) && resolveTraitRating(s, [t])?.type !== 'Pip',
-			);
-		});
+		const hasSubtraits = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, traitSetArg).length > 0);
 		return {
 			name: '',
 			description: '',
@@ -659,17 +641,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function isFixedSystemTrait(traitSetArg: TraitSet, trait: Trait) {
 		if (!trait || !trait.name) return false;
+		if (getView(trait)?.prompt) return false;
 		const name = trait.name.trim();
-		if (name.endsWith(':')) return false;
-		const tsBody = getView(traitSetArg)?.style?.body;
-		const tsName = (traitSetArg?.name || '').toLowerCase();
-		if (
-			tsBody === 'portrait-ring' ||
-			tsBody === 'die-track' ||
-			characterCurioFunctions.isFixedNameSet(tsName) ||
-			(getView(traitSetArg)?.traitColumns ?? 0) > 1 ||
-			characterCurioFunctions.hasTrackPart(traitSetArg)
-		) {
+		if (characterCurioFunctions.isFixedTraitNamesSet(traitSetArg)) {
 			return true;
 		}
 		const templateId = getView(props.character)?.template;
@@ -733,15 +707,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// and bonus at 1. Index is the truth; names are labels. The SFX
 	// container is a child trait, not a subtrait, so positional access
 	// reads past it.
-	function nonSfxSubtraits(trait: Trait) {
-		const subs = (trait as any)?.traits;
-		return (Array.isArray(subs) ? subs : []).filter(
-			(st: any) => !characterCurioFunctions.isSfxContainer(st) && resolveTraitRating(st, [trait])?.type !== 'Pip',
-		);
-	}
-
 	function getSubtraitAt(trait: Trait, index: number) {
-		return nonSfxSubtraits(trait)[index] || null;
+		return characterCurioFunctions.ratedSubtraits(trait, traitSet.value)[index] || null;
 	}
 
 	function getSubtraitSlotRatings(traitSetArg: TraitSet, slot: number) {
@@ -867,32 +834,28 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 	}
 
-	function traitHasHinder(trait: Trait, traitSetArg: TraitSet): boolean {
-		if (!trait || !isTraitRated(trait)) return false;
-		const children = characterCurioFunctions.sfxChildren(trait);
-		return children.some((e: any) => String(e.name || '').toLowerCase() === 'hinder');
+	function getAltRoll(trait: Trait, traitSetArg: TraitSet): AltRollOption | null {
+		if (!trait || !isTraitRated(trait)) return null;
+		return resolveAltRoll(trait, traitSetArg);
 	}
 
-	function hinderDie(trait: Trait): number {
-		const children = characterCurioFunctions.sfxChildren(trait);
-		const hinder = children.find((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-		return ratingDice(resolveTraitRating(hinder, [trait]))[0] || 0;
-	}
-
-	function handleHinderDieClick(trait: Trait, traitSetArg: TraitSet, sArg: any, t: any) {
-		if (props.submode === 'play') {
-			const children = characterCurioFunctions.sfxChildren(trait);
-			const hinder = children.find((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-			const size = ratingDice(resolveRating(hinder, [trait, traitSetArg]))[0] || 4;
-			emit('addDieToRoller', {
-				size: size,
-				qty: 1,
-				source: trait.name ? `${trait.name} (Hinder)` : 'Hinder',
-				hitches: resolveHitches(trait, [traitSetArg]),
-				ppDelta: 1,
-				ppCommitted: false,
-			});
-		}
+	function handleAltRollClick(trait: Trait, traitSetArg: TraitSet) {
+		if (props.submode !== 'play') return;
+		const alt = getAltRoll(trait, traitSetArg);
+		if (!alt) return;
+		const source = alt.label
+			? trait.name
+				? `${trait.name} (${alt.label})`
+				: alt.label
+			: trait.name || 'Alternate Roll';
+		emit('addDieToRoller', {
+			size: alt.die || 4,
+			qty: 1,
+			source,
+			hitches: resolveHitches(trait, [traitSetArg]),
+			ppDelta: alt.ppDelta,
+			ppCommitted: false,
+		});
 	}
 
 	function stageTrackDie(trait: Trait, size: number, label: string, traitSetArg: TraitSet) {
@@ -985,51 +948,26 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// defaults to the set's track label (fallback "Stress"), but can be
 	// customized individually (e.g. Physical's companion is "Injured", Mental is "Worried").
 	function getTrackCompanion(traitSetArg: TraitSet, trait: Trait) {
-		const subs = (trait as any)?.traits;
-		if (!Array.isArray(subs)) return undefined;
-		const fallbackName = getTrackLabel(traitSetArg).toLowerCase();
-		// 1. Direct match by set's track label
-		const direct = subs.find(
-			(st: any) =>
-				st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === fallbackName,
-		);
-		if (direct) return direct;
-		// 2. Trait-specific companion track (e.g. Physical's companion is named "Injured", Mental is "Worried")
-		if (hasTrackPart(traitSetArg)) {
-			return subs.find(
-				(st: any) =>
-					st &&
-					typeof st === 'object' &&
-					st.rating &&
-					!characterCurioFunctions.isSfxContainer(st) &&
-					Array.isArray(st.rating.range),
-			);
-		}
-		return undefined;
+		return characterCurioFunctions.getTrackCompanion(traitSetArg, trait);
 	}
 
 	function isTrackCompanion(traitSetArg: TraitSet, sub: unknown, trait?: Trait) {
+		if (trait) return characterCurioFunctions.isTrackCompanion(traitSetArg, sub, trait);
 		if (!hasTrackPart(traitSetArg) || !sub || typeof sub !== 'object') return false;
-		if (trait) {
-			return getTrackCompanion(traitSetArg, trait) === sub;
-		}
-		const subName = (sub as any)?.name;
-		if (typeof subName === 'string' && subName.toLowerCase() === getTrackLabel(traitSetArg).toLowerCase()) {
+		const subName = String((sub as any)?.noun || (sub as any)?.name || '')
+			.trim()
+			.toLowerCase();
+		const explicitLabel = getView(traitSetArg)?.labels?.track;
+		if (explicitLabel && subName === String(explicitLabel).trim().toLowerCase()) {
 			return true;
 		}
+		if (getView(sub)?.part === 'block' || resolvePpDelta(sub) !== 0) return false;
 		const r = (sub as any)?.rating;
-		return Boolean(r && !characterCurioFunctions.isSfxContainer(sub) && Array.isArray(r.range));
+		return Boolean(r && Array.isArray(r.range));
 	}
 
 	function visibleSubtraits(traitSetArg: TraitSet, trait: Trait) {
-		const subs = nonSfxSubtraits(trait);
-		if (!subs.length) return [];
-		const pipChild = getPipChild(trait);
-		const nonStatementSubs = pipChild ? subs.filter((st: any) => st !== pipChild) : subs;
-		if (!nonStatementSubs.length) return [];
-		const comp = hasTrackPart(traitSetArg) ? getTrackCompanion(traitSetArg, trait) : null;
-		const list = comp ? nonStatementSubs.filter((st: any) => st !== comp) : nonStatementSubs;
-		return list.filter((st: any) => isTraitShown(st));
+		return characterCurioFunctions.ratedSubtraits(trait, traitSetArg).filter((st: any) => isTraitShown(st));
 	}
 
 	function shouldShowTrackOut(traitSetArg: TraitSet) {
@@ -1243,38 +1181,53 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return { noun: partKey, kind: 'label' };
 	}
 
-	function isPipChildPart(partKey: string): boolean {
+	function pipChildNouns(traitSetArg?: TraitSet): Set<string> {
+		const nouns = new Set<string>(['pip']);
+		const vLabel = getView(traitSetArg)?.labels?.pip;
+		if (typeof vLabel === 'string' && vLabel.trim()) nouns.add(vLabel.trim().toLowerCase());
+		const checkList = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
+		for (const t of checkList) {
+			const child = getPipChild(t);
+			if (!child) continue;
+			if (typeof child.noun === 'string' && child.noun.trim()) nouns.add(child.noun.trim().toLowerCase());
+			if (typeof child.name === 'string' && child.name.trim()) nouns.add(child.name.trim().toLowerCase());
+		}
+		return nouns;
+	}
+
+	function isPipChildPart(partKey: string, traitSetArg?: TraitSet): boolean {
 		const n = parseChildPartKey(partKey).noun.toLowerCase();
-		return n === 'pip' || n === 'statement';
+		return pipChildNouns(traitSetArg || traitSet.value).has(n);
 	}
 
 	function hasChildPartCell(traitSetArg: TraitSet, noun: string, kind?: 'label' | 'rating'): boolean {
 		const grid = partsGridFor(traitSetArg);
 		if (!grid?.cells) return false;
 		const n = noun.toLowerCase();
+		const pipNouns = n === 'pip' ? pipChildNouns(traitSetArg) : null;
 		return Object.keys(grid.cells).some((k) => {
 			const parsed = parseChildPartKey(k);
 			const cellNoun = parsed.noun.toLowerCase();
-			if (cellNoun !== n && !(n === 'pip' && cellNoun === 'statement')) return false;
+			if (cellNoun !== n && !(pipNouns && pipNouns.has(cellNoun))) return false;
 			if (kind && parsed.kind !== kind) return false;
 			return true;
 		});
 	}
 
 	function getChildTraitByNoun(trait: Trait | undefined, noun: string): Trait | undefined {
-		if (!trait) return undefined;
+		if (!trait || !Array.isArray(trait.traits)) return undefined;
 		const n = noun.trim().toLowerCase();
-		if (n === 'sfx') {
-			const entries = characterCurioFunctions.sfxChildren(trait);
-			return entries.find(
-				(e: any) =>
-					String(e?.name || '')
-						.trim()
-						.toLowerCase() !== 'hinder',
-			) as Trait | undefined;
+		const matches = trait.traits.filter((t: Trait) => {
+			if (!t || typeof t !== 'object') return false;
+			const tNoun = typeof t.noun === 'string' ? t.noun.trim().toLowerCase() : '';
+			const tName = typeof t.name === 'string' ? t.name.trim().toLowerCase() : '';
+			return tNoun === n || tName === n;
+		});
+		if (matches.length) {
+			return matches.find((e: Trait) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || matches[0];
 		}
-		if (!Array.isArray(trait.traits)) return undefined;
-		return trait.traits.find((t: Trait) => (t?.name || '').trim().toLowerCase() === n);
+		const blocks = characterCurioFunctions.blockChildren(trait, traitSet.value);
+		return blocks.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll);
 	}
 
 	function blankPipTrait(): any {
@@ -1342,22 +1295,28 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const w = cfg?.width;
 		const widthStyle = w && w !== '100%' ? { width: w, marginInline: 'auto' } : {};
 		if (h && h !== 'auto') {
-			return { height: h, ...widthStyle };
+			return { height: typeof h === 'number' ? `${h}px` : h, ...widthStyle };
 		}
-		if (isNameSet(traitSetArg)) return { minHeight: '96px', height: '100%', ...widthStyle };
-		return { minHeight: '140px', height: 'auto', ...widthStyle };
+		return { minHeight: '8.75rem', height: 'auto', ...widthStyle };
 	}
 
 	function getImageSetGraphicStyle(traitSetArg: TraitSet) {
-		const rawUrl =
-			getView(traitSetArg)?.imageConfig?.url || (isNameSet(traitSetArg) ? props.character?.portrait?.url : '');
+		const cfg = getView(traitSetArg)?.imageConfig;
+		const rawUrl = cfg?.url || '';
 		const url = characterCurioFunctions.safeImageUrl(rawUrl);
 		if (!url) return {};
-		return {
+		const rawZoom = normalizeZoom(cfg?.zoom) ?? 1;
+		const bgSize = rawZoom !== 1 ? `${Math.round(rawZoom * 100)}%` : 'cover';
+		const style: Record<string, string> = {
 			backgroundImage: `url("${url}")`,
-			backgroundSize: 'cover',
+			backgroundSize: bgSize,
 			backgroundRepeat: 'no-repeat',
 		};
+		const align = cfg?.alignment;
+		if (typeof align === 'string' && align.includes('%') && /^[0-9.%\s-]+$/.test(align)) {
+			style.backgroundPosition = align.trim();
+		}
+		return style;
 	}
 
 	function getBranchGroups(traitSetArg: TraitSet, items: any[]) {
@@ -1465,7 +1424,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getSubtraitNameOr(trait: Trait, traitSetArg: TraitSet, index: number) {
-		const sub = nonSfxSubtraits(trait)[index];
+		const sub = characterCurioFunctions.ratedSubtraits(trait, traitSetArg)[index];
 		if (sub && sub.name && String(sub.name).trim().length) {
 			return sub.name;
 		}
@@ -1473,10 +1432,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getThreeColEffect(trait: Trait) {
-		const entries = characterCurioFunctions.sfxChildren(trait);
-		const sfx = entries.find((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
-		if (!sfx) return '';
-		return sfx.description || sfx.name || '';
+		const entries = characterCurioFunctions.blockChildren(trait, traitSet.value);
+		const effect = entries.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || entries[0];
+		if (!effect) return '';
+		return effect.description || effect.name || '';
 	}
 
 	function getExplicitPoolCount(trait: Trait) {
@@ -1727,9 +1686,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		isHiddenIn,
 		getTraitSetSlotCount,
 		isPlayMutableSet,
-		traitHasHinder,
-		hinderDie,
-		handleHinderDieClick,
+		getAltRoll,
+		handleAltRollClick,
 		stageTrackDie,
 		getTraitPipBubbles,
 		toggleTraitPipBubble,

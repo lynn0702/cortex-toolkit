@@ -9,19 +9,33 @@
 		color-scheme: light;
 	}
 
+	--paper-surface-card: #ffffff;
+	--paper-surface-elevated: #f8fafc;
+	--paper-surface-muted: #f1f5f9;
+	--paper-surface-hover: #e2e8f0;
+	--paper-text-main: #0f172a;
+	--paper-text-secondary: #334155;
+	--paper-text-muted: #64748b;
+	--paper-border-subtle: rgba(15, 23, 42, 0.12);
+	--paper-border-strong: #334155;
+	--paper-die-outline: #1e293b;
+	--paper-status-danger: #b91c1c;
 	--bg-app-canvas: #e2e8f0;
-	--bg-surface-card: #ffffff;
-	--bg-surface-elevated: #f8fafc;
-	--bg-surface-muted: #f1f5f9;
+	--bg-surface-card: var(--paper-surface-card);
+	--bg-surface-elevated: var(--paper-surface-elevated);
+	--bg-surface-muted: var(--paper-surface-muted);
+	--bg-surface-hover: var(--paper-surface-hover);
 	--bg-sticky-glass: rgba(248, 250, 252, 0.92);
-	--text-main: #0f172a;
-	--text-secondary: #334155;
-	--text-muted: #64748b;
-	--border-subtle: rgba(15, 23, 42, 0.12);
-	--border-strong: #334155;
-	--die-outline-stroke: #1e293b;
+	--text-main: var(--paper-text-main);
+	--text-secondary: var(--paper-text-secondary);
+	--text-muted: var(--paper-text-muted);
+	--border-subtle: var(--paper-border-subtle);
+	--border-strong: var(--paper-border-strong);
+	--die-outline-stroke: var(--paper-die-outline);
 	--die-active-fill: var(--color-primary, #be123c);
 	--die-active-text: #ffffff;
+	--status-danger: var(--paper-status-danger);
+	--pp-badge-ink: #0f172a;
 	--studio-bg: #0f172a;
 	--studio-header-bg: #1e293b;
 	--studio-text: #f8fafc;
@@ -37,6 +51,7 @@
 		--bg-surface-card: #111827; /* Soft dark slate for Trait Set cards */
 		--bg-surface-elevated: #1e293b; /* Elevated inputs, chips, and headers */
 		--bg-surface-muted: #0f172a; /* Recessed wells / empty tracks */
+		--bg-surface-hover: #26354d;
 		--bg-sticky-glass: rgba(15, 23, 42, 0.92);
 		--text-main: #f1f5f9; /* Crisp off-white (no harsh #fff halation) */
 		--text-secondary: #cbd5e1;
@@ -44,6 +59,7 @@
 		--border-subtle: rgba(255, 255, 255, 0.12);
 		--border-strong: #64748b;
 		--die-outline-stroke: #cbd5e1; /* Unfilled die range outlines stay legible! */
+		--status-danger: #f87171;
 		--color-sheet-bg: #111827;
 		--color-separator: rgba(255, 255, 255, 0.12);
 		--color-label: #94a3b8;
@@ -54,6 +70,22 @@
 		--studio-text-secondary: var(--text-secondary);
 		--studio-text-muted: var(--text-muted);
 		--studio-border: var(--border-subtle);
+	}
+
+	.character-sheet.submode-print {
+		color-scheme: light;
+		--bg-surface-card: var(--paper-surface-card);
+		--bg-surface-elevated: var(--paper-surface-elevated);
+		--bg-surface-muted: var(--paper-surface-muted);
+		--bg-surface-hover: var(--paper-surface-hover);
+		--text-main: var(--paper-text-main);
+		--text-secondary: var(--paper-text-secondary);
+		--text-muted: var(--paper-text-muted);
+		--border-subtle: var(--paper-border-subtle);
+		--border-strong: var(--paper-border-strong);
+		--die-outline-stroke: var(--paper-die-outline);
+		--color-sheet-bg: var(--paper-surface-card);
+		--status-danger: var(--paper-status-danger);
 	}
 }
 

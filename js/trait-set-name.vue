@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { getView, resolveVisibility } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
+import { normalizeZoom } from './frame-geometry.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitSetImage from './trait-set-image.vue';
 
 const {
 	traitSet,
@@ -28,7 +28,7 @@ const notes = computed(() => character.value?.notes ?? '');
 const game = computed(() => character.value?.game ?? '');
 const plotPoints = computed(() => Number(character.value?.plotPoints) || 0);
 const portrait = computed(() => character.value?.portrait ?? null);
-const effectivePortraitUrl = computed(() => getView(traitSet.value)?.imageConfig?.url || portrait.value?.url || '');
+const effectivePortraitUrl = computed(() => portrait.value?.url || '');
 
 function nameTrait(key: string) {
 	return characterCurioFunctions.getNameTrait(character.value, key);
@@ -62,25 +62,49 @@ const descriptionLabel = computed(() => nameLabel('description', 'DESCRIPTION'))
 const playerLabel = computed(() => nameWord('player', 'PLAYER:'));
 const plotPointsLabel = computed(() => nameWord('plotPoints', 'PP'));
 
-const ringSetIndex = computed(() =>
-	(character.value?.traitSets || []).findIndex((ts: any) => {
-		const view = getView(ts);
-		const body = view?.style?.body;
-		if (body === 'portrait-ring') return true;
-		return false;
-	}),
+const hasNameSetPortrait = computed(() => nameShown('portrait') && Boolean(effectivePortraitUrl.value));
+
+const portraitAlignment = computed(
+	() => getView(portrait.value)?.alignment || (portrait.value as any)?.alignment || 'top-center',
 );
 
-// The Name set renders an image element (via TraitSetImage) when:
-// 1. The portrait trait is not hidden (nameShown('portrait')),
-// 2. Not exclusively claimed by a portrait-ring set (unless the Name set has its own imageConfig.url), AND
-// 3. effectivePortraitUrl is non-empty (so a Name set with no image renders cleanly with no empty portrait box or missing-image frame).
-const hasNameSetPortrait = computed(() => {
-	if (!nameShown('portrait')) return false;
-	const hasOwnCfgUrl = Boolean(getView(traitSet.value)?.imageConfig?.url);
-	if (!hasOwnCfgUrl && ringSetIndex.value !== -1) return false;
-	return Boolean(effectivePortraitUrl.value);
+const portraitAlignmentClass = computed(() => {
+	const a = portraitAlignment.value;
+	return typeof a === 'string' && /^(top|center|bottom)(-(left|center|right))?$/.test(a)
+		? `portrait-alignment-${a}`
+		: undefined;
 });
+
+const portraitGraphicStyle = computed(() => {
+	const url = characterCurioFunctions.safeImageUrl(effectivePortraitUrl.value);
+	if (!url) return {};
+	const zoom = normalizeZoom(getView(portrait.value)?.zoom) ?? 1;
+	const bgSize = zoom !== 1 ? `${Math.round(zoom * 100)}%` : 'cover';
+	const style: Record<string, string> = {
+		backgroundImage: `url("${url}")`,
+		backgroundSize: bgSize,
+		backgroundRepeat: 'no-repeat',
+	};
+	const align = portraitAlignment.value;
+	if (typeof align === 'string' && align.includes('%') && /^[0-9.%\s-]+$/.test(align)) {
+		style.backgroundPosition = align.trim();
+	}
+	return style;
+});
+
+const portraitCaption = computed(() => {
+	const lbl = nameTrait('caption')?.label;
+	return typeof lbl === 'string' ? lbl : '';
+});
+
+const isCaptionShown = computed(() => Boolean(portraitCaption.value) && nameShown('caption'));
+
+function clearPortrait() {
+	if (!character.value) return;
+	if (!character.value.portrait) character.value.portrait = {};
+	character.value.portrait.url = '';
+	updateCharacter(character.value);
+}
 
 const descriptionText = computed({
 	get() {
@@ -183,10 +207,10 @@ function adjustPlotPoints(delta: number) {
 						v-if="submode === 'edit'"
 						type="button"
 						class="sheet-add-portrait-link"
-						@click.stop="selectElement(['traitSet', s])"
-						title="Edit Name Set / Image"
+						@click.stop="selectElement(['name'])"
+						title="Edit Character Portrait"
 					>
-						<i class="fas fa-sliders"></i> {{ hasNameSetPortrait ? 'Set / Image' : 'Add Image' }}
+						<i class="fas fa-sliders" aria-hidden="true"></i> {{ hasNameSetPortrait ? 'Portrait' : 'Add Portrait' }}
 					</button>
 				</div>
 				<textarea
@@ -209,9 +233,35 @@ function adjustPlotPoints(delta: number) {
 				</div>
 			</div>
 
-			<!-- RIGHT BOX: IMAGE ELEMENT (VIA TRAIT-SET-IMAGE, ONLY WHEN PRESENT AND VISIBLE) -->
+			<!-- RIGHT BOX: CHARACTER PORTRAIT (INDEPENDENT OF ALL TRAIT SETS) -->
 			<div v-if="hasNameSetPortrait" class="sheet-header-portrait-wrap">
-				<TraitSetImage />
+				<div
+					class="sheet-header-portrait-box has-image"
+					:role="submode === 'edit' ? 'button' : undefined"
+					:tabindex="submode === 'edit' ? 0 : undefined"
+					:aria-label="submode === 'edit' ? 'Edit character portrait' : undefined"
+					@click.stop="selectElement(['name'])"
+					@keydown.enter.stop.prevent="submode === 'edit' && selectElement(['name'])"
+					@keydown.space.stop.prevent="submode === 'edit' && selectElement(['name'])"
+					:title="
+						submode === 'edit' ? 'Click to edit character portrait' : portrait?.alt || name || 'Character portrait'
+					"
+				>
+					<div class="portrait-small-image" :class="portraitAlignmentClass" :style="portraitGraphicStyle"></div>
+					<button
+						v-if="submode === 'edit'"
+						type="button"
+						class="btn-remove-header-portrait"
+						@click.stop="clearPortrait"
+						title="Remove portrait"
+						aria-label="Remove portrait"
+					>
+						<i class="fas fa-trash-alt" aria-hidden="true"></i>
+					</button>
+				</div>
+				<div class="sheet-portrait-caption" v-if="isCaptionShown">
+					{{ portraitCaption }}
+				</div>
 			</div>
 		</div>
 	</div>

@@ -116,9 +116,14 @@
 					],
 					"page": 1,
 					"multiDie": false,
-					"notes": "",
+					"notes": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 					"reservedSlots": 3,
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -134,23 +139,22 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -165,23 +169,22 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -196,23 +199,22 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					}
@@ -263,7 +265,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Affiliation",
 				"plural": "Affiliations",
@@ -305,7 +308,8 @@
 						"width": "38%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",
@@ -414,18 +418,17 @@
 						},
 						"traits": {
 							"Descriptor Tags:": {},
-							"SFX": {
-								"traits": {
-									"Been There": {
-										"description": "When you are resurrecting a ______________, double your Necromancy."
-									},
-									"Done That": {
-										"description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP."
-									},
-									"Limit — Dammit": {
-										"description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
-									}
-								}
+							"Been There": {
+								"description": "When you are resurrecting a ______________, double your Necromancy.",
+								"noun": "SFX"
+							},
+							"Done That": {
+								"description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP.",
+								"noun": "SFX"
+							},
+							"Limit — Dammit": {
+								"description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene.",
+								"noun": "SFX"
 							}
 						}
 					}

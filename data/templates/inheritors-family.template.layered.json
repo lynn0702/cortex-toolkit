@@ -344,7 +344,8 @@
 							"width": "100%",
 							"height": 1
 						}
-					}
+					},
+					"fixedNames": true
 				},
 				"noun": "Detail",
 				"plural": "Details",
@@ -388,7 +389,8 @@
 							"width": "100%",
 							"height": 1
 						}
-					}
+					},
+					"fixedNames": true
 				},
 				"noun": "Detail",
 				"plural": "Details",
@@ -433,7 +435,8 @@
 							"width": "100%",
 							"height": 1
 						}
-					}
+					},
+					"fixedNames": true
 				},
 				"noun": "Detail",
 				"plural": "Details",
@@ -478,7 +481,8 @@
 							"width": "100%",
 							"height": 1
 						}
-					}
+					},
+					"fixedNames": true
 				},
 				"noun": "Detail",
 				"plural": "Details",
@@ -523,7 +527,8 @@
 							"width": "100%",
 							"height": 1
 						}
-					}
+					},
+					"fixedNames": true
 				},
 				"noun": "Detail",
 				"plural": "Details",

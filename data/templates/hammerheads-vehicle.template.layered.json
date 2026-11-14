@@ -122,7 +122,8 @@
 						"width": "25%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Hammerhead Attribute",
 				"plural": "Hammerhead Attributes",
@@ -230,7 +231,7 @@
 						8
 					],
 					"multiDie": false,
-					"notes": "",
+					"notes": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 					"reservedSlots": 3,
 					"place": {
 						"left": "25%",
@@ -238,7 +239,12 @@
 						"width": "50%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Vehicle Distinction",
 				"plural": "Vehicle Distinctions",

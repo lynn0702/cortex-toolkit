@@ -153,6 +153,10 @@ export interface TraitSet {
    * Top of the hitches inheritance chain. Sparse; base default 1.
    */
   hitches?: number | null;
+  /**
+   * Plot Point delta applied when staging or rolling a die from this set (positive gains PP, negative spends PP) unless overridden on the trait.
+   */
+  ppDelta?: number | null;
   view?: View;
   custom?: Custom;
 }
@@ -165,6 +169,14 @@ export interface Trait {
    * Display label for the trait. Name-block traits render this instead of the name.
    */
   label?: string | null;
+  /**
+   * Category singular label for this trait or child trait.
+   */
+  noun?: string | null;
+  /**
+   * Category plural label for this trait or child trait.
+   */
+  plural?: string | null;
   rating?: Rating;
   /**
    * Staging behaviour: adding the node to the roller stages its whole array of available dice.
@@ -179,9 +191,13 @@ export interface Trait {
    */
   hitches?: number | null;
   /**
-   * The Scale effect, named where data must name it: keep this many extra dice for the total.
+   * Extra dice kept toward the total when rolled.
    */
   keepsExtra?: number | null;
+  /**
+   * Plot Point delta applied when staging or rolling this trait's die (positive gains PP, negative spends PP).
+   */
+  ppDelta?: number | null;
   /**
    * A description of the trait.
    */

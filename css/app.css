@@ -188,29 +188,40 @@ textarea:focus-visible {
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
+	flex-shrink: 0;
 	overflow: visible;
+	shape-rendering: geometricPrecision;
 	color: var(--color-primary);
 
 	text {
 		stroke: none;
+		font-variant-numeric: tabular-nums lining-nums;
+		text-rendering: geometricPrecision;
 	}
 }
 
 /* PLOT POINTS */
 
 .pp {
-	display: inline-block;
-	width: 1.6em;
-	height: 1.6em;
-	background: var(--color-secondary);
-	border-color: var(--color-secondary);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.65em;
+	height: 1.65em;
+	padding-inline: 0.2em;
+	background-color: var(--color-secondary);
+	color: var(--pp-badge-ink);
+	border: 1.5px solid color-mix(in oklab, var(--color-primary) 65%, var(--pp-badge-ink));
 	border-radius: 50%;
+	font-family: var(--font-heading);
 	font-style: normal;
-	font-weight: 700;
-	text-align: center;
-	font-size: 75%;
-	line-height: 1.6em;
+	font-weight: 800;
+	font-size: 0.75em;
+	line-height: 1;
+	letter-spacing: 0.02em;
 	text-indent: 0;
+	vertical-align: baseline;
+	box-sizing: border-box;
 }
 
 /* INTERFACE */

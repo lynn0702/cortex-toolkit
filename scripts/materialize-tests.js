@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { materializeCharacter, toLayeredEntity } = require('../js/layered-materialize.ts');
+const { characterCurioFunctions: F } = require('../js/functions.ts');
 
 let pass = 0,
 	fail = 0;
@@ -56,18 +57,17 @@ function compareRender(render, label) {
 				label + ': dice kept ' + os.name + '/' + ot.name,
 				{ got: getDice(rt), want: getDice(ot) },
 			);
-			const rtSubs = named(rt.traits).filter((n) => n !== 'SFX');
+			const rtSubs = named(rt.traits);
 			ok(
 				JSON.stringify(rtSubs) === JSON.stringify(named(ot.traits)),
 				label + ': subtraits kept ' + os.name + '/' + ot.name,
 				rtSubs,
 			);
-			const f = (x) => {
-				if (Array.isArray(x.sfx)) return x.sfx.length;
-				const c = (Array.isArray(x.traits) ? x.traits : []).find((s) => s && s.name === 'SFX');
-				return c && Array.isArray(c.traits) ? c.traits.length : 0;
-			};
-			ok(f(rt) === f(ot), label + ': sfx count kept ' + os.name + '/' + ot.name, { got: f(rt), want: f(ot) });
+			const blockCount = (x, set) => F.blockChildren(x, set).length;
+			ok(blockCount(rt, rs) === blockCount(ot, os), label + ': block children count kept ' + os.name + '/' + ot.name, {
+				got: blockCount(rt, rs),
+				want: blockCount(ot, os),
+			});
 		}
 	}
 }

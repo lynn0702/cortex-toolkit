@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
-import TagEditor from './tag-editor.vue';
-import VisibilityEye from './visibility-eye.vue';
 
 const {
 	styleBody,
-	isName,
 	imageURL,
 	imageFileInput,
 	uploadError,
@@ -15,16 +12,13 @@ const {
 	imageHeight,
 	imageWidth,
 	imageCaption,
-	portraitTags,
-	namePortraitVisibility,
-	toggleNamePortraitVisibility,
 	uploadImageStart,
 	uploadImageProcess,
 	removeImage,
 	traitSetID,
 } = injectTraitSetEditor();
 
-const showImageEditor = computed(() => styleBody.value === 'image' || isName.value);
+const showImageEditor = computed(() => styleBody.value === 'image');
 </script>
 
 <template>
@@ -32,7 +26,6 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 	<div class="editor-field" v-if="showImageEditor">
 		<div class="name-heading-row editor-row-between mb-xs">
 			<label :for="'trait-set-' + traitSetID + '-image-url'" class="m-0">Illustration</label>
-			<VisibilityEye v-if="isName" :state="namePortraitVisibility" @toggle="toggleNamePortraitVisibility" />
 		</div>
 
 		<div class="image-set-preview mb-sm" v-if="imageURL">
@@ -127,40 +120,7 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 		</div>
 	</div>
 
-	<div class="editor-grid-2" v-if="styleBody === 'image'">
-		<div class="editor-field">
-			<label :for="'trait-set-' + traitSetID + '-image-width'">Width</label>
-			<select :id="'trait-set-' + traitSetID + '-image-width'" name="imageWidth" v-model="imageWidth">
-				<option value="25%">25%</option>
-				<option value="50%">50%</option>
-				<option value="75%">75%</option>
-				<option value="100%">100%</option>
-			</select>
-		</div>
-
-		<div class="editor-field">
-			<label :for="'trait-set-' + traitSetID + '-image-height'">Height</label>
-			<select :id="'trait-set-' + traitSetID + '-image-height'" name="imageHeight" v-model="imageHeight">
-				<option value="auto">Auto</option>
-				<option value="120px">Small</option>
-				<option value="180px">Medium</option>
-				<option value="240px">Large</option>
-				<option value="320px">Extra Large</option>
-			</select>
-		</div>
-	</div>
-	<div class="editor-field" v-else-if="isName">
-		<label :for="'trait-set-' + traitSetID + '-image-height'">Display Height</label>
-		<select :id="'trait-set-' + traitSetID + '-image-height'" name="imageHeight" v-model="imageHeight">
-			<option value="auto">Auto</option>
-			<option value="120px">Small</option>
-			<option value="180px">Medium</option>
-			<option value="240px">Large</option>
-			<option value="320px">Extra Large</option>
-		</select>
-	</div>
-
-	<div class="editor-field" v-if="styleBody === 'image' || isName">
+	<div class="editor-field" v-if="styleBody === 'image'">
 		<label :for="'trait-set-' + traitSetID + '-image-caption'">Caption</label>
 		<input
 			type="text"
@@ -169,9 +129,5 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 			v-model="imageCaption"
 			placeholder="Optional caption"
 		/>
-	</div>
-
-	<div class="editor-field" v-if="isName">
-		<TagEditor v-model="portraitTags" :input-id="'trait-set-' + traitSetID + '-portrait-tags'" label="Portrait Tags" />
 	</div>
 </template>

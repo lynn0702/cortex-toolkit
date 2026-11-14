@@ -143,7 +143,7 @@ function checkListing(where, entry) {
 			err(`${where}: character.view.listing.${reqKey} is required`);
 		}
 	}
-	if (sp === 'Toolkit Reference') {
+	if (sp === 'Showcase') {
 		if (typeof listing.title !== 'string' || !listing.title.trim().length) {
 			err(`${where}: showcase character.view.listing.title is required`);
 		}
@@ -429,12 +429,25 @@ function checkRatingObject(rating, where, inheritedType) {
 }
 
 function checkNodeOptions(node, where, inheritedType) {
-	if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
-	if (node.spendable !== undefined && typeof node.spendable !== 'boolean') err(`${where}: spendable must be boolean`);
-	if (node.hitches !== undefined && !(Number.isInteger(node.hitches) && node.hitches >= 0))
+	if (node.pool !== undefined && node.pool !== null && typeof node.pool !== 'boolean') {
+		err(`${where}: pool must be boolean`);
+	}
+	if (node.spendable !== undefined && node.spendable !== null && typeof node.spendable !== 'boolean') {
+		err(`${where}: spendable must be boolean`);
+	}
+	if (node.hitches !== undefined && node.hitches !== null && !(Number.isInteger(node.hitches) && node.hitches >= 0)) {
 		err(`${where}: hitches must be an integer >= 0`);
-	if (node.keepsExtra !== undefined && !(Number.isInteger(node.keepsExtra) && node.keepsExtra >= 1))
+	}
+	if (
+		node.keepsExtra !== undefined &&
+		node.keepsExtra !== null &&
+		!(Number.isInteger(node.keepsExtra) && node.keepsExtra >= 1)
+	) {
 		err(`${where}: keepsExtra must be an integer >= 1`);
+	}
+	if (node.ppDelta !== undefined && node.ppDelta !== null && !Number.isInteger(node.ppDelta)) {
+		err(`${where}: ppDelta must be an integer`);
+	}
 	checkRatingObject(node.rating, `${where}.rating`, inheritedType);
 }
 
@@ -444,6 +457,9 @@ function checkViewRetired(bag, where) {
 	if (bag.isChallengePool !== undefined || bag.challengePool !== undefined)
 		err(`${where}: retired challenge-pool flag (Dice + pool + spendable supersedes it)`);
 	if (bag.hidden !== undefined) err(`${where}: retired hidden boolean (visibility word supersedes it)`);
+	if (bag.sharedHinder !== undefined || bag.sharedHinderText !== undefined) {
+		err(`${where}: retired sharedHinder key (use view.altRoll and view.notes)`);
+	}
 	const vis = bag.visibility;
 	if (vis !== undefined && vis !== 'shown' && vis !== 'play-only' && vis !== 'editor-only' && vis !== 'hidden') {
 		err(`${where}: view.visibility must be shown|play-only|editor-only|hidden`);
@@ -530,7 +546,7 @@ function checkLayeredTrait(node, where, depth, inheritedType) {
 	if (node.custom !== undefined) err(`${where}: custom stays app-side, never in entity JSON`);
 	if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
 	if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
-	for (const k of ['noun', 'plural', 'ratingPosition', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+	for (const k of ['ratingPosition', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
 		if (node[k] !== undefined) err(`${where}: presentation key ${k} lives in the type layer`);
 	}
 	checkRetiredTraitKeys(node, where);

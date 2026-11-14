@@ -9,6 +9,7 @@ import {
 	isHiddenIn,
 	resolveSetPillar,
 	getPillarLabel,
+	resolveAltRoll,
 	type Character,
 	type TraitSet,
 	type Trait,
@@ -25,8 +26,7 @@ import ModalDialog from './modal-dialog.vue';
 import PrintToolbar from './print-toolbar.vue';
 import TraitSetMini from './trait-set-mini.vue';
 import PresetGalleryCard from './preset-gallery-card.vue';
-import { resolveFrame } from './frame-geometry.ts';
-import { resolveFrameColorPresentation } from './color-palette.ts';
+import { isHexColor, isLightHex } from './color-palette.ts';
 
 const props = defineProps<{
 	submode?: string | null;
@@ -135,27 +135,8 @@ watch(
 );
 
 const name = computed(() => props.character?.name ?? '');
-const portrait = computed(() => props.character?.portrait ?? null);
 const game = computed(() => props.character?.game ?? '');
 const traitSets = computed(() => props.character?.traitSets ?? []);
-
-const ringSetIndex = computed(() =>
-	traitSets.value.findIndex((ts) => {
-		const view = getView(ts);
-		const body = view?.style?.body;
-		if (body === 'portrait-ring') return true;
-		return false;
-	}),
-);
-
-const hasRingSet = computed(() => ringSetIndex.value !== -1);
-
-const ringTraitID = computed(() => (hasRingSet.value ? ringSetIndex.value : -1));
-const ringSet = computed(() => (hasRingSet.value ? traitSets.value[ringTraitID.value] : null));
-const ringFramePresentation = computed(() =>
-	resolveFrameColorPresentation(ringSet.value ? resolveFrame(ringSet.value)?.color : undefined),
-);
-const effectivePortraitUrl = computed(() => getView(ringSet.value)?.imageConfig?.url || portrait.value?.url || '');
 
 const pageCount = computed(() => {
 	const charView = getView(props.character);
@@ -226,7 +207,12 @@ const characterSheetStyle = computed(() => {
 
 	if (ctk.accentColor) style['--color-interactive'] = ctk.accentColor;
 	if (ctk.primaryColor) style['--color-primary'] = ctk.primaryColor;
-	if (ctk.secondaryColor) style['--color-secondary'] = ctk.secondaryColor;
+	if (ctk.secondaryColor) {
+		style['--color-secondary'] = ctk.secondaryColor;
+		if (isHexColor(ctk.secondaryColor)) {
+			style['--pp-badge-ink'] = isLightHex(ctk.secondaryColor) ? '#0f172a' : '#ffffff';
+		}
+	}
 
 	if (ctk.theme?.fonts?.heading) style['--font-heading'] = `'${ctk.theme.fonts.heading}', sans-serif`;
 	if (ctk.theme?.fonts?.primary) style['--font-primary'] = `'${ctk.theme.fonts.primary}', sans-serif`;
@@ -457,10 +443,6 @@ function getWatermarkStyle(pageIndex: number) {
 	return `background-image: url('${url}'); opacity: ${isNaN(opacity) ? 0.08 : opacity}; background-size: ${isNaN(scale) ? 75 : scale}%;`;
 }
 
-function safeImageUrl(url: unknown) {
-	return characterCurioFunctions.safeImageUrl(url);
-}
-
 function print() {
 	let cleanup: (() => void) | null = null;
 	if (isLandscape.value) {
@@ -489,7 +471,6 @@ interface MobilePillarSetItem {
 interface MobilePillarColumn {
 	key: string;
 	label: string;
-	hasClassicRing: boolean;
 	sets: MobilePillarSetItem[];
 	stagedCount: number;
 }
@@ -521,7 +502,8 @@ function countStagedDiceForSets(sets: TraitSet[]): number {
 			if (tr?.name?.trim()) {
 				const n = tr.name.trim().toLowerCase();
 				names.add(n);
-				names.add(`${n} (hinder)`);
+				const alt = resolveAltRoll(tr, ts);
+				if (alt) names.add(`${n} (${alt.label.toLowerCase()})`);
 			}
 			for (const sub of tr?.traits || []) {
 				if (sub?.name?.trim()) names.add(sub.name.trim().toLowerCase());
@@ -558,14 +540,7 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 
 	ensureBucket('identity');
 
-	let ringPillarKey: string | null = null;
-	if (hasRingSet.value && ringSet.value && !isHiddenIn(ringSet.value, 'play')) {
-		ringPillarKey = resolveSetPillar(ringSet.value);
-		ensureBucket(ringPillarKey);
-	}
-
 	allSets.forEach((ts, idx) => {
-		if (hasRingSet.value && idx === ringTraitID.value) return;
 		if (isHiddenIn(ts, 'play')) return;
 		const pKey = resolveSetPillar(ts);
 		const bucket = ensureBucket(pKey);
@@ -587,34 +562,19 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 	return orderedKeys
 		.map((key) => {
 			const sets = byPillar.get(key) || [];
-			const hasClassicRing = ringPillarKey === key;
 			const setsForCount = sets.map((s) => s.traitSet);
-			if (hasClassicRing && hasRingSet.value && ringSet.value) {
-				setsForCount.unshift(ringSet.value);
-			}
 			return {
 				key,
 				label: getPillarLabel(props.character, key),
-				hasClassicRing,
 				sets,
 				stagedCount: countStagedDiceForSets(setsForCount),
 			};
 		})
-		.filter((col) => col.sets.length > 0 || col.hasClassicRing);
+		.filter((col) => col.sets.length > 0);
 });
 
 function columnStackItems(col: MobilePillarColumn): { index: number; label: string }[] {
-	const items: { index: number; label: string }[] = [];
-	if (col.hasClassicRing && hasRingSet.value && ringSet.value) {
-		items.push({
-			index: -2,
-			label: getMobileJumpPillLabel(ringSet.value, 0),
-		});
-	}
-	for (const s of col.sets) {
-		items.push({ index: s.index, label: s.label });
-	}
-	return items;
+	return col.sets.map((s) => ({ index: s.index, label: s.label }));
 }
 
 const isSingleMobilePillar = computed(() => mobilePillarColumns.value.length === 1);
@@ -648,10 +608,7 @@ function scrollToSetInColumn(pillarKey: string, setIndex: number) {
 	const root = rootEl.value || document;
 	const colEl = root.querySelector(`.mobile-pillar-column[data-pillar-key="${pillarKey}"]`) as HTMLElement | null;
 	const scope = colEl || root;
-	const card =
-		setIndex === -2
-			? (scope.querySelector('.portrait[data-set-index="-2"]') as HTMLElement | null)
-			: (scope.querySelector(`.trait-set[data-set-index="${setIndex}"]`) as HTMLElement | null);
+	const card = scope.querySelector(`.trait-set[data-set-index="${setIndex}"]`) as HTMLElement | null;
 	if (card && typeof card.scrollIntoView === 'function') {
 		card.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
 	}
@@ -868,39 +825,6 @@ watch(
 								>
 									{{ sub.label }}
 								</button>
-							</div>
-
-							<!-- PORTRAIT RING IN PILLAR COLUMN -->
-							<div
-								v-if="col.hasClassicRing"
-								:class="[
-									'portrait',
-									{ 'portrait-standalone': !hasRingSet },
-									ringSet ? ringFramePresentation.className : undefined,
-								]"
-								:style="
-									ringFramePresentation.customColor ? { '--frame-color': ringFramePresentation.customColor } : undefined
-								"
-								:data-set-index="-2"
-							>
-								<div class="portrait-inner" @click.stop="selectElement(['traitSet', ringTraitID])">
-									<div
-										:class="
-											'portrait-circle portrait-alignment-' +
-											(getView(ringSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')
-										"
-										width="100%"
-										height="100%"
-										:style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'"
-									>
-										<img
-											class="portrait-placeholder"
-											v-if="!effectivePortraitUrl"
-											src="images/favicon.ico"
-											alt="Portrait placeholder"
-										/>
-									</div>
-								</div>
 							</div>
 
 							<TraitSetBlock

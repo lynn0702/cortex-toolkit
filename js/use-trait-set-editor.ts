@@ -28,6 +28,7 @@ import {
 	resolveSetPillar,
 	resolveSubtraitNoun,
 	resolveSubtraitPlural,
+	resolvePpDelta,
 } from './model.ts';
 import {
 	resolveBorder,
@@ -122,17 +123,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (v: string[]) => setProperty('tags', v),
 	});
 
-	const portraitTags = computed<string[]>({
-		get: () => (Array.isArray(props.character?.portrait?.tags) ? props.character.portrait.tags : []),
-		set: (v: string[]) => {
-			if (!props.character) return;
-			props.character.portrait ??= { url: '', alt: '', tags: [] };
-			props.character.portrait.alt ??= '';
-			props.character.portrait.tags = v;
-			updateCharacter(props.character);
-		},
-	});
-
 	const noun = computed({
 		get: () => traitSet.value?.noun ?? '',
 		set: (v: string) => setProperty('noun', v),
@@ -202,7 +192,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
-	const isRing = computed(() => styleBody.value === 'portrait-ring');
 	const isName = computed(() => isNameSet(traitSet.value));
 
 	const isFullWidthSpan = computed(() => {
@@ -231,31 +220,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				? Object.values(traitSet.value.traits)
 				: [];
 		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
-		const hasSfx = traits.some(
-			(t: any) =>
-				Array.isArray(characterCurioFunctions.sfxChildren(t)) && characterCurioFunctions.sfxChildren(t).length > 0,
-		);
-		const trackNameLower = String(trackLabel.value || 'Stress')
-			.trim()
-			.toLowerCase();
-		const hasSub = traits.some((t: any) => {
-			const subs = Array.isArray(t?.traits)
-				? t.traits
-				: t?.traits && typeof t.traits === 'object'
-					? Object.values(t.traits)
-					: [];
-			return subs.some((s: any) => {
-				if (!s || typeof s !== 'object' || characterCurioFunctions.isSfxContainer(s)) return false;
-				const sNoun = resolveSubtraitNoun(s).toLowerCase();
-				const sName = String(s.name || '')
-					.trim()
-					.toLowerCase();
-				if (sNoun === 'statement' || sName === 'statement' || resolveRating(s, [t, traitSet.value])?.type === 'Pip')
-					return false;
-				if (trackOn && (sNoun === trackNameLower || sName === trackNameLower)) return false;
-				return true;
-			});
-		});
+		const hasSfx = traits.some((t: any) => characterCurioFunctions.blockChildren(t, traitSet.value).length > 0);
+		const hasSub = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, traitSet.value).length > 0);
 		return {
 			rating,
 			ratingDice: scale.length,
@@ -302,23 +268,26 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 		}
 		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
-		const hasStatementPip = traits.some(
-			(t: any) =>
-				Array.isArray(t?.traits) &&
-				t.traits.some((sub: any) => {
-					const r = resolveRating(sub, [t, traitSet.value]);
-					return r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
-				}),
-		);
+		let pipChildNoun = '';
+		for (const t of traits) {
+			if (!Array.isArray(t?.traits)) continue;
+			const match = t.traits.find((sub: any) => {
+				const r = resolveRating(sub, [t, traitSet.value]);
+				return r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
+			});
+			if (match) {
+				pipChildNoun = String(match.noun || match.name || 'Pip').trim() || 'Pip';
+				break;
+			}
+		}
+		const hasExistingChildPart = Object.keys(base).some((k) => k.startsWith('child:') || k.startsWith('child_'));
 		if (
-			hasStatementPip &&
+			pipChildNoun &&
 			base.name &&
 			base.rating &&
 			Number(base.name.top || 0) === 0 &&
 			Number(base.rating.top || 0) === 0 &&
-			!base['child:Statement:rating'] &&
-			!base['child:Statement:label'] &&
-			!base['child:Statement']
+			!hasExistingChildPart
 		) {
 			let nextTop = 1;
 			for (const k of Object.keys(base)) {
@@ -330,9 +299,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				}
 			}
 			base.name = { ...base.name, left: '0%', top: 0, width: '40%', height: 1 };
-			base['child:Statement:rating'] = { left: '40%', top: 0, width: '10%', height: 1 };
+			base[`child:${pipChildNoun}:rating`] = { left: '40%', top: 0, width: '10%', height: 1 };
 			base.rating = { ...base.rating, left: '50%', top: 0, width: '50%', height: 1 };
-			base['child:Statement:label'] = { left: '0%', top: nextTop, width: '100%', height: 1 };
+			base[`child:${pipChildNoun}:label`] = { left: '0%', top: nextTop, width: '100%', height: 1 };
 		}
 		return base;
 	}
@@ -799,24 +768,14 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const imageURL = computed({
-		get: () => {
-			const cfgUrl = getView(traitSet.value)?.imageConfig?.url;
-			if (cfgUrl) return cfgUrl;
-			if (isName.value || isRing.value) return props.character?.portrait?.url ?? '';
-			return '';
-		},
+		get: () => getView(traitSet.value)?.imageConfig?.url ?? '',
 		set: (val: string) => {
 			setImageConfig('url', val);
 		},
 	});
 
 	const imageAlignment = computed({
-		get: () => {
-			const cfgAlign = getView(traitSet.value)?.imageConfig?.alignment;
-			if (cfgAlign) return cfgAlign;
-			if (isName.value || isRing.value) return getView(props.character?.portrait)?.alignment ?? 'center';
-			return 'center';
-		},
+		get: () => getView(traitSet.value)?.imageConfig?.alignment ?? 'center',
 		set: (val: string) => {
 			setImageConfig('alignment', val);
 		},
@@ -837,15 +796,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const imageCaption = computed({
-		get: () => {
-			const cfgCap = getView(traitSet.value)?.imageConfig?.caption;
-			if (cfgCap !== undefined) return cfgCap;
-			if (isName.value) {
-				const t = characterCurioFunctions.getNameTrait(props.character, 'caption');
-				return typeof t?.label === 'string' ? t.label : '';
-			}
-			return '';
-		},
+		get: () => getView(traitSet.value)?.imageConfig?.caption ?? '',
 		set: (val: string) => {
 			setImageConfig('caption', val);
 		},
@@ -854,12 +805,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const imageZoom = computed({
 		get: () => {
 			const cfgZoom = normalizeZoom(getView(traitSet.value)?.imageConfig?.zoom);
-			if (typeof cfgZoom === 'number') return cfgZoom;
-			if (isName.value || isRing.value) {
-				const pZoom = normalizeZoom(getView(props.character?.portrait)?.zoom);
-				if (typeof pZoom === 'number') return pZoom;
-			}
-			return 1;
+			return typeof cfgZoom === 'number' ? cfgZoom : 1;
 		},
 		set: (val: number) => {
 			setImageConfig('zoom', Number(val));
@@ -969,28 +915,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				event.target.value = null;
 			},
 		);
-	}
-
-	const namePortraitVisibility = computed<Visibility>(() => {
-		const t = characterCurioFunctions.getNameTrait(props.character, 'portrait');
-		const v = getView(t) as Record<string, unknown> | undefined;
-		const word = v?.visibility;
-		if (word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown') return word;
-		return 'shown';
-	});
-
-	function toggleNamePortraitVisibility() {
-		const cur = namePortraitVisibility.value;
-		const next = nextVisibility(cur);
-		const t = characterCurioFunctions.ensureNameTrait(props.character, 'portrait');
-		if (!t) return;
-		const v = ensureView(t) as Record<string, unknown>;
-		if (next === 'shown') {
-			delete v.visibility;
-		} else {
-			v.visibility = next;
-		}
-		updateCharacter(props.character);
 	}
 
 	// Generic Out indicator (default off).
@@ -1258,33 +1182,19 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (!Array.isArray(subs)) return [];
 		const result: Array<{
 			idx: number;
-			sfxIdx?: number;
-			isSfx?: boolean;
 			sub: any;
 			label: string;
 			summary: string;
 		}> = [];
 		subs.forEach((sub: any, idx: number) => {
 			if (!sub || typeof sub !== 'object') return;
-			if (characterCurioFunctions.isSfxContainer(sub)) {
-				const sfxList = Array.isArray(sub.traits) ? sub.traits : [];
-				sfxList.forEach((sfx: any, sIdx: number) => {
-					if (!sfx || typeof sfx !== 'object') return;
-					const label = sfx.name || 'SFX';
-					result.push({
-						idx,
-						sfxIdx: sIdx,
-						isSfx: true,
-						sub: sfx,
-						label: String(label).trim() || 'SFX',
-						summary: 'SFX',
-					});
-				});
-				return;
-			}
-			const label = resolveSubtraitNoun(sub);
-			const r = resolveRating(sub, [traitSet.value]);
-			const summary = r?.type ? r.type : 'Unrated';
+			const r = resolveRating(sub, [firstTrait, traitSet.value]);
+			const isBlockOrMod = resolvePpDelta(sub) !== 0 || !r || getView(sub)?.part === 'block';
+			const label =
+				String((isBlockOrMod ? sub.name || sub.noun : resolveSubtraitNoun(sub, traitSet.value)) || 'Subtrait').trim() ||
+				'Subtrait';
+			const nounStr = typeof sub.noun === 'string' ? sub.noun.trim() : '';
+			const summary = nounStr && nounStr.toLowerCase() !== label.toLowerCase() ? nounStr : r?.type ? r.type : 'Unrated';
 			result.push({ idx, sub, label, summary });
 		});
 		return result;
@@ -1293,41 +1203,42 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function openSetSubtrait(item: any) {
 		const targetItem = typeof item === 'number' ? setSubtraits.value[item] || { idx: item } : item;
 		const subIdx = targetItem?.idx ?? 0;
-		if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
-			selectElement(['subtrait', props.traitSetID, 0, subIdx, targetItem.sfxIdx]);
-		} else {
-			selectElement(['subtrait', props.traitSetID, 0, subIdx]);
-		}
+		selectElement(['subtrait', props.traitSetID, 0, subIdx]);
 	}
 
 	function removeSetSubtrait(item: any) {
 		if (!traitSet.value || !Array.isArray(traitSet.value.traits)) return;
 		const targetItem = typeof item === 'number' ? setSubtraits.value[item] || { idx: item } : item;
-		if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
-			const sfxIdx = targetItem.sfxIdx;
-			traitSet.value.traits.forEach((tr: any) => {
-				characterCurioFunctions.removeSfxAt(tr, sfxIdx);
-			});
-			const hasRemainingSfx = traitSet.value.traits.some(
-				(tr: any) => characterCurioFunctions.sfxChildren(tr).length > 0,
-			);
-			if (!hasRemainingSfx) {
-				const v = getView(traitSet.value);
-				if (v?.parts?.block) {
-					delete v.parts.block;
-				}
-			}
-			updateCharacter(structuredClone(toRaw(props.character)));
-			return;
-		}
 		const subIdx = targetItem?.idx ?? 0;
-		const firstSubs = traitSet.value.traits[0]?.traits;
+		const firstTrait = traitSet.value.traits[0];
+		const firstSubs = firstTrait?.traits;
 		const target: any = Array.isArray(firstSubs) ? firstSubs[subIdx] : null;
+		const targetRating = target ? resolveRating(target, [firstTrait, traitSet.value]) : undefined;
+		const targetIsBlock = Boolean(
+			target && (resolvePpDelta(target) !== 0 || !targetRating || getView(target)?.part === 'block'),
+		);
+		const targetNameKey = String(target?.name || '')
+			.trim()
+			.toLowerCase();
 		const targetKey = String(target?.noun || target?.name || '')
 			.trim()
 			.toLowerCase();
 		traitSet.value.traits.forEach((tr: any) => {
 			if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
+			if (targetIsBlock && targetNameKey) {
+				const nameHit = tr.traits.findIndex(
+					(st: any) =>
+						st &&
+						typeof st === 'object' &&
+						String(st.name || '')
+							.trim()
+							.toLowerCase() === targetNameKey,
+				);
+				if (nameHit !== -1) {
+					tr.traits.splice(nameHit, 1);
+					return;
+				}
+			}
 			if (targetKey) {
 				const matchIdx = tr.traits.findIndex(
 					(st: any) =>
@@ -1349,7 +1260,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				tr.traits.splice(subIdx, 1);
 			}
 		});
-		if (targetKey && targetKey === (trackLabel.value || 'Stress').toLowerCase()) {
+		const hasRemainingBlock = traitSet.value.traits.some(
+			(tr: any) => characterCurioFunctions.blockChildren(tr, traitSet.value).length > 0,
+		);
+		if (!hasRemainingBlock) {
+			const v = getView(traitSet.value);
+			if (v?.parts?.block) {
+				delete v.parts.block;
+			}
+		}
+		if (targetKey && targetKey === trackLabel.value.toLowerCase()) {
 			const parts = getView(traitSet.value)?.parts;
 			if (parts && typeof parts !== 'string') {
 				delete (parts as Record<string, unknown>).trackLabel;
@@ -1371,20 +1291,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 		const firstTrait = traitSet.value.traits[0];
 		const existingSubs = Array.isArray(firstTrait?.traits) ? firstTrait.traits : [];
-		const defaultTrackNoun = trackLabel.value || 'Stress';
-		const hasTrackSub = existingSubs.some(
-			(st: any) =>
-				st &&
-				typeof st === 'object' &&
-				(String(st.name || '')
-					.trim()
-					.toLowerCase() === defaultTrackNoun.toLowerCase() ||
-					String(st.noun || '')
-						.trim()
-						.toLowerCase() === defaultTrackNoun.toLowerCase()),
-		);
-		let subNoun = defaultTrackNoun;
-		if (hasTrackSub) {
+		let subNoun = '';
+		if (existingSubs.length === 0) {
+			subNoun = getView(traitSet.value)?.labels?.subtrait || trackLabel.value;
+		} else {
 			let n = existingSubs.length + 1;
 			subNoun = `Subtrait ${n}`;
 			while (
@@ -1420,7 +1330,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (tIdx === 0) targetSubIdx = tr.traits.length - 1;
 		});
 		if (
-			subNoun.toLowerCase() === (trackLabel.value || 'Stress').toLowerCase() &&
+			subNoun.toLowerCase() === trackLabel.value.toLowerCase() &&
 			allowsTraitColumns.value &&
 			styleBody.value !== 'image' &&
 			styleBody.value !== 'pips' &&
@@ -1437,18 +1347,17 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		get: () => {
 			const labels = getView(traitSet.value)?.labels;
 			if (labels && typeof labels.track === 'string' && labels.track.length) return labels.track;
-			return 'Stress';
+			return characterCurioFunctions.getTrackLabel(traitSet.value);
 		},
 		set: (val: string) => {
 			const view = ensureView(traitSet.value);
-			const prev = getView(traitSet.value)?.labels?.track ?? 'Stress';
+			const prev = getView(traitSet.value)?.labels?.track ?? characterCurioFunctions.getTrackLabel(traitSet.value);
 			if (!view.labels || typeof view.labels !== 'object') view.labels = {};
 			if (typeof val === 'string' && val.length) view.labels.track = val;
 			else delete view.labels.track;
-			delete (view.labels as any).stress;
 			// Keep track companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
-			const next = typeof val === 'string' && val.length ? val : 'Stress';
+			const next = typeof val === 'string' && val.length ? val : characterCurioFunctions.getTrackLabel(traitSet.value);
 			if (next !== prev && Array.isArray((traitSet.value as any)?.traits)) {
 				(traitSet.value as any).traits.forEach((tr: any) => {
 					if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
@@ -2052,36 +1961,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ctk = ctkFor(s);
 		ctk.imageConfig ??= {};
 		ctk.imageConfig[key] = value;
-
-		if ((isName.value || isRing.value) && props.character) {
-			if (ctk.frame && typeof ctk.frame === 'object' && ctk.frame.image && key === 'url') {
-				if (value) ctk.frame.image.url = value;
-				else delete ctk.frame.image.url;
-			}
-			if (key === 'url') {
-				props.character.portrait ??= { url: '', alt: '', tags: [] };
-				props.character.portrait.alt ??= '';
-				props.character.portrait.tags ??= [];
-				props.character.portrait.url = value;
-			} else if (key === 'alignment') {
-				props.character.portrait ??= { url: '', alt: '', tags: [] };
-				props.character.portrait.alt ??= '';
-				props.character.portrait.tags ??= [];
-				ensureView(props.character.portrait).alignment = value;
-			} else if (key === 'zoom') {
-				props.character.portrait ??= { url: '', alt: '', tags: [] };
-				props.character.portrait.alt ??= '';
-				props.character.portrait.tags ??= [];
-				ensureView(props.character.portrait).zoom = value;
-			} else if (key === 'caption' && isName.value) {
-				const t = characterCurioFunctions.ensureNameTrait(props.character, 'caption');
-				if (t) {
-					if (typeof value === 'string' && value.trim().length) t.label = value.trim();
-					else delete t.label;
-				}
-			}
-		}
-
 		updateCharacter(props.character);
 	}
 
@@ -2258,11 +2137,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		name,
 		description,
 		tags,
-		portraitTags,
 		noun,
 		plural,
 		styleBody,
-		isRing,
 		isName,
 		isFullWidthSpan,
 		partPreview,
@@ -2300,8 +2177,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		imageHeight,
 		imageWidth,
 		imageCaption,
-		namePortraitVisibility,
-		toggleNamePortraitVisibility,
 		includeOut,
 		endWord,
 		hasCounterTrait,

@@ -5,7 +5,7 @@
 		"id": "template-landscape-showcase",
 		"isTemplate": true,
 		"name": "Landscape Showcase",
-		"game": "Toolkit Reference",
+		"game": "Showcase",
 		"description": "Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.",
 		"pronouns": "",
 		"plotPoints": 1,
@@ -111,7 +111,8 @@
 					},
 					"header": "top",
 					"headerAlign": "center",
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",
@@ -131,12 +132,9 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Lead from the Front": {
-										"description": "Spend 1 PP to step up an ally's die when acting on your order."
-									}
-								}
+							"Lead from the Front": {
+								"description": "Spend 1 PP to step up an ally's die when acting on your order.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -155,12 +153,9 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Ghost Protocol": {
-										"description": "Spend 1 PP to borrow a die from the challenge pool for stealth."
-									}
-								}
+							"Ghost Protocol": {
+								"description": "Spend 1 PP to borrow a die from the challenge pool for stealth.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -179,12 +174,9 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Tactical Insight": {
-										"description": "Spend 1 PP to reroll a die when analyzing enemy technology."
-									}
-								}
+							"Tactical Insight": {
+								"description": "Spend 1 PP to reroll a die when analyzing enemy technology.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -217,7 +209,8 @@
 						"left": "SKILL",
 						"right": "SPECIALTIES"
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Skill",
 				"plural": "Skills",
@@ -356,17 +349,14 @@
 									]
 								}
 							},
-							"Statement": {
-								"traits": {
-									"Debts are never forgotten.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"Debts are never forgotten.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
@@ -391,17 +381,14 @@
 									]
 								}
 							},
-							"Statement": {
-								"traits": {
-									"Honor bound to protect.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"Honor bound to protect.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					}
@@ -451,7 +438,8 @@
 							"width": "39%",
 							"height": 1
 						}
-					}
+					},
+					"fixedNames": true
 				},
 				"noun": "Value",
 				"plural": "Values",
@@ -464,17 +452,14 @@
 						},
 						"description": "Form and function are inseparable.",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"Form and function are inseparable.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"Form and function are inseparable.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
@@ -486,17 +471,14 @@
 						},
 						"description": "Ship early, refine relentlessly.",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"Ship early, refine relentlessly.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"Ship early, refine relentlessly.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
@@ -508,17 +490,14 @@
 						},
 						"description": "Truth cuts through ambiguity.",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"Truth cuts through ambiguity.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"Truth cuts through ambiguity.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					}
@@ -547,7 +526,13 @@
 						"width": "66.667%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					},
+					"notes": "Gain a PP when you trade out your distinction's rating for a d4."
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -567,12 +552,9 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Zero-G Maneuver": {
-										"description": "Spend 1 PP to ignore difficult terrain in micro-gravity environments."
-									}
-								}
+							"Zero-G Maneuver": {
+								"description": "Spend 1 PP to ignore difficult terrain in micro-gravity environments.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -591,12 +573,9 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Overclock": {
-										"description": "Spend 1 PP to double an Engineering die when hotwiring security."
-									}
-								}
+							"Overclock": {
+								"description": "Spend 1 PP to double an Engineering die when hotwiring security.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -948,6 +927,7 @@
 						"height": 1
 					},
 					"pillar": "play",
+					"notesMarkdown": true,
 					"parts": {
 						"description": {
 							"left": "0%",

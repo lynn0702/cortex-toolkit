@@ -232,7 +232,7 @@
 
 	.subtrait-name {
 		font-family: var(--font-secondary);
-		color: black;
+		color: var(--text-main);
 		text-transform: none;
 		font-weight: 500;
 		font-style: normal;
@@ -311,8 +311,12 @@
 
 .trait-set-style-two-columns-detailed {
 	.trait-title {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
 		font-family: var(--font-secondary);
-		color: black;
+		color: var(--text-main);
 		text-transform: none;
 		font-weight: 500;
 		font-size: var(--text-trait-title);
@@ -321,13 +325,24 @@
 	.trait-list {
 		flex: 1 1 0;
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.5rem;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 0.55rem 0.75rem;
 		position: relative;
 	}
 
 	.trait {
-		flex: 0 0 50%;
+		min-width: 0;
+	}
+
+	.single-die-value {
+		flex-wrap: wrap;
+		justify-content: flex-start;
+
+		.diecon {
+			font-size: var(--diecon-scale-size);
+			width: var(--diecon-scale-size);
+			height: var(--diecon-scale-size);
+		}
 	}
 
 	.trait-sfx {
@@ -370,14 +385,16 @@
 	.trait-list {
 		flex: 1 1 0;
 		display: grid;
-		grid-template-columns: auto auto;
-		gap: 1rem;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 0.65rem 0.75rem;
+		align-content: start;
 		position: relative;
 	}
 
 	.trait-title {
 		position: relative;
 		display: inline-block;
+		max-width: 100%;
 		margin: 0;
 		font-size: var(--text-trait-title);
 		padding-left: 1.1rem;
@@ -388,8 +405,8 @@
 		font-family: var(--font-secondary);
 		line-height: 1.1;
 		font-weight: 500;
-		color: black;
-		border: 1px solid black;
+		color: var(--text-main);
+		border: 1px solid var(--border-strong);
 		border-left-width: 0;
 		border-top-right-radius: 1rem;
 		border-bottom-right-radius: 1rem;
@@ -404,21 +421,6 @@
 		top: calc(50% - 0.1em);
 		transform: translateY(-50%);
 		font-size: 2.2rem;
-
-		&::before {
-			display: block;
-			position: absolute;
-			top: calc(50% - 0.05em);
-			left: 50%;
-			transform: translate(-50%, -50%);
-			font-size: 1.666rem;
-			content: '';
-			width: 0.6em;
-			height: 0.6em;
-			background: white;
-			z-index: -1;
-			/* small local stacking literal */
-		}
 
 		& > span:not(.active) {
 			display: none;
@@ -450,7 +452,7 @@
 
 	.subtrait-name {
 		font-family: var(--font-secondary);
-		color: black;
+		color: var(--text-main);
 		text-transform: none;
 		font-weight: 500;
 		font-style: normal;
@@ -483,12 +485,6 @@
 }
 
 .trait-set-style-pool-rows {
-	.trait-set-header {
-		padding-bottom: 0.33rem;
-		margin: 0 0 0.33rem;
-		border-bottom: 2px solid var(--color-primary);
-	}
-
 	.trait-set-header-inner {
 		color: var(--color-primary);
 		text-transform: uppercase;
@@ -663,7 +659,7 @@
 		font-size: var(--text-trait-title);
 		line-height: 1;
 		font-weight: 800;
-		color: black;
+		color: var(--text-main);
 	}
 
 	.trait-value {
@@ -677,7 +673,7 @@
 			display: block;
 			position: absolute;
 			content: '';
-			background-color: black;
+			background-color: var(--border-strong);
 			left: 0;
 			right: 0;
 			top: 50%;
@@ -697,20 +693,20 @@
 				color: var(--color-separator);
 			}
 
-			background-color: white;
+			background-color: var(--bg-surface-card);
 			padding: 0.1em;
 		}
 
 		.out-badge {
 			position: relative;
-			background: white;
+			background: var(--bg-surface-card);
 			padding: 0.1em 0.35em;
 			font-family: var(--font-heading);
 			font-size: var(--text-meta);
 			font-weight: 800;
 			letter-spacing: 0.04em;
-			color: var(--color-separator);
-			border: 1.5px solid var(--color-separator);
+			color: var(--text-muted);
+			border: 1.5px solid var(--border-strong);
 			border-radius: 4px;
 			display: inline-flex;
 			align-items: center;
@@ -722,10 +718,10 @@
 			cursor: default;
 
 			&.active {
-				color: white;
+				color: var(--die-active-text);
 				background: var(--color-primary);
 				border-color: var(--color-primary);
-				box-shadow: 0 0 6px rgba(197, 8, 82, 0.4);
+				box-shadow: 0 0 6px color-mix(in srgb, var(--color-primary), transparent 60%);
 			}
 		}
 	}
@@ -792,12 +788,12 @@
 
 	.trait-notes-body {
 		padding: 0.6rem 0.8rem;
-		background: #f8fafc;
-		border: 1px solid var(--color-separator);
+		background: var(--bg-surface-elevated);
+		border: 1px solid var(--border-subtle);
 		border-radius: 6px;
 		font-size: var(--text-body);
 		line-height: 1.4;
-		color: #333;
+		color: var(--text-secondary);
 		cursor: pointer;
 		min-height: 3rem;
 
@@ -900,10 +896,10 @@
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				background: white;
-				border: 1px solid var(--color-separator);
+				background: var(--bg-surface-elevated);
+				border: 1px solid var(--border-strong);
 				border-radius: 3px;
-				color: var(--color-label);
+				color: var(--text-muted);
 				font-size: var(--text-meta);
 				line-height: 1;
 				cursor: pointer;
@@ -937,7 +933,7 @@
 					right: -2px;
 					top: 50%;
 					height: 2px;
-					background: #777;
+					background: var(--text-muted);
 					transform: rotate(-30deg);
 					pointer-events: none;
 				}
@@ -948,11 +944,11 @@
 				filter: none;
 				color: var(--color-interactive);
 				border-color: var(--color-interactive);
-				background: white;
+				background: var(--bg-surface-elevated);
 
 				&:hover {
 					background: var(--color-interactive);
-					color: white;
+					color: var(--die-active-text);
 				}
 			}
 		}
@@ -961,9 +957,11 @@
 
 /* SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk) */
 .trait-set-style-subtrait-columns {
+	--diecon-scale-size: 1.3rem;
+
 	.branch-head {
 		display: grid;
-		grid-template-columns: 1fr 2rem 1.4fr;
+		grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1.35fr);
 		font-family: var(--font-secondary);
 		font-size: var(--text-meta);
 		font-weight: 800;
@@ -981,7 +979,7 @@
 
 	.branch-row {
 		display: grid;
-		grid-template-columns: 1fr 2rem 1.4fr;
+		grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1.35fr);
 		align-items: stretch;
 		column-gap: 0;
 		padding: 0.4rem 0;
@@ -989,10 +987,11 @@
 	}
 
 	.branch-main {
+		min-width: 0;
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 		border-radius: 0.25rem;
 		padding: 0.3rem 0.45rem;
-		background: white;
+		background: var(--bg-surface-elevated);
 
 		.trait-name {
 			display: block;
@@ -1000,12 +999,13 @@
 			font-weight: 700;
 			font-size: var(--text-trait-title);
 			text-transform: uppercase;
-			color: black;
+			color: var(--text-main);
 			margin-bottom: 0.2rem;
 		}
 
 		.trait-value {
-			display: inline-flex;
+			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
 
 			& > span:not(.active) {
@@ -1030,30 +1030,33 @@
 	}
 
 	.branch-side {
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
 		row-gap: 0.3rem;
-		padding-left: 0.6rem;
+		padding-left: 0.45rem;
 		border-left: none;
 	}
 
 	.branch-slot {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		column-gap: 0.4rem;
+		gap: 0.2rem 0.35rem;
+		min-width: 0;
 		cursor: pointer;
 		position: relative;
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 		border-radius: 0.25rem;
 		padding: 0.25rem 0.45rem;
-		background: white;
+		background: var(--bg-surface-elevated);
 
 		&::before {
 			content: '';
 			position: absolute;
-			left: -0.6rem;
+			left: -0.45rem;
 			top: 50%;
-			width: 0.42rem;
+			width: 0.3rem;
 			height: 2px;
 			background: var(--color-primary);
 			transform: translateY(-50%);
@@ -1062,7 +1065,7 @@
 		&::after {
 			content: '';
 			position: absolute;
-			left: -0.18rem;
+			left: -0.16rem;
 			top: 50%;
 			transform: translateY(-50%);
 			border-left: 0.3rem solid var(--color-primary);
@@ -1085,15 +1088,17 @@
 
 	.subtrait-name {
 		flex: 1 1 auto;
+		min-width: 0;
 		font-size: var(--text-meta);
-		color: black;
+		color: var(--text-main);
 	}
 
 	.subtrait-value {
 		margin-left: auto;
 		display: inline-flex;
+		flex-wrap: wrap;
 		align-items: center;
-		white-space: nowrap;
+		max-width: 100%;
 
 		& > span {
 			font-size: var(--diecon-scale-size);
@@ -1102,6 +1107,13 @@
 				color: var(--color-separator);
 			}
 		}
+	}
+
+	.trait-value .diecon,
+	.subtrait-value .diecon {
+		width: var(--diecon-scale-size);
+		height: var(--diecon-scale-size);
+		font-size: var(--diecon-scale-size);
 	}
 
 	.branch-slot-empty {
@@ -1114,7 +1126,7 @@
 	/* Only applied when a set carries left-side specialties; all other */
 	/* branch sets keep the skill-left layout above untouched. */
 	.branch-split-head {
-		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 1.25rem minmax(0, 1.4fr);
 
 		.branch-head-center {
 			text-align: center;
@@ -1152,7 +1164,7 @@
 		}
 
 		&:hover {
-			background: rgba(255, 255, 255, 0.06);
+			background: color-mix(in srgb, var(--text-main), transparent 94%);
 		}
 	}
 
@@ -1163,21 +1175,21 @@
 	}
 
 	.branch-split-row {
-		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 1.25rem minmax(0, 1.4fr);
 	}
 
 	.branch-side.branch-left {
 		padding-left: 0;
-		padding-right: 0.6rem;
+		padding-right: 0.45rem;
 
 		.branch-slot::before {
 			left: auto;
-			right: -0.6rem;
+			right: -0.45rem;
 		}
 
 		.branch-slot::after {
 			left: auto;
-			right: -0.18rem;
+			right: -0.16rem;
 			border-left: none;
 			border-right: 0.3rem solid var(--color-primary);
 		}
@@ -1187,7 +1199,7 @@
 	/* middle, e.g. Solarpunk). Engaged by traitColumns 2; explicit */
 	/* left-side specialties (split above) take precedence. */
 	.branch-flank-head {
-		grid-template-columns: 1fr 1.4fr 1fr;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
 
 		span:nth-child(2) {
 			text-align: center;
@@ -1200,7 +1212,7 @@
 
 	.branch-flank-grid {
 		display: grid;
-		grid-template-columns: 1fr 1.4fr 1fr;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
 		column-gap: 0.6rem;
 		align-items: start;
 	}
@@ -1238,7 +1250,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1.2fr 1.4fr;
 		column-gap: 0;
-		color: #000000;
+		color: var(--text-main);
 		font-family: var(--font-secondary);
 		font-size: var(--text-trait-title);
 		font-weight: 800;
@@ -1258,7 +1270,7 @@
 	align-items: stretch;
 	min-height: 3.5rem;
 	border-top: 1px solid var(--color-separator);
-	background: white;
+	background: var(--bg-surface-card);
 
 	span {
 		padding: 0.3rem 0.5rem;
@@ -1275,14 +1287,14 @@
 		font-weight: 700;
 		font-size: var(--text-trait-title);
 		text-transform: uppercase;
-		color: black;
+		color: var(--text-main);
 	}
 
 	.three-col-activation,
 	.three-col-effect {
 		font-size: var(--text-body);
 		line-height: 1.3;
-		color: #333;
+		color: var(--text-secondary);
 	}
 }
 
@@ -1308,7 +1320,8 @@
 			font-weight: 700;
 			font-size: var(--text-trait-title);
 			text-transform: uppercase;
-			background: #ffffff;
+			background: var(--bg-surface-elevated);
+			color: var(--text-main);
 			flex: 0 0 38%;
 			max-width: 38%;
 			display: flex;
@@ -1321,7 +1334,8 @@
 			padding: 0.2rem 0.4rem;
 			font-size: var(--text-body);
 			font-style: italic;
-			background: #ffffff;
+			background: var(--bg-surface-elevated);
+			color: var(--text-secondary);
 			flex: 1 1 auto;
 			min-width: 0;
 			display: flex;
@@ -1403,14 +1417,14 @@
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 		border-radius: 0.25rem;
 		padding: 0.3rem 0.5rem;
-		background: white;
+		background: var(--bg-surface-elevated);
 
 		.trait-name {
 			font-family: var(--font-secondary);
 			font-weight: 700;
 			font-size: var(--text-trait-title);
 			text-transform: uppercase;
-			color: black;
+			color: var(--text-main);
 		}
 
 		.trait-value {
@@ -1475,7 +1489,7 @@
 	.trait-die-rows {
 		border: 1px solid var(--color-primary);
 		border-radius: 0.25rem;
-		background: white;
+		background: var(--bg-surface-card);
 	}
 
 	.die-rows-head {
@@ -1508,7 +1522,7 @@
 		flex: 1;
 		font-size: var(--text-trait-title);
 		font-weight: 600;
-		color: #222;
+		color: var(--text-main);
 	}
 
 	.die-row-counter {
@@ -1521,7 +1535,8 @@
 		justify-content: center;
 		font-weight: 700;
 		font-size: var(--text-meta);
-		background: #ffffff;
+		color: var(--text-main);
+		background: var(--bg-surface-elevated);
 		margin-left: 0.35rem;
 		flex-shrink: 0;
 	}
@@ -1591,7 +1606,7 @@
 			align-items: center;
 			row-gap: 0.15rem;
 			padding: 0.35rem 1rem;
-			background: white;
+			background: var(--bg-surface-elevated);
 			border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 			border-radius: 0.25rem;
 		}
@@ -1602,7 +1617,7 @@
 			font-weight: 800;
 			letter-spacing: 0.06em;
 			text-transform: uppercase;
-			color: black;
+			color: var(--text-main);
 		}
 
 		.trait-value {
@@ -1668,7 +1683,7 @@
 		flex: 0 0 auto;
 		align-self: center;
 		font-size: var(--text-trait-title);
-		color: black;
+		color: var(--text-main);
 	}
 
 	.dice-count-rating-label,
@@ -1718,7 +1733,7 @@
 		font-size: var(--text-meta);
 		font-weight: 800;
 		color: var(--color-primary);
-		background: white;
+		background: var(--bg-surface-elevated);
 		cursor: default;
 		user-select: none;
 
@@ -1728,7 +1743,7 @@
 
 		&.filled {
 			background: var(--color-primary);
-			color: white;
+			color: var(--die-active-text);
 		}
 	}
 }
@@ -1745,7 +1760,7 @@
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 		border-radius: 0.25rem;
 		margin-bottom: 0.35rem;
-		background: white;
+		background: var(--bg-surface-elevated);
 	}
 
 	.field-label {
@@ -1763,7 +1778,7 @@
 		display: block;
 		font-size: var(--text-body);
 		line-height: 1.35;
-		color: #222;
+		color: var(--text-secondary);
 	}
 
 	.field-hint {

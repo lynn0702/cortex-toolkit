@@ -155,7 +155,8 @@
 					"labels": {
 						"stress": "STRESS"
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Attribute",
 				"plural": "Attributes",
@@ -268,29 +269,30 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									},
-									"Connect": {
-										"description": "Spend a PP to step up an attribute when you connect to your old life."
-									},
-									"Overdrive": {
-										"description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Connect": {
+								"description": "Spend a PP to step up an attribute when you connect to your old life.",
+								"noun": "SFX"
+							},
+							"Overdrive": {
+								"description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -305,29 +307,30 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									},
-									"True Nature": {
-										"description": "Spend a PP to reroll your dice when you align with your true nature."
-									},
-									"Push Limits": {
-										"description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"True Nature": {
+								"description": "Spend a PP to reroll your dice when you align with your true nature.",
+								"noun": "SFX"
+							},
+							"Push Limits": {
+								"description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -342,29 +345,30 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									},
-									"Embrace": {
-										"description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality."
-									},
-									"Escalate": {
-										"description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Embrace": {
+								"description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality.",
+								"noun": "SFX"
+							},
+							"Escalate": {
+								"description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -428,119 +432,98 @@
 					"0": {
 						"description": "saved my life",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"saved my life": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"saved my life": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
 					"1": {
 						"description": "owes me big",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"owes me big": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"owes me big": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
 					"2": {
 						"description": "is a troublemaker",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"is a troublemaker": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"is a troublemaker": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
 					"3": {
 						"description": "knows their stuff",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"knows their stuff": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"knows their stuff": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
 					"4": {
 						"description": "is a liability",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"is a liability": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"is a liability": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
 					"5": {
 						"description": "is dependable",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"is dependable": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"is dependable": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
 					"6": {
 						"description": "is good for a laugh",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"is good for a laugh": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"is good for a laugh": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					}

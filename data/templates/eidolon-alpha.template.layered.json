@@ -133,7 +133,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",
@@ -204,7 +205,8 @@
 					"labels": {
 						"stress": "STRESS"
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Attribute",
 				"plural": "Attributes",
@@ -282,23 +284,22 @@
 									]
 								}
 							},
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4."
-									},
-									"Summon": {
-										"description": "Shut down this endarch distinction to summon your Eidolon on your next turn."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Summon": {
+								"description": "Shut down this endarch distinction to summon your Eidolon on your next turn.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -340,7 +341,8 @@
 						"width": "60%",
 						"height": 1
 					},
-					"pillar": "plus"
+					"pillar": "plus",
+					"fixedNames": true
 				},
 				"noun": "Eidolon Trait",
 				"plural": "Eidolon Traits",
@@ -362,6 +364,10 @@
 							"value": [
 								8
 							]
+						},
+						"keepsExtra": 1,
+						"view": {
+							"ringBadge": true
 						}
 					},
 					"Power 1": {
@@ -428,7 +434,8 @@
 						"width": "60%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -447,20 +454,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -478,20 +483,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					}

@@ -77,7 +77,7 @@ const PART_TITLES: Record<string, string> = {
 
 function partBoxLabel(key: string): string {
 	const setNoun = (traitSet.value as any)?.noun || (traitSet.value as any)?.name || 'Trait';
-	const trackNoun = getView(traitSet.value)?.labels?.track || 'Stress';
+	const trackNoun = characterCurioFunctions.getTrackLabel(traitSet.value);
 	if (key === 'trackLabel') return `${trackNoun} · Label`;
 	if (key === 'track') return `${trackNoun} · Rating`;
 	if (key.startsWith('child:')) {
@@ -89,9 +89,9 @@ function partBoxLabel(key: string): string {
 	if (key === 'subtraits') {
 		let sNoun = 'Subtrait';
 		for (const t of (traitSet.value as any)?.traits || []) {
-			for (const sub of t?.traits || []) {
+			for (const sub of characterCurioFunctions.ratedSubtraits(t, traitSet.value)) {
 				const cand = (sub?.noun || sub?.name || '').trim();
-				if (cand && cand.toLowerCase() !== trackNoun.toLowerCase() && !characterCurioFunctions.isSfxContainer(sub)) {
+				if (cand && cand.toLowerCase() !== trackNoun.toLowerCase()) {
 					sNoun = cand;
 					break;
 				}

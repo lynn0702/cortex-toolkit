@@ -477,7 +477,7 @@ const selectedPillar = computed<string>({
 								:id="'trait-set-' + traitSetID + '-track-label-words'"
 								name="trackLabelWords"
 								v-model="trackLabel"
-								placeholder="Stress"
+								placeholder="Track"
 							/>
 						</div>
 					</details>

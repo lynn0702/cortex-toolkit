@@ -140,7 +140,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Affiliation",
 				"plural": "Affiliations",
@@ -180,7 +181,8 @@
 						"width": "30%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",
@@ -302,7 +304,7 @@
 					],
 					"page": 1,
 					"multiDie": false,
-					"notes": "",
+					"notes": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 					"reservedSlots": 3,
 					"place": {
 						"left": "30%",
@@ -310,7 +312,12 @@
 						"width": "70%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -326,23 +333,22 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -357,23 +363,22 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -388,23 +393,22 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					}
@@ -443,12 +447,36 @@
 				"noun": "Talent",
 				"plural": "Talents",
 				"traits": {
-					"Talent #1:": {},
-					"Talent #2:": {},
-					"Talent #3:": {},
-					"Talent #4:": {},
-					"Talent #5:": {},
-					"Talent #6:": {}
+					"Talent #1:": {
+						"view": {
+							"prompt": true
+						}
+					},
+					"Talent #2:": {
+						"view": {
+							"prompt": true
+						}
+					},
+					"Talent #3:": {
+						"view": {
+							"prompt": true
+						}
+					},
+					"Talent #4:": {
+						"view": {
+							"prompt": true
+						}
+					},
+					"Talent #5:": {
+						"view": {
+							"prompt": true
+						}
+					},
+					"Talent #6:": {
+						"view": {
+							"prompt": true
+						}
+					}
 				}
 			},
 			"Stress": {

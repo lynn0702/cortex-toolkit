@@ -18,8 +18,8 @@ Never present a `[SUGGESTION]` or `[OPEN]` item as `[DECIDED]`. When unsure, ask
 
 ## Authoritative source: `design/DECISIONS.md`
 
-- Always read `design/DECISIONS.md` completely through its `## Decided`, `## Open (decisions needed)`, and `## Corrections` sections before proposing or changing architecture.
-- Never silently overwrite, delete, or rewrite prior history in `design/DECISIONS.md`. When adding ratified decisions, append/update cleanly and inspect `git diff design/DECISIONS.md` to confirm `0` unintentional removed lines.
+- Always read `design/DECISIONS.md` through all sections before proposing or changing architecture.
+- **Never autonomously modify `design/DECISIONS.md`.** Agents MUST NEVER create, modify, append to, or rewrite `design/DECISIONS.md` on their own initiative. Edit `design/DECISIONS.md` ONLY when the user explicitly instructs an edit to `design/DECISIONS.md` in that prompt and approves the wording. Propose candidate decisions in chat as `[SUGGESTION]` or `[OPEN]`.
 
 ## Positive-law rule outside `design/DECISIONS.md`
 

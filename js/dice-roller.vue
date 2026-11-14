@@ -154,7 +154,7 @@ function itemKeepsExtra(d: any): number {
 	if (d && typeof d.keepsExtra === 'number' && Number.isFinite(d.keepsExtra) && d.keepsExtra > 0) {
 		return Math.floor(d.keepsExtra);
 	}
-	if (d && (d.isScale || (d.source && String(d.source).toLowerCase() === 'scale'))) return 1;
+	if (d && d.isScale) return 1;
 	return 0;
 }
 
@@ -431,16 +431,21 @@ function selectSuggestion(sug: FlattenedTraitSuggestion) {
 }
 
 function hinderSuggestion(sug: FlattenedTraitSuggestion) {
-	addWordToPool(activePool.value, currentSide.value, `${sug.name} (Hinder)`, 'hinder');
+	const alt = sug.altRoll;
+	const dieSize = alt?.die || 4;
+	const ppDelta = alt ? alt.ppDelta : 1;
+	const altTag = alt?.label || 'Hinder';
+	const sourceLabel = `${sug.name} (${altTag})`;
+	addWordToPool(activePool.value, currentSide.value, sourceLabel, 'hinder');
 	addDiceToTargetPool(
 		activePool.value,
 		{
-			size: 4,
+			size: dieSize,
 			qty: 1,
-			source: `${sug.name} (Hinder)`,
+			source: sourceLabel,
 			hitches: sug.hitches,
 			keepsExtra: sug.keepsExtra,
-			ppDelta: currentSide.value === 'player' ? 1 : 0,
+			ppDelta: currentSide.value === 'player' ? ppDelta : 0,
 			ppCommitted: false,
 		},
 		true,
@@ -1463,10 +1468,14 @@ defineExpose({
 								v-if="sug.canHinder"
 								type="button"
 								class="presearch-hinder-btn"
-								:aria-label="'Hinder ' + sug.name + ' as d4 for +1 PP'"
+								:aria-label="`${sug.altRoll?.label || 'Hinder'} ${sug.name} as d${sug.altRoll?.die || 4} for ${sug.altRoll ? (sug.altRoll.ppDelta > 0 ? `+${sug.altRoll.ppDelta}` : sug.altRoll.ppDelta) : '+1'} PP`"
 								@click.stop="hinderSuggestion(sug)"
 							>
-								d4 +1 PP
+								{{
+									sug.altRoll
+										? `d${sug.altRoll.die} ${sug.altRoll.ppDelta > 0 ? `+${sug.altRoll.ppDelta}` : sug.altRoll.ppDelta} PP`
+										: 'd4 +1 PP'
+								}}
 							</button>
 						</li>
 					</ul>

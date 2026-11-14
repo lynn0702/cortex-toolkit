@@ -1,5 +1,5 @@
 // dice-pool — dice pool model (CortexPal-compatible). TypeScript leaf.
-import { resolveRating } from './model.ts';
+import { resolveAltRoll, resolvePpDelta, resolveRating, type AltRollOption } from './model.ts';
 
 export const DIE_EXPRESSION = /(\d*(d|D))?(4|6|8|10|12)/;
 export const DIE_SIZES = [4, 6, 8, 10, 12];
@@ -156,6 +156,7 @@ export interface FlattenedTraitSuggestion {
 	dice: number[];
 	notation: string;
 	canHinder: boolean;
+	altRoll: AltRollOption | null;
 	hitches: number;
 	keepsExtra: number;
 }
@@ -230,7 +231,6 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 
 		const setKey = ts.id || `set-${sIdx}`;
 		const setNoun = String(ts.noun || '').trim();
-		const isDistinctionSet = setNoun.toLowerCase() === 'distinction';
 		const setHitches = resolveNumericHitches(ts, 1);
 		const setKeepsExtra = resolveNumericKeepsExtra(ts, 0);
 
@@ -247,6 +247,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 					dice: [setDice[0]],
 					notation: `1d${setDice[0]}`,
 					canHinder: false,
+					altRoll: null,
 					hitches: setHitches,
 					keepsExtra: setKeepsExtra,
 				});
@@ -258,6 +259,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 					dice: [...setDice],
 					notation: formatDiceNotation(setDice),
 					canHinder: false,
+					altRoll: null,
 					hitches: setHitches,
 					keepsExtra: setKeepsExtra,
 				});
@@ -270,6 +272,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 					dice: [...setDice],
 					notation: formatDiceNotation(setDice),
 					canHinder: false,
+					altRoll: null,
 					hitches: setHitches,
 					keepsExtra: setKeepsExtra,
 				});
@@ -283,23 +286,8 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 
 			const trDice = extractValidDice(resolveRating(tr, [ts]));
 			const children = Array.isArray(tr.traits) ? tr.traits : [];
-			const hasHinderChild = children.some((c: any) => {
-				const cname = String(c?.name || '')
-					.trim()
-					.toLowerCase();
-				if (cname === 'hinder') return true;
-				return (
-					cname === 'sfx' &&
-					Array.isArray(c?.traits) &&
-					c.traits.some(
-						(g: any) =>
-							String(g?.name || '')
-								.trim()
-								.toLowerCase() === 'hinder',
-					)
-				);
-			});
-			const canHinder = isDistinctionSet || hasHinderChild;
+			const trAltRoll = resolveAltRoll(tr, ts);
+			const canHinder = Boolean(trAltRoll);
 			const trHitches = resolveNumericHitches(tr, setHitches);
 			const trKeepsExtra = resolveNumericKeepsExtra(tr, setKeepsExtra);
 
@@ -312,6 +300,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 					dice: trDice,
 					notation: formatDiceNotation(trDice),
 					canHinder,
+					altRoll: trAltRoll,
 					hitches: trHitches,
 					keepsExtra: trKeepsExtra,
 				});
@@ -321,8 +310,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 				const sub = children[subIdx];
 				if (!sub || sub.spent === true) continue;
 				const subName = String(sub.name || '').trim();
-				const subLower = subName.toLowerCase();
-				if (!subName || subLower === 'hinder' || subLower === 'sfx' || subLower === 'statement') continue;
+				if (!subName || resolvePpDelta(sub) !== 0) continue;
 				const subDice = extractValidDice(resolveRating(sub, [tr, ts]));
 				if (subDice.length === 0) continue;
 				results.push({
@@ -333,6 +321,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 					dice: subDice,
 					notation: formatDiceNotation(subDice),
 					canHinder: false,
+					altRoll: null,
 					hitches: resolveNumericHitches(sub, trHitches),
 					keepsExtra: resolveNumericKeepsExtra(sub, trKeepsExtra),
 				});
@@ -400,19 +389,19 @@ export class DicePool {
 					this.dice[index] = new Die(null, 'D' + dieObj.size, dieObj.size, dieObj.qty, [], dieObj.source);
 				}
 
-				const isScale = Boolean(props.isScale || (dieObj.source && dieObj.source.toLowerCase() === 'scale'));
+				const keepsExtraVal =
+					typeof props.keepsExtra === 'number' && Number.isFinite(props.keepsExtra) && (props.keepsExtra as number) > 0
+						? Math.floor(props.keepsExtra as number)
+						: 0;
+				const isScale = Boolean(props.isScale || keepsExtraVal > 0);
 				const ppDelta = typeof props.ppDelta === 'number' ? props.ppDelta : 0;
 
 				if (!options.skipWordBank && dieObj.source) {
 					const rawSource = String(dieObj.source).trim();
-					const isHinder = ppDelta > 0 || /\(hinder\)/i.test(rawSource);
-					const clean = cleanWordBankLabel(rawSource.replace(/\s*\(hinder\)\s*/i, isHinder ? ' (Hinder)' : ''));
+					const isHinder = ppDelta > 0;
+					const clean = cleanWordBankLabel(rawSource);
 					if (clean && !IGNORED_WORD_BANK_LABELS.has(clean.toLowerCase()) && !seenWords.has(clean)) {
-						const inferredKind: WordBankKind = isHinder
-							? 'hinder'
-							: isScale || clean.toLowerCase() === 'scale'
-								? 'scale'
-								: options.wordKind || 'trait';
+						const inferredKind: WordBankKind = isHinder ? 'hinder' : isScale ? 'scale' : options.wordKind || 'trait';
 						seenWords.set(clean, inferredKind);
 					}
 				}
@@ -427,12 +416,7 @@ export class DicePool {
 							typeof props.hitches === 'number' && Number.isFinite(props.hitches) && (props.hitches as number) >= 0
 								? Math.floor(props.hitches as number)
 								: 1,
-						keepsExtra:
-							typeof props.keepsExtra === 'number' &&
-							Number.isFinite(props.keepsExtra) &&
-							(props.keepsExtra as number) > 0
-								? Math.floor(props.keepsExtra as number)
-								: 0,
+						keepsExtra: keepsExtraVal,
 						ppDelta,
 						ppCommitted: Boolean(props.ppCommitted),
 					});

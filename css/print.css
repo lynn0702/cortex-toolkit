@@ -495,18 +495,21 @@
 			&.portrait-alignment-top-left,
 			&.portrait-alignment-top-right {
 				object-position: top center;
+				background-position: top center;
 			}
 
 			&.portrait-alignment-center,
 			&.portrait-alignment-center-left,
 			&.portrait-alignment-center-right {
 				object-position: center center;
+				background-position: center center;
 			}
 
 			&.portrait-alignment-bottom-center,
 			&.portrait-alignment-bottom-left,
 			&.portrait-alignment-bottom-right {
 				object-position: bottom center;
+				background-position: bottom center;
 			}
 		}
 
@@ -2709,7 +2712,7 @@ body:has(.character-sheet.submode-print) .main {
 
 	/* Blank-mode override: hollow out filled SVG diecons and pips for pencil write-in */
 	&.print-blank-mode {
-		.diecon-filled {
+		:is(.diecon-filled, .diecon-unfilled) {
 			polygon,
 			rect {
 				fill: none;
@@ -3055,7 +3058,7 @@ body:has(.character-sheet.submode-print) .main {
 
 	/* 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in */
 	&.print-blank-mode {
-		.diecon-filled {
+		:is(.diecon-filled, .diecon-unfilled) {
 			polygon,
 			rect {
 				fill: none;
@@ -3285,10 +3288,6 @@ body:has(.character-sheet.submode-print) .main {
 
 /* 5. PLAY & CREATE MODE BREATHING ROOM (non-print submodes) */
 .character-sheet:not(.submode-print) {
-	.trait-set {
-		padding-bottom: 0.5rem;
-	}
-
 	.trait {
 		padding: 0.25rem 0.35rem;
 		margin-bottom: 0.25rem;
@@ -3475,6 +3474,10 @@ body:has(.character-sheet.submode-print) .main {
 	align-items: center;
 }
 
+.character-sheet .trait-parts-inline > .trait-part-rating:has(.has-hinder-pill) {
+	justify-content: flex-end;
+}
+
 /* Blank-name rows have an empty write-in box, so their dice hold one
    line and spill left over the empty cell instead of wrapping. (Without
    this, narrow tracks flap between wrapped and unwrapped run to run on
@@ -3653,6 +3656,79 @@ body:has(.character-sheet.submode-print) .main {
 .character-sheet .subtrait {
 	flex-wrap: wrap;
 	min-width: 0;
+}
+
+.character-sheet .trait-set-style-two-columns-detailed .single-die-value .diecon,
+.character-sheet .trait-set-style-subtrait-columns .single-die-value .diecon {
+	width: var(--diecon-scale-size);
+	height: var(--diecon-scale-size);
+	font-size: var(--diecon-scale-size);
+}
+
+.character-sheet .trait-set-style-two-columns-detailed .trait-title {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.25rem;
+}
+
+.character-sheet .trait-set-style-two-columns-detailed .single-die-value {
+	flex-wrap: wrap;
+	justify-content: flex-start;
+}
+
+.character-sheet .trait-set-style-two-columns-compact .trait {
+	border-bottom: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.character-sheet
+	.trait-set-style-two-columns-compact.trait-set-borderless:not(.trait-set-header-top):not(.trait-set-header-bottom)
+	> .trait-set-header {
+	width: auto;
+	min-width: 0;
+	background: transparent;
+	border-right: none;
+	border-radius: 0;
+	padding: 0;
+	margin: 0 0.5rem 0 0;
+	align-items: stretch;
+	justify-content: center;
+}
+
+.character-sheet
+	.trait-set-style-two-columns-compact.trait-set-borderless:not(.trait-set-header-top):not(.trait-set-header-bottom)
+	.trait-set-header-inner {
+	flex: 0 0 auto;
+	width: auto;
+	margin-left: 0;
+	padding: 0.65rem 0.45rem;
+	border-radius: 999px;
+	background: var(--bg-surface-elevated);
+	border: 1.5px solid var(--border-strong);
+	color: var(--color-primary);
+}
+
+.character-sheet
+	.trait-set-style-two-columns-compact:not(.trait-set-borderless):not(.trait-set-header-top):not(
+		.trait-set-header-bottom
+	)
+	> .trait-set-header {
+	padding: 0.5rem 0;
+	justify-content: center;
+}
+
+.character-sheet
+	.trait-set-style-two-columns-compact:not(.trait-set-borderless):not(.trait-set-header-top):not(
+		.trait-set-header-bottom
+	)
+	.trait-set-header-inner {
+	flex: 0 1 auto;
+	background: transparent;
+	padding: 0;
+	border-radius: 0;
+	margin-left: 1.5px;
+	color: var(--color-primary);
 }
 
 /* LATE-NIGHT DARK MODE FOR SHEETS (Print-Immune: screen only, non-print submodes only) */
@@ -3846,6 +3922,204 @@ body:has(.character-sheet.submode-print) .main {
 			.paired-slot-sub-label {
 				color: var(--text-secondary);
 			}
+		}
+
+		/* Continuation Page Header */
+		.page-2-header-inner {
+			background: var(--bg-surface-card);
+			border-color: var(--border-strong);
+			color: var(--text-main);
+		}
+
+		.page-2-title {
+			color: var(--text-main);
+		}
+
+		.page-2-badge {
+			background: var(--bg-surface-elevated);
+			border: 1px solid var(--border-subtle);
+			color: var(--text-secondary);
+		}
+
+		/* Sheet Dividers, Buttons & Pips */
+		.trait {
+			border-bottom-color: var(--border-subtle);
+		}
+
+		.btn-sheet-add {
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-secondary);
+
+			&:hover {
+				background: var(--bg-surface-hover);
+				border-color: var(--color-primary);
+				color: var(--text-main);
+			}
+		}
+
+		.trait-title.trait-title-pip .pip.questioned {
+			background-color: var(--text-main);
+			border-color: var(--text-main);
+		}
+
+		.pip-bubble,
+		.pip-value .pip-bubble:not(.filled) {
+			background: transparent;
+			border-color: var(--border-strong);
+		}
+
+		.pip-bubble.filled,
+		.pip-value .pip-bubble.filled {
+			background: var(--text-main);
+			border-color: var(--text-main);
+		}
+
+		/* Subtrait Columns & Branched Grids */
+		.branch-main,
+		.branch-slot {
+			background: var(--bg-surface-elevated);
+			border-color: var(--color-primary);
+		}
+
+		.branch-row {
+			border-bottom-color: var(--border-subtle);
+		}
+
+		.branch-link::before,
+		.branch-slot::before {
+			background: var(--color-primary);
+		}
+
+		.branch-slot::after {
+			border-left-color: var(--color-primary);
+		}
+
+		.branch-left .branch-slot::after {
+			border-right-color: var(--color-primary);
+		}
+
+		/* Die Rows & Ladders */
+		.trait-die-rows:not(.ladder) {
+			background: var(--bg-surface-card);
+			border-color: var(--border-strong);
+		}
+
+		.die-rows-head {
+			border-bottom-color: var(--border-strong);
+			color: var(--text-main);
+		}
+
+		.die-row,
+		.trait-set-style-die-rows .die-row:not(:last-child) {
+			border-top-color: var(--border-subtle);
+			border-bottom-color: var(--border-subtle);
+		}
+
+		.die-row-counter {
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-main);
+		}
+
+		.trait-die-rows.ladder::before {
+			background: var(--color-primary);
+		}
+
+		.ladder-rung {
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-main);
+		}
+
+		/* Die Track, Attached Stress & Out Badges */
+		.stress-value::after {
+			background-color: var(--border-strong);
+		}
+
+		.stress-value > span:not(.out-badge) {
+			background-color: var(--bg-surface-card);
+		}
+
+		.out-badge:not(.active) {
+			background: var(--bg-surface-elevated);
+			color: var(--text-muted);
+			border-color: var(--border-strong);
+		}
+
+		.attached-stress-block {
+			border-color: var(--border-strong);
+		}
+
+		.attached-stress-divider {
+			border-top-color: var(--border-subtle);
+		}
+
+		/* Dice Count Pools */
+		.trait-set-style-dice-count .dice-count-rating-label,
+		.trait-set-style-dice-count .dice-count-count-label {
+			color: var(--color-primary);
+		}
+
+		.dice-count-pip:not(.filled) {
+			background: var(--bg-surface-elevated);
+			border-color: var(--color-primary);
+			color: var(--color-primary);
+		}
+
+		.dice-count-pip.filled {
+			background: var(--color-primary);
+			border-color: var(--color-primary);
+			color: var(--die-active-text);
+		}
+
+		/* Image Set, Tables, Labeled Fields & Write-In Boxes */
+		.image-set-container {
+			background: var(--bg-surface-elevated);
+		}
+
+		.image-set-placeholder,
+		.image-set-placeholder i {
+			color: var(--text-muted);
+		}
+
+		.image-set-caption {
+			background: var(--bg-surface-card);
+			color: var(--text-secondary);
+			border-top-color: var(--border-subtle);
+		}
+
+		.three-col-row {
+			background: var(--bg-surface-card);
+			border-top-color: var(--border-subtle);
+		}
+
+		.paired-slot-main {
+			background: var(--bg-surface-elevated);
+			border-color: var(--color-primary);
+		}
+
+		.field-block {
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+		}
+
+		.field-label {
+			color: var(--color-primary);
+		}
+
+		.three-col-activation,
+		.three-col-effect,
+		.field-text {
+			color: var(--text-secondary);
+		}
+
+		.trait-title-stacked > .trait-name,
+		.trait-title-stacked > .trait-title-btn,
+		.trait-set-has-feature-description .trait-name.trait-name-blank {
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-main);
 		}
 
 		/* Write-in blank lines & dividers */

@@ -1,14 +1,14 @@
 // layered-materialize — the render seam for the layered model.
 //
 // The renderer reads the array shape: `character.traitSets` is an array,
-// traits carry `rating` objects ({ type, value: [], range: [] }), SFX is a
-// child trait (grouped under an "SFX" child whose own children are the SFX
-// entries), and presentation (style, layout, reserved slots, nouns) is
+// traits carry `rating` objects ({ type, value: [], range: [] }), direct
+// child traits (modifiers, effects, subtraits, statements) live in 1-level
+// `traits[]`, and presentation (style, layout, reserved slots, nouns) is
 // inline under `view`.
 //
 // The layered model stores `sets` as a name-keyed map, ratings as objects
-// (dice strings and shorthand parse on read for import compat), SFX folded
-// into `traits.SFX`. This module is the two-way codec at the seam:
+// (dice strings and shorthand parse on read for import compat), and child
+// traits under `traits`. This module is the two-way codec at the seam:
 //
 //   materializeCharacter(file, templateChar)  layered -> render (load path)
 //   toLayeredEntity(renderChar)               render  -> layered (store path)

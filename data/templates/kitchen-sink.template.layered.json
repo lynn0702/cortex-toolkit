@@ -10,7 +10,7 @@
 		"dateTouched": "2026-10-14T12:00:00.000Z",
 		"name": "Kitchen Sink Showcase",
 		"player": "Style Audit",
-		"game": "Toolkit Reference",
+		"game": "Showcase",
 		"pronouns": "They / Them",
 		"description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
 		"plotPoints": 3,
@@ -36,6 +36,34 @@
 				"center": 0,
 				"right": 0
 			},
+			"primaryColor": "#b45309",
+			"accentColor": "#f59e0b",
+			"secondaryColor": "#fef3c7",
+			"diceConfig": {
+				"style": "custom",
+				"backgroundType": "gradient",
+				"backgroundColor1": "#10b981",
+				"backgroundColor2": "#047857",
+				"gradientAngle": 135,
+				"numeralColor": "#ffffff",
+				"borderColor": "#059669",
+				"borderWidth": 1.6,
+				"unfilledBackground": "none",
+				"unfilledNumeral": "#059669",
+				"unfilledBorder": "#059669",
+				"name": "Forest"
+			},
+			"theme": {
+				"fonts": {
+					"heading": "Alegreya Sans SC"
+				}
+			},
+			"customFonts": [
+				{
+					"name": "Curio Display SC",
+					"url": "https://characters.lynnjones.rocks/fonts/alegreya-sans-sc-normal-700-latin.woff2"
+				}
+			],
 			"listing": {
 				"title": "Kitchen Sink Style Showcase",
 				"subtitle": "All 17 Trait Set Styles & Features",
@@ -123,13 +151,13 @@
 						"name": {
 							"left": "0%",
 							"top": 0,
-							"width": "94%",
+							"width": "72%",
 							"height": 1
 						},
 						"rating": {
-							"left": "94%",
+							"left": "72%",
 							"top": 0,
-							"width": "6%",
+							"width": "28%",
 							"height": 1
 						},
 						"description": {
@@ -151,7 +179,12 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -171,23 +204,22 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-									},
-									"Pixel Parity": {
-										"description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Pixel Parity": {
+								"description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -207,20 +239,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -238,20 +268,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out this distinction's d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out this distinction's d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					}
@@ -303,7 +331,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Value",
 				"plural": "Values",
@@ -316,17 +345,14 @@
 						},
 						"description": "Form and function are inseparable.",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"Form and function are inseparable.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"Form and function are inseparable.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
@@ -338,17 +364,14 @@
 						},
 						"description": "Ship early, refine relentlessly.",
 						"traits": {
-							"Statement": {
-								"traits": {
-									"Ship early, refine relentlessly.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												true
-											]
-										}
-									}
-								}
+							"Ship early, refine relentlessly.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										true
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					},
@@ -388,7 +411,8 @@
 						"width": "50%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Skill",
 				"plural": "Skills",
@@ -519,17 +543,14 @@
 									]
 								}
 							},
-							"Statement": {
-								"traits": {
-									"They owe me a drydock bay.": {
-										"rating": {
-											"type": "Pip",
-											"value": [
-												false
-											]
-										}
-									}
-								}
+							"They owe me a drydock bay.": {
+								"rating": {
+									"type": "Pip",
+									"value": [
+										false
+									]
+								},
+								"noun": "Statement"
 							}
 						}
 					}
@@ -652,12 +673,9 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Effect": {
-										"description": "Step up your Effect die by one step for the scene."
-									}
-								}
+							"Effect": {
+								"description": "Step up your Effect die by one step for the scene.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -828,6 +846,12 @@
 				"id": "ks-labeled-fields",
 				"view": {
 					"page": 2,
+					"header": "top",
+					"border": {
+						"color": "primary",
+						"shape": "line",
+						"stroke": "1.5px"
+					},
 					"features": {
 						"description": true,
 						"sfx": false,
@@ -953,6 +977,7 @@
 				"id": "ks-two-col-compact",
 				"view": {
 					"page": 2,
+					"border": "none",
 					"style": {
 						"header": "two-columns-compact",
 						"body": "two-columns-compact"
@@ -968,7 +993,8 @@
 						"width": "50%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",
@@ -1011,6 +1037,7 @@
 				"id": "ks-notes",
 				"view": {
 					"page": 2,
+					"border": "none",
 					"place": {
 						"left": "50%",
 						"top": 2,
@@ -1018,6 +1045,7 @@
 						"height": 1
 					},
 					"pillar": "play",
+					"notesMarkdown": true,
 					"parts": {
 						"description": {
 							"left": "0%",
@@ -1098,7 +1126,7 @@
 					"value": []
 				}
 			},
-			"Resource Pool": {
+			"Crisis Pools": {
 				"id": "ks-resource-pool",
 				"view": {
 					"page": 3,
@@ -1109,7 +1137,7 @@
 					"features": {
 						"description": false,
 						"sfx": false,
-						"subtraits": true
+						"subtraits": false
 					},
 					"place": {
 						"left": "50%",
@@ -1119,48 +1147,63 @@
 					},
 					"pillar": "plus"
 				},
-				"noun": "Resource",
-				"plural": "Resources",
+				"noun": "Pool",
+				"plural": "Pools",
+				"pool": true,
 				"traits": {
-					"Supply": {
+					"Hull Breach": {
 						"rating": {
+							"type": "Dice",
 							"value": [
+								10,
+								8,
 								8
+							],
+							"range": [
+								4,
+								6,
+								8,
+								10,
+								12
 							]
-						},
-						"spendable": true,
-						"hitches": 0,
-						"traits": {
-							"Ammo": {
-								"rating": {
-									"value": [
-										6
-									]
-								}
-							}
 						}
 					},
-					"Fuel": {
+					"Security Sweep": {
 						"rating": {
+							"type": "Dice",
 							"value": [
+								8,
+								6,
 								6
+							],
+							"range": [
+								4,
+								6,
+								8,
+								10,
+								12
 							]
-						},
-						"spendable": true,
-						"hitches": 0
+						}
 					},
-					"Intel": {
+					"Failing Telemetry": {
 						"rating": {
+							"type": "Dice",
 							"value": [
-								10
+								6,
+								6
+							],
+							"range": [
+								4,
+								6,
+								8,
+								10,
+								12
 							]
-						},
-						"spendable": true,
-						"hitches": 0
+						}
 					}
 				},
 				"rating": {
-					"type": "Die",
+					"type": "Dice",
 					"value": []
 				}
 			},
@@ -1171,7 +1214,7 @@
 					"features": {
 						"description": false,
 						"sfx": false,
-						"subtraits": false
+						"subtraits": true
 					},
 					"place": {
 						"left": "0%",
@@ -1180,18 +1223,37 @@
 						"height": 1
 					},
 					"pillar": "plus",
-					"frame": {
-						"box": true
+					"border": {
+						"color": "primary",
+						"shape": "block",
+						"stroke": "2px"
 					}
 				},
 				"noun": "Asset",
 				"plural": "Assets",
 				"traits": {
-					"Custom Sidearm": {
+					"Plasma Rifle": {
 						"rating": {
 							"value": [
 								8
 							]
+						},
+						"traits": {
+							"Ammo": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										6
+									],
+									"range": [
+										4,
+										6,
+										8,
+										10,
+										12
+									]
+								}
+							}
 						}
 					},
 					"Survey Kit": {
@@ -1279,10 +1341,12 @@
 						"subtraits": false
 					},
 					"imageConfig": {
-						"url": "",
-						"height": 120,
-						"alignment": "center",
-						"caption": "Image set caption"
+						"url": "images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg",
+						"height": "180px",
+						"width": "100%",
+						"zoom": 1.2,
+						"alignment": "95% 60%",
+						"caption": "The House of the Architect"
 					},
 					"place": {
 						"left": "0%",
@@ -1294,6 +1358,204 @@
 				},
 				"noun": "Image",
 				"plural": "Images",
+				"traits": {}
+			},
+			"Cut Portrait": {
+				"id": "ks-portrait-cut",
+				"view": {
+					"page": 3,
+					"header": "top",
+					"headerAlign": "center",
+					"border": "none",
+					"frame": {
+						"array": "none",
+						"color": "primary",
+						"image": {
+							"alignment": "top-center",
+							"url": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
+							"zoom": 1
+						},
+						"position": "center",
+						"shape": "cut",
+						"size": 116,
+						"span": [
+							0,
+							360
+						],
+						"stroke": "2px"
+					},
+					"place": {
+						"left": "0%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Portrait",
+				"plural": "Portraits",
+				"traits": {}
+			},
+			"Round Portrait": {
+				"id": "ks-portrait-round",
+				"view": {
+					"page": 3,
+					"header": "top",
+					"headerAlign": "center",
+					"border": "none",
+					"frame": {
+						"array": "none",
+						"color": "accent",
+						"image": {
+							"alignment": "top-center",
+							"url": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
+							"zoom": 1.15
+						},
+						"position": "center",
+						"shape": "round",
+						"size": 116,
+						"span": [
+							0,
+							360
+						],
+						"stroke": "2px"
+					},
+					"place": {
+						"left": "50%",
+						"top": 3,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "plus"
+				},
+				"noun": "Portrait",
+				"plural": "Portraits",
+				"traits": {}
+			},
+			"Ring Array": {
+				"id": "ks-ring-array",
+				"view": {
+					"page": 3,
+					"header": "top",
+					"headerAlign": "center",
+					"border": "none",
+					"frame": {
+						"array": "ring",
+						"color": "primary",
+						"image": {
+							"alignment": "top-center",
+							"url": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
+							"zoom": 1.15
+						},
+						"ring": {
+							"arcAngle": -30
+						},
+						"shape": "circle",
+						"size": 116,
+						"span": [
+							0,
+							360
+						],
+						"stroke": "2px"
+					},
+					"place": {
+						"left": "0%",
+						"top": 4,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Trait",
+				"plural": "Traits",
+				"rating": {
+					"type": "Die",
+					"value": [],
+					"range": [
+						4,
+						6,
+						8,
+						10,
+						12
+					]
+				},
+				"traits": {
+					"Court": {
+						"rating": {
+							"value": [
+								8
+							]
+						}
+					},
+					"Commons": {
+						"rating": {
+							"value": [
+								10
+							]
+						}
+					},
+					"Church": {
+						"rating": {
+							"value": [
+								12
+							]
+						}
+					}
+				}
+			},
+			"Arc Array": {
+				"id": "ks-arc-array",
+				"view": {
+					"page": 3,
+					"header": "top",
+					"headerAlign": "center",
+					"border": "none",
+					"ringNoun": "Array Die",
+					"frame": {
+						"array": "arc",
+						"color": "accent",
+						"image": {
+							"alignment": "top-center",
+							"url": "images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg",
+							"zoom": 1
+						},
+						"shape": "circle",
+						"size": 116,
+						"span": [
+							0,
+							360
+						],
+						"stroke": "2px",
+						"traitsSpan": [
+							45,
+							135
+						]
+					},
+					"place": {
+						"left": "50%",
+						"top": 4,
+						"width": "50%",
+						"height": 1
+					},
+					"pillar": "prime"
+				},
+				"noun": "Array Die",
+				"plural": "Array Dice",
+				"rating": {
+					"type": "Dice",
+					"value": [
+						10,
+						10,
+						10
+					],
+					"range": [
+						4,
+						6,
+						8,
+						10,
+						12
+					]
+				},
 				"traits": {}
 			}
 		}

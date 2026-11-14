@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ensureView, getView, isNameSet } from './model.ts';
+import { ensureView, getView, isNameSet, isRingBadgeTrait } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { computed, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
@@ -90,7 +90,7 @@ const showRingActions = computed(() => {
 	return Boolean(traitSet.value?.traits?.some((t: any) => Boolean(getView(t)?.ring)));
 });
 
-const setSfxEntries = computed(() => characterCurioFunctions.sfxChildren(traitSet.value));
+const setSfxEntries = computed(() => characterCurioFunctions.blockChildren(traitSet.value));
 
 const BODY_COMPONENTS: Record<string, any> = {
 	name: TraitSetName,
@@ -121,7 +121,7 @@ const shouldRenderBodyComponent = computed(() => {
 		const all = traitSet.value?.traits || [];
 		const hasExplicitRingTraits = all.some((t: any) => Boolean(getView(t)?.ring));
 		if (!hasExplicitRingTraits) return false;
-		return all.some((t: any) => !getView(t)?.ring && t.name?.trim().toLowerCase() !== 'scale');
+		return all.some((t: any) => !getView(t)?.ring && !isRingBadgeTrait(t));
 	}
 	if (
 		showPortraitHub.value &&

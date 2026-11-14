@@ -1655,7 +1655,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(characterCurioFunctions.hasTrackPart(char.traitSets[0])).toBe(true);
 			setEditor.unmount();
 
-			// 2. StudioPanel drills down into TraitEditor with breadcrumb "Sheet › Attributes › Stress"
+			// 2. StudioPanel drills down into TraitEditor with breadcrumb "Sheet › Attributes › Track"
 			const studio = mount(StudioPanel, {
 				props: {
 					character: char,
@@ -1666,8 +1666,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			});
 			const crumbText = studio.find('.studio-breadcrumb').text();
 			expect(crumbText).toContain('Attributes');
-			expect(crumbText).toContain('Stress');
-			expect(crumbText).not.toContain('Subtrait Stress');
+			expect(crumbText).toContain('Track');
+			expect(crumbText).not.toContain('Subtrait Track');
 			expect(studio.findComponent(TraitEditor).exists()).toBe(true);
 			studio.unmount();
 
@@ -1677,6 +1677,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					initialSet: {
 						name: 'Values',
 						noun: 'Value',
+						view: { labels: { track: 'Stress' } },
 						traits: [
 							{
 								name: 'Justice',

@@ -145,7 +145,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Attribute",
 				"plural": "Attributes",
@@ -179,7 +180,13 @@
 						"width": "72%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					},
+					"notes": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -199,20 +206,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -230,20 +235,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -261,20 +264,18 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					}
@@ -355,7 +356,8 @@
 						"width": "72%",
 						"height": 1
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Skill",
 				"plural": "Skills",
@@ -537,7 +539,8 @@
 						"width": "33.333%",
 						"height": 1
 					},
-					"pillar": "plus"
+					"pillar": "plus",
+					"fixedNames": true
 				},
 				"noun": "Power",
 				"plural": "Powers",
@@ -552,12 +555,14 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"SFX 1": {},
-									"SFX 2": {},
-									"Limit": {}
-								}
+							"SFX 1": {
+								"noun": "SFX"
+							},
+							"SFX 2": {
+								"noun": "SFX"
+							},
+							"Limit": {
+								"noun": "SFX"
 							}
 						}
 					}
@@ -594,7 +599,8 @@
 						"width": "33.333%",
 						"height": 1
 					},
-					"pillar": "plus"
+					"pillar": "plus",
+					"fixedNames": true
 				},
 				"noun": "Power",
 				"plural": "Powers",
@@ -609,12 +615,14 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"SFX 1": {},
-									"SFX 2": {},
-									"Limit": {}
-								}
+							"SFX 1": {
+								"noun": "SFX"
+							},
+							"SFX 2": {
+								"noun": "SFX"
+							},
+							"Limit": {
+								"noun": "SFX"
 							}
 						}
 					}
@@ -651,7 +659,8 @@
 						"width": "33.334%",
 						"height": 1
 					},
-					"pillar": "plus"
+					"pillar": "plus",
+					"fixedNames": true
 				},
 				"noun": "Power",
 				"plural": "Powers",
@@ -666,12 +675,14 @@
 							}
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"SFX 1": {},
-									"SFX 2": {},
-									"Limit": {}
-								}
+							"SFX 1": {
+								"noun": "SFX"
+							},
+							"SFX 2": {
+								"noun": "SFX"
+							},
+							"Limit": {
+								"noun": "SFX"
 							}
 						}
 					}

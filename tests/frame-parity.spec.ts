@@ -343,7 +343,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 							{
 								name: 'Slipstream Test Pilot',
 								rating: { type: 'Die', value: [8] },
-								traits: [{ name: 'SFX', traits: [{ name: 'Hinder', text: 'Gain a PP' }] }],
+								traits: [{ name: 'Hinder', noun: 'SFX', description: 'Gain a PP', ppDelta: 1 }],
 							},
 						],
 					},

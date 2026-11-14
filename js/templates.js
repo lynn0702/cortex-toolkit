@@ -137,14 +137,17 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						page: 1,
 						multiDie: false,
 						ratingLadder: [8],
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -153,18 +156,15 @@ const characterCurioLibraryTemplates = [
 							name: 'Alien Background:',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -173,24 +173,22 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
 							name: 'Alien Role/Job:',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -199,24 +197,22 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
 							name: 'Personality/Quirk:',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -225,6 +221,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -256,6 +253,7 @@ const characterCurioLibraryTemplates = [
 						notes: '',
 						reservedSlots: 7,
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					rating: {
 						type: 'Die',
@@ -438,6 +436,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -811,11 +810,9 @@ const characterCurioLibraryTemplates = [
 							subtraits: false,
 						},
 						page: 1,
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						multiDie: false,
 						ratingLadder: [8],
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '0%',
@@ -824,6 +821,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -837,18 +839,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -857,6 +856,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -868,18 +868,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -888,6 +885,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -899,18 +897,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -951,6 +946,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -1423,10 +1419,8 @@ const characterCurioLibraryTemplates = [
 							subtraits: false,
 						},
 						page: 1,
-						sharedHinder: true,
-						sharedHinderText: "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						multiDie: false,
-						notes: '',
+						notes: "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '0%',
@@ -1467,6 +1461,11 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -1480,14 +1479,10 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Heritage',
-											description: 'Spend a PP to step up an attribute when you connect to your heritage.',
-											traits: [],
-										},
-									],
+									name: 'Heritage',
+									description: 'Spend a PP to step up an attribute when you connect to your heritage.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -1496,6 +1491,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -1507,14 +1503,10 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Destiny',
-											description: 'Spend a PP to reroll your dice when you embrace your destiny.',
-											traits: [],
-										},
-									],
+									name: 'Destiny',
+									description: 'Spend a PP to reroll your dice when you embrace your destiny.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -1523,6 +1515,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -1534,14 +1527,10 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Camp Reputation',
-											description: "Spend a PP to create a d8 asset linked to the thing you're known for.",
-											traits: [],
-										},
-									],
+									name: 'Camp Reputation',
+									description: "Spend a PP to create a d8 asset linked to the thing you're known for.",
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -1550,6 +1539,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -1596,6 +1586,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -1707,6 +1698,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -2072,11 +2064,9 @@ const characterCurioLibraryTemplates = [
 						traitColumns: 3,
 						page: 1,
 						ratingLadder: [8, 10, 12],
-						sharedHinder: true,
-						sharedHinderText:
-							"Gain a PP when you trade out your distinction's die rating for a d4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
 						multiDie: false,
-						notes: '',
+						notes:
+							"Gain a PP when you trade out your distinction's die rating for a d4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
 						reservedSlots: 3,
 						parts: {
 							name: {
@@ -2111,6 +2101,11 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -2206,6 +2201,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Drive',
 					plural: 'Drives',
@@ -2311,6 +2307,7 @@ const characterCurioLibraryTemplates = [
 							right: 'SPECIALTIES',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -2577,6 +2574,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -2655,6 +2653,7 @@ const characterCurioLibraryTemplates = [
 							stress: 'STRESS',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -2744,24 +2743,22 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'Summon',
-											description: 'Shut down this endarch distinction to summon your Eidolon on your next turn.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Summon',
+									description: 'Shut down this endarch distinction to summon your Eidolon on your next turn.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -2803,6 +2800,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
+						fixedNames: true,
 					},
 					noun: 'Eidolon Trait',
 					plural: 'Eidolon Traits',
@@ -2826,6 +2824,10 @@ const characterCurioLibraryTemplates = [
 								range: [4, 6, 8, 10, 12],
 							},
 							traits: [],
+							keepsExtra: 1,
+							view: {
+								ringBadge: true,
+							},
 						},
 						{
 							name: 'Power 1',
@@ -2896,6 +2898,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -2909,18 +2912,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -2940,18 +2940,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -3202,6 +3199,7 @@ const characterCurioLibraryTemplates = [
 							stress: 'STRESS',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -3357,30 +3355,29 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'Connect',
-											description: 'Spend a PP to step up an attribute when you connect to your old life.',
-											traits: [],
-										},
-										{
-											name: 'Overdrive',
-											description:
-												'Add d6 to the crisis pool to double your attribute die when you connect to your old life.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Connect',
+									description: 'Spend a PP to step up an attribute when you connect to your old life.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Overdrive',
+									description:
+										'Add d6 to the crisis pool to double your attribute die when you connect to your old life.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -3389,6 +3386,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -3400,30 +3398,29 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'True Nature',
-											description: 'Spend a PP to reroll your dice when you align with your true nature.',
-											traits: [],
-										},
-										{
-											name: 'Push Limits',
-											description:
-												'Add d6 to the crisis pool to step up your training package die when you align with your true nature.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'True Nature',
+									description: 'Spend a PP to reroll your dice when you align with your true nature.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Push Limits',
+									description:
+										'Add d6 to the crisis pool to step up your training package die when you align with your true nature.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -3432,6 +3429,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -3443,31 +3441,30 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'Embrace',
-											description:
-												'Spend a PP to double your relationship die when your assistance embraces your quirk or quality.',
-											traits: [],
-										},
-										{
-											name: 'Escalate',
-											description:
-												'Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Embrace',
+									description:
+										'Spend a PP to double your relationship die when your assistance embraces your quirk or quality.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Escalate',
+									description:
+										'Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -3476,6 +3473,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -3530,17 +3528,13 @@ const characterCurioLibraryTemplates = [
 							description: 'saved my life',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'saved my life',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'saved my life',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3549,17 +3543,13 @@ const characterCurioLibraryTemplates = [
 							description: 'owes me big',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'owes me big',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'owes me big',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3568,17 +3558,13 @@ const characterCurioLibraryTemplates = [
 							description: 'is a troublemaker',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'is a troublemaker',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'is a troublemaker',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3587,17 +3573,13 @@ const characterCurioLibraryTemplates = [
 							description: 'knows their stuff',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'knows their stuff',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'knows their stuff',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3606,17 +3588,13 @@ const characterCurioLibraryTemplates = [
 							description: 'is a liability',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'is a liability',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'is a liability',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3625,17 +3603,13 @@ const characterCurioLibraryTemplates = [
 							description: 'is dependable',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'is dependable',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'is dependable',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3644,17 +3618,13 @@ const characterCurioLibraryTemplates = [
 							description: 'is good for a laugh',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'is good for a laugh',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'is good for a laugh',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -3907,6 +3877,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Hammerhead Attribute',
 					plural: 'Hammerhead Attributes',
@@ -4025,10 +3996,8 @@ const characterCurioLibraryTemplates = [
 						page: 1,
 						ratingLadder: [8],
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 						reservedSlots: 3,
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 						place: {
 							left: '25%',
 							top: 0,
@@ -4036,6 +4005,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Vehicle Distinction',
 					plural: 'Vehicle Distinctions',
@@ -4340,6 +4314,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -4417,11 +4392,9 @@ const characterCurioLibraryTemplates = [
 							subtraits: false,
 						},
 						page: 1,
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '28%',
@@ -4430,6 +4403,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -4443,24 +4421,22 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-										{
-											name: 'Family Ties',
-											description:
-												'Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Family Ties',
+									description:
+										'Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -4480,18 +4456,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -4511,18 +4484,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -4661,6 +4631,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -5441,6 +5412,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Detail',
 					plural: 'Details',
@@ -5504,6 +5476,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Detail',
 					plural: 'Details',
@@ -5567,6 +5540,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Detail',
 					plural: 'Details',
@@ -5630,6 +5604,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Detail',
 					plural: 'Details',
@@ -5693,6 +5668,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Detail',
 					plural: 'Details',
@@ -6290,12 +6266,10 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						page: 1,
 						ratingLadder: [8],
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '0%',
@@ -6304,6 +6278,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -6317,18 +6296,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -6337,6 +6313,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -6348,18 +6325,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -6368,6 +6342,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -6379,18 +6354,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -6399,6 +6371,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -6445,6 +6418,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Affiliation',
 					plural: 'Affiliations',
@@ -6452,14 +6426,23 @@ const characterCurioLibraryTemplates = [
 						{
 							name: 'Personal:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Group:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'World:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -6725,6 +6708,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Power Set',
 					plural: 'Power Sets',
@@ -6767,6 +6751,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -6809,6 +6794,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -7174,12 +7160,10 @@ const characterCurioLibraryTemplates = [
 							sfx: true,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's die rating for a d4.",
 						ratingLadder: [8, 10, 12],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's die rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '0%',
@@ -7188,6 +7172,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -7196,18 +7185,15 @@ const characterCurioLibraryTemplates = [
 							name: 'Extraordinary:',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -7216,15 +7202,22 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
 							name: 'Backstory:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Role:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -7323,6 +7316,7 @@ const characterCurioLibraryTemplates = [
 							stress: 'STRESS',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -7690,14 +7684,17 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -7711,18 +7708,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -7731,6 +7725,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -7742,18 +7737,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -7762,6 +7754,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -7773,18 +7766,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -7793,6 +7783,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -7834,6 +7825,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Affiliation',
 					plural: 'Affiliations',
@@ -7880,6 +7872,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -7997,25 +7990,23 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Been There',
-											description: 'When you are resurrecting a ______________, double your Necromancy.',
-											traits: [],
-										},
-										{
-											name: 'Done That',
-											description: 'When a ______________ you resurrected creates or exacerbates a problem, earn a PP.',
-											traits: [],
-										},
-										{
-											name: 'Limit — Dammit',
-											description:
-												'When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene.',
-											traits: [],
-										},
-									],
+									name: 'Been There',
+									description: 'When you are resurrecting a ______________, double your Necromancy.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Done That',
+									description: 'When a ______________ you resurrected creates or exacerbates a problem, earn a PP.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Limit — Dammit',
+									description:
+										'When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -8285,6 +8276,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -8329,12 +8321,10 @@ const characterCurioLibraryTemplates = [
 							sfx: true,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '28%',
@@ -8343,6 +8333,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -8356,18 +8351,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -8387,18 +8379,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -8418,18 +8407,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -8685,6 +8671,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -8924,6 +8911,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -8968,12 +8956,10 @@ const characterCurioLibraryTemplates = [
 							sfx: true,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 2,
 						place: {
 							left: '28%',
@@ -8982,6 +8968,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -8995,18 +8986,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -9015,6 +9003,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -9026,18 +9015,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -9046,6 +9032,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -9220,6 +9207,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -9432,14 +9420,17 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -9453,18 +9444,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -9473,6 +9461,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -9484,18 +9473,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -9504,6 +9490,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -9515,18 +9502,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -9535,6 +9519,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -9572,6 +9557,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -9686,6 +9672,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -10267,6 +10254,9 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 							],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -10340,6 +10330,9 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 							],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -10413,6 +10406,9 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 							],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -10486,6 +10482,9 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 							],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -10559,6 +10558,9 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 							],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -10632,6 +10634,9 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 							],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -11197,14 +11202,17 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -11218,18 +11226,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -11249,18 +11254,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -11280,18 +11282,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -11346,6 +11345,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Affiliation',
 					plural: 'Affiliations',
@@ -11472,6 +11472,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -11526,6 +11527,7 @@ const characterCurioLibraryTemplates = [
 						notes: '',
 						reservedSlots: 19,
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -12149,6 +12151,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -12228,12 +12231,10 @@ const characterCurioLibraryTemplates = [
 							sfx: true,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '28%',
@@ -12242,6 +12243,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -12255,18 +12261,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -12275,6 +12278,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -12286,18 +12290,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -12306,6 +12307,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -12317,18 +12319,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -12337,6 +12336,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -12423,6 +12423,7 @@ const characterCurioLibraryTemplates = [
 							right: 'SPECIALTIES',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -12674,6 +12675,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -12702,12 +12704,10 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '28%',
@@ -12716,6 +12716,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -12729,18 +12734,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -12749,6 +12751,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -12760,18 +12763,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -12780,6 +12780,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -12791,18 +12792,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -12811,6 +12809,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -12921,6 +12920,7 @@ const characterCurioLibraryTemplates = [
 							right: 'SPECIALTIES',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -13168,12 +13168,10 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '22%',
@@ -13182,6 +13180,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -13195,18 +13198,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -13226,18 +13226,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -13257,18 +13254,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -13322,6 +13316,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -13436,6 +13431,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Affiliation',
 					plural: 'Affiliations',
@@ -13794,6 +13790,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -13822,8 +13819,6 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
@@ -13835,6 +13830,12 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
+						notes: "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -13880,6 +13881,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -14253,6 +14255,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -14293,8 +14296,6 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
@@ -14306,6 +14307,12 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
+						notes: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -14319,18 +14326,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -14350,18 +14354,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -14381,18 +14382,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -14468,6 +14466,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -14694,6 +14693,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -14702,21 +14702,19 @@ const characterCurioLibraryTemplates = [
 							name: '',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'SFX 1',
-											traits: [],
-										},
-										{
-											name: 'SFX 2',
-											traits: [],
-										},
-										{
-											name: 'Limit',
-											traits: [],
-										},
-									],
+									name: 'SFX 1',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'SFX 2',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Limit',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -14757,6 +14755,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -14765,21 +14764,19 @@ const characterCurioLibraryTemplates = [
 							name: '',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'SFX 1',
-											traits: [],
-										},
-										{
-											name: 'SFX 2',
-											traits: [],
-										},
-										{
-											name: 'Limit',
-											traits: [],
-										},
-									],
+									name: 'SFX 1',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'SFX 2',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Limit',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -14820,6 +14817,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -14828,21 +14826,19 @@ const characterCurioLibraryTemplates = [
 							name: '',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'SFX 1',
-											traits: [],
-										},
-										{
-											name: 'SFX 2',
-											traits: [],
-										},
-										{
-											name: 'Limit',
-											traits: [],
-										},
-									],
+									name: 'SFX 1',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'SFX 2',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Limit',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -15149,6 +15145,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -15207,6 +15204,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -15268,31 +15266,30 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'Affirmation',
-											description:
-												'Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity.',
-											traits: [],
-										},
-										{
-											name: 'Authenticity',
-											description:
-												'Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Affirmation',
+									description:
+										'Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Authenticity',
+									description:
+										'Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -15301,6 +15298,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -15312,30 +15310,29 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'Shake it Off',
-											description: 'Spend a PP to recover a complication when acting in line with your public persona.',
-											traits: [],
-										},
-										{
-											name: 'Double Down',
-											description:
-												'Step up a complication to double an attribute for an action or reaction when acting in line with your public persona.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Shake it Off',
+									description: 'Spend a PP to recover a complication when acting in line with your public persona.',
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Double Down',
+									description:
+										'Step up a complication to double an attribute for an action or reaction when acting in line with your public persona.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -15344,6 +15341,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -15355,31 +15353,30 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-											traits: [],
-										},
-										{
-											name: 'Cards on the Table',
-											description:
-												"Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration.",
-											traits: [],
-										},
-										{
-											name: 'Hurts for a Minute',
-											description:
-												"Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration.",
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									description: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Cards on the Table',
+									description:
+										"Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration.",
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Hurts for a Minute',
+									description:
+										"Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration.",
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -15388,6 +15385,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -15634,6 +15632,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Attribute',
 					plural: 'Attributes',
@@ -15716,6 +15715,9 @@ const characterCurioLibraryTemplates = [
 								range: [4, 6, 8, 10, 12],
 							},
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'History:',
@@ -15726,21 +15728,18 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Underscore',
-											description:
-												"Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history.",
-											traits: [],
-										},
-										{
-											name: 'Overcompensate',
-											description:
-												"Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history.",
-											traits: [],
-										},
-									],
+									name: 'Underscore',
+									description:
+										"Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history.",
+									traits: [],
+									noun: 'SFX',
+								},
+								{
+									name: 'Overcompensate',
+									description:
+										"Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history.",
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -15749,6 +15748,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -15759,6 +15759,9 @@ const characterCurioLibraryTemplates = [
 								range: [4, 6, 8, 10, 12],
 							},
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -15788,6 +15791,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -15819,6 +15823,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
+						fixedNames: true,
 					},
 					noun: 'Power',
 					plural: 'Powers',
@@ -16033,6 +16038,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Affiliation',
 					plural: 'Affiliations',
@@ -16077,6 +16083,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -16211,12 +16218,10 @@ const characterCurioLibraryTemplates = [
 							sfx: false,
 							subtraits: false,
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 						ratingLadder: [8],
 						page: 1,
 						multiDie: false,
-						notes: '',
+						notes: "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
 						reservedSlots: 3,
 						place: {
 							left: '30%',
@@ -16225,6 +16230,11 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -16238,18 +16248,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -16258,6 +16265,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -16269,18 +16277,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -16289,6 +16294,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 						{
@@ -16300,18 +16306,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -16320,6 +16323,7 @@ const characterCurioLibraryTemplates = [
 									shape: 'vertical-bar',
 									color: 'black',
 								},
+								prompt: true,
 							},
 						},
 					],
@@ -16357,26 +16361,44 @@ const characterCurioLibraryTemplates = [
 						{
 							name: 'Talent #1:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Talent #2:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Talent #3:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Talent #4:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Talent #5:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 						{
 							name: 'Talent #6:',
 							traits: [],
+							view: {
+								prompt: true,
+							},
 						},
 					],
 				},
@@ -16557,7 +16579,7 @@ const characterCurioLibraryTemplates = [
 			dateTouched: '2026-10-14T12:00:00.000Z',
 			name: 'Kitchen Sink Showcase',
 			player: 'Style Audit',
-			game: 'Toolkit Reference',
+			game: 'Showcase',
 			pronouns: 'They / Them',
 			description:
 				'Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.',
@@ -16581,6 +16603,34 @@ const characterCurioLibraryTemplates = [
 					center: 0,
 					right: 0,
 				},
+				primaryColor: '#b45309',
+				accentColor: '#f59e0b',
+				secondaryColor: '#fef3c7',
+				diceConfig: {
+					style: 'custom',
+					backgroundType: 'gradient',
+					backgroundColor1: '#10b981',
+					backgroundColor2: '#047857',
+					gradientAngle: 135,
+					numeralColor: '#ffffff',
+					borderColor: '#059669',
+					borderWidth: 1.6,
+					unfilledBackground: 'none',
+					unfilledNumeral: '#059669',
+					unfilledBorder: '#059669',
+					name: 'Forest',
+				},
+				theme: {
+					fonts: {
+						heading: 'Alegreya Sans SC',
+					},
+				},
+				customFonts: [
+					{
+						name: 'Curio Display SC',
+						url: 'https://characters.lynnjones.rocks/fonts/alegreya-sans-sc-normal-700-latin.woff2',
+					},
+				],
 				listing: {
 					title: 'Kitchen Sink Style Showcase',
 					subtitle: 'All 17 Trait Set Styles & Features',
@@ -16673,7 +16723,6 @@ const characterCurioLibraryTemplates = [
 							sfx: true,
 							subtraits: false,
 						},
-						sharedHinder: true,
 						reservedSlots: 3,
 						ratingLadder: [8],
 						place: {
@@ -16686,13 +16735,13 @@ const characterCurioLibraryTemplates = [
 							name: {
 								left: '0%',
 								top: 0,
-								width: '94%',
+								width: '72%',
 								height: 1,
 							},
 							rating: {
-								left: '94%',
+								left: '72%',
 								top: 0,
-								width: '6%',
+								width: '28%',
 								height: 1,
 							},
 							description: {
@@ -16715,6 +16764,11 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -16729,24 +16783,22 @@ const characterCurioLibraryTemplates = [
 							description: 'Every layout edge case deserves a test.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-										{
-											name: 'Pixel Parity',
-											description:
-												'Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF.',
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
+								},
+								{
+									name: 'Pixel Parity',
+									description:
+										'Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -16766,18 +16818,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -16797,18 +16846,15 @@ const characterCurioLibraryTemplates = [
 							},
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Hinder',
-											rating: {
-												type: 'Die',
-												value: [4],
-												range: [4],
-											},
-											traits: [],
-										},
-									],
+									name: 'Hinder',
+									rating: {
+										type: 'Die',
+										value: [4],
+										range: [4],
+									},
+									traits: [],
+									noun: 'SFX',
+									ppDelta: 1,
 								},
 							],
 							view: {
@@ -16859,6 +16905,7 @@ const characterCurioLibraryTemplates = [
 							},
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -16873,17 +16920,13 @@ const characterCurioLibraryTemplates = [
 							description: 'Form and function are inseparable.',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Form and function are inseparable.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'Form and function are inseparable.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -16897,17 +16940,13 @@ const characterCurioLibraryTemplates = [
 							description: 'Ship early, refine relentlessly.',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Ship early, refine relentlessly.',
-											rating: {
-												type: 'Pip',
-												value: [true],
-											},
-											traits: [],
-										},
-									],
+									name: 'Ship early, refine relentlessly.',
+									rating: {
+										type: 'Pip',
+										value: [true],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -16947,6 +16986,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -17080,17 +17120,13 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'They owe me a drydock bay.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'They owe me a drydock bay.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -17201,14 +17237,10 @@ const characterCurioLibraryTemplates = [
 							description: 'Spend 1 PP when rolling Engineering.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Effect',
-											description: 'Step up your Effect die by one step for the scene.',
-											traits: [],
-										},
-									],
+									name: 'Effect',
+									description: 'Step up your Effect die by one step for the scene.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -17387,6 +17419,12 @@ const characterCurioLibraryTemplates = [
 					name: 'Dossier',
 					view: {
 						page: 2,
+						header: 'top',
+						border: {
+							color: 'primary',
+							shape: 'line',
+							stroke: '1.5px',
+						},
 						features: {
 							description: true,
 							sfx: false,
@@ -17511,6 +17549,7 @@ const characterCurioLibraryTemplates = [
 					name: 'Roles (Compact Two-Column)',
 					view: {
 						page: 2,
+						border: 'none',
 						style: {
 							header: 'two-columns-compact',
 							body: 'two-columns-compact',
@@ -17527,6 +17566,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -17574,6 +17614,7 @@ const characterCurioLibraryTemplates = [
 					name: 'Notes',
 					view: {
 						page: 2,
+						border: 'none',
 						place: {
 							left: '50%',
 							top: 2,
@@ -17581,6 +17622,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'play',
+						notesMarkdown: true,
 						parts: {
 							description: {
 								left: '0%',
@@ -17670,7 +17712,7 @@ const characterCurioLibraryTemplates = [
 				},
 				{
 					id: 'ks-resource-pool',
-					name: 'Resource Pool',
+					name: 'Crisis Pools',
 					view: {
 						page: 3,
 						style: {
@@ -17680,7 +17722,7 @@ const characterCurioLibraryTemplates = [
 						features: {
 							description: false,
 							sfx: false,
-							subtraits: true,
+							subtraits: false,
 						},
 						place: {
 							left: '50%',
@@ -17690,50 +17732,39 @@ const characterCurioLibraryTemplates = [
 						},
 						pillar: 'plus',
 					},
-					noun: 'Resource',
-					plural: 'Resources',
+					noun: 'Pool',
+					plural: 'Pools',
+					pool: true,
+					rating: {
+						type: 'Dice',
+						value: [],
+					},
 					traits: [
 						{
-							name: 'Supply',
+							name: 'Hull Breach',
 							rating: {
-								type: 'Die',
-								value: [8],
+								type: 'Dice',
+								value: [10, 8, 8],
 								range: [4, 6, 8, 10, 12],
 							},
-							spendable: true,
-							hitches: 0,
-							traits: [
-								{
-									name: 'Ammo',
-									rating: {
-										type: 'Die',
-										value: [6],
-										range: [4, 6, 8, 10, 12],
-									},
-									traits: [],
-								},
-							],
-						},
-						{
-							name: 'Fuel',
-							rating: {
-								type: 'Die',
-								value: [6],
-								range: [4, 6, 8, 10, 12],
-							},
-							spendable: true,
-							hitches: 0,
 							traits: [],
 						},
 						{
-							name: 'Intel',
+							name: 'Security Sweep',
 							rating: {
-								type: 'Die',
-								value: [10],
+								type: 'Dice',
+								value: [8, 6, 6],
 								range: [4, 6, 8, 10, 12],
 							},
-							spendable: true,
-							hitches: 0,
+							traits: [],
+						},
+						{
+							name: 'Failing Telemetry',
+							rating: {
+								type: 'Dice',
+								value: [6, 6],
+								range: [4, 6, 8, 10, 12],
+							},
 							traits: [],
 						},
 					],
@@ -17746,7 +17777,7 @@ const characterCurioLibraryTemplates = [
 						features: {
 							description: false,
 							sfx: false,
-							subtraits: false,
+							subtraits: true,
 						},
 						place: {
 							left: '0%',
@@ -17755,21 +17786,33 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'plus',
-						frame: {
-							box: true,
+						border: {
+							color: 'primary',
+							shape: 'block',
+							stroke: '2px',
 						},
 					},
 					noun: 'Asset',
 					plural: 'Assets',
 					traits: [
 						{
-							name: 'Custom Sidearm',
+							name: 'Plasma Rifle',
 							rating: {
 								type: 'Die',
 								value: [8],
 								range: [4, 6, 8, 10, 12],
 							},
-							traits: [],
+							traits: [
+								{
+									name: 'Ammo',
+									rating: {
+										type: 'Die',
+										value: [6],
+										range: [4, 6, 8, 10, 12],
+									},
+									traits: [],
+								},
+							],
 						},
 						{
 							name: 'Survey Kit',
@@ -17860,10 +17903,12 @@ const characterCurioLibraryTemplates = [
 							subtraits: false,
 						},
 						imageConfig: {
-							url: '',
-							height: 120,
-							alignment: 'center',
-							caption: 'Image set caption',
+							url: 'images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg',
+							height: '180px',
+							width: '100%',
+							zoom: 1.2,
+							alignment: '95% 60%',
+							caption: 'The House of the Architect',
 						},
 						place: {
 							left: '0%',
@@ -17875,6 +17920,183 @@ const characterCurioLibraryTemplates = [
 					},
 					noun: 'Image',
 					plural: 'Images',
+					traits: [],
+				},
+				{
+					id: 'ks-portrait-cut',
+					name: 'Cut Portrait',
+					view: {
+						page: 3,
+						header: 'top',
+						headerAlign: 'center',
+						border: 'none',
+						frame: {
+							array: 'none',
+							color: 'primary',
+							image: {
+								alignment: 'top-center',
+								url: 'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
+								zoom: 1,
+							},
+							position: 'center',
+							shape: 'cut',
+							size: 116,
+							span: [0, 360],
+							stroke: '2px',
+						},
+						place: {
+							left: '0%',
+							top: 3,
+							width: '50%',
+							height: 1,
+						},
+						pillar: 'plus',
+					},
+					noun: 'Portrait',
+					plural: 'Portraits',
+					traits: [],
+				},
+				{
+					id: 'ks-portrait-round',
+					name: 'Round Portrait',
+					view: {
+						page: 3,
+						header: 'top',
+						headerAlign: 'center',
+						border: 'none',
+						frame: {
+							array: 'none',
+							color: 'accent',
+							image: {
+								alignment: 'top-center',
+								url: 'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
+								zoom: 1.15,
+							},
+							position: 'center',
+							shape: 'round',
+							size: 116,
+							span: [0, 360],
+							stroke: '2px',
+						},
+						place: {
+							left: '50%',
+							top: 3,
+							width: '50%',
+							height: 1,
+						},
+						pillar: 'plus',
+					},
+					noun: 'Portrait',
+					plural: 'Portraits',
+					traits: [],
+				},
+				{
+					id: 'ks-ring-array',
+					name: 'Ring Array',
+					view: {
+						page: 3,
+						header: 'top',
+						headerAlign: 'center',
+						border: 'none',
+						frame: {
+							array: 'ring',
+							color: 'primary',
+							image: {
+								alignment: 'top-center',
+								url: 'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
+								zoom: 1.15,
+							},
+							ring: {
+								arcAngle: -30,
+							},
+							shape: 'circle',
+							size: 116,
+							span: [0, 360],
+							stroke: '2px',
+						},
+						place: {
+							left: '0%',
+							top: 4,
+							width: '50%',
+							height: 1,
+						},
+						pillar: 'prime',
+					},
+					noun: 'Trait',
+					plural: 'Traits',
+					rating: {
+						type: 'Die',
+						value: [],
+						range: [4, 6, 8, 10, 12],
+					},
+					traits: [
+						{
+							name: 'Court',
+							rating: {
+								type: 'Die',
+								value: [8],
+								range: [4, 6, 8, 10, 12],
+							},
+							traits: [],
+						},
+						{
+							name: 'Commons',
+							rating: {
+								type: 'Die',
+								value: [10],
+								range: [4, 6, 8, 10, 12],
+							},
+							traits: [],
+						},
+						{
+							name: 'Church',
+							rating: {
+								type: 'Die',
+								value: [12],
+								range: [4, 6, 8, 10, 12],
+							},
+							traits: [],
+						},
+					],
+				},
+				{
+					id: 'ks-arc-array',
+					name: 'Arc Array',
+					view: {
+						page: 3,
+						header: 'top',
+						headerAlign: 'center',
+						border: 'none',
+						ringNoun: 'Array Die',
+						frame: {
+							array: 'arc',
+							color: 'accent',
+							image: {
+								alignment: 'top-center',
+								url: 'images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg',
+								zoom: 1,
+							},
+							shape: 'circle',
+							size: 116,
+							span: [0, 360],
+							stroke: '2px',
+							traitsSpan: [45, 135],
+						},
+						place: {
+							left: '50%',
+							top: 4,
+							width: '50%',
+							height: 1,
+						},
+						pillar: 'prime',
+					},
+					noun: 'Array Die',
+					plural: 'Array Dice',
+					rating: {
+						type: 'Dice',
+						value: [10, 10, 10],
+						range: [4, 6, 8, 10, 12],
+					},
 					traits: [],
 				},
 			],
@@ -17889,7 +18111,7 @@ const characterCurioLibraryTemplates = [
 			id: 'template-landscape-showcase',
 			isTemplate: true,
 			name: 'Landscape Showcase',
-			game: 'Toolkit Reference',
+			game: 'Showcase',
 			description:
 				'Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.',
 			pronouns: '',
@@ -18013,6 +18235,7 @@ const characterCurioLibraryTemplates = [
 						header: 'top',
 						headerAlign: 'center',
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Role',
 					plural: 'Roles',
@@ -18027,14 +18250,10 @@ const characterCurioLibraryTemplates = [
 							description: 'Direct allies and coordinate tactical movement.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Lead from the Front',
-											description: "Spend 1 PP to step up an ally's die when acting on your order.",
-											traits: [],
-										},
-									],
+									name: 'Lead from the Front',
+									description: "Spend 1 PP to step up an ally's die when acting on your order.",
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -18055,14 +18274,10 @@ const characterCurioLibraryTemplates = [
 							description: 'Bypass security systems and move undetected.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Ghost Protocol',
-											description: 'Spend 1 PP to borrow a die from the challenge pool for stealth.',
-											traits: [],
-										},
-									],
+									name: 'Ghost Protocol',
+									description: 'Spend 1 PP to borrow a die from the challenge pool for stealth.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -18083,14 +18298,10 @@ const characterCurioLibraryTemplates = [
 							description: 'Analyze technical anomalies and reverse-engineer artifacts.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Tactical Insight',
-											description: 'Spend 1 PP to reroll a die when analyzing enemy technology.',
-											traits: [],
-										},
-									],
+									name: 'Tactical Insight',
+									description: 'Spend 1 PP to reroll a die when analyzing enemy technology.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -18128,6 +18339,7 @@ const characterCurioLibraryTemplates = [
 							right: 'SPECIALTIES',
 						},
 						pillar: 'prime',
+						fixedNames: true,
 					},
 					noun: 'Skill',
 					plural: 'Skills',
@@ -18284,17 +18496,13 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Debts are never forgotten.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'Debts are never forgotten.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -18325,17 +18533,13 @@ const characterCurioLibraryTemplates = [
 									traits: [],
 								},
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Honor bound to protect.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'Honor bound to protect.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -18383,6 +18587,7 @@ const characterCurioLibraryTemplates = [
 								height: 1,
 							},
 						},
+						fixedNames: true,
 					},
 					noun: 'Value',
 					plural: 'Values',
@@ -18397,17 +18602,13 @@ const characterCurioLibraryTemplates = [
 							description: 'Form and function are inseparable.',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Form and function are inseparable.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'Form and function are inseparable.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -18421,17 +18622,13 @@ const characterCurioLibraryTemplates = [
 							description: 'Ship early, refine relentlessly.',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Ship early, refine relentlessly.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'Ship early, refine relentlessly.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -18445,17 +18642,13 @@ const characterCurioLibraryTemplates = [
 							description: 'Truth cuts through ambiguity.',
 							traits: [
 								{
-									name: 'Statement',
-									traits: [
-										{
-											name: 'Truth cuts through ambiguity.',
-											rating: {
-												type: 'Pip',
-												value: [false],
-											},
-											traits: [],
-										},
-									],
+									name: 'Truth cuts through ambiguity.',
+									rating: {
+										type: 'Pip',
+										value: [false],
+									},
+									traits: [],
+									noun: 'Statement',
 								},
 							],
 						},
@@ -18470,8 +18663,6 @@ const characterCurioLibraryTemplates = [
 							header: 'default',
 							body: 'default',
 						},
-						sharedHinder: true,
-						sharedHinderText: "Gain a PP when you trade out your distinction's rating for a d4.",
 						features: {
 							description: true,
 							sfx: true,
@@ -18484,6 +18675,12 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'prime',
+						altRoll: {
+							die: 4,
+							ppDelta: 1,
+							label: 'Hinder',
+						},
+						notes: "Gain a PP when you trade out your distinction's rating for a d4.",
 					},
 					noun: 'Distinction',
 					plural: 'Distinctions',
@@ -18498,14 +18695,10 @@ const characterCurioLibraryTemplates = [
 							description: 'Accustomed to zero-G and cold vacuum.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Zero-G Maneuver',
-											description: 'Spend 1 PP to ignore difficult terrain in micro-gravity environments.',
-											traits: [],
-										},
-									],
+									name: 'Zero-G Maneuver',
+									description: 'Spend 1 PP to ignore difficult terrain in micro-gravity environments.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -18526,14 +18719,10 @@ const characterCurioLibraryTemplates = [
 							description: 'Upgraded with experimental neural cyberware.',
 							traits: [
 								{
-									name: 'SFX',
-									traits: [
-										{
-											name: 'Overclock',
-											description: 'Spend 1 PP to double an Engineering die when hotwiring security.',
-											traits: [],
-										},
-									],
+									name: 'Overclock',
+									description: 'Spend 1 PP to double an Engineering die when hotwiring security.',
+									traits: [],
+									noun: 'SFX',
 								},
 							],
 							view: {
@@ -18901,6 +19090,7 @@ const characterCurioLibraryTemplates = [
 							height: 1,
 						},
 						pillar: 'play',
+						notesMarkdown: true,
 						parts: {
 							description: {
 								left: '0%',

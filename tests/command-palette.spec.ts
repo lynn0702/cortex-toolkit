@@ -45,18 +45,17 @@ function sampleCharacter() {
 						tags: ['craft'],
 						traits: [
 							{
-								name: 'SFX',
-								traits: [
-									{
-										name: 'Measure Twice',
-										description: 'Step up a die when drafting or planning.',
-										tags: ['planning'],
-									},
-									{
-										name: 'Hinder',
-										description: 'Gain a PP when you step down this Distinction to a d4.',
-									},
-								],
+								name: 'Measure Twice',
+								noun: 'SFX',
+								description: 'Step up a die when drafting or planning.',
+								tags: ['planning'],
+							},
+							{
+								name: 'Hinder',
+								noun: 'SFX',
+								rating: { type: 'Die', value: [4], range: [4] },
+								ppDelta: 1,
+								description: 'Gain a PP when you step down this Distinction to a d4.',
 							},
 						],
 					},

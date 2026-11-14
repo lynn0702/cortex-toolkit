@@ -217,7 +217,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 			{
 				name: 'Heroic',
 				rating: { type: 'Die', value: [8] },
-				traits: [{ name: 'SFX', traits: [{ name: 'Hinder', description: 'Gain a PP.' }] }],
+				traits: [{ name: 'Hinder', noun: 'SFX', description: 'Gain a PP.', ppDelta: 1 }],
 				view: { badge: { shape: 'pill', color: 'black', text: 'SFX' } },
 			},
 		];

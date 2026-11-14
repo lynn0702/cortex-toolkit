@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import ModalDialog from './modal-dialog.vue';
-import { availableDice, isHiddenIn, isNameSet, keepsExtraDice, resolveHitches } from './model.ts';
+import {
+	availableDice,
+	getView,
+	isHiddenIn,
+	isNameSet,
+	keepsExtraDice,
+	resolveAltRoll,
+	resolveHitches,
+	resolvePpDelta,
+	type AltRollOption,
+} from './model.ts';
 import { formatDiceNotation } from './dice-pool.ts';
 
 interface PaletteItem {
 	id: string;
 	kind: 'set' | 'trait' | 'sfx' | 'statement' | 'character' | 'action';
+	kindLabel?: string;
 	icon: string;
 	title: string;
 	subtitle: string;
@@ -15,6 +26,7 @@ interface PaletteItem {
 	dice: number[];
 	notation: string;
 	canHinder: boolean;
+	altRoll?: AltRollOption | null;
 	hitches: number;
 	keepsExtra: number;
 	selector?: unknown[];
@@ -72,23 +84,10 @@ function normalizeTags(raw: unknown): string[] {
 	return raw.map((t) => String(t || '').trim()).filter((t) => t.length > 0);
 }
 
-function hasHinderChild(children: any[]): boolean {
-	return children.some((c: any) => {
-		const name = String(c?.name || '')
-			.trim()
-			.toLowerCase();
-		if (name === 'hinder') return true;
-		return (
-			name === 'sfx' &&
-			Array.isArray(c?.traits) &&
-			c.traits.some(
-				(g: any) =>
-					String(g?.name || '')
-						.trim()
-						.toLowerCase() === 'hinder',
-			)
-		);
-	});
+function formatAltNotation(alt: AltRollOption): string {
+	const sign = alt.ppDelta > 0 ? '+' : '';
+	const deltaStr = alt.ppDelta === 1 ? '+ PP' : `${sign}${alt.ppDelta} PP`;
+	return `d${alt.die} ${deltaStr}`;
 }
 
 function buildSearchBlob(parts: Array<string | string[]>): string {
@@ -126,6 +125,7 @@ const allItems = computed<PaletteItem[]>(() => {
 					dice: [],
 					notation: '',
 					canHinder: false,
+					altRoll: null,
 					hitches: 1,
 					keepsExtra: 0,
 					selector: ['name'],
@@ -138,7 +138,6 @@ const allItems = computed<PaletteItem[]>(() => {
 
 			const setName = String(ts.name || ts.noun || `Trait Set ${sIdx + 1}`).trim();
 			const setNoun = String(ts.noun || '').trim();
-			const isDistinctionSet = setNoun.toLowerCase() === 'distinction';
 			const setHitches = resolveHitches(ts);
 			const setKeepsExtra = keepsExtraDice(ts);
 			const setDice = availableDice(ts);
@@ -154,6 +153,7 @@ const allItems = computed<PaletteItem[]>(() => {
 				dice: setDice,
 				notation: setDice.length ? formatDiceNotation(setDice) : '',
 				canHinder: false,
+				altRoll: null,
 				hitches: setHitches,
 				keepsExtra: setKeepsExtra,
 				selector: ['traitSet', sIdx],
@@ -174,7 +174,8 @@ const allItems = computed<PaletteItem[]>(() => {
 				if (!trName && !trDesc && trDice.length === 0 && children.length === 0) continue;
 
 				const displayTitle = trName || `${setNoun || setName} ${tIdx + 1}`;
-				const canHinder = isDistinctionSet || hasHinderChild(children);
+				const trAltRoll = resolveAltRoll(tr, ts);
+				const canHinder = Boolean(trAltRoll);
 				const trHitches = resolveHitches(tr, [ts]);
 				const trKeepsExtra = keepsExtraDice(tr);
 				const trTags = normalizeTags(tr.tags);
@@ -190,6 +191,7 @@ const allItems = computed<PaletteItem[]>(() => {
 					dice: trDice,
 					notation: trNotation,
 					canHinder,
+					altRoll: trAltRoll,
 					hitches: trHitches,
 					keepsExtra: trKeepsExtra,
 					selector: ['trait', sIdx, tIdx],
@@ -202,90 +204,62 @@ const allItems = computed<PaletteItem[]>(() => {
 					const child = children[cIdx];
 					if (!child || isHiddenIn(child, visContext)) continue;
 					const childName = String(child.name || '').trim();
-					const childLower = childName.toLowerCase();
-
-					if (childLower === 'sfx' && Array.isArray(child.traits)) {
-						for (let gIdx = 0; gIdx < child.traits.length; gIdx++) {
-							const g = child.traits[gIdx];
-							if (!g || isHiddenIn(g, visContext)) continue;
-							const gName = String(g.name || '').trim();
-							const gDesc = String(g.description || '').trim();
-							if (!gName && !gDesc) continue;
-							const gTags = normalizeTags(g.tags);
-							const sfxCanHinder = gName.toLowerCase() === 'hinder';
-							items.push({
-								id: `sfx-${sIdx}-${tIdx}-${cIdx}-${gIdx}`,
-								kind: 'sfx',
-								icon: 'fa-dice',
-								title: gName || 'SFX',
-								parentTitle: displayTitle,
-								subtitle: `${displayTitle} · SFX`,
-								description: gDesc,
-								dice: [],
-								notation: sfxCanHinder ? 'd4 + PP' : '',
-								canHinder: sfxCanHinder,
-								hitches: 1,
-								keepsExtra: 0,
-								selector: ['trait', sIdx, tIdx, cIdx, gIdx],
-								setIndex: sIdx,
-								tags: gTags,
-								searchBlob: buildSearchBlob([gName, 'sfx', displayTitle, setName, gDesc, gTags]),
-							});
-						}
-						continue;
-					}
-
-					if (childLower === 'statement' && Array.isArray(child.traits)) {
-						for (let gIdx = 0; gIdx < child.traits.length; gIdx++) {
-							const g = child.traits[gIdx];
-							if (!g || isHiddenIn(g, visContext)) continue;
-							const gName = String(g.name || g.description || '').trim();
-							if (!gName) continue;
-							const gTags = normalizeTags(g.tags);
-							items.push({
-								id: `stmt-${sIdx}-${tIdx}-${cIdx}-${gIdx}`,
-								kind: 'statement',
-								icon: 'fa-bookmark',
-								title: gName,
-								parentTitle: displayTitle,
-								subtitle: `${displayTitle} · Statement`,
-								description: gDescIfDistinct(gName, g.description),
-								dice: [],
-								notation: '',
-								canHinder: false,
-								hitches: 1,
-								keepsExtra: 0,
-								selector: ['trait', sIdx, tIdx, cIdx, gIdx],
-								setIndex: sIdx,
-								tags: gTags,
-								searchBlob: buildSearchBlob([gName, 'statement', displayTitle, setName, g.description, gTags]),
-							});
-						}
-						continue;
-					}
-
-					if (!childName) continue;
-					const childDice = child.spent === true ? [] : availableDice(child, [tr, ts]);
-					const childNotation = childDice.length ? formatDiceNotation(childDice) : '';
-					const childTags = normalizeTags(child.tags);
 					const childDesc = String(child.description || '').trim();
+					const childNoun = String(child.noun || getView(child)?.noun || '').trim();
+					const childDice = child.spent === true ? [] : availableDice(child, [tr, ts]);
+					if (!childName && !childDesc && childDice.length === 0) continue;
+
+					const childTags = normalizeTags(child.tags);
+					const childPpDelta = resolvePpDelta(child);
+					const childAltRoll: AltRollOption | null =
+						childPpDelta !== 0
+							? {
+									die: childDice[0] || trAltRoll?.die || 4,
+									ppDelta: childPpDelta,
+									label: childName || childNoun || trAltRoll?.label || 'Alt',
+								}
+							: null;
+					const childCanHinder = Boolean(childAltRoll);
+					const childNotation = childAltRoll
+						? formatAltNotation(childAltRoll)
+						: childDice.length
+							? formatDiceNotation(childDice)
+							: '';
+					const entryTitle = childName || childDesc || childNoun || 'Entry';
+					const kindLabel = childAltRoll
+						? childNoun || 'Effect'
+						: childDice.length > 0
+							? undefined
+							: childNoun || 'Note';
+					const subtitle =
+						childAltRoll || childDice.length === 0 ? `${displayTitle} · ${kindLabel}` : `${setName} › ${displayTitle}`;
 					items.push({
 						id: `sub-${sIdx}-${tIdx}-${cIdx}`,
-						kind: 'trait',
-						icon: childDice.length ? 'fa-dice' : 'fa-bookmark',
-						title: childName,
+						kind: childAltRoll ? 'sfx' : childDice.length > 0 ? 'trait' : 'sfx',
+						kindLabel,
+						icon: childDice.length || childCanHinder ? 'fa-dice' : 'fa-bookmark',
+						title: entryTitle,
 						parentTitle: displayTitle,
-						subtitle: `${setName} › ${displayTitle}`,
-						description: childDesc,
-						dice: childDice,
+						subtitle,
+						description: gDescIfDistinct(entryTitle, childDesc),
+						dice: childAltRoll ? [] : childDice,
 						notation: childNotation,
-						canHinder: childLower === 'hinder',
+						canHinder: childCanHinder,
+						altRoll: childAltRoll,
 						hitches: resolveHitches(child, [tr, ts]),
 						keepsExtra: keepsExtraDice(child),
 						selector: ['trait', sIdx, tIdx, cIdx],
 						setIndex: sIdx,
 						tags: childTags,
-						searchBlob: buildSearchBlob([childName, displayTitle, setName, childDesc, childNotation, childTags]),
+						searchBlob: buildSearchBlob([
+							entryTitle,
+							childNoun,
+							displayTitle,
+							setName,
+							childDesc,
+							childNotation,
+							childTags,
+						]),
 					});
 				}
 			}
@@ -458,14 +432,16 @@ const activeOptionId = computed(() => (activeItem.value ? `palette-option-${acti
 
 function buildStagePayload(item: PaletteItem, asHinder = false): any | null {
 	if (asHinder || (item.dice.length === 0 && item.canHinder)) {
-		if (!item.canHinder) return null;
+		const alt = item.altRoll;
+		if (!alt) return null;
 		const baseName = item.parentTitle || item.title;
+		const altTag = alt.label || 'Alt';
 		return {
-			size: 4,
-			source: `${baseName} (Hinder)`,
-			hitches: 1,
-			keepsExtra: 0,
-			ppDelta: 1,
+			size: alt.die,
+			source: `${baseName} (${altTag})`,
+			hitches: item.hitches || 1,
+			keepsExtra: item.keepsExtra || 0,
+			ppDelta: alt.ppDelta,
 			ppCommitted: false,
 		};
 	}
@@ -697,15 +673,14 @@ function handleKeydown(event: KeyboardEvent) {
 					</span>
 					<span class="palette-option-meta">
 						<span v-if="item.notation" class="palette-badge-die">{{ item.notation }}</span>
-						<span v-else-if="item.kind === 'sfx'" class="palette-badge-kind">SFX</span>
-						<span v-else-if="item.kind === 'statement'" class="palette-badge-kind">Statement</span>
+						<span v-else-if="item.kindLabel" class="palette-badge-kind">{{ item.kindLabel }}</span>
 						<span v-else-if="item.kind === 'character'" class="palette-badge-kind">Sheet</span>
 						<span v-else-if="item.kind === 'action'" class="palette-badge-kind">Action</span>
 					</span>
 				</li>
 			</ul>
 
-			<div v-else class="palette-empty" role="status">No matching traits, SFX, characters, or commands.</div>
+			<div v-else class="palette-empty" role="status">No matching traits, characters, or commands.</div>
 
 			<div class="palette-footer">
 				<div class="palette-footer-actions" v-if="submode === 'play'">
@@ -723,7 +698,9 @@ function handleKeydown(event: KeyboardEvent) {
 						class="palette-action-btn"
 						@click.stop="stageItem(activeItem, false, true)"
 					>
-						<i class="fas fa-dice" aria-hidden="true"></i> Hinder d4
+						<i class="fas fa-dice" aria-hidden="true"></i> {{ activeItem.altRoll?.label || 'Hinder' }} d{{
+							activeItem.altRoll?.die || 4
+						}}
 					</button>
 					<button
 						v-if="totalPoolCount > 0"

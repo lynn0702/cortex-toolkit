@@ -283,11 +283,89 @@ export function rollSeparate(node: unknown, fallbacks?: Array<unknown>): boolean
 	return resolveHitches(node, fallbacks) === 0;
 }
 
-/** keepsExtra: the Scale effect, named where data must name it. */
+/** keepsExtra: extra dice kept toward the total when rolled. */
 export function keepsExtraDice(node: unknown): number {
 	const n = (node && typeof node === 'object' ? node : undefined) as RatedNode;
 	const k = n && typeof n.keepsExtra === 'number' && Number.isFinite(n.keepsExtra) ? Math.floor(n.keepsExtra) : 0;
 	return k > 0 ? k : 0;
+}
+
+/** Whether a trait renders as the special ring badge die on portrait-ring sets. */
+export function isRingBadgeTrait(t: unknown): boolean {
+	if (!t || typeof t !== 'object') return false;
+	const v = getView(t);
+	if (v?.ringBadge === true) return true;
+	if (v?.ringBadge === false) return false;
+	return keepsExtraDice(t) > 0;
+}
+
+/** Resolve Plot Point delta (`ppDelta`) on a node or its ancestor chain. */
+export function resolvePpDelta(node: unknown, ancestors: unknown[] = []): number {
+	const chain: Array<unknown> = [node, ...(Array.isArray(ancestors) ? ancestors : [])];
+	for (const link of chain) {
+		const n = (link && typeof link === 'object' ? link : undefined) as { ppDelta?: unknown } | undefined;
+		if (n && typeof n.ppDelta === 'number' && Number.isFinite(n.ppDelta) && n.ppDelta !== 0) {
+			return Math.trunc(n.ppDelta);
+		}
+	}
+	return 0;
+}
+
+export interface AltRollConfig {
+	die: number;
+	ppDelta: number;
+	label?: string;
+}
+
+export interface AltRollOption {
+	die: number;
+	ppDelta: number;
+	label: string;
+	child?: Trait;
+}
+
+/**
+ * Resolve an alternate roll option (e.g. step-down die + Plot Point delta)
+ * from a trait's own rated child traits with non-zero `ppDelta`, falling back
+ * to `trait.view.altRoll` or `traitSet.view.altRoll`.
+ */
+export function resolveAltRoll(trait: unknown, traitSet?: unknown): AltRollOption | null {
+	const rec = (trait && typeof trait === 'object' ? trait : undefined) as Record<string, any> | undefined;
+	if (rec && Array.isArray(rec.traits)) {
+		for (const child of rec.traits) {
+			if (!child || typeof child !== 'object') continue;
+			if (resolveVisibility(child) === 'hidden') continue;
+			const ppDelta = resolvePpDelta(child);
+			if (ppDelta === 0) continue;
+			const dice = ratingDice(resolveRating(child, [rec, traitSet]));
+			if (dice.length > 0 && dice[0] > 0) {
+				return {
+					die: dice[0],
+					ppDelta,
+					label: String(child.name || child.noun || '').trim(),
+					child: child as Trait,
+				};
+			}
+		}
+	}
+	const alt = (getView(trait)?.altRoll ?? getView(traitSet)?.altRoll) as AltRollConfig | undefined;
+	if (
+		alt &&
+		typeof alt === 'object' &&
+		typeof alt.die === 'number' &&
+		Number.isFinite(alt.die) &&
+		alt.die > 0 &&
+		typeof alt.ppDelta === 'number' &&
+		Number.isFinite(alt.ppDelta) &&
+		alt.ppDelta !== 0
+	) {
+		return {
+			die: Math.trunc(alt.die),
+			ppDelta: Math.trunc(alt.ppDelta),
+			label: typeof alt.label === 'string' ? alt.label.trim() : '',
+		};
+	}
+	return null;
 }
 
 /**
@@ -411,26 +489,29 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 }
 
 /** Resolves the display noun for a child trait / subtrait definition. */
-export function resolveSubtraitNoun(sub: any): string {
+export function resolveSubtraitNoun(sub: any, traitSet?: unknown): string {
 	if (!sub || typeof sub !== 'object') return 'Subtrait';
 	if (typeof sub.noun === 'string' && sub.noun.trim().length > 0) return sub.noun.trim();
 	const v = getView(sub);
 	if (typeof v?.noun === 'string' && v.noun.trim().length > 0) return v.noun.trim();
-	const r = getRating(sub);
-	if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return 'Statement';
+	const setLabel = getView(traitSet)?.labels?.subtrait;
+	if (typeof setLabel === 'string' && setLabel.trim().length > 0) return setLabel.trim();
 	const name = String(sub.name || '').trim();
 	return name || 'Subtrait';
 }
 
 /** Resolves the plural noun for a child trait / subtrait definition. */
-export function resolveSubtraitPlural(sub: any): string {
+export function resolveSubtraitPlural(sub: any, traitSet?: unknown): string {
 	if (!sub || typeof sub !== 'object') return 'Subtraits';
 	if (typeof sub.plural === 'string' && sub.plural.trim().length > 0) return sub.plural.trim();
 	const v = getView(sub);
 	if (typeof v?.plural === 'string' && v.plural.trim().length > 0) return v.plural.trim();
-	const n = resolveSubtraitNoun(sub);
+	const setPlural = getView(traitSet)?.labels?.subtraits;
+	if (typeof setPlural === 'string' && setPlural.trim().length > 0) return setPlural.trim();
+	const n = resolveSubtraitNoun(sub, traitSet);
 	if (!n) return 'Subtraits';
-	if (n.toLowerCase() === 'stress') return 'Stress';
+	const trackLabel = getView(traitSet)?.labels?.track;
+	if (typeof trackLabel === 'string' && n.toLowerCase() === trackLabel.trim().toLowerCase()) return n;
 	if (n.endsWith('s')) return n;
 	return n + 's';
 }
@@ -714,6 +795,15 @@ export interface CharacterCurioCustom {
 	// ring / portrait ring
 	scaleDie?: number;
 	scale?: number;
+	ringBadge?: boolean;
+	ringBadgeDie?: number;
+
+	// mechanics / printing / child routing
+	altRoll?: AltRollConfig;
+	fixedNames?: boolean;
+	prompt?: boolean;
+	part?: 'block' | 'subtraits' | 'track';
+	notesMarkdown?: boolean;
 
 	// app-only trait-level flags that live under `trait.view`
 	spentDice?: number[];
@@ -775,8 +865,10 @@ export type ViewConfig = CharacterCurioCustom;
  * reserved id 'name' (which ensureTraitSetIds never assigns elsewhere).
  */
 export function isNameSet(set: unknown): boolean {
+	if (!set || typeof set !== 'object') return false;
+	if ((set as any).id === 'name') return true;
 	const v = getView(set);
-	return Boolean(set && typeof set === 'object' && v && typeof v === 'object' && v.style?.body === 'name');
+	return Boolean(v && typeof v === 'object' && v.style?.body === 'name');
 }
 
 /**
@@ -894,19 +986,6 @@ function resolveTemplateRecords(tmplOrChar: unknown): {
 	return { entry, character };
 }
 
-function firstFramedSetImageUrl(character: Record<string, unknown> | undefined): string {
-	const sets = character && Array.isArray(character.traitSets) ? character.traitSets : [];
-	for (const ts of sets) {
-		const frame = getView(ts)?.frame;
-		if (!frame || typeof frame !== 'object' || Array.isArray(frame)) continue;
-		const img = (frame as Record<string, unknown>).image;
-		if (!img || typeof img !== 'object' || Array.isArray(img)) continue;
-		const url = trimmedString((img as Record<string, unknown>).url);
-		if (url) return url;
-	}
-	return '';
-}
-
 /** Read Library listing metadata from `character.view.listing` (with legacy entry fallback). */
 export function getTemplateListing(tmplOrChar: unknown): TemplateListing | undefined {
 	const { entry, character } = resolveTemplateRecords(tmplOrChar);
@@ -980,7 +1059,7 @@ export function getTemplateHeroImage(tmpl: unknown): string {
 		character?.portrait && typeof character.portrait === 'object'
 			? (character.portrait as Record<string, unknown>)
 			: undefined;
-	return trimmedString(listing?.image) || trimmedString(portrait?.url) || firstFramedSetImageUrl(character);
+	return trimmedString(listing?.image) || trimmedString(portrait?.url);
 }
 
 /** Wrap a `.curio.json` Character in a canonical `SheetTemplate` envelope. */

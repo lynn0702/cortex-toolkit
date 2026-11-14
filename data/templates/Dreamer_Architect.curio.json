@@ -159,6 +159,11 @@
 			],
 			"view": {
 				"border": "none",
+				"altRoll": {
+					"die": 4,
+					"ppDelta": 1,
+					"label": "Hinder"
+				},
 				"header": "none",
 				"page": 1,
 				"pillar": "prime",
@@ -264,7 +269,8 @@
 					8,
 					10,
 					12
-				]
+				],
+				"fixedNames": true
 			},
 			"id": "values",
 			"plural": "Values",
@@ -308,6 +314,11 @@
 			],
 			"view": {
 				"border": "none",
+				"altRoll": {
+					"die": 4,
+					"ppDelta": 1,
+					"label": "Hinder"
+				},
 				"frame": {
 					"array": "none",
 					"color": "primary",

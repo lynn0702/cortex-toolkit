@@ -9,6 +9,7 @@ import {
 	isNameSet as isNameSetModel,
 	getRating,
 	resolveRating,
+	resolvePpDelta,
 	ratingDice,
 	setRatingDice,
 	resolveSetPillar,
@@ -31,6 +32,200 @@ import type {
 } from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
+
+const DIECON_FONT_FAMILY = "'Open Sans', sans-serif";
+const DIECON_CACHE_LIMIT = 256;
+const DIECON_SVG_CACHE = new Map<string, string>();
+const DIE_GEOM_SVG_CACHE = new Map<string, string>();
+const SAFE_SVG_PAINT_RE =
+	/^(?:#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|currentColor|none|transparent|black|white|var\(--[A-Za-z0-9-]+\))$/i;
+
+interface DieSpec {
+	shapeTag: 'rect' | 'polygon';
+	shapeGeom: string;
+	x: string;
+	y: string;
+	fontSize: string;
+	letterSpacing?: string;
+}
+
+const DIECON_SPECS: Record<number, DieSpec> = {
+	4: {
+		shapeTag: 'polygon',
+		shapeGeom: 'points="2,3.4 22,3.4 12,20.8"',
+		x: '11.95',
+		y: '12.45',
+		fontSize: '8.8',
+	},
+	6: {
+		shapeTag: 'rect',
+		shapeGeom: 'x="3.5" y="3.5" width="17" height="17" rx="1.2"',
+		x: '12',
+		y: '15.78',
+		fontSize: '10.5',
+	},
+	8: {
+		shapeTag: 'polygon',
+		shapeGeom: 'points="12,2.5 21.5,12 12,21.5 2.5,12"',
+		x: '12',
+		y: '15.67',
+		fontSize: '10.2',
+	},
+	10: {
+		shapeTag: 'polygon',
+		shapeGeom: 'points="12,2.5 21.5,7.5 21.5,16.5 12,21.5 2.5,16.5 2.5,7.5"',
+		x: '11.83',
+		y: '15.38',
+		fontSize: '9.4',
+		letterSpacing: '-0.03em',
+	},
+	12: {
+		shapeTag: 'polygon',
+		shapeGeom: 'points="12,2.7 21.7,9.8 18,21.3 6,21.3 2.3,9.8"',
+		x: '11.86',
+		y: '15.75',
+		fontSize: '9.2',
+		letterSpacing: '-0.03em',
+	},
+};
+
+function sanitizeSvgPaint(val: unknown, fallback: string): string {
+	if (typeof val !== 'string') return fallback;
+	const trimmed = val.trim();
+	return SAFE_SVG_PAINT_RE.test(trimmed) ? trimmed : fallback;
+}
+
+function sanitizeDieconClass(val: unknown): string {
+	if (typeof val !== 'string') return '';
+	return val
+		.replace(/[^A-Za-z0-9 _-]/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
+function setBoundedDieconCache(cache: Map<string, string>, key: string, value: string): string {
+	if (cache.size >= DIECON_CACHE_LIMIT) {
+		const oldestKey = cache.keys().next().value;
+		if (oldestKey !== undefined) cache.delete(oldestKey);
+	}
+	cache.set(key, value);
+	return value;
+}
+
+function resolveDieSpec(s: number): DieSpec {
+	const preset = DIECON_SPECS[s];
+	if (preset) return preset;
+	if (s < 10) {
+		return {
+			shapeTag: 'rect',
+			shapeGeom: 'x="3.5" y="3.5" width="17" height="17" rx="1.2"',
+			x: '12',
+			y: '15.78',
+			fontSize: '10.5',
+		};
+	}
+	if (s < 100) {
+		return {
+			shapeTag: 'rect',
+			shapeGeom: 'x="3.5" y="3.5" width="17" height="17" rx="1.2"',
+			x: '11.95',
+			y: '15.4',
+			fontSize: '9.5',
+			letterSpacing: '-0.03em',
+		};
+	}
+	return {
+		shapeTag: 'rect',
+		shapeGeom: 'x="3.5" y="3.5" width="17" height="17" rx="1.2"',
+		x: '12',
+		y: '14.7',
+		fontSize: '7.2',
+		letterSpacing: '-0.04em',
+	};
+}
+
+function buildDieShapeSvg(spec: DieSpec, stroke: string, strokeWidth: number, fill: string): string {
+	return `<${spec.shapeTag} ${spec.shapeGeom} stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
+}
+
+function buildDieTextSvg(spec: DieSpec, s: number, textFill: string): string {
+	const ls = spec.letterSpacing ? ` letter-spacing="${spec.letterSpacing}"` : '';
+	return `<text aria-hidden="true" x="${spec.x}" y="${spec.y}" text-anchor="middle" font-size="${spec.fontSize}" font-weight="800"${ls} font-family="${DIECON_FONT_FAMILY}" fill="${textFill}" stroke="none">${s}</text>`;
+}
+
+function resolveDieconPaint(dieValue: number, isFilled: boolean, extraClass: string, diceConfig?: DiceConfig | null) {
+	const rawS = Number(dieValue);
+	const s = Number.isFinite(rawS) && rawS > 0 ? rawS : 8;
+	const filledClass = isFilled ? 'diecon-filled' : 'diecon-unfilled';
+	const safeExtra = sanitizeDieconClass(extraClass);
+	const cfg =
+		diceConfig !== undefined
+			? diceConfig
+			: typeof window !== 'undefined'
+				? (window as any).__characterCurioActiveDiceConfig
+				: null;
+	const isCustom = Boolean(cfg && cfg.style === 'custom');
+	const cls = `diecon diecon-d${s} ${filledClass}${isCustom ? ' diecon-custom' : ''}${safeExtra ? ' ' + safeExtra : ''}`;
+
+	let fill = isFilled ? 'currentColor' : 'none';
+	let stroke = 'currentColor';
+	let textFill = isFilled ? '#ffffff' : 'currentColor';
+	let strokeWidth = 1.5;
+	let defs = '';
+	let fillCachePart = fill;
+
+	if (isCustom && cfg) {
+		const rawWidth = Number(cfg.borderWidth);
+		strokeWidth = Math.min(3.5, Math.max(0.5, Number.isFinite(rawWidth) && rawWidth > 0 ? rawWidth : 1.5));
+		if (isFilled) {
+			stroke = sanitizeSvgPaint(cfg.borderColor, '#000000');
+			textFill = sanitizeSvgPaint(cfg.numeralColor, '#ffffff');
+			const bg1 = sanitizeSvgPaint(cfg.backgroundColor1 || cfg.background, '');
+			const bg2 = sanitizeSvgPaint(cfg.backgroundColor2, '');
+			if (cfg.backgroundType === 'gradient' && bg1 && bg2) {
+				const rawAngle = Number(cfg.gradientAngle);
+				const angle =
+					cfg.gradientAngle !== undefined && cfg.gradientAngle !== null && Number.isFinite(rawAngle) ? rawAngle : 135;
+				const gradKey = `${s}-${bg1}-${bg2}-${angle}`;
+				let hash = 0;
+				for (let i = 0; i < gradKey.length; i++) {
+					hash = (hash << 5) - hash + gradKey.charCodeAt(i);
+					hash |= 0;
+				}
+				const gradSlug = Math.abs(hash).toString(36);
+				const gradId = `die-grad-${s}-${gradSlug}`;
+				const rad = (angle - 90) * (Math.PI / 180);
+				const x1 = Math.round(50 + Math.cos(rad + Math.PI) * 50);
+				const y1 = Math.round(50 + Math.sin(rad + Math.PI) * 50);
+				const x2 = Math.round(50 + Math.cos(rad) * 50);
+				const y2 = Math.round(50 + Math.sin(rad) * 50);
+				defs = `<defs><linearGradient id="${gradId}" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient></defs>`;
+				fill = `url(#${gradId})`;
+				fillCachePart = `grad:${gradKey}`;
+			} else {
+				fill = sanitizeSvgPaint(cfg.backgroundColor1 || cfg.background, '#000000');
+				fillCachePart = fill;
+			}
+		} else {
+			// Unset / unfilled dice: must remain unfilled (transparent) and only show border outline + numeral
+			fill = 'none';
+			fillCachePart = 'none';
+			const rawBorder =
+				cfg.unfilledBorder && cfg.unfilledBorder !== 'none' ? cfg.unfilledBorder : cfg.borderColor || 'currentColor';
+			stroke = sanitizeSvgPaint(rawBorder, 'currentColor');
+			if (stroke.toLowerCase() === '#ffffff' || stroke.toLowerCase() === '#fff') {
+				stroke = '#334155';
+			}
+			textFill = sanitizeSvgPaint(cfg.unfilledNumeral, stroke);
+		}
+	}
+
+	const cacheKey = isCustom
+		? `c|${s}|${isFilled ? 1 : 0}|${safeExtra}|${strokeWidth}|${stroke}|${textFill}|${fillCachePart}`
+		: `d|${s}|${isFilled ? 1 : 0}|${safeExtra}`;
+
+	return { s, cls, fill, stroke, textFill, strokeWidth, defs, cacheKey };
+}
 
 export const characterCurioFunctions = {
 	cloneDeep: cloneDeep,
@@ -132,110 +327,29 @@ export const characterCurioFunctions = {
 		extraClass = '',
 		diceConfig: DiceConfig | null = null,
 	) {
-		const s = Number(dieValue) || 8;
-		const filledClass = isFilled ? 'diecon-filled' : 'diecon-unfilled';
-		const cls = `diecon diecon-d${s} ${filledClass} ${extraClass}`.trim();
+		const paint = resolveDieconPaint(dieValue, isFilled, extraClass, diceConfig);
+		const cached = DIECON_SVG_CACHE.get(paint.cacheKey);
+		if (cached !== undefined) return cached;
 
-		const cfg =
-			diceConfig !== undefined
-				? diceConfig
-				: typeof window !== 'undefined'
-					? (window as any).__characterCurioActiveDiceConfig
-					: null;
-		const isCustom = Boolean(cfg && cfg.style === 'custom');
-		let fill = isFilled ? 'currentColor' : 'none';
-		let stroke = 'currentColor';
-		let textFill = isFilled ? '#ffffff' : 'currentColor';
-		let strokeWidth = 1.5;
-		let defs = '';
-
-		if (isCustom && cfg) {
-			strokeWidth = Number(cfg.borderWidth) || 1.5;
-			if (isFilled) {
-				stroke = cfg.borderColor || '#000000';
-				textFill = cfg.numeralColor || '#ffffff';
-				if (cfg.backgroundType === 'gradient' && cfg.backgroundColor1 && cfg.backgroundColor2) {
-					const gradKey = `${s}-${cfg.backgroundColor1}-${cfg.backgroundColor2}-${cfg.gradientAngle || 135}`;
-					let hash = 0;
-					for (let i = 0; i < gradKey.length; i++) {
-						hash = (hash << 5) - hash + gradKey.charCodeAt(i);
-						hash |= 0;
-					}
-					const gradSlug = Math.abs(hash).toString(36);
-					const gradId = `die-grad-${s}-${gradSlug}`;
-					const angle = Number(cfg.gradientAngle) || 135;
-					const rad = (angle - 90) * (Math.PI / 180);
-					const x1 = Math.round(50 + Math.cos(rad + Math.PI) * 50);
-					const y1 = Math.round(50 + Math.sin(rad + Math.PI) * 50);
-					const x2 = Math.round(50 + Math.cos(rad) * 50);
-					const y2 = Math.round(50 + Math.sin(rad) * 50);
-					defs = `<defs><linearGradient id="${gradId}" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%"><stop offset="0%" stop-color="${cfg.backgroundColor1}"/><stop offset="100%" stop-color="${cfg.backgroundColor2}"/></linearGradient></defs>`;
-					fill = `url(#${gradId})`;
-				} else {
-					fill = cfg.backgroundColor1 || cfg.background || '#000000';
-				}
-			} else {
-				// Unset / unfilled dice: must remain unfilled (transparent) and only show border outline + numeral
-				fill = 'none';
-				stroke =
-					cfg.unfilledBorder && cfg.unfilledBorder !== 'none' ? cfg.unfilledBorder : cfg.borderColor || 'currentColor';
-				if (stroke.toLowerCase() === '#ffffff' || stroke.toLowerCase() === '#fff') {
-					stroke = '#334155';
-				}
-				textFill = cfg.unfilledNumeral || stroke;
-			}
-		} else {
-			if (!isFilled) {
-				fill = 'none';
-				stroke = 'currentColor';
-				textFill = 'currentColor';
-			} else {
-				fill = 'currentColor';
-				stroke = 'currentColor';
-				textFill = '#ffffff';
-			}
-		}
-
-		let shape = '';
-		let text = '';
-
-		if (s === 4) {
-			// Inverted triangle pointing down
-			shape = `<polygon points="2.5,4 21.5,4 12,20" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">4</text>`;
-		} else if (s === 6) {
-			// Square
-			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">6</text>`;
-		} else if (s === 8) {
-			// Diamond
-			shape = `<polygon points="12,2.5 21.5,12 12,21.5 2.5,12" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">8</text>`;
-		} else if (s === 10) {
-			// Kite / Hexagon
-			shape = `<polygon points="12,2.5 21.5,7.5 21.5,16.5 12,21.5 2.5,16.5 2.5,7.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">10</text>`;
-		} else if (s === 12) {
-			// Regular pentagon pointing up
-			shape = `<polygon points="12,2.7 21.7,9.8 18,21.3 6,21.3 2.3,9.8" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">12</text>`;
-		} else {
-			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">${s}</text>`;
-		}
-
-		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1em" height="1em">${defs}${shape}${text}</svg>`;
+		const spec = resolveDieSpec(paint.s);
+		const shape = buildDieShapeSvg(spec, paint.stroke, paint.strokeWidth, paint.fill);
+		const text = buildDieTextSvg(spec, paint.s, paint.textFill);
+		const svg = `<svg role="img" aria-label="d${paint.s}" class="${paint.cls}" viewBox="0 0 24 24" width="1em" height="1em">${paint.defs}${shape}${text}</svg>`;
+		return setBoundedDieconCache(DIECON_SVG_CACHE, paint.cacheKey, svg);
 	},
 
 	// Geometry-only die SVG for miniature icons: reuses the exact diecon polygon
 	// shapes with aria-hidden="true" and no inner text node so screen readers
 	// read only the surrounding HTML labels.
 	renderDieGeometrySVG: function (dieValue: number, isFilled = false, extraClass = '') {
-		const raw = this.renderDieconSVG(dieValue, isFilled, extraClass);
-		return raw
-			.replace(/<text[^>]*>[\s\S]*?<\/text>/g, '')
-			.replace('role="img"', 'aria-hidden="true"')
-			.replace(/aria-label="[^"]*"\s*/g, '');
+		const paint = resolveDieconPaint(dieValue, isFilled, extraClass, undefined);
+		const cached = DIE_GEOM_SVG_CACHE.get(paint.cacheKey);
+		if (cached !== undefined) return cached;
+
+		const spec = resolveDieSpec(paint.s);
+		const shape = buildDieShapeSvg(spec, paint.stroke, paint.strokeWidth, paint.fill);
+		const svg = `<svg aria-hidden="true" class="${paint.cls}" viewBox="0 0 24 24" width="1em" height="1em">${paint.defs}${shape}</svg>`;
+		return setBoundedDieconCache(DIE_GEOM_SVG_CACHE, paint.cacheKey, svg);
 	},
 
 	getTraitSetRatings: function (traitSet: TraitSet) {
@@ -260,33 +374,28 @@ export const characterCurioFunctions = {
 	getSubtraitSlotRatings: function (traitSet: TraitSet, slot: number) {
 		const ratings = this.getSubtraitRatings(traitSet);
 		const v = getView(traitSet);
-		const isPaired =
-			v?.style?.body === 'paired-slots' ||
-			Boolean(v?.parts && (v.parts['child:Statement'] || (v.parts as any)['child_statement']));
+		const hasChildPart = Boolean(
+			v?.parts && Object.keys(v.parts).some((k) => k.startsWith('child:') || k.startsWith('child_')),
+		);
+		const isPaired = v?.style?.body === 'paired-slots' || hasChildPart;
 		if (isPaired && slot >= 1 && ratings.length === 5 && ratings[0] === 4) {
 			return ratings.filter((size: number) => size >= 6);
 		}
 		return ratings;
 	},
 
-	// Set names whose trait names are system labels: they print on blank
-	// sheets. Central list so the check is data, not inline sniffing.
-	fixedNameSetKeys: [
-		'attribute',
-		'value',
-		'drive',
-		'role',
-		'affiliation',
-		'branch',
-		'eidolon',
-		'power',
-		'system',
-		'chassis',
-	],
-	isFixedNameSet: function (setName: unknown) {
-		const n = typeof setName === 'string' ? setName.toLowerCase() : '';
-		if (!n.length) return false;
-		return this.fixedNameSetKeys.some((k: string) => n.includes(k));
+	// Structural check for whether a set's trait names are treated as fixed
+	// system labels (printed on blank sheets). Data-driven via view.fixedNames
+	// or multi-column / die-track / track-part / portrait-ring layouts.
+	isFixedTraitNamesSet: function (traitSetArg: any): boolean {
+		if (!traitSetArg || typeof traitSetArg !== 'object') return false;
+		const v = getView(traitSetArg);
+		if (v?.fixedNames) return true;
+		const body = v?.style?.body;
+		if (body === 'die-track' || body === 'portrait-ring') return true;
+		if ((v?.traitColumns ?? 0) > 1) return true;
+		if (this.hasTrackPart(traitSetArg)) return true;
+		return false;
 	},
 
 	isPlayMutableSet: function (traitSetArg: any): boolean {
@@ -316,11 +425,11 @@ export const characterCurioFunctions = {
 	},
 
 	getTrackLabel: function (traitSetArg: any): string {
-		if (!traitSetArg) return 'Stress';
+		if (!traitSetArg) return 'Track';
 		const view = getView(traitSetArg);
 		const labels = view?.labels;
 		if (labels && typeof labels.track === 'string' && labels.track.length) return labels.track;
-		return 'Stress';
+		return 'Track';
 	},
 
 	getTrackScale: function (traitSetArg: any): number[] {
@@ -329,7 +438,7 @@ export const characterCurioFunctions = {
 		if (Array.isArray(view?.subtraitRatingLadder) && view.subtraitRatingLadder.length > 0) {
 			return [...view.subtraitRatingLadder].sort((a, b) => a - b);
 		}
-		const label = this.getTrackLabel(traitSetArg).toLowerCase();
+		const explicitLabel = typeof view?.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
 		const rawTraits = traitSetArg?.traits;
 		const traits = Array.isArray(rawTraits)
 			? rawTraits
@@ -340,29 +449,22 @@ export const characterCurioFunctions = {
 		for (const tr of traits) {
 			if (!tr || typeof tr !== 'object') continue;
 			const rawSubs = (tr as any).traits;
-			if (Array.isArray(rawSubs)) {
-				for (const st of rawSubs) {
-					if (!st || typeof st !== 'object') continue;
-					if (this.isSfxContainer(st) || resolveRating(st, [tr, traitSetArg])?.type === 'Pip') continue;
-					const r = st.rating;
-					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
-						if (!firstAnyRange) firstAnyRange = r.range.slice();
-						if (typeof st.name === 'string' && st.name.toLowerCase() === label) {
-							return r.range.slice();
-						}
-					}
-				}
-			} else if (rawSubs && typeof rawSubs === 'object') {
-				for (const [key, st] of Object.entries(rawSubs)) {
-					if (!st || typeof st !== 'object') continue;
-					const name = (st as any).name || key;
-					if (name === 'SFX' || resolveRating(st as any, [tr, traitSetArg])?.type === 'Pip') continue;
-					const r = (st as any).rating;
-					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
-						if (!firstAnyRange) firstAnyRange = r.range.slice();
-						if (typeof name === 'string' && name.toLowerCase() === label) {
-							return r.range.slice();
-						}
+			const subs = Array.isArray(rawSubs)
+				? rawSubs
+				: rawSubs && typeof rawSubs === 'object'
+					? Object.entries(rawSubs).map(([k, v]) => ({ ...(v as any), name: (v as any)?.name || k }))
+					: [];
+			for (const st of subs) {
+				if (!st || typeof st !== 'object') continue;
+				const r = resolveRating(st, [tr, traitSetArg]);
+				if (!r || r.type === 'Pip' || resolvePpDelta(st) !== 0 || getView(st)?.part === 'block') continue;
+				if (Array.isArray(r.range) && r.range.length) {
+					if (!firstAnyRange) firstAnyRange = r.range.slice();
+					const stKey = String((st as any).noun || (st as any).name || '')
+						.trim()
+						.toLowerCase();
+					if (explicitLabel && stKey === explicitLabel) {
+						return r.range.slice();
 					}
 				}
 			}
@@ -370,47 +472,98 @@ export const characterCurioFunctions = {
 		return firstAnyRange || [4, 6, 8, 10, 12];
 	},
 
-	// The SFX container is a child trait literally named "SFX" with no
-	// rating of its own; its children are the SFX entries. Shape + name,
-	// never a field — this is the dissolve of the old `sfx` array.
-	isSfxContainer: function (t: unknown) {
-		return Boolean(
-			t && typeof t === 'object' && !Array.isArray(t) && (t as any).name === 'SFX' && getRating(t) === undefined,
-		);
+	// Lowercase child nouns claimed by explicit `child:<Noun>` part cells on a set.
+	childPartClaimedNouns: function (traitSetArg: any): Set<string> {
+		const out = new Set<string>();
+		const parts = getView(traitSetArg)?.parts;
+		if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return out;
+		for (const key of Object.keys(parts)) {
+			if (key.startsWith('child:')) {
+				const partsSeg = key.split(':');
+				const noun = partsSeg[1]?.trim().toLowerCase();
+				if (noun) out.add(noun);
+			} else if (key.startsWith('child_')) {
+				const noun = key
+					.slice('child_'.length)
+					.replace(/_(rating|label)$/, '')
+					.trim()
+					.toLowerCase();
+				if (noun) out.add(noun);
+			}
+		}
+		return out;
 	},
-	sfxChildren: function (node: unknown) {
-		const subs = node && typeof node === 'object' ? (node as any).traits : undefined;
+
+	// Resolve the track-companion child trait for a parent trait when a set
+	// uses `parts.track` or specifies `view.labels.track`.
+	getTrackCompanion: function (traitSetArg: any, trait: any): any {
+		if (!trait || typeof trait !== 'object' || !Array.isArray(trait.traits)) return undefined;
+		const view = getView(traitSetArg);
+		const explicitLabel = typeof view?.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
+		if (explicitLabel) {
+			const exact = trait.traits.find((c: any) => {
+				if (!c || typeof c !== 'object') return false;
+				const key = String(c.noun || c.name || '')
+					.trim()
+					.toLowerCase();
+				return key === explicitLabel;
+			});
+			if (exact) return exact;
+		}
+		if (!this.hasTrackPart(traitSetArg)) return undefined;
+		return trait.traits.find((c: any) => {
+			if (!c || typeof c !== 'object') return false;
+			if (getView(c)?.part === 'block' || resolvePpDelta(c) !== 0) return false;
+			const r = resolveRating(c, [trait, traitSetArg]);
+			return Boolean(r && r.type === 'Die' && Array.isArray(r.range));
+		});
+	},
+
+	isTrackCompanion: function (traitSetArg: any, child: any, trait: any): boolean {
+		return Boolean(child && trait && this.getTrackCompanion(traitSetArg, trait) === child);
+	},
+
+	// Direct child traits rendered as rule/SFX/limit bullets inside `block`:
+	// unrated children, PP-delta modifiers, or children marked `view.part === 'block'`,
+	// excluding track companions and nouns claimed by dedicated `child:<Noun>` cells.
+	blockChildren: function (node: any, traitSetArg?: any): any[] {
+		const subs = node && typeof node === 'object' ? node.traits : undefined;
 		if (!Array.isArray(subs)) return [];
-		const container = subs.find((st: any) => this.isSfxContainer(st));
-		return container && Array.isArray(container.traits) ? container.traits : [];
+		const comp = traitSetArg ? this.getTrackCompanion(traitSetArg, node) : undefined;
+		const claimed = traitSetArg ? this.childPartClaimedNouns(traitSetArg) : new Set<string>();
+		return subs.filter((c: any) => {
+			if (!c || typeof c !== 'object') return false;
+			if (c === comp) return false;
+			if (getView(c)?.part === 'block') return true;
+			const cname = String(c.noun || c.name || '')
+				.trim()
+				.toLowerCase();
+			if (cname && claimed.has(cname)) return false;
+			const r = resolveRating(c, traitSetArg ? [node, traitSetArg] : [node]);
+			return !r || resolvePpDelta(c) !== 0;
+		});
 	},
 
-	// The SFX container child, created on demand (sparse: absent until an
-	// SFX exists).
-	ensureSfxContainer: function (node: unknown) {
-		if (!node || typeof node !== 'object') return null;
-		const rec = node as any;
-		if (!Array.isArray(rec.traits)) rec.traits = [];
-		let container = rec.traits.find((st: any) => this.isSfxContainer(st));
-		if (!container) {
-			container = { name: 'SFX', traits: [] };
-			rec.traits.push(container);
-		}
-		return container;
-	},
-
-	// Drop an SFX entry by index, removing the container when it empties.
-	removeSfxAt: function (node: unknown, index: number) {
-		if (!node || typeof node !== 'object') return;
-		const rec = node as any;
-		if (!Array.isArray(rec.traits)) return;
-		const container = rec.traits.find((st: any) => this.isSfxContainer(st));
-		if (!container || !Array.isArray(container.traits)) return;
-		container.traits.splice(index, 1);
-		if (!container.traits.length) {
-			const ci = rec.traits.indexOf(container);
-			if (ci !== -1) rec.traits.splice(ci, 1);
-		}
+	// Direct child traits rendered as rated subtraits (Die/Dice/Counter, excluding
+	// Pip children, PP-delta modifiers, track companions, block children, and
+	// nouns claimed by dedicated `child:<Noun>` cells).
+	ratedSubtraits: function (node: any, traitSetArg?: any): any[] {
+		const subs = node && typeof node === 'object' ? node.traits : undefined;
+		if (!Array.isArray(subs)) return [];
+		const comp = traitSetArg ? this.getTrackCompanion(traitSetArg, node) : undefined;
+		const claimed = traitSetArg ? this.childPartClaimedNouns(traitSetArg) : new Set<string>();
+		return subs.filter((c: any) => {
+			if (!c || typeof c !== 'object') return false;
+			if (c === comp) return false;
+			if (getView(c)?.part === 'block') return false;
+			if (resolvePpDelta(c) !== 0) return false;
+			const cname = String(c.noun || c.name || '')
+				.trim()
+				.toLowerCase();
+			if (cname && claimed.has(cname)) return false;
+			const r = resolveRating(c, traitSetArg ? [node, traitSetArg] : [node]);
+			return Boolean(r && r.type !== 'Pip');
+		});
 	},
 
 	// Feature defaults seeded when a trait-set style is chosen.
@@ -934,7 +1087,7 @@ export const characterCurioFunctions = {
 	// Template-derived sets are remembered by id; custom sets just splice.
 	removeTraitSetFromSheet: function (character: Character, templateEntry: SheetTemplate | null, s: number): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
-		if (!ts || this.isNameSet(ts) || ts.id === 'name') return false;
+		if (!ts || this.isNameSet(ts)) return false;
 		let inherited = false;
 		if (ts.id && templateEntry) {
 			inherited = Boolean(this.templateSetById(templateEntry, ts.id));
@@ -1236,7 +1389,7 @@ export const characterCurioFunctions = {
 				base[key] = this.mergeSetArrays(bval, val, over.removedSets || []);
 			} else if (key === 'traits' && Array.isArray(val) && Array.isArray(bval)) {
 				base[key] = this.mergeTraitArrays(bval, val, over.removedTraits || []);
-			} else if ((key === 'sfx' || key === 'tags') && Array.isArray(val) && Array.isArray(bval)) {
+			} else if (key === 'tags' && Array.isArray(val) && Array.isArray(bval)) {
 				base[key] = val.length ? this.unionArrays(bval, val) : [];
 			} else if (
 				val &&
@@ -1383,7 +1536,7 @@ export const characterCurioFunctions = {
 					else if (oval[k].length === 0 && bval[k].length > 0) out[k] = [];
 					continue;
 				}
-				if ((k === 'sfx' || k === 'tags') && Array.isArray(oval[k]) && Array.isArray(bval[k])) {
+				if (k === 'tags' && Array.isArray(oval[k]) && Array.isArray(bval[k])) {
 					const kept = oval[k].filter((el: any) => !bval[k].some((be: any) => this.deepEqualClean(be, el)));
 					if (kept.length) out[k] = kept;
 					else if (oval[k].length === 0 && bval[k].length > 0) out[k] = [];
@@ -1704,7 +1857,6 @@ export const characterCurioFunctions = {
 						name: '',
 						description: '',
 						traits: [],
-						sfx: ['hinder'],
 						tags: [],
 						custom: {},
 					},
@@ -1712,7 +1864,6 @@ export const characterCurioFunctions = {
 						name: '',
 						description: '',
 						traits: [],
-						sfx: ['hinder'],
 						tags: [],
 						custom: {},
 					},
@@ -1720,18 +1871,21 @@ export const characterCurioFunctions = {
 						name: '',
 						description: '',
 						traits: [],
-						sfx: ['hinder'],
 						tags: [],
 						custom: {},
 					},
 				],
-				sfx: [],
 				tags: [],
 				view: {
 					features: {
 						description: true,
 						sfx: true,
 						subtraits: false,
+					},
+					altRoll: {
+						die: 4,
+						ppDelta: 1,
+						label: 'Hinder',
 					},
 					place: {
 						left: '0%',
@@ -1752,27 +1906,24 @@ export const characterCurioFunctions = {
 						name: 'Physical',
 						description: '',
 						traits: [],
-						sfx: [],
 						tags: [],
 					},
 					{
 						name: 'Mental',
 						description: '',
 						traits: [],
-						sfx: [],
 						tags: [],
 					},
 					{
 						name: 'Social',
 						description: '',
 						traits: [],
-						sfx: [],
 						tags: [],
 					},
 				],
-				sfx: [],
 				tags: [],
 				view: {
+					fixedNames: true,
 					features: {
 						description: false,
 						sfx: false,
@@ -1801,13 +1952,12 @@ export const characterCurioFunctions = {
 						name: '',
 						description: '',
 						traits: [],
-						sfx: [],
 						tags: [],
 					},
 				],
-				sfx: [],
 				tags: [],
 				view: {
+					fixedNames: true,
 					features: {
 						description: false,
 						sfx: false,
@@ -1874,13 +2024,6 @@ export const characterCurioFunctions = {
 		custom: {},
 	},
 
-	defaultSFX: {
-		name: 'New SFX',
-		description: 'SFX description',
-		tags: [],
-		custom: {},
-	},
-
 	// Built-in Set Presets (showcase TraitSet templates for Play & Edit)
 	characterCurioSetPresets: {
 		'scene-traits': {
@@ -1919,7 +2062,8 @@ export const characterCurioFunctions = {
 					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
-					style: { header: 'notes', body: 'notes' },
+					notesMarkdown: true,
+					style: { header: 'default', body: 'default' },
 				},
 			},
 		},
@@ -2009,6 +2153,7 @@ export const characterCurioFunctions = {
 					pillar: 'prime',
 					header: 'top',
 					border: 'none',
+					fixedNames: true,
 					frame: {
 						shape: 'circle',
 						array: 'ring',

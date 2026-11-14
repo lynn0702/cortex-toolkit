@@ -7,6 +7,7 @@ prompt, the prompt wins for that session — then update this file.
 ## Working style
 
 - **Read `design/DECISIONS.md` first.** It is the distilled law and authoritative. Do not re-litigate ratified decisions or revive superseded ones (`removedTraits` in layered entities, `html.print-view`, `designerPrintPreview`, game-specific style IDs) without new evidence.
+- **Never self-modify `design/DECISIONS.md`.** Agents MUST NEVER autonomously create, modify, append to, or rewrite `design/DECISIONS.md`. Edit it only when the user explicitly instructs a change to `design/DECISIONS.md` in that prompt and approves the wording; otherwise propose candidates in chat as `[SUGGESTION]` or `[OPEN]`.
 - **Terse UI.** Short labels. No parenthetical explanations, no "e.g." examples.
   If a label needs a parenthetical to be understood, rename the thing.
 - **Name the layout, not the game concept.** Internal style IDs, component filenames, and CSS classes use geometric/structural names (`portrait-ring`, `two-columns-compact`, `two-columns-detailed`, `pool-rows`, `dice-count`, `subtrait-columns`, `die-rows`, `die-track`, `list`, `image`, `pips`).

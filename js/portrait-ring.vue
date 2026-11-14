@@ -10,6 +10,7 @@ import {
 	ratingDice,
 	resolveHitches,
 	keepsExtraDice,
+	isRingBadgeTrait,
 	type Character,
 	type Trait,
 } from './model.ts';
@@ -36,10 +37,10 @@ const dragArcAngle = ref<number | null>(null);
 const dragScaleAngle = ref<number | null>(null);
 
 const ringSet = computed(() => props.character?.traitSets?.[props.ringTraitID] ?? null);
-const scaleTrait = computed(() => {
+const ringBadgeTrait = computed(() => {
 	const setNode = ringSet.value;
 	if (!setNode || !Array.isArray(setNode.traits)) return null;
-	return setNode.traits.find((t: any) => t.name?.trim().toLowerCase() === 'scale');
+	return setNode.traits.find((t: any) => isRingBadgeTrait(t)) ?? null;
 });
 const traits = computed<Trait[]>(() => {
 	const frameCfg = resolveFrame(ringSet.value);
@@ -47,12 +48,12 @@ const traits = computed<Trait[]>(() => {
 		return [];
 	}
 	const all = (ringSet.value?.traits || []) as Trait[];
-	const nonScale = all.filter((t: any) => !(t.name?.trim().toLowerCase() === 'scale'));
-	const ringOnly = nonScale.filter((t: any) => Boolean(getView(t)?.ring));
+	const nonBadge = all.filter((t: any) => !isRingBadgeTrait(t));
+	const ringOnly = nonBadge.filter((t: any) => Boolean(getView(t)?.ring));
 	if (ringOnly.length > 0) return ringOnly;
 	const hasExplicitRing = all.some((t: any) => Boolean(getView(t)?.ring));
 	if (hasExplicitRing) return [];
-	return nonScale;
+	return nonBadge;
 });
 const isRingPool = computed(() => {
 	const ts = ringSet.value;
@@ -138,8 +139,16 @@ const ringSlots = computed<RingSlot[]>(() => {
 	}
 	return slots;
 });
+const badgeLabel = computed(() => {
+	const st = ringBadgeTrait.value;
+	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Scale';
+});
+const badgeKeepCount = computed(() => {
+	const extra = ringBadgeTrait.value ? keepsExtraDice(ringBadgeTrait.value) : 1;
+	return 2 + (extra > 0 ? extra : 1);
+});
 const scaleDieValue = computed(() => {
-	const st = scaleTrait.value;
+	const st = ringBadgeTrait.value;
 	if (st) return ratingDice(resolveRating(st, [ringSet.value]))[0] || 8;
 	const setNode = ringSet.value;
 	if (getView(setNode)?.scaleDie) {
@@ -362,17 +371,20 @@ function handleScaleDieClick() {
 	if (isRingDragging.value) return;
 	if (props.submode === 'play') {
 		if (scaleDieValue.value > 0) {
+			const st = ringBadgeTrait.value;
+			const extra = st ? keepsExtraDice(st) : 1;
 			emit('addDieToRoller', {
 				size: scaleDieValue.value,
 				qty: 1,
-				source: 'Scale',
-				isScale: true,
+				source: badgeLabel.value,
+				hitches: st ? resolveHitches(st, [ringSet.value]) : resolveHitches(ringSet.value, []),
+				keepsExtra: extra > 0 ? extra : 1,
 			});
 		}
 	} else {
-		if (scaleTrait.value) {
+		if (ringBadgeTrait.value) {
 			const ringSetID = props.ringTraitID;
-			const traitIdx = (props.character?.traitSets?.[ringSetID]?.traits || []).indexOf(scaleTrait.value);
+			const traitIdx = (props.character?.traitSets?.[ringSetID]?.traits || []).indexOf(ringBadgeTrait.value);
 			if (traitIdx !== -1) {
 				selectElement(['trait', ringSetID, traitIdx]);
 				return;
@@ -536,7 +548,7 @@ function setScaleDieValue(val: any) {
 		ensureView(ringSetNode).scaleDie = num;
 
 		const traitsList = Array.isArray(ringSetNode.traits) ? ringSetNode.traits : [];
-		const stIndex = traitsList.findIndex((t: any) => t.name?.trim().toLowerCase() === 'scale');
+		const stIndex = traitsList.findIndex((t: any) => isRingBadgeTrait(t));
 		if (num === 0) {
 			if (stIndex !== -1) {
 				traitsList.splice(stIndex, 1);
@@ -544,8 +556,7 @@ function setScaleDieValue(val: any) {
 		} else if (stIndex !== -1) {
 			const st = traitsList[stIndex] as unknown as Record<string, any>;
 			st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
-			// Scale remains a trait name; its effect is keepsExtra.
-			st.keepsExtra = 1;
+			if (!keepsExtraDice(st)) st.keepsExtra = 1;
 		}
 	}
 	ensureView(props.character).scale = num;
@@ -621,7 +632,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 			</div>
 		</div>
 
-		<!-- SCALE DIE -->
+		<!-- RING BADGE DIE -->
 		<div
 			class="scale-die"
 			:class="{ 'is-draggable': submode === 'edit' }"
@@ -634,18 +645,18 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 				:class="{ selected: isScaleSelected }"
 				role="button"
 				tabindex="0"
-				:aria-label="submode === 'play' ? 'Stage d' + scaleDieValue + ' Scale die' : 'Edit Scale die'"
+				:aria-label="submode === 'play' ? `Stage d${scaleDieValue} ${badgeLabel}` : `Edit ${badgeLabel}`"
 				@click.stop="handleScaleDieClick()"
 				@keydown.enter.prevent="handleScaleDieClick()"
 				@keydown.space.prevent="handleScaleDieClick()"
 				:title="
 					submode === 'play'
-						? 'Click to add d' + scaleDieValue + ' Scale die to pool (Keep 3)'
-						: 'Click to edit Scale die'
+						? `Click to add d${scaleDieValue} ${badgeLabel} to pool (Keep ${badgeKeepCount})`
+						: `Click to edit ${badgeLabel}`
 				"
 			>
 				<span :class="'die-' + (scaleDieValue || 8)" v-html="renderDieValue(scaleDieValue)" aria-hidden="true"></span>
-				<div class="scale-name">SCALE</div>
+				<div class="scale-name">{{ badgeLabel.toUpperCase() }}</div>
 			</div>
 		</div>
 	</div>

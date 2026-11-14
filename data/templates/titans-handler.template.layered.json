@@ -145,7 +145,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Attribute",
 				"plural": "Attributes",
@@ -199,7 +200,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",
@@ -249,29 +251,30 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									},
-									"Affirmation": {
-										"description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity."
-									},
-									"Authenticity": {
-										"description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Affirmation": {
+								"description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity.",
+								"noun": "SFX"
+							},
+							"Authenticity": {
+								"description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -286,29 +289,30 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									},
-									"Shake it Off": {
-										"description": "Spend a PP to recover a complication when acting in line with your public persona."
-									},
-									"Double Down": {
-										"description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Shake it Off": {
+								"description": "Spend a PP to recover a complication when acting in line with your public persona.",
+								"noun": "SFX"
+							},
+							"Double Down": {
+								"description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -323,29 +327,30 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-									},
-									"Cards on the Table": {
-										"description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration."
-									},
-									"Hurts for a Minute": {
-										"description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
+							},
+							"Cards on the Table": {
+								"description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration.",
+								"noun": "SFX"
+							},
+							"Hurts for a Minute": {
+								"description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration.",
+								"noun": "SFX"
 							}
 						}
 					}

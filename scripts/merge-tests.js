@@ -41,15 +41,13 @@ function tpl() {
 							value: 8,
 							dice: [8],
 							description: 'Bold lineage',
-							traits: [],
-							sfx: ['hinder'],
-							tags: [],
+							traits: [{ name: 'Hinder', noun: 'SFX', ppDelta: 1, rating: { type: 'Die', value: [4] } }],
+							tags: ['lineage'],
 							custom: {},
 						},
-						{ name: '', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
-						{ name: '', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
+						{ name: '', value: 0, dice: [], description: '', traits: [], tags: [], custom: {} },
+						{ name: '', value: 0, dice: [], description: '', traits: [], tags: [], custom: {} },
 					],
-					sfx: [],
 					tags: [],
 					view: { location: 'left', style: { header: 'default', body: 'default' }, reservedSlots: 3 },
 				},
@@ -65,15 +63,11 @@ function tpl() {
 							value: 8,
 							dice: [8],
 							description: '',
-							traits: [
-								{ name: 'Lifting', value: 6, dice: [6], description: '', traits: [], sfx: [], tags: [], custom: {} },
-							],
-							sfx: [],
+							traits: [{ name: 'Lifting', value: 6, dice: [6], description: '', traits: [], tags: [], custom: {} }],
 							tags: [],
 							custom: {},
 						},
 					],
-					sfx: [],
 					tags: [],
 					view: { location: 'right' },
 				},
@@ -175,7 +169,6 @@ function tpl() {
 		dice: [],
 		description: '',
 		traits: [],
-		sfx: [],
 		tags: [],
 		custom: {},
 	});
@@ -227,14 +220,14 @@ function tpl() {
 	const m = F.mergeTemplateIntoCharacter(
 		{
 			id: 'c1',
-			traitSets: [{ id: 'distinctions', traits: [{ name: 'Heritage', sfx: [] }] }],
+			traitSets: [{ id: 'distinctions', traits: [{ name: 'Heritage', tags: [] }] }],
 		},
 		tpl(),
 	);
-	ok(eq(m.traitSets[0].traits[0].sfx, []), '[] clears inherited sfx list');
+	ok(eq(m.traitSets[0].traits[0].tags, []), '[] clears inherited tags list');
 }
 
-// ---- sfx/tags union.
+// ---- 1-level child traits + tags union.
 {
 	const m = F.mergeTemplateIntoCharacter(
 		{
@@ -242,13 +235,24 @@ function tpl() {
 			traitSets: [
 				{
 					id: 'distinctions',
-					traits: [{ name: 'Heritage', sfx: [{ name: 'Push', description: 'x', tags: [], custom: {} }] }],
+					traits: [
+						{
+							name: 'Heritage',
+							traits: [{ name: 'Push', noun: 'SFX', description: 'x', tags: [], custom: {} }],
+							tags: ['bold'],
+						},
+					],
 				},
 			],
 		},
 		tpl(),
 	);
-	ok(m.traitSets[0].traits[0].sfx.length === 2, 'sfx union adds', m.traitSets[0].traits[0].sfx.length);
+	ok(
+		m.traitSets[0].traits[0].traits.length === 2,
+		'1-level child traits union adds',
+		m.traitSets[0].traits[0].traits.length,
+	);
+	ok(m.traitSets[0].traits[0].tags.length === 2, 'tags union adds', m.traitSets[0].traits[0].tags.length);
 }
 
 // ---- Subtrait depth: name-join + removal.

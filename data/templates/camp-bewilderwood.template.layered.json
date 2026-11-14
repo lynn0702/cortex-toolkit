@@ -113,7 +113,7 @@
 					},
 					"page": 1,
 					"multiDie": false,
-					"notes": "",
+					"notes": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
 					"reservedSlots": 3,
 					"place": {
 						"left": "0%",
@@ -153,7 +153,12 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -169,15 +174,13 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Heritage": {
-										"description": "Spend a PP to step up an attribute when you connect to your heritage."
-									}
-								}
+							"Heritage": {
+								"description": "Spend a PP to step up an attribute when you connect to your heritage.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -192,15 +195,13 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Destiny": {
-										"description": "Spend a PP to reroll your dice when you embrace your destiny."
-									}
-								}
+							"Destiny": {
+								"description": "Spend a PP to reroll your dice when you embrace your destiny.",
+								"noun": "SFX"
 							}
 						}
 					},
@@ -215,15 +216,13 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Camp Reputation": {
-										"description": "Spend a PP to create a d8 asset linked to the thing you're known for."
-									}
-								}
+							"Camp Reputation": {
+								"description": "Spend a PP to create a d8 asset linked to the thing you're known for.",
+								"noun": "SFX"
 							}
 						}
 					}
@@ -279,7 +278,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Value",
 				"plural": "Values",
@@ -383,7 +383,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Attribute",
 				"plural": "Attributes",

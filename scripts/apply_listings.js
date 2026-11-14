@@ -5,7 +5,7 @@
 // - Fixes titles/games: BrighterStars, KitBash, SolarPunk.
 // - Adds `listing` per setting: full quote/genre/ratings for the 16
 //   published settings (variants share their setting's block), URL-only for
-//   the core-book settings, none for the Toolkit Reference showcases.
+//   the core-book settings, none for the showcases.
 // Usage: node scripts/apply_listings.js  (rewrites js/templates.js)
 const fs = require('fs');
 const path = require('path');
@@ -208,7 +208,7 @@ templates.forEach((entry) => {
 	if (prevSubtitle) baseMeta.subtitle = prevSubtitle;
 	if (prevGenre) baseMeta.genre = prevGenre;
 	if (prevVariant) baseMeta.variant = prevVariant;
-	if (sp === 'Toolkit Reference') {
+	if (sp === 'Showcase') {
 		ch.view.listing = baseMeta;
 		bare++;
 		return;

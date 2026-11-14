@@ -617,7 +617,7 @@ function commitPipBubbleCount(event: Event) {
 		<div class="editor-subtrait-list mt-sm" v-if="setSubtraits.length > 0">
 			<div
 				v-for="(item, itemIdx) in setSubtraits"
-				:key="'set-sub-' + item.idx + '-' + (item.sfxIdx ?? itemIdx)"
+				:key="'set-sub-' + item.idx + '-' + itemIdx"
 				class="editor-subtrait-row"
 			>
 				<button

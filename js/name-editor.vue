@@ -20,6 +20,7 @@ import PageLayoutMini from './page-layout-mini.vue';
 import TagEditor from './tag-editor.vue';
 import ColorPicker from './color-picker.vue';
 import FontPicker from './font-picker.vue';
+import { normalizeZoom } from './frame-geometry.ts';
 import {
 	describeExternalFontUrl,
 	inferFontFamilyFromUrl,
@@ -55,6 +56,7 @@ const emit = defineEmits<{
 const currentTab = computed(() => props.tab);
 const watermarkError = ref('');
 const listingImageError = ref('');
+const portraitError = ref('');
 const externalFontUrlDraft = ref('');
 const externalFontNameDraft = ref('');
 const externalFontNameTouched = ref(false);
@@ -66,6 +68,7 @@ const sheetThemePresets = SHEET_THEME_PRESETS;
 const inputName = ref<HTMLInputElement | null>(null);
 const watermarkFileInput = ref<HTMLInputElement | null>(null);
 const listingImageFileInput = ref<HTMLInputElement | null>(null);
+const portraitFileInput = ref<HTMLInputElement | null>(null);
 const fontUrlInput = ref<HTMLInputElement | null>(null);
 const fontUrlNameInput = ref<HTMLInputElement | null>(null);
 
@@ -595,6 +598,88 @@ function removeListingImage() {
 	setListingField('image', '');
 }
 
+function ensureCharacterPortrait() {
+	const c = props.character;
+	if (!c) return null;
+	c.portrait ??= { url: '', alt: '', tags: [] };
+	c.portrait.alt ??= '';
+	c.portrait.tags ??= [];
+	return c.portrait;
+}
+
+const portraitURL = computed({
+	get: () => props.character?.portrait?.url ?? '',
+	set: (val: string) => {
+		const p = ensureCharacterPortrait();
+		if (!p) return;
+		p.url = val;
+		updateCharacter(props.character);
+	},
+});
+
+const portraitSafeUrl = computed(() => characterCurioFunctions.safeImageUrl(portraitURL.value));
+
+const portraitAlignment = computed({
+	get: () =>
+		getView(props.character?.portrait)?.alignment || (props.character?.portrait as any)?.alignment || 'top-center',
+	set: (val: string) => {
+		const p = ensureCharacterPortrait();
+		if (!p) return;
+		ensureView(p).alignment = val;
+		updateCharacter(props.character);
+	},
+});
+
+const portraitZoom = computed({
+	get: () => normalizeZoom(getView(props.character?.portrait)?.zoom) ?? 1,
+	set: (val: number) => {
+		const p = ensureCharacterPortrait();
+		if (!p) return;
+		ensureView(p).zoom = Number(val);
+		updateCharacter(props.character);
+	},
+});
+
+const portraitAlt = computed({
+	get: () => props.character?.portrait?.alt ?? '',
+	set: (val: string) => {
+		const p = ensureCharacterPortrait();
+		if (!p) return;
+		p.alt = val;
+		updateCharacter(props.character);
+	},
+});
+
+const portraitCaption = computed({
+	get: () => nameTraitLabel('caption'),
+	set: (val: string) => setNameTraitLabel('caption', val),
+});
+
+const portraitTags = computed<string[]>({
+	get: () => (Array.isArray(props.character?.portrait?.tags) ? props.character.portrait.tags : []),
+	set: (val: string[]) => {
+		const p = ensureCharacterPortrait();
+		if (!p) return;
+		p.tags = val;
+		updateCharacter(props.character);
+	},
+});
+
+function uploadPortraitStart() {
+	portraitFileInput.value?.click();
+}
+
+function uploadPortraitProcess(event: Event) {
+	handleImageUpload(event, portraitError, 1280, 0.85, (dataURL) => {
+		portraitURL.value = dataURL;
+	});
+}
+
+function removePortrait() {
+	portraitError.value = '';
+	portraitURL.value = '';
+}
+
 function setPrimaryColor(hex: string) {
 	if (!props.character) return;
 	ensureView(props.character).primaryColor = hex;
@@ -880,7 +965,7 @@ function updateCharacter(character: any) {
 							<div class="editor-button-container">
 								<div class="editor-button-container-inner">
 									<button type="button" class="editor-button" @click.stop="openNameSetEditor()">
-										<span><i class="fas fa-sliders" aria-hidden="true"></i> Configure Name Set / Image</span>
+										<span><i class="fas fa-sliders" aria-hidden="true"></i> Configure Name Set</span>
 									</button>
 								</div>
 							</div>
@@ -1097,6 +1182,140 @@ function updateCharacter(character: any) {
 								aria-label="Notes"
 							></textarea>
 						</div>
+
+						<details class="editor-group" :open="Boolean(portraitURL)">
+							<summary class="editor-group-title">Portrait</summary>
+							<div class="editor-field">
+								<div class="name-heading-row editor-row-between mb-xs">
+									<label for="char-portrait-url" class="m-0">Illustration</label>
+									<visibility-eye :state="nameTraitVisibility('portrait')" @toggle="toggleNameVisibility('portrait')" />
+								</div>
+
+								<div class="image-set-preview mb-sm" v-if="portraitSafeUrl">
+									<img
+										:src="portraitSafeUrl"
+										:alt="portraitCaption || portraitAlt || 'Portrait preview'"
+										class="editor-watermark-preview-img"
+									/>
+								</div>
+
+								<div class="editor-row-inline mb-sm">
+									<button type="button" class="editor-button flex-1" @click.prevent="uploadPortraitStart">
+										<span>
+											<i class="fas fa-upload" aria-hidden="true"></i>
+											{{ portraitURL ? 'Replace' : 'Upload' }}
+										</span>
+									</button>
+									<button
+										type="button"
+										class="editor-button editor-btn-danger-mini"
+										v-if="portraitURL"
+										@click.prevent="removePortrait"
+										title="Remove portrait"
+									>
+										<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Remove</span>
+									</button>
+								</div>
+
+								<input
+									type="file"
+									id="char-portrait-file"
+									name="portraitFile"
+									ref="portraitFileInput"
+									class="sr-only"
+									@change="uploadPortraitProcess"
+									accept="image/*"
+									aria-label="Upload portrait file"
+								/>
+
+								<div class="editor-upload-error" v-if="portraitError" role="alert">{{ portraitError }}</div>
+
+								<input
+									type="text"
+									id="char-portrait-url"
+									name="portraitURL"
+									v-model.lazy="portraitURL"
+									placeholder="Image URL (https://...)"
+									autocorrect="off"
+									autocapitalize="none"
+									spellcheck="false"
+								/>
+							</div>
+
+							<div class="editor-field">
+								<div class="editor-focus-zoom-row">
+									<div>
+										<div class="editor-label">Focus</div>
+										<div class="editor-portrait-alignment">
+											<button
+												v-for="pos in [
+													'top-left',
+													'top-center',
+													'top-right',
+													'center-left',
+													'center',
+													'center-right',
+													'bottom-left',
+													'bottom-center',
+													'bottom-right',
+												]"
+												:key="pos"
+												type="button"
+												:aria-label="'Align ' + pos.replace('-', ' ')"
+												:aria-pressed="portraitAlignment === pos"
+												:class="{ active: portraitAlignment === pos }"
+												@click.stop="portraitAlignment = pos"
+											></button>
+										</div>
+									</div>
+									<div class="editor-focus-zoom-slider">
+										<div class="editor-row-between">
+											<label for="char-portrait-zoom" class="m-0">Zoom</label>
+											<span class="slider-val">{{ Math.round((portraitZoom ?? 1) * 100) }}%</span>
+										</div>
+										<input
+											type="range"
+											id="char-portrait-zoom"
+											name="portraitZoom"
+											aria-label="Portrait Zoom"
+											min="0.5"
+											max="2"
+											step="0.05"
+											v-model.number="portraitZoom"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="editor-field">
+								<div class="name-heading-row editor-row-between mb-xs">
+									<label for="char-portrait-caption" class="m-0">Caption</label>
+									<visibility-eye :state="nameTraitVisibility('caption')" @toggle="toggleNameVisibility('caption')" />
+								</div>
+								<input
+									type="text"
+									id="char-portrait-caption"
+									name="portraitCaption"
+									v-model="portraitCaption"
+									placeholder="Optional caption"
+								/>
+							</div>
+
+							<div class="editor-field">
+								<label for="char-portrait-alt">Alt Text</label>
+								<input
+									type="text"
+									id="char-portrait-alt"
+									name="portraitAlt"
+									v-model="portraitAlt"
+									placeholder="Accessible image description"
+								/>
+							</div>
+
+							<div class="editor-field">
+								<TagEditor v-model="portraitTags" input-id="char-portrait-tags" label="Portrait Tags" />
+							</div>
+						</details>
 
 						<div class="editor-field">
 							<TagEditor v-model="characterTags" input-id="char-field-tags" label="Tags" />

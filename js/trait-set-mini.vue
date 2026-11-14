@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import {
 	getView,
 	ensureView,
+	resolvePpDelta,
 	type Rating,
 	type RatingType,
 	type PartCell,
@@ -146,15 +147,14 @@ function createDefaultWorkingSet(source?: any): any {
 				if (Array.isArray(t.traits)) {
 					const traitFallbackType: RatingType = t.rating?.type || setFallbackType;
 					t.traits.forEach((sub: any) => {
-						if (sub.rating && !characterCurioFunctions.isSfxContainer(sub))
-							sub.rating = normalizeRating(sub.rating, traitFallbackType);
+						if (sub?.rating) sub.rating = normalizeRating(sub.rating, traitFallbackType);
 					});
 				}
 			});
 		}
 		// Surface any existing subtraits' parts onto the parent's parts canvas
 		const partsMap = (v as any).parts as Record<string, PartBlueprint>;
-		const configuredTrack = (v?.labels?.track || 'Stress').trim();
+		const configuredTrack = (v?.labels?.track || '').trim();
 		let nextTop = 0;
 		for (const k of Object.keys(partsMap)) {
 			const c = partsMap[k];
@@ -164,13 +164,20 @@ function createDefaultWorkingSet(source?: any): any {
 		const seededNouns = new Set<string>();
 		for (const t of copy.traits || []) {
 			for (const sub of t?.traits || []) {
-				if (!sub || typeof sub !== 'object' || characterCurioFunctions.isSfxContainer(sub)) continue;
+				if (
+					!sub ||
+					typeof sub !== 'object' ||
+					!sub.rating?.type ||
+					resolvePpDelta(sub) !== 0 ||
+					getView(sub)?.part === 'block'
+				)
+					continue;
 				const isSinglePip =
 					sub.rating?.type === 'Pip' && (!Array.isArray(sub.rating.value) || sub.rating.value.length <= 1);
 				const sName = (sub.noun || sub.name || '').trim();
 				if (!sName || seededNouns.has(sName.toLowerCase())) continue;
 				seededNouns.add(sName.toLowerCase());
-				const isTrackSub = sName.toLowerCase() === 'stress' || sName.toLowerCase() === configuredTrack.toLowerCase();
+				const isTrackSub = Boolean(configuredTrack && sName.toLowerCase() === configuredTrack.toLowerCase());
 				const labelKey = isTrackSub ? 'trackLabel' : `child:${sName}:label`;
 				const ratingKey = isTrackSub ? 'track' : `child:${sName}:rating`;
 				const rType: RatingType | undefined = sub.rating?.type;
@@ -221,7 +228,7 @@ function createDefaultWorkingSet(source?: any): any {
 						top: rowTop,
 						width: rType ? '35%' : '100%',
 						height: 1,
-						marker: rType === 'Pip' && sName.toLowerCase() !== 'stress' ? 'T' : 'L',
+						marker: rType === 'Pip' ? 'T' : 'L',
 						noun: sName,
 					};
 					addedRow = true;
@@ -342,7 +349,7 @@ const activeParts = computed<
 	const v = getView(workingSet.value);
 	const raw = v?.parts;
 	const baseNoun = (workingSet.value?.noun || workingSet.value?.name || 'Trait').trim() || 'Trait';
-	const trackNoun = (v?.labels?.track || 'Stress').trim() || 'Stress';
+	const trackNoun = (v?.labels?.track || 'Track').trim() || 'Track';
 	const PART_NAMES: Record<string, string> = {
 		name: 'Name',
 		rating: 'Rating',
@@ -421,9 +428,9 @@ const selectedPart = computed(() => {
 });
 
 const isNotesCard = computed(() => {
-	const p = (getView(workingSet.value)?.pillar || '').toLowerCase();
-	const n = (workingSet.value?.name || '').toLowerCase();
-	return p === 'notes' || n.includes('notes');
+	const v = getView(workingSet.value);
+	const p = (v?.pillar || '').toLowerCase();
+	return Boolean(v?.notesMarkdown || p === 'notes');
 });
 
 // Track label binding: uses view.labels.track (no references to labels.stress)
@@ -707,7 +714,7 @@ function toggleBlueprintRangeSide(partKey: string, side: number | string) {
 	} else if (partKey === 'track') {
 		for (const t of workingSet.value.traits || []) {
 			for (const sub of t.traits || []) {
-				if (sub?.rating && !characterCurioFunctions.isSfxContainer(sub)) {
+				if (sub?.rating && resolvePpDelta(sub) === 0 && getView(sub)?.part !== 'block') {
 					sub.rating.range = [...cur];
 				}
 			}
@@ -715,7 +722,9 @@ function toggleBlueprintRangeSide(partKey: string, side: number | string) {
 	} else if (cell.noun) {
 		const noun = cell.noun;
 		for (const t of workingSet.value.traits || []) {
-			const sub = (t.traits || []).find((sSub: any) => (sSub.name || '').toLowerCase() === noun.toLowerCase());
+			const sub = (t.traits || []).find(
+				(sSub: any) => (sSub.noun || sSub.name || '').toLowerCase() === noun.toLowerCase(),
+			);
 			if (sub && sub.rating) sub.rating.range = [...cur];
 		}
 	}
@@ -735,7 +744,9 @@ function setBlueprintPipCount(partKey: string, count: number | string) {
 	} else if (cell.noun) {
 		const noun = cell.noun;
 		for (const t of workingSet.value.traits || []) {
-			const sub = (t.traits || []).find((sSub: any) => (sSub.name || '').toLowerCase() === noun.toLowerCase());
+			const sub = (t.traits || []).find(
+				(sSub: any) => (sSub.noun || sSub.name || '').toLowerCase() === noun.toLowerCase(),
+			);
 			if (sub) sub.rating = createDefaultRatingForType('Pip', [n]);
 		}
 	}
@@ -772,18 +783,25 @@ const childSlots = computed<ChildSlotDef[]>(() => {
 	// Auto-detect any companion tracks from active parts or existing traits
 	const configuredTrack = (v?.labels?.track || '').trim();
 	if (configuredTrack && !seen.has(configuredTrack.toLowerCase())) {
-		explicit.unshift({ id: 'stress', noun: configuredTrack, ratingType: 'Die', range: [4, 6, 8, 10, 12], marker: 'L' });
+		explicit.unshift({
+			id: 'track-companion',
+			noun: configuredTrack,
+			ratingType: 'Die',
+			range: [4, 6, 8, 10, 12],
+			marker: 'L',
+		});
 		seen.add(configuredTrack.toLowerCase());
 	}
 
 	for (const t of workingSet.value?.traits || []) {
 		for (const sub of t?.traits || []) {
-			const sName = (sub?.name || '').trim();
+			const sName = (sub?.noun || sub?.name || '').trim();
 			if (
 				sName &&
 				!seen.has(sName.toLowerCase()) &&
 				sub?.rating?.type &&
-				!characterCurioFunctions.isSfxContainer(sub)
+				resolvePpDelta(sub) === 0 &&
+				getView(sub)?.part !== 'block'
 			) {
 				explicit.push({
 					id: characterCurioFunctions.generateUUID(),
@@ -801,7 +819,7 @@ const childSlots = computed<ChildSlotDef[]>(() => {
 });
 
 function onAddCompanionTrackClick() {
-	const cNoun = trackLabelText.value || 'Stress';
+	const cNoun = trackLabelText.value || 'Track';
 	ensureChildTraitOnAllInstances(cNoun, 'Die');
 	addOrFocusPart('trackLabel', cNoun, 'label');
 	addOrFocusPart('track', cNoun, 'rating', 'Die');
@@ -921,22 +939,17 @@ const inventoryGroups = computed<InventoryNounGroup[]>(() => {
 	}
 	for (const t of workingSet.value?.traits || []) {
 		for (const sub of t?.traits || []) {
-			const sName = (sub?.name || '').trim();
-			if (sName && sub?.rating?.type && !characterCurioFunctions.isSfxContainer(sub)) {
+			const sName = (sub?.noun || sub?.name || '').trim();
+			if (sName && sub?.rating?.type && resolvePpDelta(sub) === 0 && getView(sub)?.part !== 'block') {
 				companionNouns.add(sName);
 			}
 		}
 	}
 
 	for (const sNoun of companionNouns) {
-		const labelKey =
-			sNoun.toLowerCase() === 'stress' || sNoun.toLowerCase() === trackLabelText.value.toLowerCase()
-				? 'trackLabel'
-				: `child:${sNoun}:label`;
-		const ratingKey =
-			sNoun.toLowerCase() === 'stress' || sNoun.toLowerCase() === trackLabelText.value.toLowerCase()
-				? 'track'
-				: `child:${sNoun}:rating`;
+		const isTrack = Boolean(trackLabelText.value && sNoun.toLowerCase() === trackLabelText.value.toLowerCase());
+		const labelKey = isTrack ? 'trackLabel' : `child:${sNoun}:label`;
+		const ratingKey = isTrack ? 'track' : `child:${sNoun}:rating`;
 		const slot = childSlots.value.find((s) => s.noun.toLowerCase() === sNoun.toLowerCase());
 		const sRatingType = slot && slot.ratingType !== 'None' ? slot.ratingType : 'Die';
 
@@ -1387,18 +1400,19 @@ function setChildDieValue(sub: any, dieVal: number | string) {
 }
 
 function addTraitSfx(trait: any) {
-	const container = characterCurioFunctions.ensureSfxContainer(trait);
-	if (!container) return;
-	if (!Array.isArray(container.traits)) container.traits = [];
-	container.traits.push({
+	if (!Array.isArray(trait.traits)) trait.traits = [];
+	trait.traits.push({
 		id: characterCurioFunctions.generateUUID(),
-		name: 'SFX',
+		name: 'Effect',
 		description: 'Spend 1 PP to activate.',
+		view: { part: 'block' },
 	});
 }
 
-function removeSfxChild(trait: any, sIdx: number | string) {
-	characterCurioFunctions.removeSfxAt(trait, Number(sIdx));
+function removeSfxChild(trait: any, sub: any) {
+	if (!Array.isArray(trait?.traits)) return;
+	const idx = trait.traits.indexOf(sub);
+	if (idx !== -1) trait.traits.splice(idx, 1);
 }
 
 function removeChildTraitInstance(trait: any, sIdx: number | string) {
@@ -1589,7 +1603,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 							v-model="newChildNoun"
 							type="text"
 							class="mini-input mini-input-sm"
-							placeholder="Noun (e.g. Statement, Ammo, Stress, Specialty)"
+							placeholder="Noun"
 							@keydown.enter.prevent="addChildSlot"
 						/>
 						<select v-model="newChildRatingType" class="mini-select-sm">
@@ -2131,7 +2145,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 						<span class="mini-section-title">Traits in Set</span>
 						<label class="mini-inline-label">
 							<span>Track Label:</span>
-							<input v-model="trackLabelText" type="text" class="mini-input mini-input-sm" placeholder="Stress" />
+							<input v-model="trackLabelText" type="text" class="mini-input mini-input-sm" placeholder="Track" />
 						</label>
 						<label class="mini-inline-label">
 							<input v-model="outIndicator" type="checkbox" />
@@ -2333,9 +2347,9 @@ function onDialogBackdropClick(event: MouseEvent) {
 								</div>
 							</template>
 
-							<!-- SFX block items -->
+							<!-- Block items -->
 							<div
-								v-for="(sub, sIdx) in characterCurioFunctions.sfxChildren(trait)"
+								v-for="(sub, sIdx) in characterCurioFunctions.blockChildren(trait, workingSet)"
 								:key="sub.id || sIdx"
 								class="mini-trait-subrow"
 							>
@@ -2344,14 +2358,10 @@ function onDialogBackdropClick(event: MouseEvent) {
 									v-model="sub.name"
 									type="text"
 									class="mini-input mini-input-sm mini-subrow-noun"
-									placeholder="SFX Label"
+									placeholder="Label"
 								/>
-								<input v-model="sub.description" type="text" class="mini-input" placeholder="SFX Effect..." />
-								<button
-									type="button"
-									class="mini-icon-btn mini-btn-danger"
-									@click="removeSfxChild(trait, Number(sIdx))"
-								>
+								<input v-model="sub.description" type="text" class="mini-input" placeholder="Effect..." />
+								<button type="button" class="mini-icon-btn mini-btn-danger" @click="removeSfxChild(trait, sub)">
 									&times;
 								</button>
 							</div>
@@ -2401,7 +2411,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 								v-model="presetLabel"
 								type="text"
 								class="mini-input"
-								placeholder="e.g. Questioned Statements, Ammo Track"
+								placeholder="Preset name"
 								aria-label="Preset Label"
 							/>
 							<div v-if="hasCollision" class="mini-collision-alert">

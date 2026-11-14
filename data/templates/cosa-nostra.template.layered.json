@@ -120,7 +120,7 @@
 						12
 					],
 					"multiDie": false,
-					"notes": "",
+					"notes": "Gain a PP when you trade out your distinction's die rating for a d4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
 					"reservedSlots": 3,
 					"parts": {
 						"name": {
@@ -154,7 +154,12 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -249,7 +254,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Drive",
 				"plural": "Drives",
@@ -348,7 +354,8 @@
 						"left": "SKILL",
 						"right": "SPECIALTIES"
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Role",
 				"plural": "Roles",

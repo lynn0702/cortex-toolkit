@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getView } from './model.ts';
+import { getView, resolveSubtraitNoun } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
@@ -25,6 +25,7 @@ const {
 	getRatingPlacement,
 	getRatingDisplay,
 	renderText,
+	renderNotesText,
 	isFixedSystemTrait,
 	getPipChild,
 	isChildPipFilled,
@@ -71,14 +72,19 @@ const {
 	hasChildPartCell,
 	getChildTraitByNoun,
 	isPlayMutableSet,
-	traitHasHinder,
-	hinderDie,
-	handleHinderDieClick,
+	getAltRoll,
+	handleAltRollClick,
 	stageTrackDie,
 	resolvedBorder,
 	traitArrayMode,
 	showPortraitHub,
 } = injectTraitSet();
+
+function pipPlaceholder(trait: any): string {
+	const child = getPipChild(trait);
+	const noun = child ? resolveSubtraitNoun(child, traitSet.value) : 'Detail';
+	return `${noun || 'Detail'}...`;
+}
 
 function hasTraitSetDescription(ts: any) {
 	const list = Array.isArray(ts?.traits) ? ts.traits : [];
@@ -180,7 +186,7 @@ function hasTraitSetDescription(ts: any) {
 											role="checkbox"
 											tabindex="0"
 											:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
-											:aria-label="`Question statement for ${item.trait.name || 'trait'}`"
+											:aria-label="`Toggle ${resolveSubtraitNoun(getPipChild(item.trait), traitSet).toLowerCase()} for ${item.trait.name || 'trait'}`"
 											@keydown.enter.prevent="togglePip(s, item.originalIndex)"
 											@keydown.space.prevent="togglePip(s, item.originalIndex)"
 											@click.stop="togglePip(s, item.originalIndex)"
@@ -207,7 +213,7 @@ function hasTraitSetDescription(ts: any) {
 												:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
 												@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 												@click.stop="openTraitAt(s, item)"
-												placeholder="Statement..."
+												:placeholder="pipPlaceholder(item.trait)"
 											/>
 											<span
 												class="trait-pip-text"
@@ -215,7 +221,9 @@ function hasTraitSetDescription(ts: any) {
 												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
 											<span class="trait-pip-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-											<span class="trait-pip-hint" v-else-if="submode === 'edit'">Statement...</span>
+											<span class="trait-pip-hint" v-else-if="submode === 'edit'">{{
+												pipPlaceholder(item.trait)
+											}}</span>
 											<span class="trait-pip-blank" v-else></span>
 										</span>
 									</template>
@@ -271,7 +279,7 @@ function hasTraitSetDescription(ts: any) {
 												class="trait-name trait-name-blank"
 												v-else-if="printBlank || item.isPlaceholder || !item.trait.name"
 											>
-												<template v-if="item.trait.name && item.trait.name.endsWith(':') && !item.isPlaceholder">
+												<template v-if="item.trait.name && getView(item.trait)?.prompt && !item.isPlaceholder">
 													{{ item.trait.name }} <span class="trait-blank-line"></span>
 												</template>
 												<template v-else-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
@@ -444,7 +452,10 @@ function hasTraitSetDescription(ts: any) {
 									class="trait-value single-die-value"
 									:class="{
 										'has-hinder-pill':
-											submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet),
+											submode === 'play' &&
+											!printBlank &&
+											!item.isPlaceholder &&
+											Boolean(getAltRoll(item.trait, traitSet)),
 									}"
 									@click.stop="
 										submode === 'play' && !printBlank && !item.isPlaceholder
@@ -535,17 +546,23 @@ function hasTraitSetDescription(ts: any) {
 										></span>
 									</template>
 									<button
-										v-if="
-											submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet)
-										"
+										v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getAltRoll(item.trait, traitSet)"
 										type="button"
 										class="btn-hinder-pill"
-										@click.stop="handleHinderDieClick(item.trait, traitSet, s, item.originalIndex)"
-										title="Take d4 and gain 1 PP"
-										aria-label="Take d4 and gain 1 PP"
+										@click.stop="handleAltRollClick(item.trait, traitSet)"
+										:title="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
+										:aria-label="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
 									>
-										<span aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span
-										><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
+										<span aria-hidden="true">d{{ getAltRoll(item.trait, traitSet)?.die || 4 }}</span
+										><span v-if="getAltRoll(item.trait, traitSet)?.ppDelta" class="hinder-pp-tag" aria-hidden="true">{{
+											getAltRoll(item.trait, traitSet)!.ppDelta === 1
+												? '+PP'
+												: getAltRoll(item.trait, traitSet)!.ppDelta === -1
+													? '-PP'
+													: (getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') +
+														getAltRoll(item.trait, traitSet)!.ppDelta +
+														'PP'
+										}}</span>
 									</button>
 									<span
 										v-if="
@@ -664,7 +681,11 @@ function hasTraitSetDescription(ts: any) {
 									}}</span>
 									<span
 										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
-										v-html="renderText(item.trait.description)"
+										v-html="
+											getView(traitSet)?.notesMarkdown
+												? renderNotesText(item.trait.description)
+												: renderText(item.trait.description)
+										"
 									></span>
 									<span class="desc-hint" v-else-if="submode === 'edit'">Description...</span>
 									<div class="desc-blank-area" v-else-if="printBlank || item.isPlaceholder">
@@ -696,33 +717,30 @@ function hasTraitSetDescription(ts: any) {
 							</div>
 							<!-- BLOCK (SFX) -->
 							<div
-								v-if="partsGridFor(traitSet)?.cells.block && characterCurioFunctions.sfxChildren(item.trait).length"
+								v-if="
+									partsGridFor(traitSet)?.cells.block &&
+									characterCurioFunctions.blockChildren(item.trait, traitSet).length
+								"
 								class="trait-part trait-part-block"
 								:style="partCellStyle(partsGridFor(traitSet), 'block')"
 							>
 								<ul class="trait-sfx">
 									<li
-										v-for="(sfx, sfIdx) in characterCurioFunctions.sfxChildren(item.trait)"
+										v-for="(sfx, sfIdx) in characterCurioFunctions.blockChildren(item.trait, traitSet)"
 										:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 									>
 										<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
 											>{{ (getView(item.trait) as any).prefix.text }}
 										</span>
-										<template v-if="String(sfx.name || '').toLowerCase() === 'hinder'">
-											<span class="trait-sfx-name">Hinder</span>:
-											<span class="trait-sfx-description" v-html="renderText(sfx.description)"></span>
-										</template>
-										<template v-else>
-											<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
-											><span v-if="sfx.name && sfx.description">: </span>
-											<span
-												class="trait-sfx-description"
-												v-if="sfx.description"
-												v-html="renderText(sfx.description)"
-											></span>
-											<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
-											<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">SFX...</span>
-										</template>
+										<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
+										><span v-if="sfx.name && sfx.description">: </span>
+										<span
+											class="trait-sfx-description"
+											v-if="sfx.description"
+											v-html="renderText(sfx.description)"
+										></span>
+										<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
+										<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">Detail...</span>
 									</li>
 								</ul>
 							</div>
@@ -795,7 +813,7 @@ function hasTraitSetDescription(ts: any) {
 													:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
 													@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 													@click.stop="openTraitAt(s, item)"
-													placeholder="Statement..."
+													:placeholder="pipPlaceholder(item.trait)"
 												/>
 												<span
 													class="trait-pip-text"
@@ -803,7 +821,9 @@ function hasTraitSetDescription(ts: any) {
 													v-html="renderText(getPipChild(item.trait)?.name || '')"
 												></span>
 												<span class="trait-pip-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-												<span class="trait-pip-hint" v-else-if="submode === 'edit'">Statement...</span>
+												<span class="trait-pip-hint" v-else-if="submode === 'edit'">{{
+													pipPlaceholder(item.trait)
+												}}</span>
 												<span class="trait-pip-blank" v-else></span>
 											</span>
 										</template>
@@ -835,7 +855,7 @@ function hasTraitSetDescription(ts: any) {
 												role="checkbox"
 												tabindex="0"
 												:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
-												:aria-label="`Question statement for ${item.trait.name || 'trait'}`"
+												:aria-label="`Toggle ${resolveSubtraitNoun(getPipChild(item.trait), traitSet).toLowerCase()} for ${item.trait.name || 'trait'}`"
 												@keydown.enter.prevent="togglePip(s, item.originalIndex)"
 												@keydown.space.prevent="togglePip(s, item.originalIndex)"
 												@click.stop="togglePip(s, item.originalIndex)"
@@ -1113,7 +1133,7 @@ function hasTraitSetDescription(ts: any) {
 											role="checkbox"
 											tabindex="0"
 											:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
-											:aria-label="`Question statement for ${item.trait.name || 'trait'}`"
+											:aria-label="`Toggle ${resolveSubtraitNoun(getPipChild(item.trait), traitSet).toLowerCase()} for ${item.trait.name || 'trait'}`"
 											@keydown.enter.prevent="togglePip(s, item.originalIndex)"
 											@keydown.space.prevent="togglePip(s, item.originalIndex)"
 											@click.stop="togglePip(s, item.originalIndex)"
@@ -1136,7 +1156,7 @@ function hasTraitSetDescription(ts: any) {
 												:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
 												@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 												@click.stop="openTraitAt(s, item)"
-												placeholder="Statement..."
+												:placeholder="pipPlaceholder(item.trait)"
 											/>
 											<span
 												class="trait-pip-text"
@@ -1144,7 +1164,9 @@ function hasTraitSetDescription(ts: any) {
 												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
 											<span class="trait-pip-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-											<span class="trait-pip-hint" v-else-if="submode === 'edit'">Statement...</span>
+											<span class="trait-pip-hint" v-else-if="submode === 'edit'">{{
+												pipPlaceholder(item.trait)
+											}}</span>
 											<span class="trait-pip-blank" v-else></span>
 										</span>
 									</template>
@@ -1174,7 +1196,7 @@ function hasTraitSetDescription(ts: any) {
 												class="trait-name trait-name-blank"
 												v-else-if="printBlank || item.isPlaceholder || !item.trait.name"
 											>
-												<template v-if="item.trait.name && item.trait.name.endsWith(':') && !item.isPlaceholder">
+												<template v-if="item.trait.name && getView(item.trait)?.prompt && !item.isPlaceholder">
 													{{ item.trait.name }} <span class="trait-blank-line"></span>
 												</template>
 												<template v-else-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
@@ -1335,7 +1357,7 @@ function hasTraitSetDescription(ts: any) {
 												submode === 'play' &&
 												!printBlank &&
 												!item.isPlaceholder &&
-												traitHasHinder(item.trait, traitSet),
+												Boolean(getAltRoll(item.trait, traitSet)),
 										}"
 										@click.stop="
 											submode === 'play' && !printBlank && !item.isPlaceholder
@@ -1427,16 +1449,29 @@ function hasTraitSetDescription(ts: any) {
 										</template>
 										<button
 											v-if="
-												submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet)
+												submode === 'play' && !printBlank && !item.isPlaceholder && getAltRoll(item.trait, traitSet)
 											"
 											type="button"
 											class="btn-hinder-pill"
-											@click.stop="handleHinderDieClick(item.trait, traitSet, s, item.originalIndex)"
-											title="Take d4 and gain 1 PP"
-											aria-label="Take d4 and gain 1 PP"
+											@click.stop="handleAltRollClick(item.trait, traitSet)"
+											:title="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
+											:aria-label="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
 										>
-											<span aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span
-											><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
+											<span aria-hidden="true">d{{ getAltRoll(item.trait, traitSet)?.die || 4 }}</span
+											><span
+												v-if="getAltRoll(item.trait, traitSet)?.ppDelta"
+												class="hinder-pp-tag"
+												aria-hidden="true"
+												>{{
+													getAltRoll(item.trait, traitSet)!.ppDelta === 1
+														? '+PP'
+														: getAltRoll(item.trait, traitSet)!.ppDelta === -1
+															? '-PP'
+															: (getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') +
+																getAltRoll(item.trait, traitSet)!.ppDelta +
+																'PP'
+												}}</span
+											>
 										</button>
 										<span
 											v-if="
@@ -1479,7 +1514,11 @@ function hasTraitSetDescription(ts: any) {
 								>
 									<div
 										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
-										v-html="renderText(item.trait.description)"
+										v-html="
+											getView(traitSet)?.notesMarkdown
+												? renderNotesText(item.trait.description)
+												: renderText(item.trait.description)
+										"
 									></div>
 									<div class="desc-hint" v-else-if="submode === 'edit'">Description...</div>
 									<div class="desc-blank-area" v-else-if="printBlank || item.isPlaceholder">
@@ -1611,30 +1650,24 @@ function hasTraitSetDescription(ts: any) {
 							</span>
 							<ul
 								class="trait-sfx"
-								v-if="!hasTrackPart(traitSet) && characterCurioFunctions.sfxChildren(item.trait).length"
+								v-if="!hasTrackPart(traitSet) && characterCurioFunctions.blockChildren(item.trait, traitSet).length"
 							>
 								<li
-									v-for="(sfx, sfIdx) in characterCurioFunctions.sfxChildren(item.trait)"
+									v-for="(sfx, sfIdx) in characterCurioFunctions.blockChildren(item.trait, traitSet)"
 									:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 								>
 									<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
 										>{{ (getView(item.trait) as any).prefix.text }}
 									</span>
-									<template v-if="String(sfx.name || '').toLowerCase() === 'hinder'">
-										<span class="trait-sfx-name">Hinder</span>:
-										<span class="trait-sfx-description" v-html="renderText(sfx.description)"></span>
-									</template>
-									<template v-else>
-										<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
-										><span v-if="sfx.name && sfx.description">: </span>
-										<span
-											class="trait-sfx-description"
-											v-if="sfx.description"
-											v-html="renderText(sfx.description)"
-										></span>
-										<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
-										<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">SFX...</span>
-									</template>
+									<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
+									><span v-if="sfx.name && sfx.description">: </span>
+									<span
+										class="trait-sfx-description"
+										v-if="sfx.description"
+										v-html="renderText(sfx.description)"
+									></span>
+									<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
+									<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">Detail...</span>
 								</li>
 							</ul>
 						</div>

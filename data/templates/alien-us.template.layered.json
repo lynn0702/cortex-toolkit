@@ -115,9 +115,14 @@
 					"ratingLadder": [
 						8
 					],
-					"notes": "",
+					"notes": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
 					"reservedSlots": 3,
-					"pillar": "prime"
+					"pillar": "prime",
+					"altRoll": {
+						"die": 4,
+						"ppDelta": 1,
+						"label": "Hinder"
+					}
 				},
 				"noun": "Distinction",
 				"plural": "Distinctions",
@@ -128,24 +133,23 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"type": "Die",
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -155,24 +159,23 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"type": "Die",
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					},
@@ -182,24 +185,23 @@
 								"text": "SFX",
 								"shape": "vertical-bar",
 								"color": "black"
-							}
+							},
+							"prompt": true
 						},
 						"traits": {
-							"SFX": {
-								"traits": {
-									"Hinder": {
-										"rating": {
-											"type": "Die",
-											"value": [
-												4
-											],
-											"range": [
-												4
-											]
-										},
-										"description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
-									}
-								}
+							"Hinder": {
+								"rating": {
+									"type": "Die",
+									"value": [
+										4
+									],
+									"range": [
+										4
+									]
+								},
+								"description": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+								"noun": "SFX",
+								"ppDelta": 1
 							}
 						}
 					}
@@ -234,7 +236,8 @@
 					"multiDie": false,
 					"notes": "",
 					"reservedSlots": 7,
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"rating": {
 					"type": "Die",
@@ -387,7 +390,8 @@
 							"height": 1
 						}
 					},
-					"pillar": "prime"
+					"pillar": "prime",
+					"fixedNames": true
 				},
 				"noun": "Value",
 				"plural": "Values",

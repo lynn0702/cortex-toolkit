@@ -31,14 +31,15 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(JSON.stringify(F.getSubtraitSlotRatings({}, 1)) === '[4,6,8,10,12]', 'missing view falls back to full scale');
 }
 
-// ---- fixed-name sets: system labels print on blank sheets.
+// ---- fixed-name sets: structural flags and layout styles print on blank sheets.
 {
-	ok(F.isFixedNameSet('Attributes') === true, 'attribute set matches');
-	ok(F.isFixedNameSet('ROLES') === true, 'match is case-insensitive');
-	ok(F.isFixedNameSet('Signature Assets') === false, 'ordinary sets miss');
-	ok(F.isFixedNameSet('') === false, 'blank misses');
-	ok(F.isFixedNameSet(null) === false && F.isFixedNameSet(undefined) === false, 'non-strings miss');
-	ok(F.isFixedNameSet('Eidolon Strain') === true, 'eidolon matches', F.fixedNameSetKeys.length);
+	ok(F.isFixedTraitNamesSet({ view: { fixedNames: true } }) === true, 'explicit view.fixedNames matches');
+	ok(F.isFixedTraitNamesSet({ view: { style: { body: 'die-track' } } }) === true, 'die-track body matches');
+	ok(F.isFixedTraitNamesSet({ view: { style: { body: 'portrait-ring' } } }) === true, 'portrait-ring body matches');
+	ok(F.isFixedTraitNamesSet({ view: { traitColumns: 2 } }) === true, 'multi-column trait set matches');
+	ok(F.isFixedTraitNamesSet({ view: { parts: { name: {}, track: {} } } }) === true, 'track-part set matches');
+	ok(F.isFixedTraitNamesSet({ name: 'Attributes', view: {} }) === false, 'ordinary name alone does not sniff');
+	ok(F.isFixedTraitNamesSet(null) === false && F.isFixedTraitNamesSet(undefined) === false, 'non-objects miss');
 }
 
 // ---- isPlayMutableSet (playMutable-only carveout)
@@ -222,14 +223,38 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 		geomSvg.includes('<svg') && geomSvg.includes('aria-hidden="true"') && !geomSvg.includes('<text'),
 		'renderDieGeometrySVG outputs pure geometry SVG without inner text',
 	);
+	ok(F.renderDieGeometrySVG(8, true) === geomSvg, 'renderDieGeometrySVG returns deterministic cached SVG strings');
 
 	for (const size of [4, 6, 8, 10, 12, 20]) {
 		const svg = F.renderDieconSVG(size, true);
 		ok(
-			svg.includes('<text ') && svg.includes('stroke="none"'),
-			`renderDieconSVG(${size}) sets stroke="none" on numeral`,
+			svg.includes('<text ') &&
+				svg.includes('stroke="none"') &&
+				svg.includes('font-family="\'Open Sans\', sans-serif"') &&
+				!svg.includes('dominant-baseline="central"'),
+			`renderDieconSVG(${size}) uses self-hosted Open Sans with alphabetic baseline and stroke="none"`,
 		);
+		ok(F.renderDieconSVG(size, true) === svg, `renderDieconSVG(${size}) returns deterministic cached SVG strings`);
 	}
+
+	const customSvg = F.renderDieconSVG(4, true, 'extra" onclick="alert(1)', {
+		style: 'custom',
+		backgroundType: 'gradient',
+		backgroundColor1: '#10b981',
+		backgroundColor2: '#047857',
+		gradientAngle: 135,
+		numeralColor: '#ffffff',
+		borderColor: '" onload="alert(1)',
+		borderWidth: 3,
+	});
+	ok(
+		customSvg.includes('diecon-custom') &&
+			customSvg.includes('<linearGradient') &&
+			customSvg.includes('stroke="#000000"') &&
+			!customSvg.includes('onclick=') &&
+			!customSvg.includes('onload'),
+		'renderDieconSVG tags custom styles with diecon-custom, builds gradients, and rejects attribute injection',
+	);
 
 	const fs = require('node:fs');
 	const path = require('node:path');

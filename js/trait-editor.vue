@@ -20,6 +20,9 @@ import {
 	applyTypeScopedRange,
 	resolveSubtraitNoun,
 	resolveSubtraitPlural,
+	isRingBadgeTrait,
+	keepsExtraDice,
+	resolvePpDelta,
 	type Character,
 } from './model.ts';
 import { buildParts } from './sheet-grid.ts';
@@ -27,6 +30,7 @@ import TagEditor from './tag-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
 import ColorPicker from './color-picker.vue';
 import { getCharacterColorTokens } from './color-palette.ts';
+import { resolveFrame } from './frame-geometry.ts';
 
 const props = defineProps<{
 	character: Character;
@@ -185,10 +189,9 @@ const name = computed({
 		}
 		setProperty('name', val);
 		if (isThreeColumnTable.value) {
-			const entries = characterCurioFunctions.sfxChildren(trait.value);
-			const sfx = entries.find((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
-			if (sfx && typeof sfx === 'object') {
-				sfx.name = val;
+			const effect = findThreeColEffectChild();
+			if (effect && typeof effect === 'object') {
+				effect.name = val;
 			}
 		}
 	},
@@ -201,11 +204,7 @@ const isListStyle = computed(() => {
 	return b === 'list' || Boolean(parts && !parts.rating);
 });
 
-const hasSfxChildren = computed(
-	() =>
-		Array.isArray(characterCurioFunctions.sfxChildren(trait.value)) &&
-		characterCurioFunctions.sfxChildren(trait.value).length > 0,
-);
+const hasSfxChildren = computed(() => characterCurioFunctions.blockChildren(trait.value, traitSet.value).length > 0);
 
 const counterLabel = computed(() => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP');
 
@@ -645,49 +644,68 @@ const childSubtraits = computed(() => {
 	if (!Array.isArray(subs)) return [];
 	const result: Array<{
 		idx: number;
-		sfxIdx?: number;
-		isSfx?: boolean;
 		sub: any;
 		label: string;
 		summary: string;
 	}> = [];
 	subs.forEach((sub: any, idx: number) => {
 		if (!sub || typeof sub !== 'object') return;
-		if (characterCurioFunctions.isSfxContainer(sub)) {
-			const sfxList = Array.isArray(sub.traits) ? sub.traits : [];
-			sfxList.forEach((sfx: any, sIdx: number) => {
-				if (!sfx || typeof sfx !== 'object') return;
-				const label = sfx.name || 'SFX';
-				result.push({
-					idx,
-					sfxIdx: sIdx,
-					isSfx: true,
-					sub: sfx,
-					label: String(label).trim() || 'SFX',
-					summary: 'SFX',
-				});
-			});
-			return;
-		}
 		const r = resolveRating(sub, [trait.value, ...ancestorFallbacks.value]);
-		const label = (isSetSubtraitMode.value ? sub.noun || sub.name : sub.name || sub.noun) || 'Subtrait';
-		const summary = r?.type
-			? r.type
-			: Array.isArray(sub.traits) && sub.traits.length
-				? `${sub.traits.length}`
-				: 'Unrated';
-		result.push({ sub, idx, label: String(label).trim() || 'Subtrait', summary });
+		const isBlockOrMod = resolvePpDelta(sub) !== 0 || !r || getView(sub)?.part === 'block';
+		const label =
+			String(
+				(isSetSubtraitMode.value && !isBlockOrMod ? sub.noun || sub.name : sub.name || sub.noun) || 'Subtrait',
+			).trim() || 'Subtrait';
+		const nounStr = typeof sub.noun === 'string' ? sub.noun.trim() : '';
+		const summary =
+			nounStr && nounStr.toLowerCase() !== label.toLowerCase()
+				? nounStr
+				: r?.type
+					? r.type
+					: Array.isArray(sub.traits) && sub.traits.length
+						? `${sub.traits.length}`
+						: 'Unrated';
+		result.push({ sub, idx, label, summary });
 	});
 	return result;
 });
 
 const scrollable = computed(() => Boolean(childSubtraits.value.length > 0));
 
-const isThreeColumnTable = computed(() => {
-	if (isSubtraitMode.value) return false;
+const threeColPartNoun = computed(() => {
 	const parts = getView(traitSet.value)?.parts;
-	return Boolean(parts && (parts['child:SFX'] || (parts as any)['child_sfx']));
+	if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return '';
+	for (const k of Object.keys(parts)) {
+		if (k.startsWith('child:')) {
+			const segs = k.slice(6).split(':');
+			if (segs.length === 1 && segs[0]?.trim()) return segs[0].trim();
+		} else if (k.startsWith('child_')) {
+			const rest = k.slice(6);
+			if (!/_(rating|label|text)$/i.test(rest) && rest.trim()) return rest.trim();
+		}
+	}
+	return '';
 });
+
+const isThreeColumnTable = computed(() => !isSubtraitMode.value && Boolean(threeColPartNoun.value));
+
+function findThreeColEffectChild(): any {
+	const subs = Array.isArray(trait.value?.traits) ? trait.value.traits : [];
+	const nounLower = threeColPartNoun.value.toLowerCase();
+	if (nounLower) {
+		const byNoun = subs.filter((e: any) => {
+			if (!e || typeof e !== 'object') return false;
+			const eNoun = typeof e.noun === 'string' ? e.noun.trim().toLowerCase() : '';
+			const eName = typeof e.name === 'string' ? e.name.trim().toLowerCase() : '';
+			return eNoun === nounLower || eName === nounLower;
+		});
+		if (byNoun.length) {
+			return byNoun.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || byNoun[0];
+		}
+	}
+	const blocks = characterCurioFunctions.blockChildren(trait.value, traitSet.value);
+	return blocks.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || blocks[0];
+}
 
 const tableCol1Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
@@ -709,60 +727,75 @@ const tableCol3Label = computed(() => {
 
 const tableCol3Text = computed({
 	get() {
-		const entries = characterCurioFunctions.sfxChildren(trait.value);
-		const sfx = entries.find((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
-		if (!sfx) return '';
-		return sfx.description || sfx.name || '';
+		const effect = findThreeColEffectChild();
+		if (!effect) return '';
+		return effect.description || effect.name || '';
 	},
 	set(val: string) {
-		const container = characterCurioFunctions.ensureSfxContainer(trait.value);
-		if (!container || !Array.isArray(container.traits)) return;
-		const idx = container.traits.findIndex((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
-		if (idx === -1) {
-			container.traits.push({
+		if (!trait.value) return;
+		if (!Array.isArray(trait.value.traits)) trait.value.traits = [];
+		const existing = findThreeColEffectChild();
+		if (existing && typeof existing === 'object') {
+			existing.description = val;
+			existing.name = trait.value.name || '';
+			if (threeColPartNoun.value && !existing.noun) {
+				existing.noun = threeColPartNoun.value;
+			}
+		} else {
+			trait.value.traits.push({
 				name: trait.value.name || '',
+				...(threeColPartNoun.value ? { noun: threeColPartNoun.value } : {}),
 				description: val,
 				tags: [],
 				custom: {},
 			});
-		} else {
-			container.traits[idx].description = val;
-			container.traits[idx].name = trait.value.name || '';
 		}
 		updateCharacter(props.character);
 	},
 });
 
-const isRingSet = computed(() => {
-	const body = getView(traitSet.value)?.style?.body;
-	return body === 'portrait-ring';
+const hasRingFrame = computed(() => {
+	const f = resolveFrame(traitSet.value);
+	return Boolean((f && f.array !== 'none') || getView(traitSet.value)?.style?.body === 'portrait-ring');
 });
 
-const isScaleDie = computed({
+const isRingBadge = computed({
 	get() {
-		return Boolean(
-			(trait.value && typeof (trait.value as any).keepsExtra === 'number' && (trait.value as any).keepsExtra > 0) ||
-			(trait.value?.name && trait.value.name.trim().toLowerCase() === 'scale'),
-		);
+		return isRingBadgeTrait(trait.value);
 	},
-	set(val: any) {
+	set(val: boolean) {
+		if (!trait.value) return;
+		const v = ensureView(trait.value);
+		if (val) v.ringBadge = true;
+		else delete v.ringBadge;
+		updateCharacter(props.character);
+	},
+});
+
+const traitKeepsExtra = computed({
+	get() {
+		return keepsExtraDice(trait.value);
+	},
+	set(val: number) {
 		if (!trait.value) return;
 		const t = trait.value as unknown as Record<string, any>;
-		if (val) {
-			// Scale remains a trait name; its effect is keepsExtra.
-			t.keepsExtra = 1;
-		} else {
-			delete t.keepsExtra;
-		}
-		if (
-			val &&
-			(!t.name ||
-				t.name === 'New ' + (traitSet.value?.noun || 'Trait') ||
-				t.name === 'New trait' ||
-				t.name === 'New Attribute')
-		) {
-			setProperty('name', 'Scale');
-		}
+		const n = Math.max(0, Math.min(4, Math.floor(Number(val) || 0)));
+		if (n > 0) t.keepsExtra = n;
+		else delete t.keepsExtra;
+		updateCharacter(props.character);
+	},
+});
+
+const traitPpDelta = computed({
+	get() {
+		return resolvePpDelta(trait.value);
+	},
+	set(val: number) {
+		if (!trait.value) return;
+		const t = trait.value as unknown as Record<string, any>;
+		const n = Math.max(-5, Math.min(5, Math.trunc(Number(val) || 0)));
+		if (n !== 0) t.ppDelta = n;
+		else delete t.ppDelta;
 		updateCharacter(props.character);
 	},
 });
@@ -1311,11 +1344,7 @@ function openChildSubtrait(item: any) {
 	const path = resolvedPath.value;
 	if (path.length >= 3) return;
 	const targetItem = typeof item === 'number' ? childSubtraits.value[item] || { idx: item } : item;
-	if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
-		selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, targetItem.idx, targetItem.sfxIdx]);
-	} else {
-		selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, targetItem.idx]);
-	}
+	selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, targetItem.idx]);
 }
 
 function addSubtrait() {
@@ -1412,13 +1441,6 @@ function removeSubtrait(item: any) {
 	const s = props.traitSetID;
 	const path = resolvedPath.value;
 	const targetItem = typeof item === 'number' ? childSubtraits.value[item] || { idx: item } : item;
-	if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
-		if (trait.value) {
-			characterCurioFunctions.removeSfxAt(trait.value, targetItem.sfxIdx);
-			updateCharacter(character);
-		}
-		return;
-	}
 	const subtraitID = targetItem?.idx ?? 0;
 	if (depth.value === 1) {
 		const entry = characterCurioFunctions.resolveTemplateFor(character, rootTemplates());
@@ -1627,7 +1649,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 									:id="'trait-name-' + traitID"
 									name="subtraitNoun"
 									v-model="subtraitNoun"
-									placeholder="Statement"
+									placeholder="Subtrait"
 									ref="inputName"
 								/>
 							</div>
@@ -1638,7 +1660,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 									:id="'subtrait-noun-plural-' + traitID"
 									name="subtraitPlural"
 									v-model="subtraitPlural"
-									placeholder="Statements"
+									placeholder="Subtraits"
 								/>
 							</div>
 						</div>
@@ -1728,14 +1750,19 @@ function getDieDisplayValue(val: any, isFilled = false) {
 						</div>
 					</div>
 
-					<!-- SCALE DIE TOGGLE FOR PORTRAIT RING -->
-					<div class="editor-field" v-if="isRingSet && !isPlay">
+					<!-- RING BADGE TOGGLE FOR PORTRAIT RING -->
+					<div class="editor-field" v-if="hasRingFrame && !isPlay">
 						<div class="editor-toggles">
 							<div>
-								<input type="checkbox" :id="'trait-' + traitID + '-is-scale'" name="isScaleDie" v-model="isScaleDie" />
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-ring-badge'"
+									name="isRingBadge"
+									v-model="isRingBadge"
+								/>
 							</div>
 							<div>
-								<label :for="'trait-' + traitID + '-is-scale'"> Scale Die </label>
+								<label :for="'trait-' + traitID + '-ring-badge'"> Ring Badge </label>
 							</div>
 						</div>
 					</div>
@@ -2194,7 +2221,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 								/>
 								<label
 									:for="'trait-' + traitID + '-editable-sheet'"
-									title="Allow this trait or its statement/text to be edited directly on the sheet in play/edit mode"
+									title="Allow this trait or its detail/text to be edited directly on the sheet in play/edit mode"
 									>Editable on sheet</label
 								>
 							</div>
@@ -2213,6 +2240,34 @@ function getDieDisplayValue(val: any, isFilled = false) {
 								/>
 							</div>
 						</div>
+						<div class="editor-toggles mt-sm" v-if="!isPlay">
+							<div><label :for="'trait-' + traitID + '-keeps-extra'">Keeps Extra</label></div>
+							<div>
+								<input
+									type="number"
+									:id="'trait-' + traitID + '-keeps-extra'"
+									name="traitKeepsExtra"
+									min="0"
+									max="4"
+									v-model.number="traitKeepsExtra"
+									class="editor-input-short"
+								/>
+							</div>
+						</div>
+						<div class="editor-toggles mt-sm" v-if="!isPlay">
+							<div><label :for="'trait-' + traitID + '-pp-delta'">PP Delta</label></div>
+							<div>
+								<input
+									type="number"
+									:id="'trait-' + traitID + '-pp-delta'"
+									name="traitPpDelta"
+									min="-5"
+									max="5"
+									v-model.number="traitPpDelta"
+									class="editor-input-short"
+								/>
+							</div>
+						</div>
 					</div>
 
 					<!-- SUBTRAITS -->
@@ -2222,7 +2277,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 						<div class="editor-subtrait-list" v-if="childSubtraits.length > 0">
 							<div
 								v-for="(item, itemIdx) in childSubtraits"
-								:key="'child-sub-' + item.idx + '-' + (item.sfxIdx ?? itemIdx)"
+								:key="'child-sub-' + item.idx + '-' + itemIdx"
 								class="editor-subtrait-row"
 							>
 								<button
@@ -2275,7 +2330,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 									type="text"
 									:value="badgeValue('text')"
 									@change="setBadgeValue('text', targetValue($event))"
-									:placeholder="badgeValue('text') || 'SFX'"
+									:placeholder="badgeValue('text') || 'Badge'"
 								/>
 							</div>
 							<div class="min-w-7rem">

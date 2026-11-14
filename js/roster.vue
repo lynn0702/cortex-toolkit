@@ -3,6 +3,7 @@ import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import {
 	getView,
+	isNameSet,
 	getTemplateListing,
 	hasTemplateListing,
 	getTemplateTitle,
@@ -316,7 +317,7 @@ function cardTraitTags(tmpl: any): { visible: string[]; overflow: number } {
 	for (const s of tmpl?.character?.traitSets || []) {
 		const rawName = String(s?.name || '').trim();
 		if (!rawName) continue;
-		if (s?.id === 'name' || getView(s)?.style?.body === 'name') continue;
+		if (isNameSet(s)) continue;
 		if (seen.has(rawName)) continue;
 		seen.add(rawName);
 		names.push(rawName);
@@ -328,9 +329,7 @@ function cardTraitTags(tmpl: any): { visible: string[]; overflow: number } {
 }
 
 function cardSchematicBlocks(tmpl: any): Array<'ring' | 'cut' | 'half' | 'full'> {
-	const sets = (tmpl?.character?.traitSets || []).filter(
-		(s: any) => Boolean(s?.name) && s?.id !== 'name' && getView(s)?.style?.body !== 'name',
-	);
+	const sets = (tmpl?.character?.traitSets || []).filter((s: any) => Boolean(s?.name) && !isNameSet(s));
 	return sets.slice(0, 6).map((s: any) => {
 		const view = getView(s);
 		const frame = typeof view?.frame === 'object' && view.frame !== null ? view.frame : null;
