@@ -110,6 +110,23 @@ function toggleDesktopPillars() {
 	} catch (_e) {}
 }
 
+const characterRef = ref<any>(null);
+const splitCharacterRefs = new Map<string, any>();
+
+function setSplitCharacterRef(id: string, el: any) {
+	if (el) {
+		splitCharacterRefs.set(id, el);
+	} else {
+		splitCharacterRefs.delete(id);
+	}
+}
+
+function openActivePlayPresetPicker() {
+	const splitTarget = characterID.value ? splitCharacterRefs.get(characterID.value) : null;
+	const target = splitTarget || characterRef.value;
+	target?.openPlayPresetPicker?.();
+}
+
 watch(
 	isDarkMode,
 	(dark) => {
@@ -1177,17 +1194,16 @@ function duplicateCharacter(id: string) {
 	saveLocalData();
 }
 
-function loadCharacter(id: string) {
+function loadCharacter(id: string, targetSubmode?: string | null) {
 	if (!openCharacterIDs.value.includes(id)) {
 		openCharacterIDs.value.push(id);
 	}
 	characterID.value = id;
-	initHistory();
-	setMode('character', submode.value ?? 'edit', true);
-
 	touchCharacter(id);
 	saveOpenCharacterIDs();
-	saveLocalData();
+	persist();
+	initHistory();
+	setMode('character', targetSubmode ?? submode.value ?? 'edit', true);
 }
 
 function importSheetTemplate(entry: any) {
@@ -2086,6 +2102,7 @@ defineExpose({
 				@toggleStudio="handleToggleStudio"
 				@saveSession="saveLocalData"
 				@togglePillars="toggleDesktopPillars"
+				@addPlayCard="openActivePlayPresetPicker"
 			/>
 
 			<main class="main" ref="main" @scroll="setViewY" @click.stop="handleMainClick">
@@ -2117,6 +2134,7 @@ defineExpose({
 					@createFromTemplate="createFromTemplate"
 					@toggleTemplate="toggleTemplate"
 					@loadCharacter="loadCharacter"
+					@playCharacter="(id) => loadCharacter(id, 'play')"
 					@duplicateCharacter="duplicateCharacter"
 					@exportCharacter="exportCharacter"
 					@exportAllCharacters="exportAllCharacters"
@@ -2187,6 +2205,7 @@ defineExpose({
 						</div>
 
 						<Character
+							:ref="(el) => setSplitCharacterRef(char.id, el)"
 							submode="play"
 							:character="char"
 							:editing="editing"
@@ -2204,6 +2223,7 @@ defineExpose({
 				</div>
 
 				<Character
+					ref="characterRef"
 					v-else-if="mode === 'character' && character"
 					:submode="submode"
 					:character="character"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import type { ImageLayoutMode } from './model.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
@@ -12,6 +13,9 @@ const {
 	imageHeight,
 	imageWidth,
 	imageCaption,
+	imageLayout,
+	noun,
+	addTraitInEditor,
 	uploadImageStart,
 	uploadImageProcess,
 	removeImage,
@@ -120,7 +124,7 @@ const showImageEditor = computed(() => styleBody.value === 'image');
 		</div>
 	</div>
 
-	<div class="editor-field" v-if="styleBody === 'image'">
+	<div class="editor-field" v-if="showImageEditor">
 		<label :for="'trait-set-' + traitSetID + '-image-caption'">Caption</label>
 		<input
 			type="text"
@@ -129,5 +133,32 @@ const showImageEditor = computed(() => styleBody.value === 'image');
 			v-model="imageCaption"
 			placeholder="Optional caption"
 		/>
+	</div>
+
+	<div class="editor-field" v-if="showImageEditor">
+		<div class="editor-label">Layer</div>
+		<div class="editor-button-group mb-sm">
+			<button
+				v-for="opt in [
+					{ id: 'overlay', label: 'Background' },
+					{ id: 'above', label: 'Above' },
+					{ id: 'below', label: 'Below' },
+				]"
+				:key="opt.id"
+				type="button"
+				class="editor-group-btn"
+				:class="{ active: imageLayout === opt.id }"
+				:aria-pressed="imageLayout === opt.id"
+				@click.stop="imageLayout = opt.id as ImageLayoutMode"
+			>
+				{{ opt.label }}
+			</button>
+		</div>
+		<button type="button" class="editor-button w-full" @click.stop="addTraitInEditor">
+			<span>
+				<i class="fas fa-plus" aria-hidden="true"></i>
+				{{ noun && noun.length ? noun : 'Trait' }}
+			</span>
+		</button>
 	</div>
 </template>

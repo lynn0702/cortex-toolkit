@@ -16,6 +16,7 @@ const {
 	headerAlign,
 	imageWidth,
 	imageHeight,
+	imageLayout,
 	branchShares,
 	setBranchShare,
 	activePartKeys,
@@ -103,7 +104,7 @@ function partBoxLabel(key: string): string {
 	return `${setNoun} · ${PART_TITLES[key] || key}`;
 }
 
-const NON_ROW = ['image', 'pips'];
+const NON_ROW = ['pips'];
 
 const bodyOf = computed(() => getView(traitSet.value)?.style?.body);
 const isBranchBody = computed(() => bodyOf.value === 'subtrait-columns');
@@ -119,7 +120,7 @@ const showGenericBoxes = computed(() => !isBranchBody.value && boxes.value.boxes
 const isImageBody = computed(() => bodyOf.value === 'image');
 const imageWidthPct = computed(() => parsePct(imageWidth.value) ?? 100);
 const imageHeightPx = computed(() => {
-	const m = String(imageHeight.value || '').match(/^(\d+(?:\.\d+)?)px$/);
+	const m = String(imageHeight.value ?? '').match(/^(\d+(?:\.\d+)?)(?:px)?$/);
 	return m ? Number(m[1]) : 140;
 });
 const imageDrag = ref<{ width: number; height: number } | null>(null);
@@ -698,7 +699,10 @@ function onBranchDividerKeydown(event: KeyboardEvent, leftKey: 'left' | 'center'
 						</button>
 					</div>
 				</div>
-				<div class="row-mini-bodycol">
+				<div
+					class="row-mini-bodycol"
+					:class="isImageBody ? ['row-mini-bodycol-image', 'image-mini-layout-' + imageLayout] : undefined"
+				>
 					<div
 						v-if="isBranchBody"
 						class="branch-mini"
@@ -747,107 +751,119 @@ function onBranchDividerKeydown(event: KeyboardEvent, leftKey: 'left' | 'center'
 							<span class="branch-dims">{{ branchView.implicit ? '' : branchView.right + 'fr' }}</span>
 						</div>
 					</div>
-					<div
-						v-else-if="showGenericBoxes"
-						ref="rootEl"
-						class="row-mini"
-						:style="'grid-template-columns: ' + gridTemplate + '; min-height: ' + (boxes.rows * ROW_H + 8) + 'px;'"
-					>
-						<div
-							v-for="b in boxes.boxes"
-							:key="b.key"
-							class="row-mini-box"
-							:class="{ 'row-mini-implicit': b.implicit, 'row-mini-selected': selectedPartKey === b.key }"
-							:style="cellPlace(b.key)"
-							tabindex="0"
-							:aria-label="partBoxLabel(b.key) + ' — Arrow keys to reorder, Shift+Left/Right to resize'"
-							@keydown.self="onBoxKeydown($event, b.key)"
-							@focus="selectedPartKey = b.key"
-							@click.stop="selectedPartKey = b.key"
-							@mousedown="
-								selectedPartKey = b.key;
-								startBoxDrag($event, b.key, 'move');
-							"
-							@touchstart="
-								selectedPartKey = b.key;
-								startBoxDrag($event, b.key, 'move');
-							"
-							:title="partBoxLabel(b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height"
-						>
-							<span v-if="getPartMarker(b.key)" class="row-mini-marker">{{ getPartMarker(b.key) }}</span>
-							<span class="row-mini-name">{{ partBoxLabel(b.key) }}</span>
-							<span class="row-mini-dims">{{ b.width }}%</span>
-							<button
-								type="button"
-								class="row-mini-remove"
-								:aria-label="'Remove ' + partBoxLabel(b.key)"
-								:title="'Remove ' + partBoxLabel(b.key)"
-								@mousedown.stop
-								@touchstart.stop
-								@click.stop="removePartCell(b.key)"
+					<template v-else>
+						<div v-if="isImageBody" ref="imageHostEl" class="row-mini-imagehost">
+							<div
+								class="row-mini-box row-mini-imagebox"
+								tabindex="0"
+								role="group"
+								aria-label="Image size — Left/Right for width, Up/Down for height"
+								:style="
+									'width: ' +
+									(imageDrag ? imageDrag.width : imageWidthPct) +
+									'%; height: ' +
+									(imageDrag ? imageDrag.height : imageHeightPx) +
+									'px;'
+								"
+								:title="
+									'Image ' +
+									(imageDrag ? imageDrag.width : imageWidthPct) +
+									'% × ' +
+									(imageDrag ? imageDrag.height : imageHeightPx) +
+									'px'
+								"
+								@keydown.self="onImageKeydown"
 							>
-								&times;
-							</button>
-							<span
-								class="row-mini-edge row-mini-edge-e"
-								@mousedown.stop="startBoxDrag($event, b.key, 'w')"
-								@touchstart.stop="startBoxDrag($event, b.key, 'w')"
-							></span>
-							<span
-								class="row-mini-edge row-mini-edge-s"
-								@mousedown.stop="startBoxDrag($event, b.key, 'h')"
-								@touchstart.stop="startBoxDrag($event, b.key, 'h')"
-							></span>
+								<span class="row-mini-name">Image</span>
+								<span class="row-mini-dims">
+									{{ imageDrag ? imageDrag.width : imageWidthPct }}% ×
+									{{ imageDrag ? imageDrag.height : imageHeightPx }}px
+								</span>
+								<span
+									class="row-mini-edge row-mini-edge-e"
+									@mousedown.stop="startImageDrag($event, 'w')"
+									@touchstart.stop="startImageDrag($event, 'w')"
+								></span>
+								<span
+									class="row-mini-edge row-mini-edge-s"
+									@mousedown.stop="startImageDrag($event, 'h')"
+									@touchstart.stop="startImageDrag($event, 'h')"
+								></span>
+							</div>
 						</div>
-					</div>
-					<div v-else-if="isImageBody" ref="imageHostEl" class="row-mini-imagehost">
 						<div
-							class="row-mini-box row-mini-imagebox"
-							tabindex="0"
-							role="group"
-							aria-label="Image size — Left/Right for width, Up/Down for height"
+							v-if="showGenericBoxes"
+							ref="rootEl"
+							class="row-mini"
+							:class="{ 'row-mini-over-image': isImageBody && imageLayout === 'overlay' }"
 							:style="
-								'width: ' +
-								(imageDrag ? imageDrag.width : imageWidthPct) +
-								'%; height: ' +
-								(imageDrag ? imageDrag.height : imageHeightPx) +
-								'px;'
+								'grid-template-columns: ' +
+								gridTemplate +
+								'; min-height: ' +
+								(boxes.rows * ROW_H + 8) +
+								'px;' +
+								(isImageBody && imageLayout === 'overlay'
+									? ' width: ' + Math.max(20, (imageDrag ? imageDrag.width : imageWidthPct) - 6) + '%;'
+									: '')
 							"
-							:title="
-								'Image ' +
-								(imageDrag ? imageDrag.width : imageWidthPct) +
-								'% × ' +
-								(imageDrag ? imageDrag.height : imageHeightPx) +
-								'px'
-							"
-							@keydown.self="onImageKeydown"
 						>
-							<span class="row-mini-name">Image</span>
-							<span class="row-mini-dims">
-								{{ imageDrag ? imageDrag.width : imageWidthPct }}% ×
-								{{ imageDrag ? imageDrag.height : imageHeightPx }}px
-							</span>
-							<span
-								class="row-mini-edge row-mini-edge-e"
-								@mousedown.stop="startImageDrag($event, 'w')"
-								@touchstart.stop="startImageDrag($event, 'w')"
-							></span>
-							<span
-								class="row-mini-edge row-mini-edge-s"
-								@mousedown.stop="startImageDrag($event, 'h')"
-								@touchstart.stop="startImageDrag($event, 'h')"
-							></span>
+							<div
+								v-for="b in boxes.boxes"
+								:key="b.key"
+								class="row-mini-box"
+								:class="{ 'row-mini-implicit': b.implicit, 'row-mini-selected': selectedPartKey === b.key }"
+								:style="cellPlace(b.key)"
+								tabindex="0"
+								:aria-label="partBoxLabel(b.key) + ' — Arrow keys to reorder, Shift+Left/Right to resize'"
+								@keydown.self="onBoxKeydown($event, b.key)"
+								@focus="selectedPartKey = b.key"
+								@click.stop="selectedPartKey = b.key"
+								@mousedown="
+									selectedPartKey = b.key;
+									startBoxDrag($event, b.key, 'move');
+								"
+								@touchstart="
+									selectedPartKey = b.key;
+									startBoxDrag($event, b.key, 'move');
+								"
+								:title="partBoxLabel(b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height"
+							>
+								<span v-if="getPartMarker(b.key)" class="row-mini-marker">{{ getPartMarker(b.key) }}</span>
+								<span class="row-mini-name">{{ partBoxLabel(b.key) }}</span>
+								<span class="row-mini-dims">{{ b.width }}%</span>
+								<button
+									type="button"
+									class="row-mini-remove"
+									:aria-label="'Remove ' + partBoxLabel(b.key)"
+									:title="'Remove ' + partBoxLabel(b.key)"
+									@mousedown.stop
+									@touchstart.stop
+									@click.stop="removePartCell(b.key)"
+								>
+									&times;
+								</button>
+								<span
+									class="row-mini-edge row-mini-edge-e"
+									@mousedown.stop="startBoxDrag($event, b.key, 'w')"
+									@touchstart.stop="startBoxDrag($event, b.key, 'w')"
+								></span>
+								<span
+									class="row-mini-edge row-mini-edge-s"
+									@mousedown.stop="startBoxDrag($event, b.key, 'h')"
+									@touchstart.stop="startBoxDrag($event, b.key, 'h')"
+								></span>
+							</div>
 						</div>
-					</div>
-					<div v-else class="row-mini-norows">
-						{{
-							isNonRowBody
-								? 'No trait rows to arrange.'
-								: hasCustomParts
-									? 'All trait elements removed — Reset to restore.'
-									: 'Column arrangement for this row style is not adjustable here.'
-						}}
-					</div>
+						<div v-if="!isImageBody && !showGenericBoxes" class="row-mini-norows">
+							{{
+								isNonRowBody
+									? 'No trait rows to arrange.'
+									: hasCustomParts
+										? 'All trait elements removed — Reset to restore.'
+										: 'Column arrangement for this row style is not adjustable here.'
+							}}
+						</div>
+					</template>
 				</div>
 			</div>
 			<div v-if="isBottom" class="row-mini-headerbar row-mini-headerbar-bottom">

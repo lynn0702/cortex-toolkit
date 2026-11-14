@@ -30,6 +30,8 @@
 		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",
 		"smoke": "node scripts/smoke.cjs",
+		"interaction-map": "node scripts/interaction-map.cjs",
+		"interaction-map:live": "node scripts/interaction-map.cjs --live --strict",
 		"test": "vitest run && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/run-node-tests.js"
 	},
 	"engines": {

@@ -957,41 +957,77 @@
 
 /* SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk) */
 .trait-set-style-subtrait-columns {
-	--diecon-scale-size: 1.3rem;
+	container: subtrait-col / inline-size;
+	width: 100%;
+	--diecon-scale-size: 1.5rem;
+	--branch-gutter: 1.2rem;
+	--branch-arrow-pad: 0.38rem;
+	--branch-stroke: 2px;
+	--branch-row-pad: 0.35rem;
+	--branch-slot-gap: 0.28rem;
+	--branch-box-h: 1.55rem;
+	--branch-left-col: minmax(0, 1fr);
+	--branch-right-col: minmax(0, 1.35fr);
+	--branch-conn-color: var(--color-primary);
+	--branch-divider-color: var(--color-separator);
+	--branch-ink-color: var(--text-main);
+	--branch-head-color: var(--color-primary);
+	--branch-scale-mask: var(--bg-surface-card);
+	--branch-box-bg: var(--bg-surface-elevated);
+	--branch-box-border: color-mix(in srgb, var(--branch-conn-color), transparent 48%);
+	--branch-unrated-color: var(--color-separator);
 
 	.branch-head {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1.35fr);
+		grid-template-columns: var(--branch-left-col) var(--branch-gutter) var(--branch-right-col);
+		align-items: end;
 		font-family: var(--font-secondary);
 		font-size: var(--text-meta);
 		font-weight: 800;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--color-primary);
-		margin-bottom: 0.35rem;
-		padding-bottom: 0.3rem;
-		border-bottom: 2px solid var(--color-primary);
+		color: var(--branch-head-color);
+		margin-bottom: 0.3rem;
+		padding-bottom: 0.25rem;
+		border-bottom: 2px solid var(--branch-head-color);
+	}
 
-		span:last-child {
-			text-align: left;
+	.branch-head-col {
+		text-align: center;
+		min-width: 0;
+	}
+
+	.branch-head.branch-top-head {
+		font-family: var(--font-heading);
+		font-size: var(--text-header);
+		letter-spacing: 0.1em;
+		padding-top: 0.2rem;
+		cursor: pointer;
+
+		&:hover {
+			background: color-mix(in srgb, var(--text-main), transparent 94%);
 		}
 	}
 
 	.branch-row {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1.35fr);
-		align-items: stretch;
+		grid-template-columns: var(--branch-left-col) var(--branch-gutter) var(--branch-right-col);
+		align-items: center;
 		column-gap: 0;
-		padding: 0.4rem 0;
-		border-bottom: 1px solid var(--color-separator);
+		padding: var(--branch-row-pad) 0;
+		border-bottom: 1px solid var(--branch-divider-color);
 	}
 
 	.branch-main {
 		min-width: 0;
-		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
+		align-self: center;
+		display: flex;
+		flex-direction: column;
+		gap: 0.18rem;
+		border: 1px solid var(--branch-box-border);
 		border-radius: 0.25rem;
-		padding: 0.3rem 0.45rem;
-		background: var(--bg-surface-elevated);
+		padding: 0.28rem 0.42rem;
+		background: var(--branch-box-bg);
 
 		.trait-name {
 			display: block;
@@ -999,118 +1035,244 @@
 			font-weight: 700;
 			font-size: var(--text-trait-title);
 			text-transform: uppercase;
-			color: var(--text-main);
-			margin-bottom: 0.2rem;
+			color: var(--branch-ink-color);
+			margin-bottom: 0;
 		}
 
 		.trait-value {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-
-			& > span:not(.active) {
-				color: var(--color-separator);
-			}
+			gap: 0.08rem;
 		}
+	}
+
+	.branch-name-btn {
+		min-width: 0;
+		text-align: left;
+	}
+
+	.branch-leader {
+		display: none;
+	}
+
+	.trait-value > span:not(.active),
+	.subtrait-value > span:not(.active) {
+		color: var(--branch-unrated-color);
 	}
 
 	.branch-link {
 		position: relative;
+		align-self: stretch;
+	}
 
-		&::before {
-			content: '';
-			position: absolute;
-			left: 50%;
-			top: 0.5rem;
-			bottom: 0.5rem;
-			width: 2px;
-			background: var(--color-primary);
-			transform: translateX(-50%);
-		}
+	.branch-link-right.branch-conn-single::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		height: var(--branch-stroke);
+		background: var(--branch-conn-color);
+		transform: translateY(-50%);
+	}
+
+	.branch-link-right.branch-conn-multi::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		width: calc(50% + var(--branch-stroke) * 0.5);
+		top: 50%;
+		height: var(--branch-stroke);
+		background: var(--branch-conn-color);
+		transform: translateY(-50%);
+	}
+
+	.branch-link-left.branch-conn-single::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		height: var(--branch-stroke);
+		background: var(--branch-conn-color);
+		transform: translateY(-50%);
+	}
+
+	.branch-link-left.branch-conn-multi::before {
+		content: '';
+		position: absolute;
+		left: calc(50% - var(--branch-stroke) * 0.5);
+		right: 0;
+		top: 50%;
+		height: var(--branch-stroke);
+		background: var(--branch-conn-color);
+		transform: translateY(-50%);
 	}
 
 	.branch-side {
 		min-width: 0;
+		align-self: center;
 		display: flex;
 		flex-direction: column;
-		row-gap: 0.3rem;
-		padding-left: 0.45rem;
+		row-gap: var(--branch-slot-gap);
+		padding-left: var(--branch-arrow-pad);
 		border-left: none;
+	}
+
+	.branch-side.branch-side-multi {
+		row-gap: 0;
+		margin-block: calc(var(--branch-slot-gap) * -0.5);
 	}
 
 	.branch-slot {
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		align-items: center;
-		gap: 0.2rem 0.35rem;
+		gap: 0;
 		min-width: 0;
 		cursor: pointer;
 		position: relative;
-		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-		border-radius: 0.25rem;
-		padding: 0.25rem 0.45rem;
-		background: var(--bg-surface-elevated);
+	}
+
+	.branch-side-multi > .branch-slot {
+		padding-block: calc(var(--branch-slot-gap) * 0.5);
+	}
+
+	.branch-side-multi > .branch-slot::before {
+		content: '';
+		position: absolute;
+		left: calc(-0.5 * var(--branch-gutter) - var(--branch-arrow-pad) - var(--branch-stroke) * 0.5);
+		top: 0;
+		bottom: 0;
+		width: var(--branch-stroke);
+		background: var(--branch-conn-color);
+	}
+
+	.branch-side-multi > .branch-slot:first-child::before {
+		top: 50%;
+	}
+
+	.branch-side-multi > .branch-slot:last-child::before {
+		bottom: 50%;
+	}
+
+	.branch-slot-conn {
+		position: absolute;
+		left: calc(-1 * var(--branch-arrow-pad));
+		width: var(--branch-arrow-pad);
+		top: 50%;
+		height: 0.5rem;
+		transform: translateY(-50%);
+		pointer-events: none;
 
 		&::before {
 			content: '';
 			position: absolute;
-			left: -0.45rem;
+			left: 0;
+			right: 0.25rem;
 			top: 50%;
-			width: 0.3rem;
-			height: 2px;
-			background: var(--color-primary);
+			height: var(--branch-stroke);
+			background: var(--branch-conn-color);
 			transform: translateY(-50%);
 		}
 
 		&::after {
 			content: '';
 			position: absolute;
-			left: -0.16rem;
+			right: 0;
 			top: 50%;
 			transform: translateY(-50%);
-			border-left: 0.3rem solid var(--color-primary);
-			border-top: 0.22rem solid transparent;
-			border-bottom: 0.22rem solid transparent;
+			border-left: 0.3rem solid var(--branch-conn-color);
+			border-top: 0.2rem solid transparent;
+			border-bottom: 0.2rem solid transparent;
 		}
+	}
+
+	.branch-side-multi .branch-slot-conn {
+		left: calc(-0.5 * var(--branch-gutter) - var(--branch-arrow-pad));
+		width: calc(0.5 * var(--branch-gutter) + var(--branch-arrow-pad));
 	}
 
 	&.hide-branch-arrows {
 		.branch-link::before,
-		.branch-slot::before,
-		.branch-slot::after {
+		.branch-side-multi > .branch-slot::before,
+		.branch-slot-conn {
 			display: none;
 		}
 
 		.branch-side {
 			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 
 	.subtrait-name {
-		flex: 1 1 auto;
+		flex: 1 1 0;
 		min-width: 0;
+		overflow-wrap: anywhere;
+		display: flex;
+		align-items: center;
+		min-height: var(--branch-box-h);
+		padding: 0.14rem 0.38rem;
+		border: 1px solid var(--branch-box-border);
+		border-radius: 0.2rem;
+		background: var(--branch-box-bg);
 		font-size: var(--text-meta);
-		color: var(--text-main);
+		color: var(--branch-ink-color);
+	}
+
+	.subtrait-name .subtrait-blank-line {
+		display: none;
 	}
 
 	.subtrait-value {
-		margin-left: auto;
+		flex: 0 0 auto;
 		display: inline-flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		align-items: center;
+		position: relative;
+		padding-left: 0.5rem;
 		max-width: 100%;
 
-		& > span {
-			font-size: var(--diecon-scale-size);
+		&:empty {
+			display: none;
+		}
 
-			&:not(.active) {
-				color: var(--color-separator);
-			}
+		&::before {
+			content: '';
+			position: absolute;
+			left: 1px;
+			right: 0.45em;
+			top: 50%;
+			height: 1px;
+			background: var(--branch-conn-color);
+			transform: translateY(-50%);
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: -0.1rem;
+			top: 50%;
+			width: 0.22rem;
+			height: 0.22rem;
+			border-radius: 50%;
+			background: var(--branch-conn-color);
+			transform: translateY(-50%);
+		}
+
+		& > span {
+			position: relative;
+			background: var(--branch-scale-mask);
+			padding-inline: 1px;
+			font-size: var(--diecon-scale-size);
 		}
 	}
 
 	.trait-value .diecon,
-	.subtrait-value .diecon {
+	.subtrait-value .diecon,
+	.set-rating-die .diecon {
 		width: var(--diecon-scale-size);
 		height: var(--diecon-scale-size);
 		font-size: var(--diecon-scale-size);
@@ -1123,91 +1285,98 @@
 	}
 
 	/* SPLIT BRANCH (specialties both sides of the skill, e.g. Alien Us). */
-	/* Only applied when a set carries left-side specialties; all other */
-	/* branch sets keep the skill-left layout above untouched. */
 	.branch-split-head {
-		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 1.25rem minmax(0, 1.4fr);
-
-		.branch-head-center {
-			text-align: center;
-
-			.set-rating-die {
-				margin-left: 0.4em;
-			}
-		}
-	}
-
-	/* SPLIT HEAD AS THE SECTION HEADER: in split top-bar mode the outer */
-	/* header hides (see print file) and this bar is the section identity — */
-	/* same magenta header voice, vertically centered, clickable into the */
-	/* set editor. The 0,5,0 specificity beats the print file's black twin */
-	/* (which lives in a dual screen+print block); print keeps its black. */
-	/* @at-root because this sits nested inside the subtrait block. */
-	.character-sheet .trait-set.trait-set-style-subtrait-columns .branch-head {
-		color: var(--color-primary);
-		border-bottom-color: var(--color-primary);
-	}
-
-	.branch-split-head {
-		font-family: var(--font-heading);
-		font-size: var(--text-header);
-		font-weight: 800;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--color-primary);
+		grid-template-columns: var(--branch-split-left, minmax(0, 1.4fr)) var(--branch-gutter) var(
+				--branch-split-center,
+				minmax(0, 1fr)
+			) var(--branch-gutter) var(--branch-split-right, minmax(0, 1.4fr));
 		align-items: center;
-		padding-top: 0.3rem;
-		cursor: pointer;
+	}
+
+	.branch-head-center {
+		text-align: center;
 
 		.set-rating-die {
+			display: inline-flex;
+			vertical-align: middle;
+			margin-left: 0.35em;
 			font-size: 1em;
-		}
-
-		&:hover {
-			background: color-mix(in srgb, var(--text-main), transparent 94%);
 		}
 	}
 
-	/* Set die on unrated grid rows: the die an unrated trait rolls, shown */
-	/* where it acts (the branch center carries it for split rows). */
 	.trait-value.single-die-value > .set-rating-die {
 		margin-left: 0.35em;
 	}
 
 	.branch-split-row {
-		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 1.25rem minmax(0, 1.4fr);
+		grid-template-columns: var(--branch-split-left, minmax(0, 1.4fr)) var(--branch-gutter) var(
+				--branch-split-center,
+				minmax(0, 1fr)
+			) var(--branch-gutter) var(--branch-split-right, minmax(0, 1.4fr));
+
+		.branch-main {
+			justify-content: center;
+			text-align: center;
+		}
+
+		.branch-name-btn {
+			text-align: center;
+		}
 	}
 
 	.branch-side.branch-left {
 		padding-left: 0;
-		padding-right: 0.45rem;
+		padding-right: var(--branch-arrow-pad);
 
-		.branch-slot::before {
-			left: auto;
-			right: -0.45rem;
+		.branch-slot {
+			flex-direction: row-reverse;
 		}
 
-		.branch-slot::after {
+		.branch-slot-conn {
 			left: auto;
-			right: -0.16rem;
-			border-left: none;
-			border-right: 0.3rem solid var(--color-primary);
+			right: calc(-1 * var(--branch-arrow-pad));
+		}
+
+		.subtrait-value {
+			padding-left: 0;
+			padding-right: 0.5rem;
 		}
 	}
 
-	/* FLANK LAYOUT (skills in the outer columns, specialties down the */
-	/* middle, e.g. Solarpunk). Engaged by traitColumns 2; explicit */
-	/* left-side specialties (split above) take precedence. */
+	.branch-left.branch-side-multi .branch-slot::before {
+		left: auto;
+		right: calc(-0.5 * var(--branch-gutter) - var(--branch-arrow-pad) - var(--branch-stroke) * 0.5);
+	}
+
+	.branch-left.branch-side-multi .branch-slot-conn {
+		right: calc(-0.5 * var(--branch-gutter) - var(--branch-arrow-pad));
+	}
+
+	.branch-left .branch-slot-conn::before {
+		left: 0.25rem;
+		right: 0;
+	}
+
+	.branch-left .branch-slot-conn::after {
+		left: 0;
+		right: auto;
+		border-left: none;
+		border-right: 0.3rem solid var(--branch-conn-color);
+	}
+
+	.branch-left .subtrait-value::before {
+		left: 0.45em;
+		right: 1px;
+	}
+
+	.branch-left .subtrait-value::after {
+		left: auto;
+		right: -0.1rem;
+	}
+
+	/* FLANK LAYOUT (skills in the outer columns, specialties down the middle, e.g. Solarpunk). */
 	.branch-flank-head {
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
-
-		span:nth-child(2) {
-			text-align: center;
-		}
-
-		span:last-child {
-			text-align: right;
-		}
 	}
 
 	.branch-flank-grid {
@@ -1220,22 +1389,611 @@
 	.branch-flank-col {
 		display: flex;
 		flex-direction: column;
-		row-gap: 0.4rem;
+		row-gap: var(--branch-row-pad);
 	}
 
 	.branch-flank-center {
 		display: flex;
 		flex-direction: column;
-		row-gap: 0.3rem;
+		row-gap: var(--branch-slot-gap);
 
-		.branch-slot::before,
-		.branch-slot::after {
+		.branch-slot-conn {
+			display: none;
+		}
+	}
+}
+
+@media screen {
+	.character-sheet:not(.submode-print):not(.print-sheet) .trait-set-style-subtrait-columns {
+		container-name: subtrait-col subtrait-screen;
+	}
+}
+
+@container subtrait-col (min-width: 30.01rem) {
+	.trait-subtrait-columns {
+		--branch-left-col: minmax(0, 0.92fr);
+		--branch-right-col: minmax(0, 1.45fr);
+	}
+
+	.trait-set-style-subtrait-columns .trait-subtrait-columns .branch-row:not(.branch-split-row) .branch-main {
+		flex-direction: row;
+		align-items: center;
+		gap: 0.25rem;
+		border: none;
+		border-radius: 0;
+		padding: 0;
+		background: transparent;
+	}
+
+	.trait-set-style-subtrait-columns .branch-row:not(.branch-split-row) .branch-name-btn {
+		flex: 0 1 auto;
+		width: auto;
+	}
+
+	.trait-set-style-subtrait-columns .branch-row:not(.branch-split-row) .trait-name {
+		white-space: nowrap;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+	}
+
+	.trait-set-style-subtrait-columns .branch-row:not(.branch-split-row) .branch-main .trait-blank-line {
+		min-width: 4.5rem;
+	}
+
+	.trait-set-style-subtrait-columns .branch-row:not(.branch-split-row) .branch-leader {
+		display: block;
+		flex: 1 1 auto;
+		min-width: 0.4rem;
+		height: 1px;
+		background: var(--branch-conn-color);
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 50%;
+			width: 0.22rem;
+			height: 0.22rem;
+			border-radius: 50%;
+			background: var(--branch-conn-color);
+			transform: translateY(-50%);
+		}
+	}
+
+	.trait-set-style-subtrait-columns .branch-row:not(.branch-split-row) .trait-value {
+		flex: 0 0 auto;
+		flex-wrap: nowrap;
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: -0.25rem;
+			right: 0.4em;
+			top: 50%;
+			height: 1px;
+			background: var(--branch-conn-color);
+			transform: translateY(-50%);
+		}
+	}
+
+	.trait-set-style-subtrait-columns .branch-row:not(.branch-split-row) .trait-value > span {
+		position: relative;
+		background: var(--branch-scale-mask);
+		padding-inline: 1px;
+	}
+}
+
+@container subtrait-col (min-width: 32.01rem) {
+	.trait-set-style-subtrait-columns .trait-subtrait-columns .branch-flank-col .branch-main {
+		flex-direction: row;
+		align-items: center;
+		gap: 0.25rem;
+		border: none;
+		border-radius: 0;
+		padding: 0;
+		background: transparent;
+	}
+
+	.trait-set-style-subtrait-columns .branch-flank-col .branch-name-btn {
+		flex: 0 1 auto;
+		width: auto;
+	}
+
+	.trait-set-style-subtrait-columns .branch-flank-col .trait-name {
+		white-space: nowrap;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+	}
+
+	.trait-set-style-subtrait-columns .branch-flank-col .branch-main .trait-blank-line {
+		min-width: 4.5rem;
+	}
+
+	.trait-set-style-subtrait-columns .branch-flank-col .branch-leader {
+		display: block;
+		flex: 1 1 auto;
+		min-width: 0.4rem;
+		height: 1px;
+		background: var(--branch-conn-color);
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 50%;
+			width: 0.22rem;
+			height: 0.22rem;
+			border-radius: 50%;
+			background: var(--branch-conn-color);
+			transform: translateY(-50%);
+		}
+	}
+
+	.trait-set-style-subtrait-columns .branch-flank-col .trait-value {
+		flex: 0 0 auto;
+		flex-wrap: nowrap;
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: -0.25rem;
+			right: 0.4em;
+			top: 50%;
+			height: 1px;
+			background: var(--branch-conn-color);
+			transform: translateY(-50%);
+		}
+	}
+
+	.trait-set-style-subtrait-columns .branch-flank-col .trait-value > span {
+		position: relative;
+		background: var(--branch-scale-mask);
+		padding-inline: 1px;
+	}
+}
+
+@media screen {
+	@container subtrait-screen (min-width: 26.01rem) and (max-width: 38.5rem) {
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) .branch-main:has(.trait-value > :nth-child(4)) {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.18rem;
+			border: 1px solid var(--branch-box-border);
+			border-radius: 0.25rem;
+			padding: 0.28rem 0.42rem;
+			background: var(--branch-box-bg);
+		}
+
+		.trait-subtrait-columns
+			.branch-row:not(.branch-split-row)
+			.branch-main:has(.trait-value > :nth-child(4))
+			.trait-name {
+			white-space: normal;
+			font-weight: 700;
+			letter-spacing: normal;
+		}
+
+		.branch-row:not(.branch-split-row) .branch-main:has(.trait-value > :nth-child(4)) .branch-leader,
+		.branch-row:not(.branch-split-row) .branch-main:has(.trait-value > :nth-child(4)) .trait-value::before {
+			display: none;
+		}
+	}
+
+	@container subtrait-screen (min-width: 32.01rem) {
+		.trait-subtrait-columns .branch-flank-col .branch-main:has(.trait-value > :nth-child(4)) {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.18rem;
+			border: 1px solid var(--branch-box-border);
+			border-radius: 0.25rem;
+			padding: 0.28rem 0.42rem;
+			background: var(--branch-box-bg);
+		}
+
+		.branch-flank-col .branch-main:has(.trait-value > :nth-child(4)) .trait-name {
+			white-space: normal;
+			font-weight: 700;
+			letter-spacing: normal;
+		}
+
+		.branch-flank-col .branch-main:has(.trait-value > :nth-child(4)) .branch-leader,
+		.branch-flank-col .branch-main:has(.trait-value > :nth-child(4)) .trait-value::before {
+			display: none;
+		}
+	}
+
+	@container subtrait-screen (min-width: 26.01rem) and (max-width: 34rem) {
+		.trait-subtrait-columns .branch-slot:has(.subtrait-value > :nth-child(4)) {
+			flex-wrap: wrap;
+			gap: 0.16rem 0;
+		}
+
+		.trait-subtrait-columns .branch-slot:has(.subtrait-value > :nth-child(4)) .subtrait-name {
+			flex: 1 1 6.5rem;
+		}
+
+		.trait-subtrait-columns .branch-slot:has(.subtrait-value > :nth-child(4)) .subtrait-value {
+			margin-left: auto;
+		}
+	}
+
+	@container subtrait-screen (max-width: 32rem) {
+		.trait-set-style-subtrait-columns .branch-head:is(.branch-split-head, .branch-flank-head) {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.5rem;
+			font-family: var(--font-secondary);
+			font-size: var(--text-meta);
+			letter-spacing: 0.06em;
+		}
+
+		.trait-subtrait-columns .branch-split-head > .branch-head-gutter,
+		.trait-subtrait-columns .branch-split-head > .branch-head-col:first-child,
+		.trait-subtrait-columns .branch-flank-head > .branch-head-gutter,
+		.trait-subtrait-columns .branch-flank-head > .branch-head-col:last-child {
 			display: none;
 		}
 
-		.branch-slot {
-			padding-left: 0.45rem;
+		.trait-subtrait-columns .branch-split-head > .branch-head-center {
+			text-align: left;
 		}
+
+		.trait-subtrait-columns .branch-split-head > .branch-head-col:last-child {
+			text-align: right;
+		}
+
+		.trait-subtrait-columns .branch-row.branch-split-row {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.28rem;
+		}
+
+		.trait-subtrait-columns .branch-split-row > .branch-main {
+			order: 1;
+			width: 100%;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.2rem 0.5rem;
+			text-align: left;
+		}
+
+		.trait-subtrait-columns .branch-split-row .branch-name-btn {
+			text-align: left;
+		}
+
+		.trait-subtrait-columns .branch-split-row .trait-value {
+			margin-left: auto;
+		}
+
+		.trait-subtrait-columns .branch-split-row > .branch-link {
+			display: none;
+		}
+
+		.trait-subtrait-columns .branch-split-row > .branch-side {
+			width: auto;
+			align-self: stretch;
+			margin-block: 0;
+			margin-left: 0.75rem;
+			padding-left: 0.9rem;
+			padding-right: 0;
+			row-gap: 0.28rem;
+
+			&.branch-left {
+				order: 2;
+			}
+
+			&.branch-right {
+				order: 3;
+			}
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left > .branch-slot {
+			flex-direction: row;
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left .branch-slot-conn {
+			left: -0.9rem;
+			right: auto;
+			width: 0.9rem;
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left .branch-slot-conn::before {
+			left: 0;
+			right: 0.25rem;
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left .branch-slot-conn::after {
+			right: 0;
+			left: auto;
+			border-left: 0.3rem solid var(--branch-conn-color);
+			border-right: none;
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left .subtrait-value {
+			padding-right: 0;
+			padding-left: 0.35rem;
+			margin-right: 0;
+			margin-left: auto;
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left .subtrait-value::before {
+			left: 0.45em;
+			right: 0.45em;
+		}
+
+		.trait-subtrait-columns .branch-side.branch-left .subtrait-value::after {
+			display: none;
+		}
+
+		.trait-subtrait-columns .branch-split-row .branch-side > .branch-slot {
+			padding-block: 0;
+			flex-wrap: wrap;
+			gap: 0.16rem 0.4rem;
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: calc(-0.9rem - var(--branch-stroke) * 0.5);
+				right: auto;
+				top: -0.32rem;
+				bottom: -0.32rem;
+				width: var(--branch-stroke);
+				background: var(--branch-conn-color);
+			}
+
+			&:first-child::before {
+				top: -0.32rem;
+			}
+
+			&:last-child::before {
+				bottom: 50%;
+			}
+		}
+
+		.branch-left:has(~ .branch-right .branch-slot) > .branch-slot:last-child::before {
+			bottom: -0.32rem;
+		}
+
+		.trait-subtrait-columns .branch-split-row .branch-side .branch-slot-conn {
+			left: -0.9rem;
+			width: 0.9rem;
+		}
+
+		.trait-subtrait-columns .branch-split-row .subtrait-name {
+			flex: 1 1 6.5rem;
+		}
+
+		.trait-subtrait-columns .branch-split-row .subtrait-value {
+			margin-left: auto;
+			padding-left: 0.35rem;
+
+			&::before {
+				left: 0.45em;
+				right: 0.45em;
+			}
+
+			&::after {
+				display: none;
+			}
+		}
+
+		.trait-set-style-subtrait-columns.hide-branch-arrows .branch-split-row > .branch-side {
+			margin-left: 0.5rem;
+			padding-left: 0;
+		}
+
+		.trait-set-style-subtrait-columns.hide-branch-arrows .branch-side > .branch-slot::before {
+			display: none;
+		}
+
+		.trait-subtrait-columns .branch-flank-head > .branch-head-col:first-child {
+			text-align: left;
+		}
+
+		.trait-subtrait-columns .branch-flank-head > .branch-head-center {
+			text-align: right;
+		}
+
+		.trait-subtrait-columns .branch-flank-grid {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 0.35rem;
+		}
+
+		.trait-subtrait-columns .branch-flank-col .branch-main {
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.2rem 0.5rem;
+		}
+
+		.trait-subtrait-columns .branch-flank-col .trait-value {
+			margin-left: auto;
+		}
+
+		.trait-subtrait-columns .branch-flank-center {
+			grid-row: 1;
+			grid-column: 1 / -1;
+			display: flex;
+			flex-direction: column;
+			gap: 0.28rem;
+			padding-bottom: 0.35rem;
+			margin-bottom: 0.1rem;
+			border-bottom: 1px solid var(--branch-divider-color);
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		.trait-subtrait-columns .branch-flank-center > .branch-slot {
+			flex-wrap: wrap;
+			gap: 0.16rem 0.4rem;
+		}
+
+		.trait-subtrait-columns .branch-flank-center .subtrait-name {
+			flex: 1 1 6.5rem;
+		}
+
+		.trait-subtrait-columns .branch-flank-center .subtrait-value {
+			margin-left: auto;
+			padding-left: 0.35rem;
+
+			&::before {
+				left: 0.45em;
+				right: 0.45em;
+			}
+
+			&::after {
+				display: none;
+			}
+		}
+	}
+
+	@container subtrait-screen (max-width: 26rem) {
+		.trait-set-style-subtrait-columns .branch-head:not(.branch-split-head):not(.branch-flank-head) {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.5rem;
+			font-family: var(--font-secondary);
+			font-size: var(--text-meta);
+			letter-spacing: 0.06em;
+		}
+
+		.trait-subtrait-columns .branch-head > .branch-head-gutter {
+			display: none;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.28rem;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) > .branch-main {
+			width: 100%;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.2rem 0.5rem;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) .trait-value {
+			margin-left: auto;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) > .branch-link {
+			display: none;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) > .branch-side {
+			width: auto;
+			align-self: stretch;
+			margin-block: 0;
+			margin-left: 0.75rem;
+			padding-left: 0.9rem;
+			row-gap: 0.28rem;
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) .branch-side > .branch-slot {
+			padding-block: 0;
+			flex-wrap: wrap;
+			gap: 0.16rem 0.4rem;
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: calc(-0.9rem - var(--branch-stroke) * 0.5);
+				top: -0.32rem;
+				bottom: -0.32rem;
+				width: var(--branch-stroke);
+				background: var(--branch-conn-color);
+			}
+
+			&:first-child::before {
+				top: -0.32rem;
+			}
+
+			&:last-child::before {
+				bottom: 50%;
+			}
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) .branch-side .branch-slot-conn {
+			left: -0.9rem;
+			width: 0.9rem;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) .subtrait-name {
+			flex: 1 1 6.5rem;
+		}
+
+		.trait-subtrait-columns .branch-row:not(.branch-split-row) .subtrait-value {
+			margin-left: auto;
+			padding-left: 0.35rem;
+
+			&::before {
+				left: 0.45em;
+				right: 0.45em;
+			}
+
+			&::after {
+				display: none;
+			}
+		}
+
+		.trait-set-style-subtrait-columns.hide-branch-arrows .branch-row > .branch-side {
+			margin-left: 0.5rem;
+			padding-left: 0;
+		}
+
+		.trait-set-style-subtrait-columns.hide-branch-arrows .branch-side > .branch-slot::before {
+			display: none;
+		}
+	}
+}
+
+@media screen and (max-width: 48rem) {
+	.submode-play .trait-subtrait-columns .branch-slot {
+		min-height: 2.375rem;
+	}
+
+	.submode-play .trait-subtrait-columns .subtrait-value span,
+	.submode-play .trait-subtrait-columns .trait-value .diecon {
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.submode-play .trait-subtrait-columns .trait-value > span {
+		min-width: 1.5rem;
+		min-height: 2rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.character-sheet:not(.submode-print) .trait-set-style-two-columns-detailed .trait-list,
+	.character-sheet:not(.submode-print) .trait-set-style-two-columns-compact .trait-list {
+		grid-template-columns: minmax(0, 1fr);
 	}
 }
 

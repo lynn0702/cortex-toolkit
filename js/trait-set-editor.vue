@@ -274,7 +274,7 @@ const selectedPillar = computed<string>({
 							</div>
 						</div>
 
-						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
+						<div class="editor-field" v-if="styleBody !== 'pips' && !isName">
 							<div class="editor-row-between">
 								<label :for="'trait-set-reserved-slots-' + traitSetID" class="m-0">Print Slots</label>
 								<div class="num-stepper">
@@ -444,7 +444,7 @@ const selectedPillar = computed<string>({
 							</div>
 						</div>
 
-						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips'">
+						<div class="editor-field" v-if="styleBody !== 'pips'">
 							<div class="editor-label">Nouns</div>
 							<div class="editor-row-inline">
 								<div class="flex-1">
@@ -606,13 +606,7 @@ const selectedPillar = computed<string>({
 						<!-- PILLAR & COLUMNS WITHIN SET -->
 						<div
 							class="editor-grid-2"
-							v-if="
-								allowsTraitColumns &&
-								styleBody !== 'image' &&
-								styleBody !== 'pips' &&
-								selectedPillar !== '__custom__' &&
-								!isCustomPillar
-							"
+							v-if="allowsTraitColumns && styleBody !== 'pips' && selectedPillar !== '__custom__' && !isCustomPillar"
 						>
 							<div class="editor-field">
 								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
@@ -673,7 +667,7 @@ const selectedPillar = computed<string>({
 								</div>
 							</div>
 
-							<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips'">
+							<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'pips'">
 								<label :for="'trait-set-' + traitSetID + '-columns'">Columns</label>
 								<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
 									<option :value="1">1 Column</option>

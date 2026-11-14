@@ -1290,12 +1290,23 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getImageSetContainerStyle(traitSetArg: TraitSet) {
-		const cfg = getView(traitSetArg)?.imageConfig;
+		const view = getView(traitSetArg);
+		const cfg = view?.imageConfig;
 		const h = cfg?.height;
 		const w = cfg?.width;
 		const widthStyle = w && w !== '100%' ? { width: w, marginInline: 'auto' } : {};
+		const layout = cfg?.layout || 'overlay';
+		const parts = view?.parts;
+		const hasParts = Boolean(
+			parts && typeof parts === 'object' && !Array.isArray(parts) && Object.keys(parts).length > 0,
+		);
+		const hasTraitContent = Boolean(traitSetArg?.traits?.length) || Number(view?.reservedSlots) > 0 || hasParts;
 		if (h && h !== 'auto') {
-			return { height: typeof h === 'number' ? `${h}px` : h, ...widthStyle };
+			const hVal = typeof h === 'number' ? `${h}px` : h;
+			if (layout === 'overlay' && hasTraitContent) {
+				return { minHeight: hVal, height: 'auto', ...widthStyle };
+			}
+			return { height: hVal, ...widthStyle };
 		}
 		return { minHeight: '8.75rem', height: 'auto', ...widthStyle };
 	}
@@ -1347,12 +1358,18 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (orphans.length) {
 			groups.push({ traitItem: null, subs: orphans });
 		}
-		const split = groups.some((g: any) =>
-			(g.subs || []).some((e: any) => {
+		const split = groups.some((g: any) => {
+			const hasLeftSub = (g.subs || []).some((e: any) => {
 				const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
 				return getBranchSide(t) === 'left';
-			}),
-		);
+			});
+			if (hasLeftSub) return true;
+			const slots = g.traitItem?.trait?.slots;
+			if (slots && typeof slots === 'object' && !Array.isArray(slots)) {
+				return Object.values(slots).some((sl: any) => getBranchSide(sl as Trait) === 'left');
+			}
+			return false;
+		});
 		groups.forEach((g: any) => {
 			g.split = split;
 		});
@@ -1542,7 +1559,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function getTraitSetSlotCount(traitSetArg: TraitSet) {
 		const custom = getView(traitSetArg);
 		const bodyStyle = custom?.style?.body;
-		if (bodyStyle === 'image') return 0;
 
 		const traitsAll = traitSetArg.traits || [];
 		const frameCfg = resolveFrame(traitSetArg);

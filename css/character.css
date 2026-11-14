@@ -1354,98 +1354,146 @@
 /* IMAGE TRAIT SET BODY */
 .trait-image-body {
 	width: 100%;
-	cursor: pointer;
 
-	.image-set-container {
-		width: 100%;
-		position: relative;
-		overflow: hidden;
-		border-radius: 4px;
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
-		background: var(--bg-surface-elevated);
-		border: 1px solid var(--border-subtle, var(--color-separator));
-		min-height: 8.75rem;
+	.image-set-traits {
+		margin-block: 0.35rem;
+	}
+}
 
-		.image-set-graphic {
-			width: 100%;
-			height: 100%;
-			min-height: 80px;
-			flex: 1 1 auto;
-			background-size: cover;
-			background-repeat: no-repeat;
-			background-position: center;
+.image-set-container {
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	border-radius: 0.25rem;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	background: var(--bg-surface-elevated);
+	border: 1px solid var(--border-subtle, var(--color-separator));
+	min-height: 8.75rem;
 
-			&.portrait-alignment-top-left {
-				background-position: top left;
-			}
+	&.has-overlay-traits {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: 1fr auto;
 
-			&.portrait-alignment-top-center {
-				background-position: top center;
-			}
-
-			&.portrait-alignment-top-right {
-				background-position: top right;
-			}
-
-			&.portrait-alignment-center-left {
-				background-position: center left;
-			}
-
-			&.portrait-alignment-center,
-			&.portrait-alignment-center-center {
-				background-position: center center;
-			}
-
-			&.portrait-alignment-center-right {
-				background-position: center right;
-			}
-
-			&.portrait-alignment-bottom-left {
-				background-position: bottom left;
-			}
-
-			&.portrait-alignment-bottom-center {
-				background-position: bottom center;
-			}
-
-			&.portrait-alignment-bottom-right {
-				background-position: bottom right;
-			}
-		}
-
-		.image-set-placeholder {
-			width: 100%;
-			min-height: 120px;
-			flex: 1 1 auto;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			color: var(--text-muted);
-			font-size: 0.85rem;
-			gap: 0.5rem;
-			padding: 1.5rem 1rem;
-			border: 1px dashed var(--border-subtle);
-			border-radius: 4px;
-
-			i {
-				font-size: 2.2rem;
-				color: var(--text-muted);
-			}
+		.image-set-surface {
+			grid-column: 1;
+			grid-row: 1;
+			min-height: 100%;
 		}
 
 		.image-set-caption {
-			padding: 0.35rem 0.5rem;
-			font-size: 0.75rem;
-			font-style: italic;
-			color: var(--text-secondary);
-			text-align: center;
-			background: var(--bg-surface-elevated);
-			border-top: 1px solid var(--border-subtle, var(--color-separator));
+			grid-column: 1;
+			grid-row: 2;
 		}
 	}
+}
+
+.image-set-surface {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	width: 100%;
+	min-height: inherit;
+	cursor: pointer;
+}
+
+.image-set-overlay-traits {
+	grid-column: 1;
+	grid-row: 1;
+	position: relative;
+	align-self: stretch;
+	padding: 0.5rem 0.65rem;
+	background: color-mix(in oklch, var(--bg-surface-card) 48%, transparent);
+	pointer-events: none;
+
+	.trait-list {
+		background: transparent;
+	}
+
+	.trait,
+	.preview-button-container {
+		pointer-events: auto;
+	}
+}
+
+.image-set-graphic {
+	width: 100%;
+	height: 100%;
+	min-height: 5rem;
+	flex: 1 1 auto;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+
+	&.portrait-alignment-top-left {
+		background-position: top left;
+	}
+
+	&.portrait-alignment-top-center {
+		background-position: top center;
+	}
+
+	&.portrait-alignment-top-right {
+		background-position: top right;
+	}
+
+	&.portrait-alignment-center-left {
+		background-position: center left;
+	}
+
+	&.portrait-alignment-center,
+	&.portrait-alignment-center-center {
+		background-position: center center;
+	}
+
+	&.portrait-alignment-center-right {
+		background-position: center right;
+	}
+
+	&.portrait-alignment-bottom-left {
+		background-position: bottom left;
+	}
+
+	&.portrait-alignment-bottom-center {
+		background-position: bottom center;
+	}
+
+	&.portrait-alignment-bottom-right {
+		background-position: bottom right;
+	}
+}
+
+.image-set-placeholder {
+	width: 100%;
+	min-height: 7.5rem;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-muted);
+	font-size: 0.85rem;
+	gap: 0.5rem;
+	padding: 1.5rem 1rem;
+	border: 1px dashed var(--border-subtle);
+	border-radius: 0.25rem;
+
+	i {
+		font-size: 2.2rem;
+		color: var(--text-muted);
+	}
+}
+
+.image-set-caption {
+	padding: 0.35rem 0.5rem;
+	font-size: 0.75rem;
+	font-style: italic;
+	color: var(--text-secondary);
+	text-align: center;
+	background: var(--bg-surface-elevated);
+	border-top: 1px solid var(--border-subtle, var(--color-separator));
 }
 
 .sheet-header-portrait-wrap .sheet-header-portrait-box {
@@ -2453,6 +2501,7 @@ button.trait-title-btn {
 @media screen and (max-width: 48rem) {
 	/* Design Mode: vertical flex stack */
 	.character-sheet:not(.submode-print):not(.submode-play) {
+		.classic-grid-sections,
 		.page,
 		.sheet-grid,
 		.sheet-columns,
@@ -2467,6 +2516,7 @@ button.trait-title-btn {
 		}
 
 		.trait-set {
+			flex: 0 0 auto;
 			width: 100%;
 			grid-column: 1 / -1;
 			overflow: visible;

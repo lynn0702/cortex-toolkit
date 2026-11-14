@@ -110,9 +110,15 @@ const hasTraitArray = computed(() => traitArrayMode.value !== 'none');
 
 const shouldRenderBodyComponent = computed(() => {
 	if (isName.value) return true;
+	const view = getView(traitSet.value);
+	const bodyStyle = view?.style?.body;
+	if (bodyStyle === 'image' || bodyStyle === 'pips') {
+		return true;
+	}
 	if (
 		resolvedBorder.value.shape === 'line' &&
 		!showPortraitHub.value &&
+		!view?.imageConfig?.url &&
 		(!traitSet.value?.traits || !traitSet.value.traits.length)
 	) {
 		return false;

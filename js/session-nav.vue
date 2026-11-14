@@ -20,6 +20,7 @@ const emit = defineEmits<{
 	(e: 'toggleStudio', tab: 'properties' | 'roller' | 'json'): void;
 	(e: 'saveSession'): void;
 	(e: 'togglePillars'): void;
+	(e: 'addPlayCard'): void;
 }>();
 
 function safeImageUrl(url: any) {
@@ -121,6 +122,18 @@ function safeImageUrl(url: any) {
 					<i class="fas fa-dice" aria-hidden="true"></i>
 					<span class="sheet-bar-btn-label">Roller</span>
 					<span class="sheet-bar-dice-count" v-if="rollerCount && rollerCount > 0">{{ rollerCount }}</span>
+				</button>
+
+				<button
+					type="button"
+					class="sheet-bar-btn sheet-bar-add-card"
+					@click.stop="emit('addPlayCard')"
+					title="Add play card"
+					aria-label="Add play card"
+					v-if="submode === 'play'"
+				>
+					<i class="fas fa-plus" aria-hidden="true"></i>
+					<span class="sheet-bar-btn-label">Card</span>
 				</button>
 
 				<button

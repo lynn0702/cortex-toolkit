@@ -1046,7 +1046,7 @@ function syncCompanionSubtraits(prevName?: string) {
 	if (targetNoun.toLowerCase() === trackTarget) {
 		const view = ensureView(traitSet.value);
 		const body = view.style?.body;
-		if (body !== 'portrait-ring' && body !== 'image' && body !== 'pips' && body !== 'die-track') {
+		if (body !== 'portrait-ring' && body !== 'pips' && body !== 'die-track') {
 			const existingParts = view.parts && typeof view.parts === 'object' ? view.parts : null;
 			if (!existingParts || !(existingParts as any).track) {
 				const frameShape = typeof view.frame === 'string' ? view.frame : view.frame?.shape;

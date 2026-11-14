@@ -1295,7 +1295,10 @@
 	/* IMAGE TRAIT SET BODY */
 	.trait-image-body {
 		flex: 1 1 auto;
-		cursor: pointer;
+
+		.image-set-traits {
+			margin-block: 0.35rem;
+		}
 
 		.image-set-container {
 			width: 100%;
@@ -1305,6 +1308,40 @@
 			background: #f8fafc;
 			border-radius: 2px;
 			overflow: hidden;
+
+			&.has-overlay-traits {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr);
+				grid-template-rows: 1fr auto;
+
+				& > .image-set-surface {
+					grid-column: 1;
+					grid-row: 1;
+					min-height: 100%;
+				}
+
+				& > .image-set-overlay-traits {
+					grid-column: 1;
+					grid-row: 1;
+					position: relative;
+					align-self: stretch;
+					padding: 0.45rem 0.6rem;
+					background: color-mix(in oklch, var(--bg-surface-card, #ffffff) 48%, transparent);
+				}
+
+				& > .image-set-caption {
+					grid-column: 1;
+					grid-row: 2;
+				}
+			}
+		}
+
+		.image-set-surface {
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 auto;
+			width: 100%;
+			min-height: inherit;
 		}
 
 		.image-set-graphic {
@@ -2198,10 +2235,6 @@
 			min-width: 0;
 		}
 
-		.sheet-grid > .trait-set:not(:first-child) {
-			margin-top: -2px;
-		}
-
 		.columns.sheet-columns > .sheet-column {
 			width: 100%;
 			max-width: 100%;
@@ -2387,10 +2420,91 @@
 .character-sheet.print-sheet {
 	.trait-set-style-die-rows .trait,
 	.trait-set-style-three-column-table .trait,
-	.trait-set-style-paired-slots .trait {
+	.trait-set-style-paired-slots .trait,
+	.trait-set-style-subtrait-columns .trait {
 		padding-bottom: 0;
 		margin-bottom: 0;
 		border-bottom: none;
+	}
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-subtrait-columns {
+	--diecon-scale-size: 0.96rem;
+	--branch-gutter: 1.3rem;
+	--branch-arrow-pad: 0.38rem;
+	--branch-stroke: 1.5px;
+	--branch-row-pad: 0.09rem;
+	--branch-slot-gap: 0.14rem;
+	--branch-box-h: 1.18rem;
+	--branch-conn-color: #000000;
+	--branch-divider-color: transparent;
+	--branch-ink-color: #000000;
+	--branch-head-color: #000000;
+	--branch-scale-mask: #ffffff;
+	--branch-box-bg: #ffffff;
+	--branch-box-border: #000000;
+	--branch-unrated-color: #000000;
+
+	.branch-head {
+		margin-bottom: 0.16rem;
+		padding-bottom: 0.14rem;
+	}
+
+	.branch-main,
+	.subtrait-name {
+		border-radius: 0;
+	}
+
+	.branch-main {
+		padding: 0.16rem 0.28rem;
+	}
+
+	.subtrait-name {
+		padding: 0.05rem 0.28rem;
+	}
+}
+
+@media print {
+	.character-sheet .trait-set-style-subtrait-columns {
+		--diecon-scale-size: 0.96rem;
+		--branch-gutter: 1.3rem;
+		--branch-arrow-pad: 0.38rem;
+		--branch-stroke: 1.5px;
+		--branch-row-pad: 0.09rem;
+		--branch-slot-gap: 0.14rem;
+		--branch-box-h: 1.18rem;
+		--branch-conn-color: #000000;
+		--branch-divider-color: transparent;
+		--branch-ink-color: #000000;
+		--branch-head-color: #000000;
+		--branch-scale-mask: #ffffff;
+		--branch-box-bg: #ffffff;
+		--branch-box-border: #000000;
+		--branch-unrated-color: #000000;
+
+		.trait {
+			padding-bottom: 0;
+			margin-bottom: 0;
+			border-bottom: none;
+		}
+
+		.branch-head {
+			margin-bottom: 0.16rem;
+			padding-bottom: 0.14rem;
+		}
+
+		.branch-main,
+		.subtrait-name {
+			border-radius: 0;
+		}
+
+		.branch-main {
+			padding: 0.16rem 0.28rem;
+		}
+
+		.subtrait-name {
+			padding: 0.05rem 0.28rem;
+		}
 	}
 }
 
@@ -2635,32 +2749,6 @@ body:has(.character-sheet.submode-print) .main {
 
 		.attached-stress-header {
 			margin-bottom: 0;
-		}
-	}
-
-	/* High-contrast black borders for specialty styles in print */
-	.trait-set-style-subtrait-columns {
-		.branch-head {
-			color: #000000;
-			border-bottom-color: #000000;
-		}
-
-		.branch-main,
-		.branch-slot {
-			border: 1.5px solid #000000;
-		}
-
-		.branch-link::before,
-		.branch-slot::before {
-			background: #000000;
-		}
-
-		.branch-slot::after {
-			border-left-color: #000000;
-		}
-
-		.branch-side.branch-left .branch-slot::after {
-			border-right-color: #000000;
 		}
 	}
 
@@ -2962,11 +3050,10 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	/* 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches): */
-	/* the branch bar IS the section header (single magenta header on */
-	/* screen; see _variants). The redundant outer header hides wherever */
-	/* the split bar renders, and the bar opens the set editor. */
-	.trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
+	/* 8. TOP-HEADER BRANCHED SKILLS (subtrait-columns with header: 'top'): */
+	/* the branch bar IS the section header. The redundant outer header */
+	/* hides wherever the branch bar renders, and the bar opens the set editor. */
+	.trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-head) {
 		& > .trait-set-header {
 			display: none;
 		}
@@ -2990,29 +3077,6 @@ body:has(.character-sheet.submode-print) .main {
 
 		.attached-stress-header {
 			margin-bottom: 0;
-		}
-	}
-
-	/* 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT */
-	/* (the branch head keeps the theme magenta on screen; its black */
-	/* twin lives in the print-only block above) */
-	.trait-set-style-subtrait-columns {
-		.branch-main,
-		.branch-slot {
-			border: 1.5px solid #000000;
-		}
-
-		.branch-link::before,
-		.branch-slot::before {
-			background: #000000;
-		}
-
-		.branch-slot::after {
-			border-left-color: #000000;
-		}
-
-		.branch-side.branch-left .branch-slot::after {
-			border-right-color: #000000;
 		}
 	}
 
@@ -3293,6 +3357,11 @@ body:has(.character-sheet.submode-print) .main {
 		margin-bottom: 0.25rem;
 	}
 
+	.trait-set-style-subtrait-columns .trait {
+		padding: 0;
+		margin-bottom: 0;
+	}
+
 	.trait-name {
 		font-size: var(--text-trait-title);
 	}
@@ -3474,6 +3543,52 @@ body:has(.character-sheet.submode-print) .main {
 	align-items: center;
 }
 
+@media screen {
+	.character-sheet:not(.submode-print):not(.print-sheet) .trait:has(> .trait-parts-inline > .trait-part-track) {
+		container: trait-track-row / inline-size;
+	}
+
+	@container trait-track-row (max-width: 30rem) {
+		.character-sheet .trait-parts.trait-parts-inline {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.25rem 0.5rem;
+		}
+
+		.character-sheet .trait-parts.trait-parts-inline > .trait-part-name {
+			flex: 1 1 47%;
+			min-width: 5.5rem;
+			padding-right: 0;
+		}
+
+		.character-sheet .trait-parts.trait-parts-inline > .trait-part-rating {
+			flex: 1 0 47%;
+			justify-content: flex-end;
+		}
+
+		.character-sheet .trait-parts.trait-parts-inline > .trait-part-track-label {
+			flex: 0 0 auto;
+		}
+
+		.character-sheet .trait-parts.trait-parts-inline > .trait-part-track {
+			flex: 1 1 auto;
+			justify-content: flex-end;
+		}
+
+		.character-sheet .trait-parts.trait-parts-inline .attached-stress-track {
+			flex-wrap: wrap;
+			justify-content: flex-end;
+		}
+
+		.character-sheet
+			.trait-parts.trait-parts-inline
+			> :is(.trait-part-description, .trait-part-block, .trait-part-subtraits) {
+			flex: 1 0 100%;
+		}
+	}
+}
+
 .character-sheet .trait-parts-inline > .trait-part-rating:has(.has-hinder-pill) {
 	justify-content: flex-end;
 }
@@ -3650,7 +3765,6 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 .character-sheet .die-row,
-.character-sheet .branch-slot,
 .character-sheet .dice-count-row,
 .character-sheet .ladder-rung,
 .character-sheet .subtrait {
@@ -3976,27 +4090,14 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		/* Subtrait Columns & Branched Grids */
-		.branch-main,
-		.branch-slot {
-			background: var(--bg-surface-elevated);
-			border-color: var(--color-primary);
-		}
-
-		.branch-row {
-			border-bottom-color: var(--border-subtle);
-		}
-
-		.branch-link::before,
-		.branch-slot::before {
-			background: var(--color-primary);
-		}
-
-		.branch-slot::after {
-			border-left-color: var(--color-primary);
-		}
-
-		.branch-left .branch-slot::after {
-			border-right-color: var(--color-primary);
+		.trait-set-style-subtrait-columns {
+			--branch-conn-color: var(--color-primary);
+			--branch-ink-color: var(--text-main);
+			--branch-divider-color: var(--border-subtle);
+			--branch-head-color: var(--color-primary);
+			--branch-scale-mask: var(--bg-surface-card);
+			--branch-box-bg: var(--bg-surface-elevated);
+			--branch-box-border: var(--color-primary);
 		}
 
 		/* Die Rows & Ladders */
@@ -4152,6 +4253,51 @@ body:has(.character-sheet.submode-print) .main {
 
 .classic-grid-sections .columns.sheet-columns + .columns.sheet-columns {
 	margin-top: -2px;
+}
+
+@media screen and (max-width: 48rem) {
+	.character-sheet:not(.submode-print) .classic-grid-sections {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		width: 100%;
+	}
+
+	.character-sheet:not(.submode-print) .classic-grid-sections > .columns.sheet-columns,
+	.character-sheet:not(.submode-print) .classic-grid-sections > .columns.sheet-columns.sheet-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		width: 100%;
+		margin-top: 0;
+	}
+
+	.character-sheet:not(.submode-print) .columns > * {
+		flex: 0 0 auto;
+	}
+
+	.character-sheet:not(.submode-print) .classic-grid-sections > .sheet-columns > .trait-set {
+		flex: 0 0 auto;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		margin: 0;
+	}
+
+	.character-sheet:not(.submode-print) .page-header > .page-header-inner.sheet-header-card,
+	.character-sheet:not(.submode-print) .page-header > .page-header-inner.sheet-header-card:not(.has-portrait) {
+		grid-template-columns: 1fr;
+	}
+
+	.character-sheet:not(.submode-print) .trait-list-cols-2,
+	.character-sheet:not(.submode-print) .trait-list-cols-3,
+	.character-sheet:not(.submode-print) .trait-set-style-labeled-fields .trait-labeled-fields {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.character-sheet:not(.submode-print) .trait-set-style-notes.trait-set-cols-2 .trait-notes-body {
+		column-count: 1;
+	}
 }
 
 /* TRAIT BADGES (FORCE BACKGROUNDS IN PRINT) */

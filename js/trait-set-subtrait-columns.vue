@@ -34,36 +34,112 @@ const {
 	hasBranchFlank,
 	getFlankColumns,
 	handleBranchFlatClick,
+	isFixedSystemTrait,
 } = injectTraitSet();
+
+const renderedTraits = computed(() => getRenderedTraits(traitSet.value, s.value));
+const isTopHeader = computed(() => getView(traitSet.value)?.header === 'top');
+const isFlank = computed(() => hasBranchFlank(traitSet.value, renderedTraits.value));
+const isSplit = computed(() => hasBranchSplit(traitSet.value, renderedTraits.value));
+const flankCols = computed(() => getFlankColumns(traitSet.value, renderedTraits.value));
+const subtraitRatings = computed(() => getSubtraitRatings(traitSet.value));
+
+function isFilledSubEntry(entry: any): boolean {
+	const t = entry?.kind === 'sub' ? entry.sub : entry?.item?.trait;
+	if (!t) return false;
+	return Boolean((t.name && String(t.name).trim()) || isTraitRated(t));
+}
+
+const flankCenterEntries = computed(() =>
+	printBlank.value ? [] : (flankCols.value.center || []).filter(isFilledSubEntry),
+);
+
+const flankBlankSlotCount = computed(() => {
+	if (submode.value !== 'print' && !printBlank.value) return 0;
+	const rowCount = Math.max(flankCols.value.left.length, flankCols.value.right.length);
+	return Math.max(0, rowCount - flankCenterEntries.value.length);
+});
 
 // Stored branch column shares (view.branch), from the section miniature.
 // Absent means the CSS default (1.4 / 1 / 1.4); flank rows keep theirs.
 const branchGridStyle = computed(() => {
 	const shares = resolveBranchShares(getView(traitSet.value)?.branch);
 	if (!shares) return '';
-	return 'grid-template-columns: ' + shares.left + 'fr ' + shares.center + 'fr 2rem ' + shares.right + 'fr;';
+	return (
+		'--branch-split-left: minmax(0, ' +
+		shares.left +
+		'fr); --branch-split-center: minmax(0, ' +
+		shares.center +
+		'fr); --branch-split-right: minmax(0, ' +
+		shares.right +
+		'fr);'
+	);
 });
+
+function showTraitName(item: any): boolean {
+	if (!item || item.isPlaceholder || !item.trait?.name) return false;
+	return !printBlank.value || isFixedSystemTrait(traitSet.value, item.trait);
+}
+
+function visibleSideEntries(entries: any[]): any[] {
+	if (printBlank.value) return [];
+	const list = entries || [];
+	if (submode.value === 'print') {
+		return list.filter(isFilledSubEntry);
+	}
+	return list;
+}
+
+function showBlankSlotForSide(entries: any[]): boolean {
+	if (visibleSideEntries(entries).length > 0) return false;
+	return submode.value === 'print' || Boolean(printBlank.value);
+}
+
+function connectedSubCount(entries: any[]): number {
+	if (printBlank.value) return 0;
+	return (entries || []).filter(isFilledSubEntry).length;
+}
+
+function connClass(entries: any[]): string {
+	const n = connectedSubCount(entries);
+	if (n <= 0) return 'branch-conn-none';
+	return n === 1 ? 'branch-conn-single' : 'branch-conn-multi';
+}
+
+function sideCountClass(entries: any[]): string {
+	const n = connectedSubCount(entries);
+	if (n <= 0) return 'branch-side-none';
+	return n === 1 ? 'branch-side-single' : 'branch-side-multi';
+}
 </script>
 
 <template>
 	<div class="trait-subtrait-columns" v-if="getView(traitSet)?.style?.body === 'subtrait-columns'">
 		<!-- FLANK LAYOUT: parent traits in the outer columns, subtraits down the middle -->
-		<template v-if="hasBranchFlank(traitSet, getRenderedTraits(traitSet, s))">
-			<div class="branch-head branch-flank-head">
-				<span>{{ getTraitSetLabel(traitSet, 'left') }}</span
-				><span>{{ getTraitSetLabel(traitSet, 'center') || getTraitSetLabel(traitSet, 'right') }}</span
-				><span>{{ getTraitSetLabel(traitSet, 'left') }}</span>
+		<template v-if="isFlank">
+			<div
+				class="branch-head branch-flank-head"
+				:class="{ 'branch-top-head': isTopHeader }"
+				:role="isTopHeader ? 'button' : undefined"
+				:tabindex="isTopHeader ? 0 : undefined"
+				@click.stop="isTopHeader ? selectElement(['traitSet', s]) : null"
+				@keydown.enter.prevent="isTopHeader ? selectElement(['traitSet', s]) : null"
+				@keydown.space.prevent="isTopHeader ? selectElement(['traitSet', s]) : null"
+				:title="isTopHeader ? traitSet.name + ' — click to edit section' : ''"
+			>
+				<span class="branch-head-col">{{ getTraitSetLabel(traitSet, 'left') }}</span
+				><span class="branch-head-col branch-head-center"
+					>{{ getTraitSetLabel(traitSet, 'center') || getTraitSetLabel(traitSet, 'right')
+					}}<span
+						v-if="subtraitRatings.length === 1"
+						class="set-rating-die"
+						v-html="renderDieValueForPrint(subtraitRatings[0], true)"
+					></span></span
+				><span class="branch-head-col">{{ getTraitSetLabel(traitSet, 'left') }}</span>
 			</div>
 			<div class="branch-flank-grid">
-				<div
-					class="branch-flank-col"
-					v-for="(col, ci) in [
-						getFlankColumns(traitSet, getRenderedTraits(traitSet, s)).left,
-						getFlankColumns(traitSet, getRenderedTraits(traitSet, s)).right,
-					]"
-					:key="'flank-col-' + ci"
-				>
-					<template v-for="(group, gi) in col" :key="gi">
+				<div class="branch-flank-col branch-flank-col-left">
+					<template v-for="(group, gi) in flankCols.left" :key="'flankl-' + gi">
 						<div
 							v-if="group.traitItem"
 							:class="group.traitItem ? getTraitClasses(group.traitItem.trait) : {}"
@@ -105,15 +181,10 @@ const branchGridStyle = computed(() => {
 										"
 										@click.stop="openTraitAt(s, group.traitItem)"
 									>
-										<span
-											class="trait-name"
-											v-if="!printBlank && !group.traitItem.isPlaceholder && group.traitItem.trait.name"
-											>{{ group.traitItem.trait.name }}</span
-										>
-										<span
-											class="trait-name trait-name-blank"
-											v-else-if="printBlank || group.traitItem.isPlaceholder || !group.traitItem.trait.name"
-										>
+										<span class="trait-name" v-if="showTraitName(group.traitItem)">{{
+											group.traitItem.trait.name
+										}}</span>
+										<span class="trait-name trait-name-blank" v-else>
 											<template v-if="submode === 'edit' && !printBlank && !group.traitItem.trait.name">
 												<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 											</template>
@@ -121,8 +192,12 @@ const branchGridStyle = computed(() => {
 												<span class="trait-blank-line"></span>
 											</template>
 										</span>
-										<span class="trait-name" v-else>{{ group.traitItem.trait.name || '' }}</span>
 									</button>
+									<span
+										class="branch-leader"
+										aria-hidden="true"
+										v-if="isTraitRated(group.traitItem.trait) || !getSetRatingDie(traitSet)"
+									></span>
 									<div
 										class="trait-value single-die-value"
 										v-if="isTraitRated(group.traitItem.trait) || !getSetRatingDie(traitSet)"
@@ -196,10 +271,7 @@ const branchGridStyle = computed(() => {
 					</template>
 				</div>
 				<div class="branch-flank-center">
-					<template
-						v-for="(entry, ei) in getFlankColumns(traitSet, getRenderedTraits(traitSet, s)).center"
-						:key="entry._lid || 'flankc-' + ei"
-					>
+					<template v-for="(entry, ei) in flankCenterEntries" :key="entry._lid || 'flankc-' + ei">
 						<div
 							class="branch-slot"
 							v-if="entry.kind === 'sub' && entry.traitIndex !== null && entry.traitIndex !== undefined"
@@ -223,12 +295,10 @@ const branchGridStyle = computed(() => {
 							"
 						>
 							<span class="subtrait-name" v-if="!printBlank && entry.sub.name">{{ entry.sub.name }}</span>
-							<span class="subtrait-name" v-else-if="printBlank"
-								><span class="trait-blank-line subtrait-blank-line"></span
-							></span>
-							<div class="subtrait-value">
+							<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+							<div class="subtrait-value" v-if="subtraitRatings.length > 1">
 								<span
-									v-for="size in getSubtraitRatings(traitSet)"
+									v-for="size in subtraitRatings"
 									:key="size"
 									:class="{ active: !printBlank && isDieActive(entry.sub, size) }"
 									v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.sub, size))"
@@ -250,10 +320,8 @@ const branchGridStyle = computed(() => {
 							"
 						>
 							<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{ entry.item.trait.name }}</span>
-							<span class="subtrait-name" v-else-if="printBlank"
-								><span class="trait-blank-line subtrait-blank-line"></span
-							></span>
-							<div class="subtrait-value">
+							<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+							<div class="subtrait-value" v-if="getTraitSetRatings(traitSet).length">
 								<span
 									v-for="size in getTraitSetRatings(traitSet)"
 									:key="size"
@@ -263,46 +331,182 @@ const branchGridStyle = computed(() => {
 							</div>
 						</div>
 					</template>
-					<div
-						class="branch-slot-empty"
-						v-if="
-							!getFlankColumns(traitSet, getRenderedTraits(traitSet, s)).center.length &&
-							!printBlank &&
-							submode === 'edit'
-						"
-					>
+					<div class="branch-slot branch-slot-blank" v-for="bi in flankBlankSlotCount" :key="'flankb-' + bi">
+						<span class="subtrait-name"><span class="trait-blank-line subtrait-blank-line"></span></span>
+						<div class="subtrait-value" v-if="subtraitRatings.length > 1">
+							<span v-for="size in subtraitRatings" :key="size" v-html="renderDieValueForPrint(size, false)"></span>
+						</div>
+					</div>
+					<div class="branch-slot-empty" v-if="!flankCenterEntries.length && !printBlank && submode === 'edit'">
 						Select a {{ (traitSet.noun || 'trait').toLowerCase() }} to add subtraits
 					</div>
+				</div>
+				<div class="branch-flank-col branch-flank-col-right">
+					<template v-for="(group, gi) in flankCols.right" :key="'flankr-' + gi">
+						<div
+							v-if="group.traitItem"
+							:class="group.traitItem ? getTraitClasses(group.traitItem.trait) : {}"
+							:data-trait-name="group.traitItem.trait.name || undefined"
+							:data-trait-rating="firstDie(group.traitItem.trait) ? 'd' + firstDie(group.traitItem.trait) : undefined"
+						>
+							<div
+								:class="{
+									'trait-inner': true,
+									selected: !group.traitItem.isPlaceholder && isSelected(['trait', s, group.traitItem.originalIndex]),
+									'trait-placeholder-slot': group.traitItem.isPlaceholder,
+								}"
+							>
+								<div
+									class="branch-main"
+									@click="
+										submode === 'play' &&
+										!printBlank &&
+										!group.traitItem.isPlaceholder &&
+										!isTraitRated(group.traitItem.trait) &&
+										getSetRatingDie(traitSet)
+											? handleSingleDieClick(
+													group.traitItem.trait,
+													getSetRatingDie(traitSet),
+													traitSet,
+													s,
+													group.traitItem.originalIndex,
+												)
+											: null
+									"
+								>
+									<button
+										type="button"
+										class="trait-title-btn branch-name-btn"
+										:aria-label="
+											!group.traitItem.isPlaceholder && group.traitItem.trait.name
+												? group.traitItem.trait.name + (submode === 'play' ? ' options' : ' edit')
+												: (traitSet.noun || 'Name') + ' edit'
+										"
+										@click.stop="openTraitAt(s, group.traitItem)"
+									>
+										<span class="trait-name" v-if="showTraitName(group.traitItem)">{{
+											group.traitItem.trait.name
+										}}</span>
+										<span class="trait-name trait-name-blank" v-else>
+											<template v-if="submode === 'edit' && !printBlank && !group.traitItem.trait.name">
+												<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
+											</template>
+											<template v-else>
+												<span class="trait-blank-line"></span>
+											</template>
+										</span>
+									</button>
+									<span
+										class="branch-leader"
+										aria-hidden="true"
+										v-if="isTraitRated(group.traitItem.trait) || !getSetRatingDie(traitSet)"
+									></span>
+									<div
+										class="trait-value single-die-value"
+										v-if="isTraitRated(group.traitItem.trait) || !getSetRatingDie(traitSet)"
+										@click.stop="
+											!printBlank && !group.traitItem.isPlaceholder
+												? handleSingleDieClick(
+														group.traitItem.trait,
+														firstDie(group.traitItem.trait) || getSetRatingDie(traitSet),
+														traitSet,
+														s,
+														group.traitItem.originalIndex,
+													)
+												: null
+										"
+									>
+										<span
+											v-for="size in getTraitSetRatings(traitSet)"
+											:key="size"
+											:class="{
+												active:
+													!printBlank && !group.traitItem.isPlaceholder && isDieActive(group.traitItem.trait, size),
+											}"
+											role="button"
+											tabindex="0"
+											:aria-label="`Stage d${size} from ${group.traitItem.trait.name || (traitSet.noun || 'trait').toLowerCase()}`"
+											:aria-pressed="isDieActive(group.traitItem.trait, size) ? 'true' : 'false'"
+											@click.stop="
+												!printBlank && !group.traitItem.isPlaceholder
+													? handleSingleDieClick(
+															group.traitItem.trait,
+															size,
+															traitSet,
+															s,
+															group.traitItem.originalIndex,
+														)
+													: null
+											"
+											@keydown.enter.prevent="
+												!printBlank && !group.traitItem.isPlaceholder
+													? handleSingleDieClick(
+															group.traitItem.trait,
+															size,
+															traitSet,
+															s,
+															group.traitItem.originalIndex,
+														)
+													: null
+											"
+											@keydown.space.prevent="
+												!printBlank && !group.traitItem.isPlaceholder
+													? handleSingleDieClick(
+															group.traitItem.trait,
+															size,
+															traitSet,
+															s,
+															group.traitItem.originalIndex,
+														)
+													: null
+											"
+											v-html="
+												renderDieValueForPrint(
+													size,
+													!printBlank && !group.traitItem.isPlaceholder && isDieActive(group.traitItem.trait, size),
+												)
+											"
+										></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</template>
 				</div>
 			</div>
 		</template>
 		<template v-else>
 			<div
 				class="branch-head"
-				:class="{ 'branch-split-head': hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) }"
-				:style="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) ? branchGridStyle : ''"
-				@click.stop="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) ? selectElement(['traitSet', s]) : null"
-				:title="
-					hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) ? traitSet.name + ' — click to edit section' : ''
-				"
+				:class="{ 'branch-split-head': isSplit, 'branch-top-head': isTopHeader }"
+				:style="isSplit ? branchGridStyle : ''"
+				:role="isSplit || isTopHeader ? 'button' : undefined"
+				:tabindex="isSplit || isTopHeader ? 0 : undefined"
+				@click.stop="isSplit || isTopHeader ? selectElement(['traitSet', s]) : null"
+				@keydown.enter.prevent="isSplit || isTopHeader ? selectElement(['traitSet', s]) : null"
+				@keydown.space.prevent="isSplit || isTopHeader ? selectElement(['traitSet', s]) : null"
+				:title="isSplit || isTopHeader ? traitSet.name + ' — click to edit section' : ''"
 			>
-				<template v-if="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s))"
-					><span>{{ getTraitSetLabel(traitSet, 'left') }}</span
-					><span class="branch-head-center"
+				<template v-if="isSplit"
+					><span class="branch-head-col">{{ getTraitSetLabel(traitSet, 'left') }}</span
+					><span class="branch-head-gutter" aria-hidden="true"></span
+					><span class="branch-head-col branch-head-center"
 						>{{ getTraitSetLabel(traitSet, 'center')
 						}}<span
 							v-if="getSetRatingDie(traitSet)"
 							class="set-rating-die"
 							v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)"
 						></span></span
-					><span></span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template
+					><span class="branch-head-gutter" aria-hidden="true"></span
+					><span class="branch-head-col">{{ getTraitSetLabel(traitSet, 'right') }}</span></template
 				>
 				<template v-else
-					><span>{{ getTraitSetLabel(traitSet, 'left') }}</span
-					><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template
+					><span class="branch-head-col">{{ getTraitSetLabel(traitSet, 'left') }}</span
+					><span class="branch-head-gutter" aria-hidden="true"></span
+					><span class="branch-head-col">{{ getTraitSetLabel(traitSet, 'right') }}</span></template
 				>
 			</div>
-			<template v-for="(group, gi) in getBranchGroups(traitSet, getRenderedTraits(traitSet, s))" :key="gi">
+			<template v-for="(group, gi) in getBranchGroups(traitSet, renderedTraits)" :key="gi">
 				<div
 					v-if="group.traitItem"
 					:class="group.traitItem ? getTraitClasses(group.traitItem.trait) : {}"
@@ -318,11 +522,21 @@ const branchGridStyle = computed(() => {
 					>
 						<div
 							class="branch-row"
-							:class="{ 'branch-split-row': group.split }"
+							:class="{
+								'branch-split-row': group.split,
+								'branch-row-single': !group.split && connectedSubCount(group.subs) === 1,
+							}"
 							:style="group.split ? branchGridStyle : ''"
 						>
-							<div class="branch-side branch-left" v-if="group.split">
-								<template v-for="(entry, ei) in branchSubs(group.subs, 'left')" :key="entry._lid || 'subl-' + ei">
+							<div
+								class="branch-side branch-left"
+								:class="sideCountClass(branchSubs(group.subs, 'left'))"
+								v-if="group.split"
+							>
+								<template
+									v-for="(entry, ei) in visibleSideEntries(branchSubs(group.subs, 'left'))"
+									:key="entry._lid || 'subl-' + ei"
+								>
 									<div
 										class="branch-slot"
 										v-if="entry.kind === 'sub'"
@@ -363,13 +577,12 @@ const branchGridStyle = computed(() => {
 												: null
 										"
 									>
+										<span v-if="isFilledSubEntry(entry)" class="branch-slot-conn" aria-hidden="true"></span>
 										<span class="subtrait-name" v-if="!printBlank && entry.sub.name">{{ entry.sub.name }}</span>
-										<span class="subtrait-name" v-else-if="printBlank"
-											><span class="trait-blank-line subtrait-blank-line"></span
-										></span>
-										<div class="subtrait-value">
+										<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+										<div class="subtrait-value" v-if="subtraitRatings.length">
 											<span
-												v-for="size in getSubtraitRatings(traitSet)"
+												v-for="size in subtraitRatings"
 												:key="size"
 												:class="{ active: !printBlank && isDieActive(entry.sub, size) }"
 												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.sub, size))"
@@ -392,13 +605,12 @@ const branchGridStyle = computed(() => {
 											!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null
 										"
 									>
+										<span v-if="isFilledSubEntry(entry)" class="branch-slot-conn" aria-hidden="true"></span>
 										<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{
 											entry.item.trait.name
 										}}</span>
-										<span class="subtrait-name" v-else-if="printBlank"
-											><span class="trait-blank-line subtrait-blank-line"></span
-										></span>
-										<div class="subtrait-value">
+										<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+										<div class="subtrait-value" v-if="getTraitSetRatings(traitSet).length">
 											<span
 												v-for="size in getTraitSetRatings(traitSet)"
 												:key="size"
@@ -408,11 +620,11 @@ const branchGridStyle = computed(() => {
 										</div>
 									</div>
 								</template>
-								<div class="branch-slot branch-slot-blank" v-if="printBlank && !branchSubs(group.subs, 'left').length">
+								<div class="branch-slot branch-slot-blank" v-if="showBlankSlotForSide(branchSubs(group.subs, 'left'))">
 									<span class="subtrait-name"><span class="trait-blank-line subtrait-blank-line"></span></span>
-									<div class="subtrait-value">
+									<div class="subtrait-value" v-if="subtraitRatings.length">
 										<span
-											v-for="size in getSubtraitRatings(traitSet)"
+											v-for="size in subtraitRatings"
 											:key="size"
 											v-html="renderDieValueForPrint(size, false)"
 										></span>
@@ -421,7 +633,8 @@ const branchGridStyle = computed(() => {
 								<div
 									class="branch-slot-empty"
 									v-if="
-										!branchSubs(group.subs, 'left').length &&
+										!visibleSideEntries(branchSubs(group.subs, 'left')).length &&
+										!showBlankSlotForSide(branchSubs(group.subs, 'left')) &&
 										!printBlank &&
 										!group.traitItem.isPlaceholder &&
 										submode === 'edit'
@@ -430,6 +643,12 @@ const branchGridStyle = computed(() => {
 									Select to add subtraits
 								</div>
 							</div>
+							<div
+								v-if="group.split"
+								class="branch-link branch-link-left"
+								:class="connClass(branchSubs(group.subs, 'left'))"
+								aria-hidden="true"
+							></div>
 							<div
 								class="branch-main"
 								@click="
@@ -458,15 +677,8 @@ const branchGridStyle = computed(() => {
 									"
 									@click.stop="openTraitAt(s, group.traitItem)"
 								>
-									<span
-										class="trait-name"
-										v-if="!printBlank && !group.traitItem.isPlaceholder && group.traitItem.trait.name"
-										>{{ group.traitItem.trait.name }}</span
-									>
-									<span
-										class="trait-name trait-name-blank"
-										v-else-if="printBlank || group.traitItem.isPlaceholder || !group.traitItem.trait.name"
-									>
+									<span class="trait-name" v-if="showTraitName(group.traitItem)">{{ group.traitItem.trait.name }}</span>
+									<span class="trait-name trait-name-blank" v-else>
 										<template v-if="submode === 'edit' && !printBlank && !group.traitItem.trait.name">
 											<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 										</template>
@@ -474,8 +686,12 @@ const branchGridStyle = computed(() => {
 											<span class="trait-blank-line"></span>
 										</template>
 									</span>
-									<span class="trait-name" v-else>{{ group.traitItem.trait.name || '' }}</span>
 								</button>
+								<span
+									class="branch-leader"
+									aria-hidden="true"
+									v-if="!group.split && (isTraitRated(group.traitItem.trait) || !getSetRatingDie(traitSet))"
+								></span>
 								<div
 									class="trait-value single-die-value"
 									v-if="isTraitRated(group.traitItem.trait) || !getSetRatingDie(traitSet)"
@@ -525,10 +741,20 @@ const branchGridStyle = computed(() => {
 									></span>
 								</div>
 							</div>
-							<div class="branch-link" aria-hidden="true"></div>
-							<div class="branch-side" :class="{ 'branch-right': group.split }">
+							<div
+								class="branch-link branch-link-right"
+								:class="connClass(group.split ? branchSubs(group.subs, 'right') : group.subs)"
+								aria-hidden="true"
+							></div>
+							<div
+								class="branch-side"
+								:class="[
+									{ 'branch-right': group.split },
+									sideCountClass(group.split ? branchSubs(group.subs, 'right') : group.subs),
+								]"
+							>
 								<template
-									v-for="(entry, ei) in group.split ? branchSubs(group.subs, 'right') : group.subs"
+									v-for="(entry, ei) in visibleSideEntries(group.split ? branchSubs(group.subs, 'right') : group.subs)"
 									:key="entry._lid || 'sub-' + ei"
 								>
 									<div
@@ -571,13 +797,12 @@ const branchGridStyle = computed(() => {
 												: null
 										"
 									>
+										<span v-if="isFilledSubEntry(entry)" class="branch-slot-conn" aria-hidden="true"></span>
 										<span class="subtrait-name" v-if="!printBlank && entry.sub.name">{{ entry.sub.name }}</span>
-										<span class="subtrait-name" v-else-if="printBlank"
-											><span class="trait-blank-line subtrait-blank-line"></span
-										></span>
-										<div class="subtrait-value">
+										<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+										<div class="subtrait-value" v-if="subtraitRatings.length">
 											<span
-												v-for="size in getSubtraitRatings(traitSet)"
+												v-for="size in subtraitRatings"
 												:key="size"
 												:class="{ active: !printBlank && isDieActive(entry.sub, size) }"
 												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.sub, size))"
@@ -600,13 +825,12 @@ const branchGridStyle = computed(() => {
 											!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null
 										"
 									>
+										<span v-if="isFilledSubEntry(entry)" class="branch-slot-conn" aria-hidden="true"></span>
 										<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{
 											entry.item.trait.name
 										}}</span>
-										<span class="subtrait-name" v-else-if="printBlank"
-											><span class="trait-blank-line subtrait-blank-line"></span
-										></span>
-										<div class="subtrait-value">
+										<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+										<div class="subtrait-value" v-if="getTraitSetRatings(traitSet).length">
 											<span
 												v-for="size in getTraitSetRatings(traitSet)"
 												:key="size"
@@ -618,12 +842,12 @@ const branchGridStyle = computed(() => {
 								</template>
 								<div
 									class="branch-slot branch-slot-blank"
-									v-if="printBlank && !(group.split ? branchSubs(group.subs, 'right') : group.subs).length"
+									v-if="showBlankSlotForSide(group.split ? branchSubs(group.subs, 'right') : group.subs)"
 								>
 									<span class="subtrait-name"><span class="trait-blank-line subtrait-blank-line"></span></span>
-									<div class="subtrait-value">
+									<div class="subtrait-value" v-if="subtraitRatings.length">
 										<span
-											v-for="size in getSubtraitRatings(traitSet)"
+											v-for="size in subtraitRatings"
 											:key="size"
 											v-html="renderDieValueForPrint(size, false)"
 										></span>
@@ -632,7 +856,8 @@ const branchGridStyle = computed(() => {
 								<div
 									class="branch-slot-empty"
 									v-if="
-										!(group.split ? branchSubs(group.subs, 'right') : group.subs).length &&
+										!visibleSideEntries(group.split ? branchSubs(group.subs, 'right') : group.subs).length &&
+										!showBlankSlotForSide(group.split ? branchSubs(group.subs, 'right') : group.subs) &&
 										!printBlank &&
 										!group.traitItem.isPlaceholder &&
 										submode === 'edit'
@@ -650,8 +875,11 @@ const branchGridStyle = computed(() => {
 						:class="{ 'branch-split-row': group.split }"
 						:style="group.split ? branchGridStyle : ''"
 					>
-						<div class="branch-side branch-left" v-if="group.split">
-							<template v-for="(entry, ei) in branchSubs(group.subs, 'left')" :key="entry._lid || 'orphl-' + ei">
+						<div class="branch-side branch-left branch-side-none" v-if="group.split">
+							<template
+								v-for="(entry, ei) in visibleSideEntries(branchSubs(group.subs, 'left'))"
+								:key="entry._lid || 'orphl-' + ei"
+							>
 								<div
 									class="branch-slot"
 									v-if="entry.kind === 'flat'"
@@ -662,10 +890,8 @@ const branchGridStyle = computed(() => {
 									<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{
 										entry.item.trait.name
 									}}</span>
-									<span class="subtrait-name" v-else-if="printBlank"
-										><span class="trait-blank-line subtrait-blank-line"></span
-									></span>
-									<div class="subtrait-value">
+									<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+									<div class="subtrait-value" v-if="getTraitSetRatings(traitSet).length">
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
@@ -676,11 +902,12 @@ const branchGridStyle = computed(() => {
 								</div>
 							</template>
 						</div>
+						<div v-if="group.split" class="branch-link branch-link-left branch-conn-none" aria-hidden="true"></div>
 						<div class="branch-main"></div>
-						<div class="branch-link" aria-hidden="true"></div>
-						<div class="branch-side">
+						<div class="branch-link branch-link-right branch-conn-none" aria-hidden="true"></div>
+						<div class="branch-side branch-side-none" :class="{ 'branch-right': group.split }">
 							<template
-								v-for="(entry, ei) in group.split ? branchSubs(group.subs, 'right') : group.subs"
+								v-for="(entry, ei) in visibleSideEntries(group.split ? branchSubs(group.subs, 'right') : group.subs)"
 								:key="entry._lid || 'orph-' + ei"
 							>
 								<div
@@ -693,10 +920,8 @@ const branchGridStyle = computed(() => {
 									<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{
 										entry.item.trait.name
 									}}</span>
-									<span class="subtrait-name" v-else-if="printBlank"
-										><span class="trait-blank-line subtrait-blank-line"></span
-									></span>
-									<div class="subtrait-value">
+									<span class="subtrait-name" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+									<div class="subtrait-value" v-if="getTraitSetRatings(traitSet).length">
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"

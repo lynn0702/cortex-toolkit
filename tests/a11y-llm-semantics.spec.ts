@@ -1982,6 +1982,100 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(imgBlock.find('.image-set-container').attributes('style')).toContain('width: 50%');
 			imgBlock.unmount();
 
+			// 6b. Border: Line preserves the Image set graphic and passes axe-core in edit & play
+			const imgLineChar: any = {
+				name: 'Tester',
+				traitSets: [
+					{
+						name: 'Art',
+						view: {
+							style: { body: 'image' },
+							border: { shape: 'line', stroke: '2px', color: 'primary' },
+							imageConfig: { url: 'x.png', height: 180 },
+						},
+						traits: [],
+					},
+				],
+			};
+			for (const submode of ['edit', 'play'] as const) {
+				const lineBlock = mount(TraitSetBlock, {
+					props: { character: imgLineChar, traitSetID: 0, submode, editing: [] },
+				});
+				expect(lineBlock.find('.frame-line-svg').exists()).toBe(true);
+				expect(lineBlock.find('.image-set-container').exists()).toBe(true);
+				expect(lineBlock.find('.image-set-graphic').exists()).toBe(true);
+				await runAxeAudit(lineBlock.element as HTMLElement);
+				lineBlock.unmount();
+			}
+
+			// 6c. Image set hosts trait parts & traits with Background/Above/Below layering in editor & sheet
+			const imgOverlayChar: any = reactive({
+				name: 'Tester',
+				traitSets: [
+					{
+						name: 'Backdrop',
+						noun: 'Trait',
+						view: {
+							style: { body: 'image' },
+							imageConfig: { url: 'x.png', width: '50%', height: '180px' },
+						},
+						traits: [],
+					},
+				],
+			});
+			const imgOverlayEditor = mount(TraitSetEditor, {
+				props: { character: imgOverlayChar, traitSetID: 0 },
+			});
+			expect(imgOverlayEditor.find('.row-mini-parts-bar').exists()).toBe(true);
+			const chipByLabel = (label: string) =>
+				imgOverlayEditor.findAll('.row-mini-part-chip').find((b) => b.text().includes(label));
+			await chipByLabel('Name')!.trigger('click');
+			await chipByLabel('Rating')!.trigger('click');
+			expect(imgOverlayChar.traitSets[0].view.parts).toHaveProperty('name');
+			expect(imgOverlayChar.traitSets[0].view.parts).toHaveProperty('rating');
+			expect(imgOverlayEditor.find('.row-mini-imagebox').exists()).toBe(true);
+			expect(imgOverlayEditor.find('.row-mini-over-image .row-mini-box').exists()).toBe(true);
+			const layerBtn = (label: string) =>
+				imgOverlayEditor.findAll('.editor-group-btn').find((b) => b.text().trim() === label);
+			await layerBtn('Above')!.trigger('click');
+			expect(imgOverlayChar.traitSets[0].view.imageConfig.layout).toBe('above');
+			expect(imgOverlayEditor.find('.image-mini-layout-above').exists()).toBe(true);
+			await layerBtn('Below')!.trigger('click');
+			expect(imgOverlayChar.traitSets[0].view.imageConfig.layout).toBe('below');
+			expect(imgOverlayEditor.find('.image-mini-layout-below').exists()).toBe(true);
+			await layerBtn('Background')!.trigger('click');
+			expect(imgOverlayChar.traitSets[0].view.imageConfig.layout).toBeUndefined();
+			expect(imgOverlayEditor.find('.image-mini-layout-overlay').exists()).toBe(true);
+			expect(layerBtn('Background')!.attributes('aria-pressed')).toBe('true');
+			await runAxeAudit(imgOverlayEditor.element as HTMLElement);
+			imgOverlayEditor.unmount();
+
+			imgOverlayChar.traitSets[0].traits.push({
+				name: 'Vanguard',
+				rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+				traits: [],
+				tags: [],
+				description: '',
+			});
+			for (const submode of ['edit', 'play'] as const) {
+				const overlayBlock = mount(TraitSetBlock, {
+					props: { character: imgOverlayChar, traitSetID: 0, submode, editing: [] },
+				});
+				expect(overlayBlock.find('.image-set-container.has-overlay-traits').exists()).toBe(true);
+				expect(overlayBlock.find('.image-set-graphic').exists()).toBe(true);
+				expect(overlayBlock.find('.image-set-overlay-traits .trait-parts').exists()).toBe(true);
+				if (submode === 'play') {
+					const dieBtn = overlayBlock.find(
+						'.image-set-overlay-traits .trait-part-rating [role="button"][aria-label*="Stage d8"]',
+					);
+					expect(dieBtn.exists()).toBe(true);
+					await dieBtn.trigger('click');
+					expect(overlayBlock.emitted('addDieToRoller')?.length).toBe(1);
+				}
+				await runAxeAudit(overlayBlock.element as HTMLElement);
+				overlayBlock.unmount();
+			}
+
 			// 7. Ring set with no stored parts previews name and rating inline, as it renders
 			const ringChar: any = {
 				name: 'Tester',

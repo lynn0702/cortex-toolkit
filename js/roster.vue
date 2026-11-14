@@ -41,6 +41,7 @@ const emit = defineEmits<{
 	(e: 'createFromTemplate', characterID: string): void;
 	(e: 'toggleTemplate', characterID: string): void;
 	(e: 'loadCharacter', characterID: string): void;
+	(e: 'playCharacter', characterID: string): void;
 	(e: 'duplicateCharacter', characterID: string): void;
 	(e: 'exportCharacter', characterID: string): void;
 	(e: 'exportAllCharacters'): void;
@@ -393,6 +394,10 @@ function toggleTemplate(characterID: string) {
 
 function loadCharacter(characterID: string) {
 	emit('loadCharacter', characterID);
+}
+
+function playCharacter(characterID: string) {
+	emit('playCharacter', characterID);
 }
 
 function duplicateCharacter(characterID: string) {
@@ -778,6 +783,16 @@ function getRelativeDateLabel(date1: any, date2: any) {
 										title="Create a new character from this template"
 									>
 										<span><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Use</span>
+									</button>
+
+									<!-- PLAY (IF CHARACTER) -->
+									<button
+										type="button"
+										class="roster-item-button roster-button-play"
+										v-if="!character.isTemplate"
+										@click.stop="playCharacter(character.id)"
+									>
+										<span><i class="fas fa-dice" aria-hidden="true"></i> Play</span>
 									</button>
 
 									<!-- LOAD -->

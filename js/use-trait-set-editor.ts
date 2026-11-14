@@ -47,6 +47,7 @@ import type {
 	CharacterCurioCustom,
 	RingConfig,
 	ImageConfig,
+	ImageLayoutMode,
 	PipsConfig,
 	Visibility,
 } from './model.ts';
@@ -347,11 +348,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// never takes over a bespoke body: arranging one writes only what
 	// that body can render (branch shares for subtrait-columns).
 	// Ladders keep view.ladder (no parts form).
-	const FLEX_BODIES = ['image', 'pips', 'subtrait-columns', 'die-rows', 'dice-count'];
-	const NON_ROW_BODIES = ['image', 'pips'];
+	const FLEX_BODIES = ['pips', 'subtrait-columns', 'die-rows', 'dice-count'];
+	const NON_ROW_BODIES = ['pips'];
 	function isPartsDriven() {
 		const body = getView(traitSet.value)?.style?.body;
 		if (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body)) return false;
+		if (body === 'image') {
+			const hasTraits = Boolean(traitSet.value?.traits?.length) || Number(getView(traitSet.value)?.reservedSlots) > 0;
+			return hasTraits || hasParts.value;
+		}
 		return true;
 	}
 	function isRowBody() {
@@ -402,6 +407,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const hasCustomParts = computed(() => {
 		const parts = getView(traitSet.value)?.parts;
 		if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return false;
+		if (
+			styleBody.value === 'image' &&
+			!traitSet.value?.traits?.length &&
+			!(Number(getView(traitSet.value)?.reservedSlots) > 0)
+		) {
+			return Object.keys(parts).length > 0;
+		}
 		const canon = (o: Record<string, unknown>) => {
 			const out: Record<string, unknown> = {};
 			Object.keys(o)
@@ -414,10 +426,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return canon(parts as Record<string, unknown>) !== canon(buildParts(partsSpec()) as Record<string, unknown>);
 	});
 
-	function setPartCell(key: string, field: 'left' | 'width' | 'top' | 'height', val: number) {
+	function editablePartCells(seedEmptyOnBlankImage = false): Record<string, any> {
+		const blankImage = seedEmptyOnBlankImage && styleBody.value === 'image' && !isPartsDriven();
 		const view = ensureView(traitSet.value);
-		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
-		const cells = view.parts as Record<string, any>;
+		view.parts = blankImage ? {} : normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
+		return view.parts as Record<string, any>;
+	}
+
+	function setPartCell(key: string, field: 'left' | 'width' | 'top' | 'height', val: number) {
+		const cells = editablePartCells();
 		if (!cells[key] || typeof cells[key] !== 'object') {
 			cells[key] = { left: '0%', top: 0, width: '100%', height: 1 };
 		}
@@ -438,10 +455,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function removePartCell(key: string) {
 		const view = ensureView(traitSet.value);
-		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
-		const cells = view.parts as Record<string, any>;
+		const cells = editablePartCells();
 		if (!cells[key]) return;
 		delete cells[key];
+		if (styleBody.value === 'image' && Object.keys(cells).length === 0) {
+			delete (view as Record<string, unknown>).parts;
+		}
 		updateCharacter(props.character);
 	}
 
@@ -454,10 +473,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return;
 		}
 		const view = ensureView(traitSet.value);
-		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
-		const cells = view.parts as Record<string, any>;
+		const cells = editablePartCells(true);
 		if (cells[partKey]) {
-			if (Object.keys(cells).length <= 1) return;
+			if (Object.keys(cells).length <= 1) {
+				if (styleBody.value === 'image') {
+					delete (view as Record<string, unknown>).parts;
+					updateCharacter(props.character);
+				}
+				return;
+			}
 			delete cells[partKey];
 			updateCharacter(props.character);
 			return;
@@ -506,9 +530,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function setPartMarker(key: string, marker: 'L' | 'T') {
 		if (!traitSet.value || !key) return;
-		const view = ensureView(traitSet.value);
-		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
-		const cells = view.parts as Record<string, any>;
+		const cells = editablePartCells();
 		if (!cells[key]) return;
 		cells[key].marker = marker;
 		updateCharacter(props.character);
@@ -524,9 +546,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			.trim()
 			.replace(/:/g, '');
 		if (!noun) return;
-		const view = ensureView(traitSet.value);
-		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
-		const cells = view.parts as Record<string, any>;
+		const cells = editablePartCells(true);
 		const nextTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1) + 1;
 		if (kind === 'both') {
 			cells[`child:${noun}:label`] = { left: '0%', top: nextTop, width: '75%', height: 1, marker: 'T' };
@@ -605,7 +625,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			delete (view as Record<string, unknown>).branch;
 		}
 		const body = getView(traitSet.value)?.style?.body;
-		if (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body)) {
+		const emptyImageSet =
+			body === 'image' && !traitSet.value?.traits?.length && !(Number(getView(traitSet.value)?.reservedSlots) > 0);
+		if (emptyImageSet || (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body))) {
 			// Flex layouts author their own rows: reset means no stored
 			// geometry at all, not a generated map they would ignore.
 			if (view && typeof view === 'object') {
@@ -811,6 +833,37 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			setImageConfig('zoom', Number(val));
 		},
 	});
+
+	const imageLayout = computed<ImageLayoutMode>({
+		get: () => {
+			const l = getView(traitSet.value)?.imageConfig?.layout;
+			return l === 'above' || l === 'below' ? l : 'overlay';
+		},
+		set: (val: ImageLayoutMode) => {
+			setImageConfig('layout', val === 'overlay' ? undefined : val);
+		},
+	});
+
+	function addTraitInEditor() {
+		const ts = traitSet.value;
+		if (!ts) return;
+		const n = ts.noun && ts.noun.length ? ts.noun : 'Trait';
+		const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
+		trait.name = 'New ' + n;
+		const allowed = characterCurioFunctions.getTraitSetRatings(ts);
+		const cur =
+			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
+		if (allowed.length > 0 && !allowed.includes(cur)) {
+			trait.rating = { type: 'Die', value: [allowed[0]], range: allowed.slice() };
+		}
+		if (!Array.isArray(ts.traits)) ts.traits = [];
+		ts.traits.push(trait);
+		if (styleBody.value === 'image' && !getView(ts)?.parts) {
+			ensureView(ts).parts = buildParts(partsSpec());
+		}
+		updateCharacter(props.character);
+		selectElement(['trait', props.traitSetID, ts.traits.length - 1]);
+	}
 
 	function normalizedFrameBase(): Record<string, any> {
 		const raw = getView(traitSet.value)?.frame;
@@ -1332,7 +1385,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (
 			subNoun.toLowerCase() === trackLabel.value.toLowerCase() &&
 			allowsTraitColumns.value &&
-			styleBody.value !== 'image' &&
 			styleBody.value !== 'pips' &&
 			styleBody.value !== 'die-track'
 		) {
@@ -1953,14 +2005,18 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const body = styleBody.value;
 		if (body === 'subtrait-columns' || body === 'dice-count') return true;
 		if (hasTrackPart.value) return true;
-		return body !== 'image' && body !== 'pips' && body !== 'name';
+		return body !== 'pips' && body !== 'name';
 	});
 
 	function setImageConfig(key: keyof ImageConfig, value: any) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
 		ctk.imageConfig ??= {};
-		ctk.imageConfig[key] = value;
+		if (value === undefined) {
+			delete ctk.imageConfig[key];
+		} else {
+			ctk.imageConfig[key] = value;
+		}
 		updateCharacter(props.character);
 	}
 
@@ -2177,6 +2233,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		imageHeight,
 		imageWidth,
 		imageCaption,
+		imageLayout,
+		addTraitInEditor,
 		includeOut,
 		endWord,
 		hasCounterTrait,

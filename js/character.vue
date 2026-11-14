@@ -697,6 +697,10 @@ watch(
 		setupCarouselObserver();
 	},
 );
+
+defineExpose({
+	openPlayPresetPicker,
+});
 </script>
 
 <template>

@@ -1005,6 +1005,7 @@
 
 .roller-roll-btn {
 	width: 100%;
+	min-block-size: 2.75rem;
 	background: var(--active-accent);
 	color: var(--roller-on-accent);
 	border: none;
@@ -1729,11 +1730,14 @@
 		display: none;
 	}
 
-	.studio-panel.is-play[data-state='split'] .roller-top-bar,
 	.studio-panel.is-play[data-state='split'] .roller-controls,
 	.studio-panel.is-play[data-state='split'] .quick-add-section .roller-section-header,
 	.studio-panel.is-play[data-state='split'] .word-bank-empty {
 		display: none;
+	}
+
+	.studio-panel.is-play[data-state='split'] .roller-top-bar {
+		padding-bottom: var(--space-2xs);
 	}
 
 	.studio-panel.is-play[data-state='split'] .roller-body {

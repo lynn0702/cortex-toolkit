@@ -635,13 +635,16 @@ export interface RingConfig {
 	scaleDieY?: number;
 }
 
+export type ImageLayoutMode = 'overlay' | 'above' | 'below';
+
 export interface ImageConfig {
 	url?: string;
 	alignment?: string;
-	height?: string;
+	height?: string | number;
 	width?: string;
 	caption?: string;
 	zoom?: number;
+	layout?: ImageLayoutMode;
 }
 
 /** The character portrait, with the app-typed `view` and `custom` carriers. */

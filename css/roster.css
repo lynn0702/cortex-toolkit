@@ -399,6 +399,13 @@
 		line-height: 1.2;
 	}
 
+	@media (pointer: coarse) {
+		min-block-size: 2.75rem;
+	}
+
+	&.roster-button-play {
+		--button-color: var(--color-effect-light);
+	}
 	&.roster-button-delete {
 		--button-color: var(--color-primary);
 	}
