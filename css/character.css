@@ -1817,21 +1817,85 @@ button.trait-title-btn {
 }
 
 .trait-set-play-remove-btn {
+	position: absolute;
+	top: 0.35rem;
+	right: 0.35rem;
+	z-index: var(--z-editable-content);
+	width: 1.55rem;
+	height: 1.55rem;
+	border-radius: 999px;
 	background: transparent;
-	border: none;
-	color: inherit;
-	opacity: 0.7;
+	border: 1px solid transparent;
+	color: var(--text-muted, #64748b);
 	cursor: pointer;
-	padding: 0 0.3rem;
-	margin-left: auto;
-	font-size: 0.85rem;
+	padding: 0;
+	margin: 0;
+	font-size: 0.82rem;
 	line-height: 1;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	transition:
+		color 0.15s,
+		background 0.15s,
+		border-color 0.15s;
 
 	&:hover {
-		opacity: 1;
+		color: var(--status-danger, #b91c1c);
+		border-color: var(--status-danger, #b91c1c);
+		background: color-mix(in oklab, var(--status-danger, #b91c1c) 10%, transparent);
+	}
+}
+
+@media (pointer: coarse) {
+	.trait-set-play-remove-btn::after {
+		content: '';
+		position: absolute;
+		inset: -0.6rem;
+	}
+}
+
+.mini-preview-sheet-frame .trait-set-play-remove-btn {
+	display: none;
+}
+
+.trait-set:has(> .trait-set-play-remove-btn) {
+	&.trait-set-header-top > .trait-set-header {
+		margin-right: 1.85rem;
+	}
+
+	&:not(.trait-set-header-top) > .trait-set-body {
+		padding-right: 1.85rem;
+	}
+}
+
+.character-sheet:not(.submode-print) .trait-set-body-framed,
+.mini-preview-sheet-frame .trait-set-body-framed {
+	container-type: inline-size;
+
+	& > .portrait:has(> .ring-grid):not(:has(.ring-trait-name)) {
+		width: min(calc(100cqi - 2.75rem), var(--portrait-size, 13rem));
+		max-width: min(calc(100cqi - 2.75rem), var(--portrait-size, 13rem));
+		margin-block: 1.25rem;
+	}
+
+	& > .portrait:has(> .ring-grid .ring-trait-name) {
+		width: clamp(6.5rem, calc(100cqi - 13.5rem), var(--portrait-size, 13.5rem));
+		max-width: clamp(6.5rem, calc(100cqi - 13.5rem), var(--portrait-size, 13.5rem));
+		margin-block: 2rem;
+	}
+}
+
+@container (max-width: 26rem) {
+	.character-sheet:not(.submode-print) .trait-set-body-framed > .portrait:has(> .ring-grid .ring-trait-name),
+	.mini-preview-sheet-frame .trait-set-body-framed > .portrait:has(> .ring-grid .ring-trait-name) {
+		width: clamp(6.25rem, calc(100cqi - 11.25rem), var(--portrait-size, 12.5rem));
+		max-width: clamp(6.25rem, calc(100cqi - 11.25rem), var(--portrait-size, 12.5rem));
+
+		.ring-trait-name {
+			max-width: 4.25rem;
+			font-size: 0.78rem;
+		}
 	}
 }
 
@@ -2433,7 +2497,7 @@ button.trait-title-btn {
 			box-sizing: border-box;
 
 			.page-header,
-			.portrait,
+			& > .portrait,
 			.trait-set {
 				width: 100%;
 				max-width: 100%;
@@ -2467,11 +2531,6 @@ button.trait-title-btn {
 			.sheet-header-portrait-box {
 				max-width: 5.625rem;
 				aspect-ratio: 1 / 1;
-			}
-
-			.portrait-circle {
-				max-width: 11.25rem;
-				margin: 0 auto;
 			}
 		}
 
@@ -2732,7 +2791,7 @@ button.trait-title-btn {
 			box-sizing: border-box;
 
 			.page-header,
-			.portrait,
+			& > .portrait,
 			.trait-set {
 				width: 100%;
 				max-width: 100%;

@@ -609,7 +609,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		// 4. Save as Preset: creator-typed label, derived ID, collision check, and round-trip across Play, Edit, and Print
 		const labelInput = wrapper.find('input[aria-label="Preset Label"]');
-		await labelInput.setValue('Scene Traits'); // Collides with built-in preset
+		await labelInput.setValue('Pool'); // Collides with built-in preset
 		expect(wrapper.find('.mini-collision-alert').exists()).toBe(true);
 		const saveBtn = wrapper.find('.mini-save-preset-btn');
 		expect((saveBtn.element as HTMLButtonElement).disabled).toBe(true);
@@ -1931,16 +1931,16 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(distChar.traitSets[0].view.parts).toEqual({});
 			distEditor.unmount();
 
-			// 5. Trait Block Mini modal also supports bottom header, none header, and removing all parts
+			// 5. Card Builder modal also supports bottom header, none header, and removing all parts
 			const modalMini = mount(TraitSetMini, {
 				props: { initialSet: { name: 'Distinctions', noun: 'Distinction', traits: [] } },
 			});
 			const modalBtns = modalMini.findAll('.mini-header-controls .mini-toggle-btn');
-			const bottomCenterBtn = modalBtns.find((b) => b.text().includes('Bottom Center'));
-			const noneHeaderBtn = modalBtns.find((b) => b.text().includes('None'));
-			expect(bottomCenterBtn?.exists()).toBe(true);
+			const modalBottomBtn = modalBtns.find((b) => b.text().trim() === 'Bottom');
+			const noneHeaderBtn = modalBtns.find((b) => b.text().trim() === 'None');
+			expect(modalBottomBtn?.exists()).toBe(true);
 			expect(noneHeaderBtn?.exists()).toBe(true);
-			await bottomCenterBtn!.trigger('click');
+			await modalBottomBtn!.trigger('click');
 			expect(modalMini.find('.trait-set.trait-set-header-bottom').exists()).toBe(true);
 			await noneHeaderBtn!.trigger('click');
 			expect(modalMini.find('.trait-set-header').exists()).toBe(false);

@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import {
-	ensureView,
-	getRating,
-	getView,
-	isNameSet,
-	ratingDice,
-	resolvePlotPoints,
-	resolveVisibility,
-} from './model.ts';
+import { ensureView, getRating, getView, isNameSet, ratingDice, resolveVisibility } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { normalizeZoom } from './frame-geometry.ts';
 import { injectTraitSet } from './use-trait-set.ts';
@@ -40,7 +32,6 @@ const nickname = computed(() => character.value?.nickname ?? getView(character.v
 const hasNickname = computed(() => Boolean(nickname.value || getView(character.value)?.hasNickname));
 const notes = computed(() => character.value?.notes ?? '');
 const game = computed(() => character.value?.game ?? '');
-const plotPoints = computed(() => resolvePlotPoints(character.value));
 const portrait = computed(() => character.value?.portrait ?? null);
 const effectivePortraitUrl = computed(() => portrait.value?.url || '');
 
@@ -172,7 +163,6 @@ const descriptionLabel = computed(() => nameLabel('description', 'DESCRIPTION'))
 const notesLabel = computed(() => nameLabel('notes', 'NOTES'));
 const gameLabel = computed(() => nameLabel('game', 'GAME'));
 const playerLabel = computed(() => nameWord('player', 'PLAYER:'));
-const plotPointsLabel = computed(() => nameWord('plotPoints', 'PP'));
 
 const hasDescBox = computed(
 	() => nameShown('description') && (Boolean(description.value) || hasExplicitNameTraitShown('description')),
@@ -327,13 +317,6 @@ const descriptionText = computed({
 		updateCharacter(character.value);
 	},
 });
-
-function adjustPlotPoints(delta: number) {
-	if (!character.value) return;
-	const current = resolvePlotPoints(character.value);
-	character.value.plotPoints = Math.max(0, current + delta);
-	updateCharacter(character.value);
-}
 </script>
 
 <template>
@@ -519,23 +502,6 @@ function adjustPlotPoints(delta: number) {
 								<span v-else class="counter-display">{{ !printBlank ? nameSetCounter : '' }}</span>
 							</div>
 						</template>
-
-						<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')" @click.stop>
-							<span class="pp-badge-label">{{ plotPointsLabel }}</span>
-							<button
-								type="button"
-								class="btn-pp-step"
-								@click.stop="adjustPlotPoints(-1)"
-								:disabled="plotPoints <= 0"
-								title="Spend Plot Point"
-							>
-								-
-							</button>
-							<span class="pp-count">{{ plotPoints }}</span>
-							<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">
-								+
-							</button>
-						</div>
 					</div>
 
 					<InlineRatingBar

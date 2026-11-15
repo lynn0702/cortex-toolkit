@@ -2850,16 +2850,15 @@ dialog.trait-set-mini-dialog {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	flex-wrap: wrap;
-	gap: 0.75rem;
-	padding: 0.75rem 1.1rem;
+	gap: 0.6rem;
+	padding: 0.6rem 0.95rem;
 	background: #0f172a;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 
 	.mini-header-left {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.55rem;
 		min-width: 0;
 	}
 
@@ -2868,54 +2867,44 @@ dialog.trait-set-mini-dialog {
 		align-items: center;
 		justify-content: center;
 		flex: 0 0 auto;
-		width: 1.9rem;
-		height: 1.9rem;
+		width: 1.75rem;
+		height: 1.75rem;
 		border: 1px solid #38bdf8;
 		border-radius: 6px;
 		background: rgba(56, 189, 248, 0.16);
 		color: #38bdf8;
-		font-size: 0.85rem;
-	}
-
-	.mini-header-titles {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		min-width: 0;
+		font-size: 0.82rem;
 	}
 
 	.mini-title {
 		margin: 0;
-		font-size: 1.05rem;
+		font-size: 1rem;
 		font-weight: 800;
 		color: #f8fafc;
-	}
-
-	.mini-subtitle {
-		margin: 0;
-		font-size: 0.78rem;
-		color: #cbd5e1;
+		text-wrap: balance;
 	}
 
 	.mini-header-actions {
 		display: flex;
 		align-items: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 0.45rem;
+		flex: 0 0 auto;
 	}
 
-	.legend-chip {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 0.18rem 0.5rem;
-		border: 1px solid rgba(255, 255, 255, 0.14);
-		border-radius: 5px;
-		background: rgba(255, 255, 255, 0.06);
-		color: #cbd5e1;
-		font-size: 0.72rem;
+	.mini-header-apply-btn {
+		background: #0284c7;
+		border: 1px solid #38bdf8;
+		color: #ffffff;
+		border-radius: 6px;
+		padding: 0.35rem 0.7rem;
+		font-size: 0.78rem;
+		font-weight: 700;
+		cursor: pointer;
 		white-space: nowrap;
+
+		&:hover {
+			background: #0369a1;
+		}
 	}
 
 	.mini-close-btn {
@@ -2928,11 +2917,17 @@ dialog.trait-set-mini-dialog {
 		border-radius: 6px;
 		background: transparent;
 		color: #f1f5f9;
+		font-size: 1.15rem;
 		cursor: pointer;
 		line-height: 1;
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.1);
+		}
+
+		@media (pointer: coarse) {
+			width: 2.5rem;
+			height: 2.5rem;
 		}
 	}
 }
@@ -2941,30 +2936,51 @@ dialog.trait-set-mini-dialog {
 	.mini-body {
 		display: grid;
 		grid-template-columns: 1.25fr 1fr;
-		gap: 1rem;
+		grid-template-rows: auto 1fr;
+		grid-template-areas:
+			'authoring preview'
+			'authoring save';
+		gap: 0.85rem;
 		align-items: start;
 		flex: 1;
 		min-height: 0;
-		padding: 0.9rem 1.1rem;
+		padding: 0.8rem 1rem;
 		overflow-y: auto;
 
 		@media (max-width: 900px) {
 			grid-template-columns: 1fr;
+			grid-template-rows: auto;
+			grid-template-areas:
+				'preview'
+				'authoring'
+				'save';
+			gap: 0.65rem;
+			padding: 0.65rem 0.75rem;
 		}
 	}
 
-	.mini-authoring-column,
-	.mini-preview-column {
+	.mini-authoring-column {
+		grid-area: authoring;
 		display: flex;
 		flex-direction: column;
-		gap: 0.85rem;
+		gap: 0.65rem;
+		min-width: 0;
+	}
+
+	.mini-card-preview-section {
+		grid-area: preview;
+		min-width: 0;
+	}
+
+	.mini-save-section {
+		grid-area: save;
 		min-width: 0;
 	}
 
 	.mini-field {
 		display: flex;
 		flex-direction: column;
-		gap: 0.28rem;
+		gap: 0.24rem;
 		min-width: 0;
 
 		.mini-input,
@@ -2973,7 +2989,7 @@ dialog.trait-set-mini-dialog {
 		}
 
 		.mini-field-label {
-			font-size: 0.7rem;
+			font-size: 0.68rem;
 			font-weight: 700;
 			text-transform: uppercase;
 			letter-spacing: 0.04em;
@@ -2987,8 +3003,8 @@ dialog.trait-set-mini-dialog {
 		border: 1px solid #475569;
 		border-radius: 5px;
 		color: #f8fafc;
-		padding: 0.36rem 0.55rem;
-		font-size: 0.84rem;
+		padding: 0.34rem 0.5rem;
+		font-size: 0.82rem;
 
 		&:focus {
 			outline: 2px solid #38bdf8;
@@ -2997,44 +3013,44 @@ dialog.trait-set-mini-dialog {
 	}
 
 	.mini-input-sm {
-		width: 7rem;
-		padding: 0.25rem 0.45rem;
-		font-size: 0.78rem;
+		width: 6.5rem;
+		padding: 0.24rem 0.45rem;
+		font-size: 0.76rem;
 	}
 
 	.mini-btn-group {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.3rem;
 
 		&.mini-btn-group-sm {
-			gap: 0.3rem;
+			gap: 0.25rem;
 		}
 	}
 
 	.mini-toggle-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.4rem;
+		gap: 0.35rem;
 		background: #0f172a;
 		border: 1px solid #475569;
 		color: #e2e8f0;
 		border-radius: 6px;
-		padding: 0.32rem 0.6rem;
-		font-size: 0.78rem;
+		padding: 0.28rem 0.55rem;
+		font-size: 0.76rem;
 		font-weight: 600;
 		cursor: pointer;
 
 		&.mini-toggle-sm {
-			padding: 0.18rem 0.45rem;
+			padding: 0.2rem 0.45rem;
 			font-size: 0.72rem;
-			gap: 0.3rem;
+			gap: 0.28rem;
 		}
 
 		&.active {
 			border-color: #38bdf8;
-			background: rgba(56, 189, 248, 0.14);
+			background: rgba(56, 189, 248, 0.16);
 		}
 	}
 
@@ -3042,36 +3058,41 @@ dialog.trait-set-mini-dialog {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 1.25rem;
-		height: 1.25rem;
-		padding: 0 0.25rem;
+		min-width: 1.2rem;
+		height: 1.2rem;
+		padding: 0 0.22rem;
 		border-radius: 4px;
 		background: #0284c7;
 		color: #ffffff;
-		font-size: 0.7rem;
+		font-size: 0.68rem;
 		font-weight: 800;
 		font-family: monospace;
 		line-height: 1;
+		cursor: pointer;
+		user-select: none;
 
 		&.marker-label {
 			background: #64748b;
+		}
+
+		&.mini-marker-static {
+			cursor: default;
+			pointer-events: none;
 		}
 	}
 
 	.mini-section-title,
 	.mini-section-label,
 	.mini-subheading {
-		font-size: 0.74rem;
+		font-size: 0.72rem;
 		font-weight: 800;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: #94a3b8;
-		margin-bottom: 0.35rem;
+		margin: 0;
 	}
 
-	.mini-inventory-palette,
-	.mini-header-controls,
-	.mini-frame-section,
+	.mini-card-style-section,
 	.mini-grid-section,
 	.mini-traits-section,
 	.mini-card-preview-section,
@@ -3079,20 +3100,133 @@ dialog.trait-set-mini-dialog {
 		background: rgba(15, 23, 42, 0.55);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 8px;
-		padding: 0.7rem 0.85rem;
+		padding: 0.65rem 0.75rem;
+	}
+
+	.mini-card-style-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.mini-identity-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 6.75rem;
+		gap: 0.5rem;
+	}
+
+	.mini-style-row {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.38rem;
+	}
+
+	.mini-row-label {
+		min-width: 3.4rem;
+		font-size: 0.7rem;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #94a3b8;
+	}
+
+	.mini-align-group {
+		padding-left: 0.38rem;
+		border-left: 1px solid rgba(255, 255, 255, 0.16);
+	}
+
+	.mini-inline-check {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		margin-left: 0.25rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #cbd5e1;
+		cursor: pointer;
+	}
+
+	.mini-frame-params {
+		padding-top: 0.4rem;
+		border-top: 1px dashed rgba(255, 255, 255, 0.12);
+		display: flex;
+		flex-direction: column;
+		gap: 0.38rem;
+	}
+
+	.mini-param-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.mini-param-label {
+		font-size: 0.72rem;
+		color: #94a3b8;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
+
+	.mini-param-num {
+		width: 3.8rem;
+		background: rgba(15, 23, 42, 0.8);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 4px;
+		color: #f1f5f9;
+		font-size: 0.74rem;
+		padding: 0.15rem 0.35rem;
+	}
+
+	.mini-param-text {
+		width: 6rem;
+		background: rgba(15, 23, 42, 0.8);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 4px;
+		color: #f1f5f9;
+		font-size: 0.74rem;
+		padding: 0.15rem 0.35rem;
+	}
+
+	.mini-param-presets {
+		display: flex;
+		gap: 0.28rem;
+	}
+
+	.mini-chip-btn {
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		color: #cbd5e1;
+		border-radius: 4px;
+		font-size: 0.7rem;
+		padding: 0.15rem 0.45rem;
+		cursor: pointer;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.18);
+			color: #ffffff;
+		}
+
+		&.active {
+			background: var(--color-primary, #e11d48);
+			border-color: var(--color-primary, #e11d48);
+			color: #ffffff;
+		}
 	}
 
 	.inventory-palette-header {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.4rem;
-		margin-bottom: 0.5rem;
+		gap: 0.35rem;
+		margin-bottom: 0.45rem;
 	}
 
 	.inventory-palette-title {
 		flex: 1 1 auto;
-		font-size: 0.7rem;
+		font-size: 0.72rem;
 		font-weight: 800;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
@@ -3100,59 +3234,43 @@ dialog.trait-set-mini-dialog {
 	}
 
 	.inventory-noun-group {
-		margin-top: 0.45rem;
-		padding-top: 0.45rem;
-		border-top: 1px dashed rgba(255, 255, 255, 0.1);
-
-		&:first-of-type {
-			margin-top: 0.2rem;
-			padding-top: 0;
-			border-top: none;
-		}
+		margin-bottom: 0.45rem;
 
 		.inventory-group-header {
 			display: flex;
 			align-items: center;
 			gap: 0.4rem;
-			margin-bottom: 0.3rem;
+			margin-bottom: 0.25rem;
+		}
 
-			.inventory-group-noun {
-				font-size: 0.8rem;
-				font-weight: 800;
-				color: #38bdf8;
-			}
+		.inventory-group-noun {
+			font-size: 0.76rem;
+			font-weight: 800;
+			color: #38bdf8;
+		}
 
-			.inventory-group-tag {
-				font-size: 0.68rem;
-				color: #94a3b8;
-				background: rgba(255, 255, 255, 0.06);
-				padding: 0.1rem 0.4rem;
-				border-radius: 4px;
-			}
-
-			.mini-icon-btn {
-				margin-left: auto;
-			}
+		.mini-icon-btn {
+			margin-left: auto;
 		}
 
 		.inventory-tiles-row {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 0.4rem;
+			gap: 0.32rem;
 		}
 	}
 
 	.inventory-tile {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.3rem;
 		max-width: 100%;
 		background: #1e293b;
 		border: 1px solid #475569;
 		color: #f1f5f9;
 		border-radius: 6px;
-		padding: 0.3rem 0.55rem;
-		font-size: 0.76rem;
+		padding: 0.25rem 0.5rem;
+		font-size: 0.74rem;
 		font-weight: 600;
 		cursor: grab;
 
@@ -3165,24 +3283,23 @@ dialog.trait-set-mini-dialog {
 			outline: 2px solid #38bdf8;
 		}
 
-		.mini-tile-svg {
-			svg {
-				width: 1rem;
-				height: 1rem;
-			}
+		.mini-tile-svg svg {
+			width: 0.95rem;
+			height: 0.95rem;
+		}
 
-			.diecon-stroke {
-				fill: #f8fafc;
-			}
-			.diecon-fill {
-				fill: #0284c7;
-			}
+		.mini-tile-svg .diecon-stroke {
+			fill: #f8fafc;
+		}
+
+		.mini-tile-svg .diecon-fill {
+			fill: #0284c7;
 		}
 
 		.pip-bubble {
 			display: inline-block;
-			width: 0.7rem;
-			height: 0.7rem;
+			width: 0.68rem;
+			height: 0.68rem;
 			border-radius: 50%;
 			border: 2px solid #f8fafc;
 		}
@@ -3194,104 +3311,18 @@ dialog.trait-set-mini-dialog {
 		text-overflow: ellipsis;
 	}
 
-	.mini-header-controls {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
 	.mini-grid-container {
+		margin-top: 0.45rem;
 		border: 1px solid #475569;
 		border-radius: 6px;
 		background: #0f172a;
 		overflow: hidden;
 	}
 
-	.mini-frame-section {
-		.mini-frame-bar {
-			display: flex;
-			gap: 0.35rem;
-			flex-wrap: wrap;
-			margin-top: 0.3rem;
-		}
-
-		.mini-frame-params {
-			margin-top: 0.45rem;
-			padding-top: 0.4rem;
-			border-top: 1px dashed rgba(255, 255, 255, 0.1);
-			display: flex;
-			flex-direction: column;
-			gap: 0.4rem;
-		}
-
-		.mini-param-row {
-			display: flex;
-			align-items: center;
-			gap: 0.6rem;
-			flex-wrap: wrap;
-		}
-
-		.mini-param-label {
-			font-size: 0.74rem;
-			color: #94a3b8;
-			display: inline-flex;
-			align-items: center;
-			gap: 0.3rem;
-		}
-
-		.mini-param-num {
-			width: 4rem;
-			background: rgba(15, 23, 42, 0.8);
-			border: 1px solid rgba(255, 255, 255, 0.2);
-			border-radius: 4px;
-			color: #f1f5f9;
-			font-size: 0.75rem;
-			padding: 0.15rem 0.35rem;
-		}
-
-		.mini-param-text {
-			width: 6rem;
-			background: rgba(15, 23, 42, 0.8);
-			border: 1px solid rgba(255, 255, 255, 0.2);
-			border-radius: 4px;
-			color: #f1f5f9;
-			font-size: 0.75rem;
-			padding: 0.15rem 0.35rem;
-		}
-
-		.mini-param-presets {
-			display: flex;
-			gap: 0.3rem;
-		}
-
-		.mini-chip-btn {
-			background: rgba(255, 255, 255, 0.08);
-			border: 1px solid rgba(255, 255, 255, 0.15);
-			color: #cbd5e1;
-			border-radius: 4px;
-			font-size: 0.7rem;
-			padding: 0.15rem 0.45rem;
-			cursor: pointer;
-			transition: all 0.15s ease;
-
-			&:hover {
-				background: rgba(255, 255, 255, 0.18);
-				color: #ffffff;
-			}
-
-			&.active {
-				background: var(--color-primary, #e11d48);
-				border-color: var(--color-primary, #e11d48);
-				color: #ffffff;
-			}
-		}
-	}
-
 	.mini-layout-canvas {
 		position: relative;
 		flex: 1;
-		min-height: 76px;
+		min-height: 4.75rem;
 		background-image:
 			linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
 			linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
@@ -3304,7 +3335,7 @@ dialog.trait-set-mini-dialog {
 		background: rgba(30, 41, 59, 0.92);
 		border: 1.5px solid #64748b;
 		border-radius: 5px;
-		padding: 0.25rem 0.45rem;
+		padding: 0.22rem 0.4rem;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -3313,7 +3344,7 @@ dialog.trait-set-mini-dialog {
 
 		&.dragging {
 			opacity: 0.7;
-			z-index: 3; /* small local stacking literal */
+			z-index: var(--z-elevated-card);
 		}
 
 		&.selected,
@@ -3321,24 +3352,24 @@ dialog.trait-set-mini-dialog {
 			border-color: #38bdf8;
 			box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35);
 			outline: none;
-			z-index: 2; /* small local stacking literal */
+			z-index: var(--z-beneath-editor);
 		}
 
 		.block-mini-part-inner {
 			display: inline-flex;
 			align-items: center;
-			gap: 0.35rem;
+			gap: 0.3rem;
 			overflow: hidden;
 		}
 
 		.block-mini-part-name {
-			font-size: 0.76rem;
+			font-size: 0.74rem;
 			font-weight: 700;
 			color: #f8fafc;
 		}
 
 		.block-mini-part-coords {
-			font-size: 0.68rem;
+			font-size: 0.66rem;
 			color: #94a3b8;
 		}
 
@@ -3382,18 +3413,17 @@ dialog.trait-set-mini-dialog {
 			cursor: ns-resize;
 		}
 
-		.mini-tile-svg {
-			svg {
-				width: 1rem;
-				height: 1rem;
-			}
+		.mini-tile-svg svg {
+			width: 0.95rem;
+			height: 0.95rem;
+		}
 
-			.diecon-stroke {
-				fill: #f8fafc;
-			}
-			.diecon-fill {
-				fill: #0284c7;
-			}
+		.mini-tile-svg .diecon-stroke {
+			fill: #f8fafc;
+		}
+
+		.mini-tile-svg .diecon-fill {
+			fill: #0284c7;
 		}
 	}
 
@@ -3401,11 +3431,11 @@ dialog.trait-set-mini-dialog {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.65rem;
-		margin-top: 0.55rem;
-		padding-top: 0.5rem;
+		gap: 0.5rem;
+		margin-top: 0.45rem;
+		padding-top: 0.45rem;
 		border-top: 1px solid rgba(255, 255, 255, 0.1);
-		font-size: 0.76rem;
+		font-size: 0.74rem;
 
 		.readout-part-title {
 			color: #cbd5e1;
@@ -3415,35 +3445,27 @@ dialog.trait-set-mini-dialog {
 			}
 		}
 
-		.readout-label {
-			font-size: 0.7rem;
-			font-weight: 700;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			color: #94a3b8;
-		}
-
 		.readout-coords-row {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			gap: 0.55rem;
+			gap: 0.45rem;
 			width: 100%;
 		}
 
 		.readout-field {
 			display: inline-flex;
 			align-items: center;
-			gap: 0.3rem;
+			gap: 0.25rem;
 
 			input {
-				width: 3.6rem;
+				width: 3.2rem;
 				background: #0f172a;
 				border: 1px solid #475569;
 				border-radius: 4px;
 				color: #f8fafc;
-				padding: 0.2rem 0.35rem;
-				font-size: 0.76rem;
+				padding: 0.18rem 0.3rem;
+				font-size: 0.74rem;
 			}
 		}
 	}
@@ -3453,8 +3475,8 @@ dialog.trait-set-mini-dialog {
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
-		margin-bottom: 0.55rem;
+		gap: 0.45rem;
+		margin-bottom: 0.45rem;
 
 		.mini-inline-label {
 			display: inline-flex;
@@ -3470,8 +3492,8 @@ dialog.trait-set-mini-dialog {
 		border: none;
 		color: #ffffff;
 		border-radius: 5px;
-		padding: 0.28rem 0.65rem;
-		font-size: 0.76rem;
+		padding: 0.26rem 0.6rem;
+		font-size: 0.75rem;
 		font-weight: 700;
 		cursor: pointer;
 	}
@@ -3481,8 +3503,8 @@ dialog.trait-set-mini-dialog {
 		border: 1px solid #64748b;
 		color: #cbd5e1;
 		border-radius: 5px;
-		padding: 0.28rem 0.65rem;
-		font-size: 0.76rem;
+		padding: 0.26rem 0.6rem;
+		font-size: 0.75rem;
 		font-weight: 600;
 		cursor: pointer;
 
@@ -3495,16 +3517,15 @@ dialog.trait-set-mini-dialog {
 	.mini-btn-sub {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
+		gap: 0.28rem;
 		background: rgba(2, 132, 199, 0.15);
 		border: 1px solid #0284c7;
 		color: #38bdf8;
 		border-radius: 4px;
-		padding: 0.18rem 0.45rem;
+		padding: 0.18rem 0.42rem;
 		font-size: 0.7rem;
 		font-weight: 700;
 		cursor: pointer;
-		transition: all 0.15s ease;
 
 		&:hover {
 			background: #0284c7;
@@ -3515,46 +3536,38 @@ dialog.trait-set-mini-dialog {
 	.mini-traits-list {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.42rem;
 	}
 
 	.mini-trait-card {
 		background: rgba(30, 41, 59, 0.75);
 		border: 1px solid rgba(255, 255, 255, 0.12);
 		border-radius: 6px;
-		padding: 0.45rem 0.55rem;
+		padding: 0.4rem 0.5rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: 0.35rem;
 	}
 
 	.mini-trait-row-main {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.38rem;
+		gap: 0.35rem;
 	}
 
 	.mini-trait-subrow {
 		display: flex;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.38rem;
+		gap: 0.35rem;
 		width: 100%;
 		box-sizing: border-box;
 
 		.mini-subrow-noun {
-			width: 6.2rem;
+			width: 5.8rem;
 			flex: 0 0 auto;
 			min-width: 0;
-		}
-
-		.mini-subrow-caption {
-			font-size: 0.7rem;
-			font-weight: 700;
-			color: #94a3b8;
-			text-transform: uppercase;
-			flex: 0 0 auto;
 		}
 
 		.mini-die-picker {
@@ -3572,19 +3585,19 @@ dialog.trait-set-mini-dialog {
 
 	.mini-trait-name-input {
 		flex: 1;
-		min-width: 110px;
+		min-width: 6.5rem;
 	}
 
 	.mini-trait-noun-input {
-		width: 5.5rem;
-		font-size: 0.75rem;
+		width: 5rem;
+		font-size: 0.74rem;
 	}
 
 	.mini-die-picker,
 	.mini-pip-picker {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.2rem;
+		gap: 0.18rem;
 	}
 
 	.mini-die-chip {
@@ -3600,9 +3613,6 @@ dialog.trait-set-mini-dialog {
 		align-items: center;
 		justify-content: center;
 		user-select: none;
-		transition:
-			background-color 0.15s ease,
-			border-color 0.15s ease;
 
 		.diecon {
 			display: inline-block;
@@ -3610,45 +3620,19 @@ dialog.trait-set-mini-dialog {
 			line-height: 1;
 			color: #64748b;
 			transform: translateY(-0.15em);
-			transition: color 0.15s ease;
 		}
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.08);
-			.diecon {
-				color: #f8fafc;
-			}
 		}
 
 		&.active {
 			background: color-mix(in srgb, var(--color-primary, #0284c7) 20%, transparent);
 			border-color: var(--color-primary, #0284c7);
-
-			.diecon {
-				color: var(--color-primary, #0284c7);
-			}
-		}
-	}
-
-	.mini-marker-badge {
-		cursor: pointer;
-		user-select: none;
-		transition:
-			transform 0.1s ease,
-			filter 0.15s ease;
-
-		&:hover {
-			filter: brightness(1.2);
-			transform: scale(1.05);
 		}
 
-		&.mini-marker-static {
-			cursor: default;
-			pointer-events: none;
-			&:hover {
-				filter: none;
-				transform: none;
-			}
+		&.active .diecon {
+			color: var(--color-primary, #0284c7);
 		}
 	}
 
@@ -3659,12 +3643,11 @@ dialog.trait-set-mini-dialog {
 		border-radius: 4px;
 		font-size: 0.72rem;
 		font-weight: 700;
-		padding: 0.25rem 0.55rem;
+		padding: 0.22rem 0.5rem;
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
-		transition: all 0.15s ease;
+		gap: 0.3rem;
 
 		&:hover {
 			background: #0284c7;
@@ -3676,12 +3659,12 @@ dialog.trait-set-mini-dialog {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.4rem;
-		padding: 0.5rem 0.6rem;
+		gap: 0.38rem;
+		padding: 0.45rem 0.55rem;
 		background: rgba(2, 132, 199, 0.08);
 		border: 1px dashed rgba(2, 132, 199, 0.4);
 		border-radius: 6px;
-		margin-bottom: 0.6rem;
+		margin-bottom: 0.45rem;
 	}
 
 	.readout-part-title-row {
@@ -3689,34 +3672,34 @@ dialog.trait-set-mini-dialog {
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.6rem;
+		gap: 0.5rem;
 		width: 100%;
-		margin-bottom: 0.4rem;
 	}
 
 	.readout-marker-toggle,
 	.readout-rating-controls {
 		display: inline-flex;
+		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.3rem;
 	}
 
 	.readout-pip-stepper {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
-		font-size: 0.75rem;
+		gap: 0.28rem;
+		font-size: 0.74rem;
 
 		.pip-count-val {
 			font-weight: 700;
-			min-width: 1.2rem;
+			min-width: 1.1rem;
 			text-align: center;
 		}
 	}
 
 	.mini-counter-badge {
 		font-weight: 900;
-		font-size: 0.75rem;
+		font-size: 0.74rem;
 		color: #38bdf8;
 		padding: 0 0.2rem;
 	}
@@ -3727,7 +3710,7 @@ dialog.trait-set-mini-dialog {
 	}
 
 	.mini-counter-input {
-		width: 3.2rem;
+		width: 3.1rem;
 		text-align: center;
 	}
 
@@ -3744,7 +3727,7 @@ dialog.trait-set-mini-dialog {
 		border: 1px solid rgba(255, 255, 255, 0.16);
 		color: #cbd5e1;
 		border-radius: 4px;
-		padding: 0.35rem 0.5rem;
+		padding: 0.32rem 0.5rem;
 		font-size: 0.74rem;
 		font-weight: 600;
 		cursor: pointer;
@@ -3752,7 +3735,6 @@ dialog.trait-set-mini-dialog {
 		align-items: center;
 		justify-content: center;
 		gap: 0.35rem;
-		transition: all 0.15s ease;
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.12);
@@ -3793,22 +3775,17 @@ dialog.trait-set-mini-dialog {
 		}
 	}
 
-	.mini-subrow-caption {
-		font-size: 0.7rem;
-		color: #94a3b8;
-	}
-
 	.preview-mode-bar {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
-		margin-bottom: 0.5rem;
+		gap: 0.45rem;
+		margin-bottom: 0.45rem;
 	}
 
 	.preview-mode-title {
-		font-size: 0.74rem;
+		font-size: 0.72rem;
 		font-weight: 800;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -3818,14 +3795,14 @@ dialog.trait-set-mini-dialog {
 	.preview-mode-toggles {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.3rem;
+		gap: 0.28rem;
 	}
 
 	.mini-preview-sheet-frame {
 		background: #ffffff;
 		color: #0f172a;
 		border-radius: 6px;
-		padding: 0.65rem;
+		padding: 0.6rem;
 		border: 1px solid #cbd5e1;
 		overflow: hidden;
 	}
@@ -3833,8 +3810,8 @@ dialog.trait-set-mini-dialog {
 	.mini-save-fields {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		gap: 0.6rem;
-		margin-bottom: 0.65rem;
+		gap: 0.5rem;
+		margin-bottom: 0.55rem;
 
 		@media (max-width: 600px) {
 			grid-template-columns: 1fr;
@@ -3842,8 +3819,8 @@ dialog.trait-set-mini-dialog {
 	}
 
 	.mini-save-title {
-		margin: 0 0 0.55rem;
-		font-size: 0.8rem;
+		margin: 0 0 0.45rem;
+		font-size: 0.74rem;
 		font-weight: 800;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -3855,16 +3832,16 @@ dialog.trait-set-mini-dialog {
 		border: 1px solid #f87171;
 		color: #fecaca;
 		border-radius: 6px;
-		padding: 0.45rem 0.65rem;
-		font-size: 0.78rem;
-		margin-bottom: 0.55rem;
+		padding: 0.4rem 0.6rem;
+		font-size: 0.76rem;
+		margin-top: 0.25rem;
 	}
 
 	.mini-save-status {
 		grid-column: 1 / -1;
 		border-radius: 6px;
-		padding: 0.45rem 0.65rem;
-		font-size: 0.78rem;
+		padding: 0.4rem 0.6rem;
+		font-size: 0.76rem;
 
 		&.success {
 			background: rgba(16, 185, 129, 0.18);
@@ -3884,13 +3861,13 @@ dialog.trait-set-mini-dialog {
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: flex-end;
-		gap: 0.55rem;
+		gap: 0.45rem;
 
 		.btn-apply-sheet,
 		.btn-save-preset {
-			padding: 0.45rem 0.9rem;
+			padding: 0.4rem 0.8rem;
 			border-radius: 6px;
-			font-size: 0.82rem;
+			font-size: 0.8rem;
 			font-weight: 700;
 			cursor: pointer;
 		}

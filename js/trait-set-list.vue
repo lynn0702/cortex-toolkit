@@ -197,7 +197,7 @@ function hasTraitSetDescription(ts: any) {
 												<template v-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 													{{ item.trait.name }}
 												</template>
-												<template v-else-if="submode === 'edit' && !printBlank">
+												<template v-else-if="(submode === 'edit' || isPlayMutableSet(traitSet)) && !printBlank">
 													<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 												</template>
 												<template v-else>
@@ -330,7 +330,7 @@ function hasTraitSetDescription(ts: any) {
 												<template v-else-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 													{{ item.trait.name }}
 												</template>
-												<template v-else-if="submode === 'edit' && !printBlank">
+												<template v-else-if="(submode === 'edit' || isPlayMutableSet(traitSet)) && !printBlank">
 													<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 												</template>
 												<template v-else>
@@ -1250,7 +1250,7 @@ function hasTraitSetDescription(ts: any) {
 												<template v-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 													{{ item.trait.name }}
 												</template>
-												<template v-else-if="submode === 'edit' && !printBlank">
+												<template v-else-if="(submode === 'edit' || isPlayMutableSet(traitSet)) && !printBlank">
 													<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 												</template>
 												<template v-else>
@@ -1353,7 +1353,7 @@ function hasTraitSetDescription(ts: any) {
 												<template v-else-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 													{{ item.trait.name }}
 												</template>
-												<template v-else-if="submode === 'edit' && !printBlank">
+												<template v-else-if="(submode === 'edit' || isPlayMutableSet(traitSet)) && !printBlank">
 													<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 												</template>
 												<template v-else>

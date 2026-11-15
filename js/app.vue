@@ -16,7 +16,7 @@ import CommandPalette from './command-palette.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
-import { getView, getTemplateTitle } from './model.ts';
+import { getView, getTemplateTitle, resolvePlotPoints, resolveVisibility } from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
 
@@ -155,6 +155,19 @@ const character = computed(() => {
 	return characters.value[characterIndex.value];
 });
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
+const activePlayPlotPoints = computed(() => (character.value ? resolvePlotPoints(character.value) : 0));
+const activePlayPlotPointsLabel = computed(() => {
+	if (!character.value) return 'PP';
+	const custom = characterCurioFunctions.getNameTrait(character.value, 'plotPoints')?.label;
+	return typeof custom === 'string' && custom.trim().length ? custom.trim() : 'PP';
+});
+const showPlayPlotPoints = computed(() => {
+	if (mode.value !== 'character' || submode.value !== 'play' || !character.value) return false;
+	const ppTrait = characterCurioFunctions.getNameTrait(character.value, 'plotPoints');
+	if (!ppTrait) return true;
+	const vis = resolveVisibility(ppTrait);
+	return vis !== 'hidden' && vis !== 'editor-only';
+});
 
 const {
 	canUndo,
@@ -2307,6 +2320,35 @@ defineExpose({
 				@touchend.passive="onPillTouchEnd"
 			>
 				<div
+					class="character-pp-badge footer-pp-badge"
+					v-if="isMobileViewport && showPlayPlotPoints"
+					@click.stop
+					@touchstart.stop
+					@touchend.stop
+				>
+					<span class="pp-badge-label">{{ activePlayPlotPointsLabel }}</span>
+					<button
+						type="button"
+						class="btn-pp-step"
+						@click.stop="handleSettlePP(-1)"
+						:disabled="activePlayPlotPoints <= 0"
+						title="Spend Plot Point"
+						aria-label="Spend Plot Point"
+					>
+						-
+					</button>
+					<span class="pp-count">{{ activePlayPlotPoints }}</span>
+					<button
+						type="button"
+						class="btn-pp-step"
+						@click.stop="handleSettlePP(1)"
+						title="Gain Plot Point"
+						aria-label="Gain Plot Point"
+					>
+						+
+					</button>
+				</div>
+				<div
 					class="mobile-roller-pill-left"
 					@click="
 						studioPanelRef?.diceRoller?.isRolled ? studioPanelRef.openOutcomeDialog() : toggleMobileRollerDrawer()
@@ -2347,9 +2389,7 @@ defineExpose({
 						</span>
 					</template>
 					<template v-else>
-						<span class="pill-empty-label"
-							><i class="fas fa-dice" aria-hidden="true"></i> 0 Dice Staged — Tap traits</span
-						>
+						<span class="pill-empty-label"><i class="fas fa-dice" aria-hidden="true"></i> Tap traits</span>
 					</template>
 				</div>
 				<div class="mobile-roller-pill-right">
@@ -2455,5 +2495,13 @@ defineExpose({
 		</div>
 	</transition>
 
-	<app-footer :mode="mode" :year="year" @navigate="setMode" />
+	<app-footer
+		:mode="mode"
+		:year="year"
+		:showPlotPoints="!isMobileViewport && showPlayPlotPoints"
+		:plotPoints="activePlayPlotPoints"
+		:plotPointsLabel="activePlayPlotPointsLabel"
+		@navigate="setMode"
+		@adjustPlotPoints="handleSettlePP"
+	/>
 </template>

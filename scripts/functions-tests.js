@@ -116,17 +116,26 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 
 	const presets = F.characterCurioSetPresets;
 	ok(
-		presets && presets['scene-traits'] && presets['session-notes'] && presets['crisis-pool'] && presets['micro-gmc'],
-		'4 built-in set presets exist',
+		presets &&
+			presets['pool'] &&
+			presets['trait-track'] &&
+			presets['trait-list'] &&
+			presets['pip-track'] &&
+			presets['framed-ring'] &&
+			presets['cut-corner-block'] &&
+			presets['notes'] &&
+			presets['divider-line'],
+		'8 built-in structural set presets exist',
 	);
-	const inst = F.instantiateSetPreset(presets['scene-traits'], { traitSets: [] }, 1);
+	const inst = F.instantiateSetPreset(presets['pool'], { traitSets: [] }, 1);
 	ok(
 		inst &&
-			inst.name === 'Scene Traits' &&
+			inst.name === 'Pool' &&
+			inst.traits[0].name === '' &&
 			inst.view.pillar === 'play' &&
 			inst.view.visibility === 'play-only' &&
 			inst.view.playMutable === true,
-		'instantiateSetPreset clones and assigns id',
+		'instantiateSetPreset clones with empty slot and assigns id',
 	);
 
 	// ---- Phase 3a: derivePresetId, collision check, saveCustomSetPreset, getTrackScale, renderDieGeometrySVG
@@ -145,7 +154,7 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 		F.derivePresetId('  Doom Pool & Stress! ') === 'doom-pool-stress',
 		'derivePresetId lowercases and hyphenates label',
 	);
-	ok(F.hasPresetCollision('Scene Traits') === true, 'hasPresetCollision detects built-in preset collision');
+	ok(F.hasPresetCollision('Pool') === true, 'hasPresetCollision detects built-in preset collision');
 	ok(F.hasPresetCollision('Brand New Card') === false, 'hasPresetCollision passes unused label');
 
 	const customCard = {

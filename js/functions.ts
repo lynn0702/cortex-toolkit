@@ -1891,16 +1891,165 @@ export const characterCurioFunctions = {
 		rating: { type: 'Die', value: [6] },
 	},
 
-	// Built-in Set Presets (showcase TraitSet templates for Play & Edit)
+	// Built-in Set Presets (styled structural TraitSet templates for Play & Edit)
 	characterCurioSetPresets: {
-		'scene-traits': {
-			id: 'scene-traits',
-			label: 'Scene Traits — Assets & Complications',
-			blurb: 'Temporary Play-only set with 3 slots and Out indicator.',
+		pool: {
+			id: 'pool',
+			label: 'Dice Pool',
+			blurb: 'Spendable dice pool.',
 			preset: {
-				name: 'Scene Traits',
-				noun: 'Scene Trait',
-				plural: 'Scene Traits',
+				name: 'Pool',
+				noun: 'Pool',
+				plural: 'Pools',
+				description: '',
+				pool: true,
+				spendable: true,
+				traits: [
+					{
+						name: '',
+						description: '',
+						traits: [],
+						tags: [],
+						rating: { type: 'Dice', value: [6, 6] },
+					},
+				],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'top',
+					parts: {
+						name: { left: '0%', top: 0, width: '45%', height: 1, marker: 'T' },
+						rating: { left: '45%', top: 0, width: '55%', height: 1, ratingType: 'Dice', range: [4, 6, 8, 10, 12] },
+					},
+					style: { header: 'default', body: 'default' },
+				},
+			},
+		},
+		'trait-track': {
+			id: 'trait-track',
+			label: 'Trait + Track',
+			blurb: 'Rated slot paired with a steppable track.',
+			preset: {
+				name: 'Trait + Track',
+				noun: 'Trait',
+				plural: 'Traits',
+				description: '',
+				traits: [
+					{
+						name: '',
+						description: '',
+						traits: [],
+						tags: [],
+						rating: { type: 'Die', value: [8] },
+					},
+				],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'top',
+					outIndicator: true,
+					ratingDisplay: 'rating',
+					parts: {
+						name: { left: '0%', top: 0, width: '65%', height: 1, marker: 'T' },
+						rating: { left: '65%', top: 0, width: '35%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+						trackLabel: { left: '0%', top: 1, width: '28%', height: 1, marker: 'L' },
+						track: { left: '28%', top: 1, width: '72%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+					},
+					style: { header: 'default', body: 'default' },
+				},
+			},
+		},
+		'trait-list': {
+			id: 'trait-list',
+			label: 'Trait List',
+			blurb: 'Three open rated slots.',
+			preset: {
+				name: 'Traits',
+				noun: 'Trait',
+				plural: 'Traits',
+				description: '',
+				traits: [],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'top',
+					outIndicator: true,
+					reservedSlots: 3,
+					ratingDisplay: 'rating',
+					style: { header: 'default', body: 'default' },
+				},
+			},
+		},
+		'pip-track': {
+			id: 'pip-track',
+			label: 'Pip Track',
+			blurb: 'Checkable pip bubbles with counter.',
+			preset: {
+				name: 'Track',
+				noun: 'Pip',
+				plural: 'Pips',
+				description: '',
+				rating: { type: 'Pip', value: [false, false, false, false, false] },
+				traits: [],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'top',
+					style: { header: 'default', body: 'pips' },
+				},
+			},
+		},
+		'framed-ring': {
+			id: 'framed-ring',
+			label: 'Framed Ring',
+			blurb: 'Radial ring with 6 open die slots.',
+			preset: {
+				name: 'Ring',
+				noun: 'Slot',
+				plural: 'Slots',
+				description: '',
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'top',
+					border: 'none',
+					ratingDisplay: 'rating',
+					frame: {
+						shape: 'circle',
+						array: 'ring',
+						span: [0, 360],
+						color: 'primary',
+					},
+					style: { header: 'default', body: 'default' },
+				},
+				traits: [
+					{ name: '', rating: { type: 'Die', value: [8] } },
+					{ name: '', rating: { type: 'Die', value: [8] } },
+					{ name: '', rating: { type: 'Die', value: [8] } },
+					{ name: '', rating: { type: 'Die', value: [8] } },
+					{ name: '', rating: { type: 'Die', value: [8] } },
+					{ name: '', rating: { type: 'Die', value: [8] } },
+				],
+			},
+		},
+		'cut-corner-block': {
+			id: 'cut-corner-block',
+			label: 'Cut-Corner Card',
+			blurb: 'Angled frame with 2 open slots.',
+			preset: {
+				name: 'Card',
+				noun: 'Trait',
+				plural: 'Traits',
 				description: '',
 				traits: [],
 				tags: [],
@@ -1909,17 +2058,24 @@ export const characterCurioFunctions = {
 					visibility: 'play-only',
 					playMutable: true,
 					outIndicator: true,
-					reservedSlots: 3,
+					reservedSlots: 2,
+					ratingDisplay: 'rating',
+					header: 'top',
+					border: {
+						shape: 'block',
+						corner: 'cut',
+						color: 'accent',
+					},
 					style: { header: 'default', body: 'default' },
 				},
 			},
 		},
-		'session-notes': {
-			id: 'session-notes',
-			label: 'Session Notes',
-			blurb: 'Play-only markdown scratchpad for session notes.',
+		notes: {
+			id: 'notes',
+			label: 'Notes',
+			blurb: 'Markdown scratchpad.',
 			preset: {
-				name: 'Session Notes',
+				name: 'Notes',
 				noun: 'Note',
 				plural: 'Notes',
 				description: '',
@@ -1929,192 +2085,16 @@ export const characterCurioFunctions = {
 					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
+					header: 'top',
 					notesMarkdown: true,
 					style: { header: 'default', body: 'default' },
 				},
 			},
 		},
-		'crisis-pool': {
-			id: 'crisis-pool',
-			label: 'Crisis / Trouble Pool',
-			blurb: 'Spendable dice pool for scene trouble or crisis dice.',
-			preset: {
-				name: 'Crisis Pool',
-				noun: 'Die',
-				plural: 'Dice',
-				description: '',
-				pool: true,
-				spendable: true,
-				traits: [
-					{
-						name: 'Trouble',
-						description: '',
-						traits: [],
-						tags: [],
-						rating: { type: 'Dice', value: [6, 6], range: [4, 6, 8, 10, 12] },
-					},
-				],
-				tags: [],
-				view: {
-					pillar: 'play',
-					visibility: 'play-only',
-					playMutable: true,
-					style: { header: 'default', body: 'default' },
-				},
-			},
-		},
-		'micro-gmc': {
-			id: 'micro-gmc',
-			label: 'Micro-Character / GMC',
-			blurb: 'Compact GMC card with role/specialty dice and stress track.',
-			preset: {
-				name: 'Scene GMC',
-				noun: 'Trait',
-				plural: 'Traits',
-				description: '',
-				traits: [
-					{
-						name: 'Primary Role',
-						description: '',
-						traits: [],
-						tags: [],
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-					},
-					{
-						name: 'Specialty / Gear',
-						description: '',
-						traits: [],
-						tags: [],
-						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-					},
-				],
-				tags: [],
-				view: {
-					pillar: 'play',
-					visibility: 'play-only',
-					playMutable: true,
-					outIndicator: true,
-					parts: buildParts({
-						rating: 'inline',
-						ratingDice: 5,
-						trackDice: 5,
-						description: false,
-						block: false,
-						subtraits: false,
-					}),
-					style: { header: 'default', body: 'default' },
-				},
-			},
-		},
-		'framed-ring-attributes': {
-			id: 'framed-ring-attributes',
-			label: 'Framed Ring — Attributes + Stress',
-			blurb: 'Attributes arranged on a 360° ring frame with attached stress tracks.',
-			preset: {
-				name: 'Attributes',
-				noun: 'Attribute',
-				plural: 'Attributes',
-				description: '',
-				tags: [],
-				view: {
-					pillar: 'prime',
-					header: 'top',
-					border: 'none',
-					fixedNames: true,
-					frame: {
-						shape: 'circle',
-						array: 'ring',
-						span: [0, 360],
-						color: 'primary',
-					},
-					labels: {
-						track: 'Stress',
-						out: 'OUT',
-					},
-					parts: {
-						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'L' },
-						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
-						trackLabel: { left: '0%', top: 1, width: '30%', height: 1, marker: 'L' },
-						track: { left: '30%', top: 1, width: '70%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
-					},
-				},
-				traits: [
-					{
-						name: 'Agility',
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: [{ name: 'Stress', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }],
-					},
-					{
-						name: 'Awareness',
-						rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] },
-						traits: [],
-					},
-					{
-						name: 'Brawn',
-						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-						traits: [],
-					},
-					{
-						name: 'Coordination',
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: [],
-					},
-					{
-						name: 'Intellect',
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: [{ name: 'Stress', rating: { type: 'Die', value: [4], range: [4, 6, 8, 10, 12] } }],
-					},
-					{
-						name: 'Will',
-						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-						traits: [],
-					},
-				],
-			},
-		},
-		'framed-chamfer-block': {
-			id: 'framed-chamfer-block',
-			label: 'Sci-Fi Chamfered Block — Scene Traits',
-			blurb: 'Scene traits enclosed in a sci-fi chamfered cut-corner block frame.',
-			preset: {
-				name: 'Scene Traits',
-				noun: 'Scene Trait',
-				plural: 'Scene Traits',
-				description: '',
-				tags: [],
-				view: {
-					pillar: 'play',
-					visibility: 'play-only',
-					playMutable: true,
-					outIndicator: true,
-					reservedSlots: 2,
-					header: 'top',
-					border: {
-						shape: 'block',
-						corner: 'cut',
-						color: 'accent',
-					},
-					parts: {
-						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'T' },
-						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
-					},
-				},
-				traits: [
-					{
-						name: 'Sensor Lock',
-						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-					},
-					{
-						name: 'Hull Breach',
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12], out: true },
-					},
-				],
-			},
-		},
-		'framed-section-line': {
-			id: 'framed-section-line',
-			label: 'Section Divider Line',
-			blurb: 'Pure SVG section divider line acting as a horizon rule.',
+		'divider-line': {
+			id: 'divider-line',
+			label: 'Divider Line',
+			blurb: 'Horizontal rule.',
 			preset: {
 				name: '',
 				noun: 'Divider',
@@ -2123,10 +2103,15 @@ export const characterCurioFunctions = {
 				traits: [],
 				tags: [],
 				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'none',
 					border: {
 						shape: 'line',
 						color: 'accent',
 					},
+					style: { header: 'none', body: 'default' },
 				},
 			},
 		},
@@ -2244,6 +2229,12 @@ export const characterCurioFunctions = {
 			v.style.header = v.style.body || 'default';
 		}
 		v.page = page || 1;
+		if (typeof traitSet.name === 'string' && traitSet.name.trim().length > 0 && character?.traitSets?.length) {
+			traitSet.name = this.nextUniqueName(
+				(character.traitSets || []).map((ts: any) => ts?.name),
+				traitSet.name,
+			);
+		}
 		this.ensureTraitSetIds({ traitSets: [...(character?.traitSets || []), traitSet] });
 		this.assignLids({ traitSets: [traitSet] });
 		return traitSet;

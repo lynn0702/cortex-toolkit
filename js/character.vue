@@ -251,16 +251,19 @@ function removeInlineCustomPreset(id: string) {
 }
 
 function openMiniFromInline() {
+	miniOrigin.value = 'edit';
 	showInlineAddSet.value = false;
 	showPlayMini.value = true;
 }
 
 function openPlayMini() {
+	miniOrigin.value = 'play';
 	showPlayPresetPicker.value = false;
 	showPlayMini.value = true;
 }
 const showPlayPresetPicker = ref(false);
 const showPlayMini = ref(false);
+const miniOrigin = ref<'edit' | 'play'>('play');
 const playBuiltInPresets = Object.values(characterCurioSetPresets);
 const playCustomPresets = ref<SetPresetEntry[]>([]);
 const isMobileViewport = ref(
@@ -559,11 +562,48 @@ function removeTraitSet(traitSetID: number) {
 function addPresetSet(preset: SetPresetEntry, page?: number) {
 	const character = props.character as Character;
 	if (!character || !preset) return;
-	const traitSet = characterCurioFunctions.instantiateSetPreset(preset, character, page ?? 1);
+	const traitSet: any = characterCurioFunctions.instantiateSetPreset(preset, character, page ?? 1);
+	if (props.submode === 'edit' && Boolean(characterCurioSetPresets[preset.id])) {
+		const v = ensureView(traitSet) as Record<string, unknown>;
+		if (v.visibility === 'play-only') delete v.visibility;
+		if (v.pillar === 'play') delete v.pillar;
+	}
 	character.traitSets.push(traitSet);
 	updateCharacter(character);
 	showInlineAddSet.value = false;
 	showPlayPresetPicker.value = false;
+	const newTraitSetID = character.traitSets.length - 1;
+	if (props.submode === 'edit') {
+		selectElement(['traitSet', newTraitSetID]);
+	} else if (props.submode === 'play') {
+		const pKey = resolveSetPillar(traitSet);
+		nextTick(() => scrollToPillar(pKey, newTraitSetID));
+	}
+}
+
+function applyMiniSet(builtSet: any) {
+	const character = props.character as Character;
+	if (!character || !builtSet) return;
+	const traitSet: any = structuredClone(builtSet);
+	if (typeof traitSet.name === 'string' && traitSet.name.trim().length > 0) {
+		traitSet.name = characterCurioFunctions.nextUniqueName(
+			(character.traitSets || []).map((ts) => ts?.name),
+			traitSet.name.trim(),
+		);
+	}
+	if (miniOrigin.value === 'play') {
+		const v = ensureView(traitSet) as Record<string, unknown>;
+		v.visibility = 'play-only';
+		v.playMutable = true;
+		v.pillar = 'play';
+	} else if ((inlineAddPage.value ?? 1) > 1) {
+		ensureView(traitSet).page = inlineAddPage.value;
+	}
+	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
+	if (!Array.isArray(character.traitSets)) character.traitSets = [];
+	character.traitSets.push(traitSet);
+	updateCharacter(character);
+	showPlayMini.value = false;
 	const newTraitSetID = character.traitSets.length - 1;
 	if (props.submode === 'edit') {
 		selectElement(['traitSet', newTraitSetID]);
@@ -1309,7 +1349,7 @@ defineExpose({
 												<i class="fas fa-plus" aria-hidden="true"></i> Blank Set
 											</button>
 											<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
-												<i class="fas fa-th-large" aria-hidden="true"></i> New Card in Mini
+												<i class="fas fa-th-large" aria-hidden="true"></i> Card Builder
 											</button>
 											<button
 												type="button"
@@ -1367,10 +1407,9 @@ defineExpose({
 					<div class="modal-header-actions">
 						<h2><i class="fas fa-gamepad" aria-hidden="true"></i> Add Play Card</h2>
 						<button type="button" class="btn-preset-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
-							<i class="fas fa-th-large" aria-hidden="true"></i> New Card in Mini
+							<i class="fas fa-th-large" aria-hidden="true"></i> Card Builder
 						</button>
 					</div>
-					<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
 					<div class="preset-gallery-grid">
 						<PresetGalleryCard
 							v-for="preset in playBuiltInPresets"
@@ -1395,6 +1434,8 @@ defineExpose({
 			<TraitSetMini
 				v-if="showPlayMini"
 				:character="props.character"
+				:apply-label="miniOrigin === 'play' ? 'Add to Session' : 'Add to Sheet'"
+				@apply-to-set="applyMiniSet"
 				@close="showPlayMini = false"
 				@saved="playCustomPresets = characterCurioFunctions.getCustomSetPresets()"
 			/>

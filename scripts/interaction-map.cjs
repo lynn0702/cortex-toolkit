@@ -359,13 +359,7 @@ function buildEdges() {
 	add('create_canvas', 'create_inline_presets', 1, ALL_PROFILES, 'Click/tap .btn-presets-toggle ("Presets")');
 
 	add('create_inline_presets', 'create_canvas', 1, ALL_PROFILES, 'Click/tap .btn-inline-close (or add preset)');
-	add(
-		'create_inline_presets',
-		'roster_card_builder',
-		1,
-		ALL_PROFILES,
-		'Click/tap .btn-inline-mini ("New Card in Mini")',
-	);
+	add('create_inline_presets', 'roster_card_builder', 1, ALL_PROFILES, 'Click/tap .btn-inline-mini ("Card Builder")');
 
 	// Sheet root sub-tabs inside StudioPanel:
 	for (const fromTab of ['create_sheet_tab', 'create_page_tab', 'create_theme_tab']) {

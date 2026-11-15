@@ -507,6 +507,18 @@
 	}
 }
 
+.footer-left {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding-left: 0.65rem;
+}
+
+.footer-pp-badge {
+	margin-left: 0;
+	flex-shrink: 0;
+}
+
 .footer-colophon {
 	a {
 		display: block;

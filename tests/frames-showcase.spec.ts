@@ -17,19 +17,21 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		expect(tmpl.character.traitSets.length).toBe(8);
 	});
 
-	it('verifies characterCurioSetPresets contains the 3 new Phase 3c Framed Presets', () => {
-		const ringPreset = characterCurioSetPresets['framed-ring-attributes'];
-		expect(ringPreset, 'framed-ring-attributes preset must exist').toBeDefined();
+	it('verifies characterCurioSetPresets contains the 3 Framed Presets with empty slots', () => {
+		const ringPreset = characterCurioSetPresets['framed-ring'];
+		expect(ringPreset, 'framed-ring preset must exist').toBeDefined();
 		expect(ringPreset?.preset?.view?.frame?.shape).toBe('circle');
 		expect(ringPreset?.preset?.view?.frame?.array).toBe('ring');
+		expect(ringPreset?.preset?.traits?.every((t: any) => t.name === '')).toBe(true);
 
-		const blockPreset = characterCurioSetPresets['framed-chamfer-block'];
-		expect(blockPreset, 'framed-chamfer-block preset must exist').toBeDefined();
+		const blockPreset = characterCurioSetPresets['cut-corner-block'];
+		expect(blockPreset, 'cut-corner-block preset must exist').toBeDefined();
 		expect(blockPreset?.preset?.view?.border?.shape).toBe('block');
 		expect(blockPreset?.preset?.view?.border?.corner).toBe('cut');
+		expect(blockPreset?.preset?.traits?.every((t: any) => t.name === '')).toBe(true);
 
-		const linePreset = characterCurioSetPresets['framed-section-line'];
-		expect(linePreset, 'framed-section-line preset must exist').toBeDefined();
+		const linePreset = characterCurioSetPresets['divider-line'];
+		expect(linePreset, 'divider-line preset must exist').toBeDefined();
 		expect(linePreset?.preset?.view?.border?.shape).toBe('line');
 	});
 

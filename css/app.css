@@ -319,10 +319,17 @@ textarea:focus-visible {
 	}
 
 	.chip-remove,
-	.session-tab-close,
-	.btn-pp-step {
+	.session-tab-close {
 		min-width: 2.5rem;
 		min-height: 2.5rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.btn-pp-step {
+		min-width: 2.75rem;
+		min-height: 2.75rem;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

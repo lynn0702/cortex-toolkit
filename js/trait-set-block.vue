@@ -232,6 +232,17 @@ watch(rootEl, (el) => {
 			:has-header="hasHeader"
 		/>
 
+		<button
+			v-if="submode === 'play' && canRemoveSetInPlay"
+			type="button"
+			class="trait-set-play-remove-btn"
+			title="Remove card from session"
+			aria-label="Remove card from session"
+			@click.stop="removeTraitSet(s)"
+		>
+			<i class="fas fa-times" aria-hidden="true"></i>
+		</button>
+
 		<div class="trait-set-header" v-if="hasHeader && headerMode !== 'bottom'">
 			<div v-if="submode === 'edit' && isCanvasSetActive(s)" class="trait-set-header-inline-edit" @click.stop>
 				<input
@@ -341,16 +352,6 @@ watch(rootEl, (el) => {
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
-					<button
-						v-if="submode === 'play' && canRemoveSetInPlay"
-						type="button"
-						class="trait-set-play-remove-btn"
-						title="Remove card from session"
-						aria-label="Remove card from session"
-						@click.stop="removeTraitSet(s)"
-					>
-						<i class="fas fa-times" aria-hidden="true"></i>
-					</button>
 				</div>
 			</transition>
 		</div>
@@ -535,16 +536,6 @@ watch(rootEl, (el) => {
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
-					<button
-						v-if="submode === 'play' && canRemoveSetInPlay"
-						type="button"
-						class="trait-set-play-remove-btn"
-						title="Remove card from session"
-						aria-label="Remove card from session"
-						@click.stop="removeTraitSet(s)"
-					>
-						<i class="fas fa-times" aria-hidden="true"></i>
-					</button>
 				</div>
 			</transition>
 		</div>
