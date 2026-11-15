@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { cloneDeep } from './clone-deep.ts';
-import { toLayeredEntity } from './layered-materialize.ts';
+import { orderCharacterKeys, toLayeredEntity } from './layered-materialize.ts';
 
 const props = defineProps<{
 	character?: any;
@@ -36,7 +36,6 @@ function fill() {
 		error.value = 'JSON error: ' + String((e as Error)?.message || e).slice(0, 200);
 		return;
 	}
-	text.value = JSON.stringify(doc, null, 2);
 	// Keep the template pin beside the entity (reference only — the full
 	// template object lives in the template store, embedded on file export).
 	const tref = props.character && props.character.sheet && props.character.sheet.template;
@@ -48,11 +47,11 @@ function fill() {
 					? { id: tref.id, version: tref.version || 1 }
 					: null;
 		if (ref) {
-			const withRef = JSON.parse(text.value);
-			withRef.sheet = { template: ref };
-			text.value = JSON.stringify(withRef, null, 2);
+			doc.sheet = { template: ref };
+			doc = orderCharacterKeys(doc);
 		}
 	}
+	text.value = JSON.stringify(doc, null, 2);
 	error.value = '';
 	filledId.value = props.character.id || '';
 	filledText = text.value;
@@ -70,6 +69,9 @@ function apply() {
 	if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
 		error.value = 'JSON error: top level must be a character object';
 		return;
+	}
+	if ((typeof parsed.id !== 'string' || !parsed.id.length) && props.character?.id) {
+		parsed.id = props.character.id;
 	}
 	emit('applyJson', parsed);
 	filledId.value = parsed.id || '';
@@ -107,8 +109,7 @@ watch(
 	<div class="editor json-editor">
 		<div class="editor-label">Character JSON</div>
 		<div class="editor-hint">
-			Stored layered form: name-keyed maps, dice strings, no slots, no internal ids. Apply runs the import path — a
-			syntax error changes nothing on the sheet.
+			Layered JSON. Omitted or null fields use sheet defaults. Apply validates before updating.
 		</div>
 		<div v-if="error" class="json-error" role="alert">{{ error }}</div>
 		<textarea

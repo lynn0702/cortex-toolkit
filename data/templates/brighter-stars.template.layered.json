@@ -1,15 +1,12 @@
 {
 	"id": "brighter-stars",
-	"version": 1,
 	"character": {
-		"id": "template-brighter-stars",
-		"isTemplate": true,
 		"name": "",
-		"game": "Brighter Stars",
 		"pronouns": "",
+		"player": "",
+		"game": "Brighter Stars",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -588,6 +585,9 @@
 				"plural": "XP",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-brighter-stars",
+		"isTemplate": true
+	},
+	"version": 1
 }

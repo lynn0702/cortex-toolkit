@@ -1,15 +1,12 @@
 {
 	"id": "inheritors-character",
-	"version": 1,
 	"character": {
-		"id": "template-inheritors-char",
-		"isTemplate": true,
 		"name": "",
-		"game": "Inheritors",
 		"pronouns": "",
+		"player": "",
+		"game": "Inheritors",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -722,6 +719,9 @@
 				"plural": "Pips",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-inheritors-char",
+		"isTemplate": true
+	},
+	"version": 1
 }

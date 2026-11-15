@@ -1,15 +1,12 @@
 {
 	"id": "inheritors-family",
-	"version": 1,
 	"character": {
-		"id": "template-inheritors-family",
-		"isTemplate": true,
 		"name": "",
-		"game": "Inheritors",
 		"pronouns": "",
+		"player": "",
+		"game": "Inheritors",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -823,6 +820,9 @@
 				},
 				"label": "GMC"
 			}
-		}
-	}
+		},
+		"id": "template-inheritors-family",
+		"isTemplate": true
+	},
+	"version": 1
 }

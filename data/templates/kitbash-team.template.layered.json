@@ -1,15 +1,12 @@
 {
 	"id": "kitbash-team",
-	"version": 1,
 	"character": {
-		"id": "template-kitbash-team",
-		"isTemplate": true,
 		"name": "",
-		"game": "Kit Bash!",
 		"pronouns": "",
+		"player": "",
+		"game": "Kit Bash!",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -175,6 +172,9 @@
 				"plural": "Resources",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-kitbash-team",
+		"isTemplate": true
+	},
+	"version": 1
 }

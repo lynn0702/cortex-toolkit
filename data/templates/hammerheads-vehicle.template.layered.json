@@ -1,15 +1,12 @@
 {
 	"id": "hammerheads-vehicle",
-	"version": 1,
 	"character": {
-		"id": "template-hammerheads-vehicle",
-		"isTemplate": true,
 		"name": "",
-		"game": "Hammerheads",
 		"pronouns": "",
+		"player": "",
+		"game": "Hammerheads",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -393,6 +390,9 @@
 					"value": []
 				}
 			}
-		}
-	}
+		},
+		"id": "template-hammerheads-vehicle",
+		"isTemplate": true
+	},
+	"version": 1
 }

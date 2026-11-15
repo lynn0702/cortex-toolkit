@@ -19,6 +19,7 @@ import {
 	type WordBankKind,
 } from './dice-pool.ts';
 import { characterCurioFunctions } from './functions.ts';
+import { resolvePlotPoints } from './model.ts';
 import RollerOutcome from './roller-outcome.vue';
 
 const props = withDefaults(
@@ -74,8 +75,8 @@ function wordsForPool(poolObj: any, side: 'player' | 'opposition'): WordBankItem
 const activeWordBank = computed<WordBankItem[]>(() => wordsForPool(activePool.value, currentSide.value));
 
 const effectivePlotPoints = computed<number>(() => {
-	if (props.character && props.character.plotPoints !== undefined) {
-		return Math.max(0, Math.floor(Number(props.character.plotPoints) || 0));
+	if (props.character) {
+		return resolvePlotPoints(props.character);
 	}
 	return localPlotPoints.value;
 });

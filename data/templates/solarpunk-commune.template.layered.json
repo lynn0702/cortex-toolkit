@@ -1,15 +1,12 @@
 {
 	"id": "solarpunk-commune",
-	"version": 1,
 	"character": {
-		"id": "template-solarpunk-commune",
-		"isTemplate": true,
 		"name": "",
-		"game": "Solarpunk",
 		"pronouns": "",
+		"player": "",
+		"game": "Solarpunk",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -396,6 +393,9 @@
 				"plural": "Skills",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-solarpunk-commune",
+		"isTemplate": true
+	},
+	"version": 1
 }

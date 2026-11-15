@@ -1,19 +1,16 @@
 {
-	"$schema": "../../schema/0.1/character.schema.json",
-	"version": "0.1",
-	"id": "kaelen-vos-frame-showcase",
 	"name": "Kaelen Vos",
-	"game": "Vanguard Frame Showcase",
 	"pronouns": "they/them",
 	"description": "Horizon Vanguard recon pilot testing experimental frame telemetry.",
+	"game": "Vanguard Frame Showcase",
 	"plotPoints": 2,
+	"notes": "",
+	"tags": [],
 	"portrait": {
 		"url": "",
 		"alt": "",
 		"tags": []
 	},
-	"notes": "",
-	"tags": [],
 	"view": {
 		"pageCount": 2,
 		"labels": {
@@ -899,5 +896,8 @@
 			},
 			"traits": []
 		}
-	]
+	],
+	"id": "kaelen-vos-frame-showcase",
+	"version": "0.1",
+	"$schema": "../../schema/0.1/character.schema.json"
 }

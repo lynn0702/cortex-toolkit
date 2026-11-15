@@ -122,6 +122,7 @@ const BODY_COMPONENTS: Record<string, any> = {
 };
 
 const bodyComponent = computed(() => {
+	if (isName.value) return TraitSetName;
 	const style = getView(traitSet.value)?.style?.body;
 	return (style && BODY_COMPONENTS[style]) || TraitSetList;
 });

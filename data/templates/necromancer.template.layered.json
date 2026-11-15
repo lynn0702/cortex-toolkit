@@ -1,15 +1,12 @@
 {
 	"id": "necromancer",
-	"version": 1,
 	"character": {
-		"id": "template-necromancer",
-		"isTemplate": true,
 		"name": "",
-		"game": "Necromancer",
 		"pronouns": "",
+		"player": "",
+		"game": "Necromancer",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -535,6 +532,9 @@
 					}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-necromancer",
+		"isTemplate": true
+	},
+	"version": 1
 }

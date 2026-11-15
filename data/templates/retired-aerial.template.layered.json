@@ -1,15 +1,12 @@
 {
 	"id": "retired-aerial",
-	"version": 1,
 	"character": {
-		"id": "template-retired-aerial",
-		"isTemplate": true,
 		"name": "",
-		"game": "Retired No More",
 		"pronouns": "",
+		"player": "",
+		"game": "Retired No More",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -520,6 +517,9 @@
 					}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-retired-aerial",
+		"isTemplate": true
+	},
+	"version": 1
 }

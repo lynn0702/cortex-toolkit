@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { orderTemplateKeys } = require('../js/layered-materialize.ts');
 
 const templatesPath = path.join(__dirname, '../js/templates.js');
 let templates = require(templatesPath);
@@ -94,7 +95,7 @@ templates = templates.map((item) => {
 		});
 	}
 
-	return item;
+	return orderTemplateKeys(item);
 });
 
 const output = `/**\n * Character Curio - Library Templates Repository (Blank Sheets)\n */\nconst characterCurioLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = characterCurioLibraryTemplates;\n}\n`;

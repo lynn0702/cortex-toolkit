@@ -1,15 +1,12 @@
 {
 	"id": "trace-20",
-	"version": 1,
 	"character": {
-		"id": "template-trace-20",
-		"isTemplate": true,
 		"name": "",
-		"game": "TRACE 2.0",
 		"pronouns": "",
+		"player": "",
+		"game": "TRACE 2.0",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -628,6 +625,9 @@
 					"value": []
 				}
 			}
-		}
-	}
+		},
+		"id": "template-trace-20",
+		"isTemplate": true
+	},
+	"version": 1
 }

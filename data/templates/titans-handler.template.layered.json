@@ -1,15 +1,12 @@
 {
 	"id": "titans-handler",
-	"version": 1,
 	"character": {
-		"id": "template-titans-handler",
-		"isTemplate": true,
 		"name": "",
-		"game": "Titans vs Leviathans",
 		"pronouns": "",
+		"player": "",
+		"game": "Titans vs Leviathans",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -427,6 +424,9 @@
 				"plural": "Complications",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-titans-handler",
+		"isTemplate": true
+	},
+	"version": 1
 }

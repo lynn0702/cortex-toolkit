@@ -1,26 +1,23 @@
 {
 	"id": "landscape-showcase",
-	"version": 1,
 	"character": {
-		"id": "template-landscape-showcase",
-		"isTemplate": true,
 		"name": "Landscape Showcase",
-		"game": "Showcase",
-		"description": "Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.",
 		"pronouns": "",
+		"description": "Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.",
+		"player": "Layout Reference",
+		"game": "Showcase",
 		"plotPoints": 1,
 		"notes": "",
+		"tags": [
+			"showcase",
+			"landscape"
+		],
 		"portrait": {
 			"url": "",
 			"view": {
 				"location": "header"
 			}
 		},
-		"player": "Layout Reference",
-		"tags": [
-			"showcase",
-			"landscape"
-		],
 		"view": {
 			"nickname": "The Panorama Sheet",
 			"pageOrientation": "landscape",
@@ -1007,6 +1004,9 @@
 					}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-landscape-showcase",
+		"isTemplate": true
+	},
+	"version": 1
 }

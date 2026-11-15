@@ -1,15 +1,12 @@
 {
 	"id": "eidolon-alpha",
-	"version": 1,
 	"character": {
-		"id": "template-eidolon-alpha",
-		"isTemplate": true,
 		"name": "",
-		"game": "Eidolon Alpha",
 		"pronouns": "",
+		"player": "",
+		"game": "Eidolon Alpha",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -564,6 +561,9 @@
 				"plural": "XP",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-eidolon-alpha",
+		"isTemplate": true
+	},
+	"version": 1
 }

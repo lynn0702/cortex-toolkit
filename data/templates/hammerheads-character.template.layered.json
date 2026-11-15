@@ -1,15 +1,12 @@
 {
 	"id": "hammerheads-character",
-	"version": 1,
 	"character": {
-		"id": "template-hammerheads-character",
-		"isTemplate": true,
 		"name": "",
-		"game": "Hammerheads",
 		"pronouns": "",
+		"player": "",
+		"game": "Hammerheads",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -635,6 +632,9 @@
 				"plural": "Crisis Pools",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-hammerheads-character",
+		"isTemplate": true
+	},
+	"version": 1
 }

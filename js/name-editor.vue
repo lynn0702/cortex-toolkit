@@ -14,6 +14,7 @@ import {
 	resolveSetPillar,
 	getPillarLabel,
 	hasTemplateListing,
+	resolvePlotPoints,
 	type Character,
 	type TemplateListing,
 	type Visibility,
@@ -159,6 +160,11 @@ function setNameTraitLabel(key: string, val: string) {
 
 function nameTraitVisibility(key: string) {
 	const t = characterCurioFunctions.getNameTrait(props.character, key);
+	if (!t && ['pronouns', 'description', 'game', 'player', 'notes', 'portrait'].includes(key)) {
+		const hasValue =
+			key === 'portrait' ? Boolean(props.character?.portrait?.url) : Boolean((props.character as any)?.[key]);
+		if (!hasValue) return 'hidden';
+	}
 	const v = getView(t) as Record<string, unknown> | undefined;
 	const word = v?.visibility;
 	if (word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown') return word;
@@ -189,7 +195,7 @@ function ensureNameSet() {
 	if (!Array.isArray(props.character.traitSets)) props.character.traitSets = [];
 	let idx = props.character.traitSets.findIndex((s: any) => isNameSet(s));
 	if (idx === -1) {
-		const set: any = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
+		const set: any = { id: 'name', name: 'Name', traits: [] };
 		props.character.traitSets.unshift(set);
 		idx = 0;
 	}
@@ -237,9 +243,7 @@ function setSheetRatingDie(size: number | null) {
 	if (size === null || isSheetRatingDie(size)) {
 		delete set.rating;
 	} else {
-		const prevRange = Array.isArray(sheetRating.value?.range)
-			? [...(sheetRating.value!.range as number[])]
-			: [4, 6, 8, 10, 12];
+		const prevRange = Array.isArray(sheetRating.value?.range) ? [...(sheetRating.value!.range as number[])] : undefined;
 		setRatingDie(set as Record<string, any>, size, prevRange);
 	}
 	updateCharacter(props.character);
@@ -310,12 +314,12 @@ const plotPoints = computed({
 		if (rating && rating.type === 'Counter' && Array.isArray(rating.value) && typeof rating.value[0] === 'number') {
 			return rating.value[0];
 		}
-		return Number(props.character?.plotPoints) || 0;
+		return resolvePlotPoints(props.character);
 	},
 	set(val: any) {
 		const n = Math.max(0, parseInt(val, 10) || 0);
 		setCharacterProperty('plotPoints', n);
-		const t = characterCurioFunctions.ensureNameTrait(props.character, 'plotPoints');
+		const t = characterCurioFunctions.getNameTrait(props.character, 'plotPoints');
 		if (t) {
 			(t as unknown as Record<string, any>).rating = { type: 'Counter', value: [n], range: [0, 20] };
 			if ((t as unknown as Record<string, unknown>).spendable === undefined) {

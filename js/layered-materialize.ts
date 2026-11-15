@@ -27,8 +27,8 @@ export interface RenderTrait {
 	name?: string;
 	description?: string | null;
 	traits?: RenderTrait[] | null;
-	tags?: unknown[];
-	custom?: Record<string, unknown>;
+	tags?: unknown[] | null;
+	custom?: Record<string, unknown> | null;
 	xp?: unknown;
 	counter?: unknown;
 	_lid?: string;
@@ -41,8 +41,8 @@ export interface RenderSet {
 	name?: string;
 	description?: string | null;
 	traits?: RenderTrait[] | null;
-	tags?: unknown[];
-	custom?: Record<string, unknown>;
+	tags?: unknown[] | null;
+	custom?: Record<string, unknown> | null;
 	[key: string]: unknown;
 }
 
@@ -50,6 +50,118 @@ export interface RenderCharacter {
 	description?: string | null;
 	traitSets?: RenderSet[];
 	[key: string]: unknown;
+}
+
+const CHARACTER_LEADING_KEYS = [
+	'name',
+	'nickname',
+	'pronouns',
+	'description',
+	'player',
+	'game',
+	'plotPoints',
+	'notes',
+	'tags',
+	'portrait',
+	'view',
+	'custom',
+	'sets',
+	'traitSets',
+	'removedSets',
+	'prefs',
+	'sheet',
+	'template',
+] as const;
+
+const CHARACTER_TRAILING_KEYS = [
+	'id',
+	'isTemplate',
+	'dateCreated',
+	'dateModified',
+	'dateTouched',
+	'version',
+	'$schema',
+] as const;
+
+const TEMPLATE_LEADING_KEYS = ['id', 'character', 'userSaved'] as const;
+const TEMPLATE_TRAILING_KEYS = ['updatedAt', 'version', '$schema'] as const;
+
+/**
+ * Return a shallow copy of a character object with human-editable content and
+ * layout fields first and housekeeping metadata (`id`, `isTemplate`, `date*`,
+ * `version`, `$schema`) last.
+ */
+export function orderCharacterKeys<T extends Record<string, unknown>>(obj: T): T {
+	if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+	const out: Record<string, unknown> = {};
+	const trailingSet = new Set<string>(CHARACTER_TRAILING_KEYS);
+	const placed = new Set<string>();
+	for (const k of CHARACTER_LEADING_KEYS) {
+		if (Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined) {
+			out[k] = obj[k];
+			placed.add(k);
+		}
+	}
+	for (const k of Object.keys(obj)) {
+		if (placed.has(k) || trailingSet.has(k) || obj[k] === undefined) continue;
+		out[k] = obj[k];
+		placed.add(k);
+	}
+	for (const k of CHARACTER_TRAILING_KEYS) {
+		if (Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined) {
+			out[k] = obj[k];
+		}
+	}
+	return out as T;
+}
+
+/**
+ * Return a shallow copy of a sheet-template wrapper object with `id` and
+ * `character` first and `updatedAt`, `version`, `$schema` last.
+ */
+export function orderTemplateKeys<T extends Record<string, unknown>>(obj: T): T {
+	if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+	const out: Record<string, unknown> = {};
+	const trailingSet = new Set<string>(TEMPLATE_TRAILING_KEYS);
+	const placed = new Set<string>();
+	for (const k of TEMPLATE_LEADING_KEYS) {
+		if (Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined) {
+			out[k] =
+				k === 'character' && obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])
+					? orderCharacterKeys(obj[k] as Record<string, unknown>)
+					: obj[k];
+			placed.add(k);
+		}
+	}
+	for (const k of Object.keys(obj)) {
+		if (placed.has(k) || trailingSet.has(k) || obj[k] === undefined) continue;
+		out[k] = obj[k];
+		placed.add(k);
+	}
+	for (const k of TEMPLATE_TRAILING_KEYS) {
+		if (Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined) {
+			out[k] = obj[k];
+		}
+	}
+	return out as T;
+}
+
+function isDefaultEmptyPortrait(v: unknown): boolean {
+	if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+	const p = v as Record<string, unknown>;
+	if (typeof p.url === 'string' && p.url.length > 0) return false;
+	if (typeof p.alt === 'string' && p.alt.length > 0) return false;
+	if (Array.isArray(p.tags) && p.tags.length > 0) return false;
+	if (p.custom && typeof p.custom === 'object' && !Array.isArray(p.custom) && Object.keys(p.custom).length > 0) {
+		return false;
+	}
+	if (p.view && typeof p.view === 'object' && !Array.isArray(p.view)) {
+		const vk = Object.keys(p.view as Record<string, unknown>);
+		if (vk.some((k) => !(k === 'alignment' && (p.view as Record<string, unknown>).alignment === 'top-center'))) {
+			return false;
+		}
+	}
+	return true;
 }
 
 const clone = cloneDeep;
@@ -355,7 +467,7 @@ export function materializeCharacter(
 		traitSets.push(buildSet(null, eset, name));
 	}
 	out.traitSets = traitSets;
-	return out;
+	return orderCharacterKeys(out as Record<string, unknown>) as RenderCharacter;
 }
 
 // ---------- render -> layered (serialize) ----------
@@ -419,6 +531,14 @@ function layeredSetFrom(set: RenderSet): SetObject {
 			!Object.keys(v as Record<string, unknown>).length
 		)
 			continue;
+		if (
+			k === 'view' &&
+			v &&
+			typeof v === 'object' &&
+			!Array.isArray(v) &&
+			!Object.keys(v as Record<string, unknown>).length
+		)
+			continue;
 		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
 		if (k === 'description' && v === '') continue;
 		s[k] = clone(v);
@@ -428,7 +548,7 @@ function layeredSetFrom(set: RenderSet): SetObject {
 		if (!tr || typeof tr.name !== 'string' || !tr.name.length) continue;
 		traits[tr.name] = layeredTraitFrom(tr);
 	}
-	s.traits = traits;
+	if (Object.keys(traits).length) s.traits = traits;
 	return s as SetObject;
 }
 
@@ -441,9 +561,39 @@ function layeredSetFrom(set: RenderSet): SetObject {
  */
 export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unknown> {
 	const entity: Record<string, unknown> = {};
+	const hasTemplate =
+		Boolean(ch.sheet && typeof ch.sheet === 'object' && (ch.sheet as Record<string, unknown>).template) ||
+		ch.template !== undefined;
+	const isStandalonePlayer = !hasTemplate && ch.isTemplate !== true;
 	for (const [k, v] of Object.entries(ch)) {
 		if (k === 'traitSets' || k === 'sheet' || k === 'removedSets') continue;
+		if (k === 'isTemplate' && v !== true) continue;
 		if (k === 'description' && v === '') continue;
+		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
+		if (
+			k === 'custom' &&
+			v &&
+			typeof v === 'object' &&
+			!Array.isArray(v) &&
+			!Object.keys(v as Record<string, unknown>).length
+		)
+			continue;
+		if (k === 'view' && v && typeof v === 'object' && !Array.isArray(v)) {
+			const bag = clone(v) as Record<string, unknown>;
+			if (isStandalonePlayer && bag.pageCount === 1) {
+				delete bag.pageCount;
+			}
+			if (!Object.keys(bag).length) continue;
+			entity.view = bag;
+			continue;
+		}
+		if (isStandalonePlayer) {
+			if ((k === 'player' || k === 'game' || k === 'pronouns' || k === 'notes' || k === 'nickname') && v === '') {
+				continue;
+			}
+			if (k === 'plotPoints' && v === 1) continue;
+			if (k === 'portrait' && isDefaultEmptyPortrait(v)) continue;
+		}
 		entity[k] = clone(v);
 	}
 	const sets: Record<string, SetObject> = {};
@@ -458,5 +608,5 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 		sets[key] = layeredSetFrom(set);
 	}
 	entity.sets = sets;
-	return entity;
+	return orderCharacterKeys(entity);
 }

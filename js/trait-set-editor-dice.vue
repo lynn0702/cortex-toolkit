@@ -16,6 +16,7 @@ import {
 
 const {
 	needsDiceUI,
+	styleBody,
 	isRatingIncluded,
 	toggleRatingOption,
 	getDieDisplayValue,
@@ -41,6 +42,22 @@ const RATING_TYPES = ['Die', 'Dice', 'Counter', 'Pip'] as const;
 
 const ratingType = computed(() => getRating(traitSet.value)?.type ?? null);
 
+const effectiveRatingType = computed<'Die' | 'Dice' | 'Counter' | 'Pip' | null>(() => {
+	const own = ratingType.value;
+	if (own) return own;
+	const ts = traitSet.value;
+	const traits = Array.isArray(ts?.traits) ? ts.traits : [];
+	const childTypes = traits.map((t: any) => resolveRating(t, ts ? [ts] : [])?.type).filter(Boolean);
+	if (childTypes.length > 0 && childTypes.every((t) => t === childTypes[0])) {
+		return childTypes[0] as 'Die' | 'Dice' | 'Counter' | 'Pip';
+	}
+	return null;
+});
+
+const isDiceFamily = computed(() => effectiveRatingType.value !== 'Counter' && effectiveRatingType.value !== 'Pip');
+
+const showRatingSection = computed(() => needsDiceUI.value && styleBody.value !== 'list' && styleBody.value !== 'pips');
+
 const confirmRatingChange = ref<'Counter' | 'Die' | 'Dice' | 'Pip' | null>(null);
 
 const setDieRange = computed(() => resolveRange(traitSet.value));
@@ -61,7 +78,7 @@ function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	const ts = traitSet.value as unknown as Record<string, any> | null;
 	if (!ts) return;
 	const cur = getRating(ts);
-	if (cur?.type === type) return;
+	if ((cur?.type ?? effectiveRatingType.value) === type) return;
 	const hasChildValues =
 		Array.isArray(ts.traits) &&
 		ts.traits.some(
@@ -80,35 +97,49 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	if (!ts) return;
 	const cur = getRating(ts);
 	if (cur?.type === type) return;
+	const scale = ratingLadder.value;
+	const size = Array.isArray(scale) && scale.length ? scale[0] : 8;
 	if (Array.isArray(ts.traits)) {
 		ts.traits.forEach((ct: any) => {
-			if (ct && typeof ct === 'object' && ct.rating) {
-				ct.rating.value = [];
+			if (ct && typeof ct === 'object') {
+				if (ct.rating && typeof ct.rating === 'object') {
+					ct.rating = {
+						value: type === 'Counter' ? [0] : type === 'Pip' ? [false] : [size],
+					};
+				}
+				if (type !== 'Dice' && 'pool' in ct) delete ct.pool;
+				if ('isOut' in ct) delete ct.isOut;
 			}
 		});
 	}
-	const scale = ratingLadder.value;
-	const size = Array.isArray(scale) && scale.length ? scale[0] : 8;
 	const ownPrevRange = cur && Array.isArray(cur.range) && cur.range.length ? [...cur.range] : undefined;
 	if ((cur?.type === 'Die' || cur?.type === 'Dice') && (type === 'Die' || type === 'Dice')) {
 		const dice = cur ? ratingDice(cur) : [];
 		const list = dice.length ? dice : [size];
-		if (type === 'Die') setRatingDie(ts, list[0], ownPrevRange);
-		else
+		if (type === 'Die') {
+			setRatingDie(ts, list[0], ownPrevRange);
+			delete ts.pool;
+		} else {
 			ts.rating = {
 				type: 'Dice',
 				value: list,
 				...(ownPrevRange ? { range: ownPrevRange } : {}),
 				...(cur && (cur as any).out === true ? { out: true } : {}),
 			};
+			ts.pool = true;
+		}
 	} else if (type === 'Die') {
 		setRatingDie(ts, size);
+		delete ts.pool;
 	} else if (type === 'Dice') {
 		ts.rating = { type: 'Dice', value: [size] };
+		ts.pool = true;
 	} else if (type === 'Counter') {
 		ts.rating = { type: 'Counter', value: [0], range: [0, 20] };
+		delete ts.pool;
 	} else {
 		ts.rating = { type: 'Pip', value: [false] };
+		delete ts.pool;
 	}
 	commitCharacter();
 }
@@ -118,6 +149,7 @@ function clearSetRating() {
 	if (!ts) return;
 	preserveInheritedTraitTypes(ts);
 	delete ts.rating;
+	delete ts.pool;
 	commitCharacter();
 }
 
@@ -201,8 +233,18 @@ function stepDownSetDieAtIndex(index: number) {
 	}
 }
 
+function firstInheritedChildRating(expectedType: 'Counter' | 'Pip') {
+	const ts = traitSet.value;
+	const traits = Array.isArray(ts?.traits) ? ts.traits : [];
+	for (const ct of traits) {
+		const r = resolveRating(ct, ts ? [ts] : []);
+		if (r?.type === expectedType) return r;
+	}
+	return null;
+}
+
 function counterBounds(): [number, number] {
-	const r = getRating(traitSet.value);
+	const r = getRating(traitSet.value) ?? firstInheritedChildRating('Counter');
 	if (r && r.type === 'Counter') {
 		const nums = (r.range || []).filter((n): n is number => typeof n === 'number');
 		if (nums.length >= 2) {
@@ -216,7 +258,7 @@ function counterBounds(): [number, number] {
 
 const setCounterNumber = computed({
 	get() {
-		const r = getRating(traitSet.value);
+		const r = getRating(traitSet.value) ?? firstInheritedChildRating('Counter');
 		if (r && r.type === 'Counter' && typeof r.value[0] === 'number') return r.value[0];
 		return 0;
 	},
@@ -246,7 +288,8 @@ function commitCounterBound(which: 0 | 1, event: Event) {
 			hi = n;
 			if (hi < lo) lo = hi;
 		}
-		const cur = typeof getRating(ts)?.value[0] === 'number' ? ((getRating(ts) as any).value[0] as number) : lo;
+		const curSource = getRating(ts) ?? firstInheritedChildRating('Counter');
+		const cur = typeof curSource?.value[0] === 'number' ? (curSource.value[0] as number) : lo;
 		ts.rating = { type: 'Counter', value: [Math.max(lo, Math.min(hi, cur))], range: [lo, hi] };
 		commitCharacter();
 	}
@@ -254,13 +297,14 @@ function commitCounterBound(which: 0 | 1, event: Event) {
 }
 
 const setPipBubbleCount = computed(() => {
-	const r = getRating(traitSet.value);
+	const r = getRating(traitSet.value) ?? firstInheritedChildRating('Pip');
 	if (!r || r.type !== 'Pip') return 0;
+	if (Array.isArray(r.range) && r.range[0]) return r.range[0];
 	return r.value.length;
 });
 
 function pipBubbleAt(index: number): boolean {
-	const r = getRating(traitSet.value);
+	const r = getRating(traitSet.value) ?? firstInheritedChildRating('Pip');
 	return Boolean(r && r.type === 'Pip' && r.value[index] === true);
 }
 
@@ -268,7 +312,7 @@ function togglePipBubble(index: number) {
 	const ts = traitSet.value as unknown as Record<string, any> | null;
 	if (!ts) return;
 	const n = Math.max(setPipBubbleCount.value, index + 1);
-	const cur = getRating(ts);
+	const cur = getRating(ts) ?? firstInheritedChildRating('Pip');
 	const list: boolean[] = [];
 	for (let i = 0; i < n; i++) {
 		list.push(Boolean(cur && cur.type === 'Pip' && cur.value[i] === true));
@@ -282,12 +326,25 @@ function updatePipBubbleCount(count: number) {
 	const ts = traitSet.value as unknown as Record<string, any> | null;
 	if (!ts) return;
 	const clamped = Math.max(1, Math.min(100, Math.floor(Number(count)) || 1));
-	const cur = getRating(ts);
+	const cur = getRating(ts) ?? firstInheritedChildRating('Pip');
 	const list: boolean[] = [];
 	for (let i = 0; i < clamped; i++) {
 		list.push(Boolean(cur && cur.type === 'Pip' && cur.value[i] === true));
 	}
 	ts.rating = { type: 'Pip', value: list };
+	if (Array.isArray(ts.traits)) {
+		ts.traits.forEach((ct: any) => {
+			if (!ct || typeof ct !== 'object' || !ct.rating || typeof ct.rating !== 'object') return;
+			const resolvedChild = resolveRating(ct, [ts]);
+			if (resolvedChild?.type === 'Pip' && ct.rating.type === 'Pip') {
+				const childList: boolean[] = [];
+				for (let i = 0; i < clamped; i++) {
+					childList.push(Boolean(Array.isArray(ct.rating.value) && ct.rating.value[i] === true));
+				}
+				ct.rating = { type: 'Pip', value: childList };
+			}
+		});
+	}
 	commitCharacter();
 }
 
@@ -300,52 +357,9 @@ function commitPipBubbleCount(event: Event) {
 </script>
 
 <template>
-	<!-- RANGE (OPT IN/OUT OF RATINGS) -->
-	<div class="editor-field" v-if="needsDiceUI">
-		<label>Range</label>
-		<div class="rating-scale-container">
-			<div class="rating-scale-chips">
-				<button
-					type="button"
-					v-for="size in [4, 6, 8, 10, 12]"
-					:key="size"
-					class="rating-scale-chip"
-					:class="{ active: isRatingIncluded(size) }"
-					:aria-pressed="isRatingIncluded(size)"
-					:aria-label="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
-					@click.stop="toggleRatingOption(size)"
-					:title="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
-				>
-					<span v-html="getDieDisplayValue(size, isRatingIncluded(size))"></span>
-				</button>
-				<button
-					type="button"
-					class="rating-scale-chip rating-scale-chip-out"
-					:class="{ active: includeOut }"
-					:aria-pressed="includeOut"
-					@click.stop="includeOut = !includeOut"
-					:title="(includeOut ? 'Disable' : 'Enable') + ' Out marker'"
-				>
-					<span class="chip-label chip-out-label">OUT</span>
-				</button>
-			</div>
-		</div>
-		<div class="editor-row-between mt-sm" v-if="includeOut">
-			<label :for="'trait-set-' + traitSetID + '-end-word'" class="m-0">End Word</label>
-			<input
-				type="text"
-				:id="'trait-set-' + traitSetID + '-end-word'"
-				name="endWord"
-				v-model="endWord"
-				placeholder="OUT"
-				class="editor-input-short"
-			/>
-		</div>
-	</div>
-
-	<!-- RATING (THE SET NODE'S OWN; UNRATED TRAITS FALL THROUGH TO IT) -->
-	<div class="editor-field" v-if="needsDiceUI">
-		<label>Rating</label>
+	<!-- RATING + CONNECTED DISPLAY & RANGE -->
+	<div class="editor-field" v-if="showRatingSection">
+		<div class="editor-label">Rating</div>
 
 		<!-- Warning Prompt if child values would be cleared -->
 		<div class="editor-warning-prompt editor-warning-banner mb-sm" v-if="confirmRatingChange">
@@ -363,129 +377,201 @@ function commitPipBubbleCount(event: Event) {
 		</div>
 
 		<!-- TYPE (Die | Dice | Counter | Pip) -->
-		<div class="editor-button-group mb-sm">
+		<div class="editor-button-group mb-sm" role="group" aria-label="Rating type">
 			<button
 				type="button"
 				v-for="rt in RATING_TYPES"
 				:key="'set-rating-type-' + rt"
 				class="editor-group-btn"
-				:class="{ active: ratingType === rt }"
-				:aria-pressed="ratingType === rt"
+				:class="{ active: (ratingType ?? effectiveRatingType ?? 'Die') === rt }"
+				:aria-pressed="(ratingType ?? effectiveRatingType ?? 'Die') === rt"
 				@click.stop="requestRatingType(rt)"
 			>
 				{{ rt }}
 			</button>
 		</div>
 
-		<!-- SINGLE DIE SELECTOR -->
-		<div class="rating-scale-container" v-if="ratingType === 'Die' || ratingType === null">
-			<div class="rating-scale-chips set-rating-die-chips" :class="{ 'has-out-chip': shouldShowSetOut }">
-				<button
-					type="button"
-					class="rating-scale-chip set-rating-die-none"
-					:class="{ active: ratingType === null || (ratingType === 'Die' && setRating === null && !isSetOut) }"
-					:aria-pressed="ratingType === null || (ratingType === 'Die' && setRating === null && !isSetOut)"
-					@click.stop="toggleSetRating(null)"
-					title="No rating"
-				>
-					<span class="chip-label">None</span>
-				</button>
-				<button
-					type="button"
-					v-for="size in setDieRange"
-					:key="size"
-					class="rating-scale-chip"
-					:class="{ active: ratingType === 'Die' && setRating === size && !isSetOut }"
-					:aria-pressed="ratingType === 'Die' && setRating === size && !isSetOut"
-					:aria-label="(setRating === size && !isSetOut ? 'Clear d' : 'Set d') + size"
-					@click.stop="toggleSetRating(size)"
-					:title="
-						(setRating === size && !isSetOut ? 'Clear the rating (was d' : 'Set the rating to d') +
-						size +
-						(setRating === size && !isSetOut ? ')' : '')
-					"
-				>
-					<span v-html="getDieDisplayValue(size, ratingType === 'Die' && setRating === size && !isSetOut)"></span>
-				</button>
-				<button
-					type="button"
-					v-if="shouldShowSetOut"
-					class="rating-scale-chip rating-scale-chip-out"
-					:class="{ active: isSetOut }"
-					:aria-pressed="isSetOut"
-					@click.stop="toggleSetOutValue"
-					title="Out"
-				>
-					<span class="chip-label chip-out-label">{{ setOutLabel }}</span>
-				</button>
+		<!-- CONNECTED DICE DISPLAY & RANGE (Die / Dice only; hidden for Pip & Counter) -->
+		<div class="rating-connected-group" v-if="isDiceFamily">
+			<div class="rating-connected-sub" v-if="effectiveRatingType !== 'Dice'">
+				<div class="editor-sub-label">Rating Display</div>
+				<div class="editor-button-group" role="group" aria-label="Rating Display">
+					<button
+						type="button"
+						class="editor-group-btn"
+						:class="{ active: ratingDisplay === 'rating' }"
+						:aria-pressed="ratingDisplay === 'rating'"
+						@click.stop="ratingDisplay = 'rating'"
+					>
+						Single Die
+					</button>
+					<button
+						type="button"
+						class="editor-group-btn"
+						:class="{ active: ratingDisplay === 'track' }"
+						:aria-pressed="ratingDisplay === 'track'"
+						@click.stop="ratingDisplay = 'track'"
+					>
+						Full Track
+					</button>
+				</div>
 			</div>
-		</div>
 
-		<!-- DICE LIST EDITOR -->
-		<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
-			<div class="editor-die-steppers">
-				<div
-					v-for="size in setDieRange"
-					:key="'set-stepper-' + size"
-					class="die-stepper-item"
-					:class="{ active: getSetDieCount(size) > 0 }"
-				>
-					<span v-html="getDieDisplayValue(size, getSetDieCount(size) > 0)"></span>
-					<div class="stepper-controls">
+			<div class="rating-connected-sub">
+				<div class="editor-sub-label">Range</div>
+				<div class="rating-scale-container">
+					<div class="rating-scale-chips" role="group" aria-label="Range">
 						<button
 							type="button"
-							class="btn-step"
-							@click.stop="removeDieFromSet(size)"
-							:disabled="getSetDieCount(size) === 0"
-							:aria-label="'Remove d' + size"
-							:title="'Remove d' + size"
+							v-for="size in [4, 6, 8, 10, 12]"
+							:key="size"
+							class="rating-scale-chip"
+							:class="{ active: isRatingIncluded(size) }"
+							:aria-pressed="isRatingIncluded(size)"
+							:aria-label="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
+							@click.stop="toggleRatingOption(size)"
+							:title="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
 						>
-							-
+							<span v-html="getDieDisplayValue(size, isRatingIncluded(size))"></span>
 						</button>
-						<span class="stepper-count">{{ getSetDieCount(size) }}</span>
 						<button
 							type="button"
-							class="btn-step"
-							@click.stop="addDieToSet(size)"
-							:aria-label="'Add d' + size"
-							:title="'Add d' + size"
+							class="rating-scale-chip rating-scale-chip-out"
+							:class="{ active: includeOut }"
+							:aria-pressed="includeOut"
+							@click.stop="includeOut = !includeOut"
+							:title="(includeOut ? 'Disable' : 'Enable') + ' Out marker'"
 						>
-							+
+							<span class="chip-label chip-out-label">OUT</span>
+						</button>
+					</div>
+				</div>
+				<div class="editor-row-between mt-sm" v-if="includeOut">
+					<label :for="'trait-set-' + traitSetID + '-end-word'" class="m-0 editor-sub-label">End Word</label>
+					<input
+						type="text"
+						:id="'trait-set-' + traitSetID + '-end-word'"
+						name="endWord"
+						v-model="endWord"
+						placeholder="OUT"
+						class="editor-input-short"
+					/>
+				</div>
+			</div>
+
+			<!-- SINGLE DIE DEFAULT SELECTOR -->
+			<div class="rating-connected-sub" v-if="effectiveRatingType === 'Die' || effectiveRatingType === null">
+				<div class="editor-sub-label">Default</div>
+				<div class="rating-scale-container">
+					<div class="rating-scale-chips set-rating-die-chips" :class="{ 'has-out-chip': shouldShowSetOut }">
+						<button
+							type="button"
+							class="rating-scale-chip set-rating-die-none"
+							:class="{ active: ratingType === null || (ratingType === 'Die' && setRating === null && !isSetOut) }"
+							:aria-pressed="ratingType === null || (ratingType === 'Die' && setRating === null && !isSetOut)"
+							@click.stop="toggleSetRating(null)"
+							title="No rating"
+						>
+							<span class="chip-label">None</span>
+						</button>
+						<button
+							type="button"
+							v-for="size in setDieRange"
+							:key="size"
+							class="rating-scale-chip"
+							:class="{ active: ratingType === 'Die' && setRating === size && !isSetOut }"
+							:aria-pressed="ratingType === 'Die' && setRating === size && !isSetOut"
+							:aria-label="(setRating === size && !isSetOut ? 'Clear default d' : 'Set default d') + size"
+							@click.stop="toggleSetRating(size)"
+							:title="
+								(setRating === size && !isSetOut ? 'Clear the rating (was d' : 'Set the rating to d') +
+								size +
+								(setRating === size && !isSetOut ? ')' : '')
+							"
+						>
+							<span v-html="getDieDisplayValue(size, ratingType === 'Die' && setRating === size && !isSetOut)"></span>
+						</button>
+						<button
+							type="button"
+							v-if="shouldShowSetOut"
+							class="rating-scale-chip rating-scale-chip-out"
+							:class="{ active: isSetOut }"
+							:aria-pressed="isSetOut"
+							@click.stop="toggleSetOutValue"
+							title="Out"
+						>
+							<span class="chip-label chip-out-label">{{ setOutLabel }}</span>
 						</button>
 					</div>
 				</div>
 			</div>
 
-			<div class="multidie-active-list" v-if="setDiceList.length > 0">
-				<span class="sub-label">Pool ({{ setDiceList.length }})</span>
-				<div class="multidie-chips">
-					<div v-for="(dieSize, dIdx) in setDiceList" :key="dIdx" class="multidie-chip">
-						<span v-html="getDieDisplayValue(dieSize, true)"></span>
-						<button
-							type="button"
-							class="btn-step-down"
-							@click.stop="stepDownSetDieAtIndex(dIdx)"
-							title="Step down die size"
-							:aria-label="'Step down d' + dieSize"
-						>
-							-2
-						</button>
-						<button
-							type="button"
-							class="btn-remove-die"
-							@click.stop="removeSetDieAtIndex(dIdx)"
-							title="Remove die"
-							:aria-label="'Remove d' + dieSize"
-						>
-							×
-						</button>
+			<!-- DICE LIST EDITOR -->
+			<div class="editor-multidie-container" v-else-if="effectiveRatingType === 'Dice'">
+				<div class="editor-die-steppers">
+					<div
+						v-for="size in setDieRange"
+						:key="'set-stepper-' + size"
+						class="die-stepper-item"
+						:class="{ active: getSetDieCount(size) > 0 }"
+					>
+						<span v-html="getDieDisplayValue(size, getSetDieCount(size) > 0)"></span>
+						<div class="stepper-controls">
+							<button
+								type="button"
+								class="btn-step"
+								@click.stop="removeDieFromSet(size)"
+								:disabled="getSetDieCount(size) === 0"
+								:aria-label="'Remove d' + size"
+								:title="'Remove d' + size"
+							>
+								-
+							</button>
+							<span class="stepper-count">{{ getSetDieCount(size) }}</span>
+							<button
+								type="button"
+								class="btn-step"
+								@click.stop="addDieToSet(size)"
+								:aria-label="'Add d' + size"
+								:title="'Add d' + size"
+							>
+								+
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="multidie-active-list" v-if="setDiceList.length > 0">
+					<span class="sub-label">Pool ({{ setDiceList.length }})</span>
+					<div class="multidie-chips">
+						<div v-for="(dieSize, dIdx) in setDiceList" :key="dIdx" class="multidie-chip">
+							<span v-html="getDieDisplayValue(dieSize, true)"></span>
+							<button
+								type="button"
+								class="btn-step-down"
+								@click.stop="stepDownSetDieAtIndex(dIdx)"
+								title="Step down die size"
+								:aria-label="'Step down d' + dieSize"
+							>
+								-2
+							</button>
+							<button
+								type="button"
+								class="btn-remove-die"
+								@click.stop="removeSetDieAtIndex(dIdx)"
+								title="Remove die"
+								:aria-label="'Remove d' + dieSize"
+							>
+								×
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- COUNTER NUMBER + RANGE -->
-		<div v-else-if="ratingType === 'Counter'">
+		<div v-else-if="effectiveRatingType === 'Counter'">
 			<div class="editor-row-inline flex-wrap">
 				<div class="flex-1 min-w-5rem">
 					<label :for="'trait-set-' + traitSetID + '-counter-number'" class="editor-sub-label">Count</label>
@@ -525,84 +611,61 @@ function commitPipBubbleCount(event: Event) {
 			</div>
 		</div>
 
-		<!-- PIP BUBBLE ROW -->
-		<div v-else-if="ratingType === 'Pip'">
+		<!-- PIP BUBBLES + INLINE COUNTER -->
+		<div v-else-if="effectiveRatingType === 'Pip'">
 			<div class="pip-editor-row">
-				<div
-					v-for="bubbleIndex in setPipBubbleCount"
-					:key="'set-pip-' + bubbleIndex"
-					class="pip-bubble-wrap"
-					tabindex="0"
-					role="checkbox"
-					:aria-checked="pipBubbleAt(bubbleIndex - 1) ? 'true' : 'false'"
-					:aria-label="'Pip ' + bubbleIndex"
-					@keydown.enter.prevent="togglePipBubble(bubbleIndex - 1)"
-					@keydown.space.prevent="togglePipBubble(bubbleIndex - 1)"
-					@click.stop="togglePipBubble(bubbleIndex - 1)"
-					:title="pipBubbleAt(bubbleIndex - 1) ? 'Unfill bubble' : 'Fill bubble'"
-				>
-					<div class="pip-bubble" :class="{ filled: pipBubbleAt(bubbleIndex - 1) }"></div>
+				<div class="pip-editor-bubbles" role="group" aria-label="Pips">
+					<div
+						v-for="bubbleIndex in setPipBubbleCount"
+						:key="'set-pip-' + bubbleIndex"
+						class="pip-bubble-wrap"
+						tabindex="0"
+						role="checkbox"
+						:aria-checked="pipBubbleAt(bubbleIndex - 1) ? 'true' : 'false'"
+						:aria-label="'Pip ' + bubbleIndex"
+						@keydown.enter.prevent="togglePipBubble(bubbleIndex - 1)"
+						@keydown.space.prevent="togglePipBubble(bubbleIndex - 1)"
+						@click.stop="togglePipBubble(bubbleIndex - 1)"
+						:title="pipBubbleAt(bubbleIndex - 1) ? 'Unfill bubble' : 'Fill bubble'"
+					>
+						<div class="pip-bubble" :class="{ filled: pipBubbleAt(bubbleIndex - 1) }"></div>
+					</div>
+					<span class="pip-editor-count" v-if="setPipBubbleCount === 0">No bubbles</span>
 				</div>
-				<span class="pip-editor-count" v-if="setPipBubbleCount === 0">No bubbles</span>
+				<div class="num-stepper pip-count-stepper">
+					<button
+						type="button"
+						class="btn-step"
+						@click.stop="updatePipBubbleCount(setPipBubbleCount - 1)"
+						:disabled="setPipBubbleCount <= 1"
+						title="Fewer bubbles"
+						aria-label="Fewer bubbles"
+					>
+						-
+					</button>
+					<input
+						type="number"
+						:id="'trait-set-' + traitSetID + '-pip-count'"
+						name="setPipBubbleCount"
+						min="1"
+						max="100"
+						:value="setPipBubbleCount"
+						@change="commitPipBubbleCount($event)"
+						inputmode="numeric"
+						aria-label="Bubble count"
+						class="editor-input-short"
+					/>
+					<button
+						type="button"
+						class="btn-step"
+						@click.stop="updatePipBubbleCount(setPipBubbleCount + 1)"
+						title="More bubbles"
+						aria-label="More bubbles"
+					>
+						+
+					</button>
+				</div>
 			</div>
-			<div class="num-stepper mt-sm">
-				<button
-					type="button"
-					class="btn-step"
-					@click.stop="updatePipBubbleCount(setPipBubbleCount - 1)"
-					:disabled="setPipBubbleCount <= 1"
-					title="Fewer bubbles"
-					aria-label="Fewer bubbles"
-				>
-					-
-				</button>
-				<input
-					type="number"
-					:id="'trait-set-' + traitSetID + '-pip-count'"
-					name="setPipBubbleCount"
-					min="1"
-					max="100"
-					:value="setPipBubbleCount"
-					@change="commitPipBubbleCount($event)"
-					inputmode="numeric"
-					aria-label="Bubble count"
-					class="editor-input-short"
-				/>
-				<button
-					type="button"
-					class="btn-step"
-					@click.stop="updatePipBubbleCount(setPipBubbleCount + 1)"
-					title="More bubbles"
-					aria-label="More bubbles"
-				>
-					+
-				</button>
-			</div>
-		</div>
-	</div>
-
-	<!-- RATING DISPLAY (FULL TRACK OR SINGLE DIE) -->
-	<div class="editor-field" v-if="needsDiceUI">
-		<label :for="'trait-set-' + traitSetID + '-rating-display'">Rating Display</label>
-		<div class="editor-button-group">
-			<button
-				type="button"
-				class="editor-group-btn"
-				:class="{ active: (ratingDisplay || 'track') === 'track' }"
-				:aria-pressed="(ratingDisplay || 'track') === 'track'"
-				@click.stop="ratingDisplay = 'track'"
-			>
-				Full Track
-			</button>
-			<button
-				type="button"
-				class="editor-group-btn"
-				:class="{ active: ratingDisplay === 'rating' }"
-				:aria-pressed="ratingDisplay === 'rating'"
-				@click.stop="ratingDisplay = 'rating'"
-			>
-				Single Die
-			</button>
 		</div>
 	</div>
 
@@ -687,7 +750,7 @@ function commitPipBubbleCount(event: Event) {
 			</div>
 		</div>
 
-		<div class="editor-row-between mt-md">
+		<div class="editor-row-between mt-md" v-if="isDiceFamily && styleBody !== 'list' && styleBody !== 'pips'">
 			<label :for="'trait-set-' + traitSetID + '-hitches'" class="m-0">Hitches on</label>
 			<div class="num-stepper">
 				<button

@@ -641,7 +641,7 @@ function clearOppositionPool() {
 
 function handleSettlePP(delta: number) {
 	if (character.value && delta !== 0) {
-		const currentPP = Number(character.value.plotPoints || 0);
+		const currentPP = characterCurioFunctions.resolvePlotPoints(character.value);
 		characterCurioFunctions.setPlotPoints(character.value, currentPP + delta);
 		updateCharacter(character.value);
 	}
@@ -909,7 +909,7 @@ function setViewY() {
 
 function setPageTitle() {
 	let pageTitle = 'Character Curio';
-	if (mode.value === 'character' && character.value && character.value.name.length) {
+	if (mode.value === 'character' && character.value && character.value.name?.length) {
 		pageTitle = `${character.value.name} - ${pageTitle}`;
 	}
 	document.title = pageTitle;
@@ -1016,18 +1016,19 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 
 			const now = new Date().toISOString();
 			const entity = {
-				id: characterCurioFunctions.generateUUID(),
-				isTemplate: asTemplate,
 				name: asTemplate ? template.name || 'New Template' : '',
 				game: template.game || template.name || '',
+				sets: {},
+				template: { id: entry.id, version: entry.version || 1 },
+				id: characterCurioFunctions.generateUUID(),
+				...(asTemplate ? { isTemplate: true } : {}),
 				dateCreated: now,
 				dateModified: now,
 				dateTouched: now,
-				sets: {},
-				template: { id: entry.id, version: entry.version || 1 },
 			};
-			const characterData: any = characterCurioFunctions.materializeCharacter(entity, entry.character);
+			let characterData: any = characterCurioFunctions.materializeCharacter(entity, entry.character);
 			characterData.sheet = { template: { id: entry.id, version: entry.version || 1 } };
+			characterData = characterCurioFunctions.orderCharacterKeys(characterData);
 			characterCurioFunctions.ensureTraitSetIds(characterData);
 			characterCurioFunctions.assignLids(characterData);
 			recordCharOrder(characterData);
@@ -1051,17 +1052,21 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 		}
 	}
 
-	const characterData = structuredClone(characterCurioFunctions.defaultCharacter);
+	let characterData: any = structuredClone(characterCurioFunctions.defaultCharacter);
 
 	characterData.id = characterCurioFunctions.generateUUID();
-	characterData.isTemplate = asTemplate;
 	if (asTemplate) {
+		characterData.isTemplate = true;
 		characterData.name = 'New Template';
+	} else {
+		delete characterData.isTemplate;
 	}
 
-	characterData.dateCreated = new Date().toISOString();
-	characterData.dateModified = new Date().toISOString();
-	characterData.dateTouched = new Date().toISOString();
+	const now = new Date().toISOString();
+	characterData.dateCreated = now;
+	characterData.dateModified = now;
+	characterData.dateTouched = now;
+	characterData = characterCurioFunctions.orderCharacterKeys(characterData);
 	characterCurioFunctions.ensureTraitSetIds(characterData);
 	characterCurioFunctions.assignLids(characterData);
 
@@ -1093,15 +1098,15 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 	// template at the seam; nothing is cloned from the array form.
 	const now = new Date().toISOString();
 	const entity = {
-		id: characterCurioFunctions.generateUUID(),
-		isTemplate: asTemplate,
 		name: asTemplate ? (itemTitle ? itemTitle.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '',
 		game: libraryItem.character?.game || libraryItem.game || itemTitle || '',
+		sets: {},
+		template: { id: libraryItem.id, version: libraryItem.version || 1 },
+		id: characterCurioFunctions.generateUUID(),
+		...(asTemplate ? { isTemplate: true } : {}),
 		dateCreated: now,
 		dateModified: now,
 		dateTouched: now,
-		sets: {},
-		template: { id: libraryItem.id, version: libraryItem.version || 1 },
 	};
 	const characterData: any = characterCurioFunctions.materializeCharacter(entity, libraryItem.character);
 	characterCurioFunctions.ensureTraitSetIds(characterData);
@@ -1130,10 +1135,16 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 }
 
 function toggleTemplate(characterId: string) {
-	const characterData = characters.value.find((c: any) => c.id === characterId);
-	if (!characterData) return;
-	characterData.isTemplate = !characterData.isTemplate;
+	const characterIndex = characters.value.findIndex((c: any) => c.id === characterId);
+	if (characterIndex === -1) return;
+	const characterData = characters.value[characterIndex];
+	if (characterData.isTemplate) {
+		delete characterData.isTemplate;
+	} else {
+		characterData.isTemplate = true;
+	}
 	characterData.dateModified = new Date().toISOString();
+	characters.value[characterIndex] = characterCurioFunctions.orderCharacterKeys(characterData);
 	saveLocalData();
 	showToast(characterData.isTemplate ? 'Saved as template' : 'Converted to regular character');
 }
@@ -1309,11 +1320,29 @@ function importCharacter(characterData: any) {
 		// presentation base; entity sets render as custom sets).
 		incoming = characterCurioFunctions.materializeCharacter(incoming);
 	}
+	if (typeof incoming.id !== 'string' || !incoming.id.length) {
+		incoming.id = characterCurioFunctions.generateUUID();
+	}
+	if (typeof incoming.name !== 'string') {
+		incoming.name = '';
+	}
 	characterCurioFunctions.ensureTraitSetIds(incoming);
 	characterCurioFunctions.assignLids(incoming);
 
-	// Save new character.
+	// Save new character (preserve existing dateCreated when updating in-place via JSON editor).
 	const c = characters.value.findIndex((existingCharacter: any) => existingCharacter.id === incoming.id);
+	const now = new Date().toISOString();
+	const prev = c !== -1 ? characters.value[c] : null;
+	if (!incoming.dateCreated) {
+		incoming.dateCreated = prev?.dateCreated || now;
+	}
+	if (!incoming.dateModified) {
+		incoming.dateModified = now;
+	}
+	if (!incoming.dateTouched) {
+		incoming.dateTouched = now;
+	}
+	incoming = characterCurioFunctions.orderCharacterKeys(incoming);
 
 	if (c !== -1) {
 		characters.value[c] = incoming;
@@ -1367,16 +1396,17 @@ async function exportCharacter(id: string) {
 
 	await ensureLibraryTemplates();
 	const entry = sheetTemplateForExport(characterData);
-	const out = characterCurioFunctions.stripCharacterForExport(characterData, entry);
+	let out = characterCurioFunctions.stripCharacterForExport(characterData, entry);
 	// Arrangement travels name-keyed (D18 same-user-new-device).
 	const filePrefs = characterCurioFunctions.prefsForExport(
 		prefs.value && prefs.value.characters ? prefs.value.characters[characterData.id] : null,
 		characterData,
 	);
 	if (filePrefs) out.prefs = filePrefs;
+	out = characterCurioFunctions.orderCharacterKeys(out);
 
 	let name = out.name && out.name.length ? out.name : 'Name';
-	const timestamp = new Date(out.dateModified).getTime();
+	const timestamp = new Date(out.dateModified || Date.now()).getTime() || Date.now();
 	name = name.replaceAll(/\s+/g, '_');
 	const filename = `${name}_${timestamp}.curio.json`;
 
@@ -1445,7 +1475,7 @@ async function exportAllCharacters() {
 			c,
 		);
 		if (filePrefs) o.prefs = filePrefs;
-		return o;
+		return characterCurioFunctions.orderCharacterKeys(o);
 	});
 
 	const bundle = {
@@ -1799,7 +1829,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 			if (ref && ref.id) {
 				out.sheet = ref.version ? { template: { id: ref.id, version: ref.version } } : { template: { id: ref.id } };
 			} else delete out.sheet;
-			return out;
+			return characterCurioFunctions.orderCharacterKeys(out);
 		});
 		session = cloneDeep({
 			openCharacterIDs: openCharacterIDs.value,

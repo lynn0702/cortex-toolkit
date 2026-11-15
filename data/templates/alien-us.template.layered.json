@@ -1,15 +1,12 @@
 {
 	"id": "alien-us",
-	"version": 1,
 	"character": {
-		"id": "template-alien-us",
-		"isTemplate": true,
 		"name": "",
-		"game": "Alien, Us",
 		"pronouns": "",
+		"player": "",
+		"game": "Alien, Us",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -613,6 +610,9 @@
 				"plural": "Sessions",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-alien-us",
+		"isTemplate": true
+	},
+	"version": 1
 }

@@ -1,15 +1,12 @@
 {
 	"id": "retired-crystalline",
-	"version": 1,
 	"character": {
-		"id": "template-retired-crystalline",
-		"isTemplate": true,
 		"name": "",
-		"game": "Retired No More",
 		"pronouns": "",
+		"player": "",
+		"game": "Retired No More",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -583,6 +580,9 @@
 					"Trick": {}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-retired-crystalline",
+		"isTemplate": true
+	},
+	"version": 1
 }

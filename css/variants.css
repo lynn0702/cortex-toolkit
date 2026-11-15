@@ -870,8 +870,11 @@
 .multidie-value {
 	display: inline-flex;
 	align-items: center;
-	column-gap: 0.45rem;
+	column-gap: 0.35rem;
+	row-gap: 0.35rem;
 	flex-wrap: wrap;
+	min-inline-size: 0;
+	max-inline-size: 100%;
 
 	.multidie-badge-wrap {
 		position: relative;

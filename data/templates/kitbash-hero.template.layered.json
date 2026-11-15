@@ -1,15 +1,12 @@
 {
 	"id": "kitbash-hero",
-	"version": 1,
 	"character": {
-		"id": "template-kitbash-hero",
-		"isTemplate": true,
 		"name": "",
-		"game": "Kit Bash!",
 		"pronouns": "",
+		"player": "",
+		"game": "Kit Bash!",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -643,6 +640,9 @@
 					"Limits": {}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-kitbash-hero",
+		"isTemplate": true
+	},
+	"version": 1
 }

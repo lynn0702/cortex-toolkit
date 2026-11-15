@@ -1,15 +1,16 @@
 {
-	"$schema": "../../schema/0.1/character.schema.json",
+	"name": "The Dreamer & the Architect",
+	"pronouns": "they/them",
 	"description": "The Dreamer finds the beauty, the Architect builds the form, a Character Curio example.",
 	"game": "Character Curio",
-	"id": "d6b1030e-c194-4556-958a-3e6f91c538a2",
-	"name": "The Dreamer & the Architect",
+	"plotPoints": 1,
+	"notes": "",
+	"tags": [],
 	"portrait": {
 		"url": "",
 		"alt": "",
 		"tags": []
 	},
-	"pronouns": "they/them",
 	"view": {
 		"accentColor": "#f59e0b",
 		"listing": {
@@ -365,11 +366,10 @@
 			}
 		}
 	],
-	"version": "0.1",
+	"id": "d6b1030e-c194-4556-958a-3e6f91c538a2",
 	"dateCreated": "2026-11-10T14:03:15-06:00",
 	"dateModified": "2026-11-11T22:23:56.493Z",
 	"dateTouched": "2026-11-11T22:23:56.493Z",
-	"plotPoints": 1,
-	"notes": "",
-	"tags": []
+	"version": "0.1",
+	"$schema": "../../schema/0.1/character.schema.json"
 }

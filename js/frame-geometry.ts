@@ -130,8 +130,11 @@ function parseCorner(rawCorner: unknown, fallback = 8): number | 'cut' {
 export function resolveBorder(traitSetOrView: any): BorderConfig {
 	const fallbackClassic: BorderConfig = { shape: 'block', explicit: false, stroke: '2px', color: 'strong', corner: 0 };
 	if (!traitSetOrView || typeof traitSetOrView !== 'object') return fallbackClassic;
+	const isName = traitSetOrView.id === 'name';
 	const view = traitSetOrView.view !== undefined ? getView(traitSetOrView) : traitSetOrView;
-	if (!view || typeof view !== 'object') return fallbackClassic;
+	if (!view || typeof view !== 'object') {
+		return isName ? { shape: 'none', explicit: false, stroke: '2px', color: 'primary', corner: 8 } : fallbackClassic;
+	}
 
 	const viewTint = typeof view.tint === 'string' && view.tint.trim() ? view.tint.trim() : undefined;
 	const rawBorder = (view as any).border;
@@ -198,7 +201,7 @@ export function resolveBorder(traitSetOrView: any): BorderConfig {
 	if (view.borderless === true) {
 		return { shape: 'none', explicit: true, stroke: '2px', color: 'primary', corner: 8 };
 	}
-	if (view.style?.body === 'name' || view.style?.body === 'portrait-ring') {
+	if (isName || view.style?.body === 'name' || view.style?.body === 'portrait-ring') {
 		return { shape: 'none', explicit: false, stroke: '2px', color: 'primary', corner: 8 };
 	}
 	if (rawFrame && typeof rawFrame === 'object' && rawFrame.shape && rawFrame.shape !== 'none') {

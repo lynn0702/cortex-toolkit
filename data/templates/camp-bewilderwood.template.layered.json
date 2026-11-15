@@ -1,15 +1,12 @@
 {
 	"id": "camp-bewilderwood",
-	"version": 1,
 	"character": {
-		"id": "template-camp-bewilderwood",
-		"isTemplate": true,
 		"name": "",
-		"game": "Camp Bewilderwood",
 		"pronouns": "",
+		"player": "",
+		"game": "Camp Bewilderwood",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -572,6 +569,9 @@
 				"plural": "Talents",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-camp-bewilderwood",
+		"isTemplate": true
+	},
+	"version": 1
 }

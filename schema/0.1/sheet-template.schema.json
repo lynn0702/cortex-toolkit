@@ -5,25 +5,25 @@
 	"description": "A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.",
 	"type" : "object",
 	"properties": {
-		"$schema": {
-			"description": "JSON schema URI for sheet-template.schema.json.",
-			"type": "string"
-		},
 		"id": {
 			"type": "string",
 			"description": "Static template identifier. Assigned once, never regenerated; imports replace the same id instead of duplicating."
 		},
-		"version": {
-			"description": "Template format version.",
-			"type": "integer"
+		"character": {
+			"description": "Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.",
+			"type": "object"
 		},
 		"updatedAt": {
 			"type": "string",
 			"format": "date-time"
 		},
-		"character": {
-			"description": "Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.",
-			"type": "object"
+		"version": {
+			"description": "Template format version.",
+			"type": "integer"
+		},
+		"$schema": {
+			"description": "JSON schema URI for sheet-template.schema.json.",
+			"type": "string"
 		}
 	},
 	"required": [ "id", "character" ],

@@ -559,6 +559,11 @@ function hasTraitSetDescription(ts: any) {
 									v-else
 									class="trait-value single-die-value"
 									:class="{
+										'is-out-active':
+											!printBlank &&
+											!item.isPlaceholder &&
+											getRatingDisplay(traitSet) === 'rating' &&
+											isTraitOut(item.trait, traitSet),
 										'has-hinder-pill':
 											submode === 'play' &&
 											!printBlank &&
@@ -571,8 +576,22 @@ function hasTraitSetDescription(ts: any) {
 											: null
 									"
 								>
-									<template v-if="getRatingDisplay(traitSet) === 'rating'">
+									<template v-if="!printBlank && getRatingDisplay(traitSet) === 'rating'">
 										<span
+											v-if="!item.isPlaceholder && isTraitOut(item.trait, traitSet)"
+											class="out-badge active"
+											role="button"
+											tabindex="0"
+											:aria-label="`Out for ${item.trait.name || 'trait'}`"
+											aria-pressed="true"
+											@click.stop="handleSingleDieClick(item.trait, null, traitSet, s, item.originalIndex)"
+											@keydown.enter.prevent="handleSingleDieClick(item.trait, null, traitSet, s, item.originalIndex)"
+											@keydown.space.prevent="handleSingleDieClick(item.trait, null, traitSet, s, item.originalIndex)"
+											title="Out"
+											>{{ getTraitSetLabel(traitSet, 'out') }}</span
+										>
+										<span
+											v-else
 											:class="{ active: !printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) }"
 											role="button"
 											tabindex="0"
@@ -654,7 +673,13 @@ function hasTraitSetDescription(ts: any) {
 										></span>
 									</template>
 									<button
-										v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getAltRoll(item.trait, traitSet)"
+										v-if="
+											submode === 'play' &&
+											!printBlank &&
+											!item.isPlaceholder &&
+											!isTraitOut(item.trait, traitSet) &&
+											getAltRoll(item.trait, traitSet)
+										"
 										type="button"
 										class="btn-hinder-pill"
 										@click.stop="handleAltRollClick(item.trait, traitSet)"
@@ -674,7 +699,7 @@ function hasTraitSetDescription(ts: any) {
 									</button>
 									<span
 										v-if="
-											getRatingDisplay(traitSet) !== 'rating' &&
+											(printBlank || getRatingDisplay(traitSet) !== 'rating') &&
 											getSetRatingDie(traitSet) &&
 											!item.isPlaceholder &&
 											!isTraitRated(item.trait)
@@ -685,7 +710,7 @@ function hasTraitSetDescription(ts: any) {
 										aria-hidden="true"
 									></span>
 									<span
-										v-if="shouldShowOut(traitSet)"
+										v-if="(printBlank || getRatingDisplay(traitSet) !== 'rating') && shouldShowOut(traitSet)"
 										:class="{
 											'out-badge': true,
 											active: !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet),
@@ -1578,8 +1603,22 @@ function hasTraitSetDescription(ts: any) {
 												: null
 										"
 									>
-										<template v-if="getRatingDisplay(traitSet) === 'rating'">
+										<template v-if="!printBlank && getRatingDisplay(traitSet) === 'rating'">
 											<span
+												v-if="!item.isPlaceholder && isTraitOut(item.trait, traitSet)"
+												class="out-badge active"
+												role="button"
+												tabindex="0"
+												:aria-label="`Out for ${item.trait.name || 'trait'}`"
+												aria-pressed="true"
+												@click.stop="handleSingleDieClick(item.trait, null, traitSet, s, item.originalIndex)"
+												@keydown.enter.prevent="handleSingleDieClick(item.trait, null, traitSet, s, item.originalIndex)"
+												@keydown.space.prevent="handleSingleDieClick(item.trait, null, traitSet, s, item.originalIndex)"
+												title="Out"
+												>{{ getTraitSetLabel(traitSet, 'out') }}</span
+											>
+											<span
+												v-else
 												:class="{ active: !printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) }"
 												role="button"
 												tabindex="0"
@@ -1662,7 +1701,11 @@ function hasTraitSetDescription(ts: any) {
 										</template>
 										<button
 											v-if="
-												submode === 'play' && !printBlank && !item.isPlaceholder && getAltRoll(item.trait, traitSet)
+												submode === 'play' &&
+												!printBlank &&
+												!item.isPlaceholder &&
+												!isTraitOut(item.trait, traitSet) &&
+												getAltRoll(item.trait, traitSet)
 											"
 											type="button"
 											class="btn-hinder-pill"
@@ -1688,7 +1731,7 @@ function hasTraitSetDescription(ts: any) {
 										</button>
 										<span
 											v-if="
-												getRatingDisplay(traitSet) !== 'rating' &&
+												(printBlank || getRatingDisplay(traitSet) !== 'rating') &&
 												getSetRatingDie(traitSet) &&
 												!item.isPlaceholder &&
 												!isTraitRated(item.trait)
@@ -1699,7 +1742,7 @@ function hasTraitSetDescription(ts: any) {
 											aria-hidden="true"
 										></span>
 										<span
-											v-if="shouldShowOut(traitSet)"
+											v-if="(printBlank || getRatingDisplay(traitSet) !== 'rating') && shouldShowOut(traitSet)"
 											:class="{
 												'out-badge': true,
 												active: !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet),

@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { ensureView, getRating, getView, ratingDice, resolveVisibility } from './model.ts';
+import {
+	ensureView,
+	getRating,
+	getView,
+	isNameSet,
+	ratingDice,
+	resolvePlotPoints,
+	resolveVisibility,
+} from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { normalizeZoom } from './frame-geometry.ts';
 import { injectTraitSet } from './use-trait-set.ts';
@@ -32,7 +40,7 @@ const nickname = computed(() => character.value?.nickname ?? getView(character.v
 const hasNickname = computed(() => Boolean(nickname.value || getView(character.value)?.hasNickname));
 const notes = computed(() => character.value?.notes ?? '');
 const game = computed(() => character.value?.game ?? '');
-const plotPoints = computed(() => Number(character.value?.plotPoints) || 0);
+const plotPoints = computed(() => resolvePlotPoints(character.value));
 const portrait = computed(() => character.value?.portrait ?? null);
 const effectivePortraitUrl = computed(() => portrait.value?.url || '');
 
@@ -130,12 +138,26 @@ function hasExplicitNameTraitShown(key: string) {
 
 function hideIdentityPart(key: string) {
 	if (!character.value) return;
-	const t = characterCurioFunctions.ensureNameTrait(character.value, key);
-	if (!t) return;
-	ensureView(t).visibility = 'hidden';
 	if (key === 'nickname') {
 		delete ensureView(character.value).hasNickname;
 	}
+	const hasTemplate = Boolean(character.value.sheet?.template);
+	const hasVal =
+		key === 'portrait'
+			? Boolean(character.value.portrait?.url)
+			: Boolean((character.value as Record<string, unknown>)[key]);
+	const existing = characterCurioFunctions.getNameTrait(character.value, key);
+	if (!hasTemplate && !hasVal && !existing?.label) {
+		const ns = (character.value.traitSets || []).find((st: any) => isNameSet(st));
+		if (ns && Array.isArray(ns.traits)) {
+			ns.traits = ns.traits.filter((tr: any) => !(tr && tr.name === key));
+		}
+		updateCharacter(character.value);
+		return;
+	}
+	const t = characterCurioFunctions.ensureNameTrait(character.value, key);
+	if (!t) return;
+	ensureView(t).visibility = 'hidden';
 	updateCharacter(character.value);
 }
 
@@ -152,7 +174,12 @@ const gameLabel = computed(() => nameLabel('game', 'GAME'));
 const playerLabel = computed(() => nameWord('player', 'PLAYER:'));
 const plotPointsLabel = computed(() => nameWord('plotPoints', 'PP'));
 
-const hasDescBox = computed(() => nameShown('description'));
+const hasDescBox = computed(
+	() => nameShown('description') && (Boolean(description.value) || hasExplicitNameTraitShown('description')),
+);
+const showPronouns = computed(
+	() => nameShown('pronouns') && (Boolean(pronouns.value) || hasExplicitNameTraitShown('pronouns')),
+);
 const hasNameSetPortrait = computed(() => nameShown('portrait') && Boolean(effectivePortraitUrl.value));
 const showPortraitDropSlot = computed(
 	() =>
@@ -303,7 +330,7 @@ const descriptionText = computed({
 
 function adjustPlotPoints(delta: number) {
 	if (!character.value) return;
-	const current = Number(character.value.plotPoints) || 0;
+	const current = resolvePlotPoints(character.value);
 	character.value.plotPoints = Math.max(0, current + delta);
 	updateCharacter(character.value);
 }
@@ -542,7 +569,7 @@ function adjustPlotPoints(delta: number) {
 					</div>
 				</div>
 
-				<div class="sheet-meta-divider" v-if="(hasNickname && nameShown('nickname')) || nameShown('pronouns')"></div>
+				<div class="sheet-meta-divider" v-if="(hasNickname && nameShown('nickname')) || showPronouns"></div>
 
 				<div class="sheet-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')" @click.stop>
 					<span class="sheet-cell-label">{{ nicknameLabel }}</span>
@@ -569,9 +596,9 @@ function adjustPlotPoints(delta: number) {
 					<span class="sheet-blank-line" v-else></span>
 				</div>
 
-				<div class="sheet-meta-divider" v-if="hasNickname && nameShown('nickname') && nameShown('pronouns')"></div>
+				<div class="sheet-meta-divider" v-if="hasNickname && nameShown('nickname') && showPronouns"></div>
 
-				<div class="sheet-meta-pronoun-cell" v-if="nameShown('pronouns')" @click.stop>
+				<div class="sheet-meta-pronoun-cell" v-if="showPronouns" @click.stop>
 					<span class="sheet-cell-label">{{ pronounsLabel }}</span>
 					<template v-if="submode === 'edit'">
 						<input

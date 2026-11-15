@@ -299,6 +299,14 @@ export function isRingBadgeTrait(t: unknown): boolean {
 	return keepsExtraDice(t) > 0;
 }
 
+/** Resolve Plot Points on a character; omitted or `null` defaults to `1` (explicit `0` stays `0`). */
+export function resolvePlotPoints(character: unknown): number {
+	if (!character || typeof character !== 'object') return 1;
+	const rec = character as Record<string, unknown>;
+	if (rec.plotPoints === undefined || rec.plotPoints === null) return 1;
+	return Math.max(0, Math.floor(Number(rec.plotPoints) || 0));
+}
+
 /** Resolve Plot Point delta (`ppDelta`) on a node or its ancestor chain. */
 export function resolvePpDelta(node: unknown, ancestors: unknown[] = []): number {
 	const chain: Array<unknown> = [node, ...(Array.isArray(ancestors) ? ancestors : [])];
@@ -649,8 +657,8 @@ export interface ImageConfig {
 
 /** The character portrait, with the app-typed `view` and `custom` carriers. */
 export interface Portrait {
-	url?: string;
-	alt?: string;
+	url?: string | null;
+	alt?: string | null;
 	tags?: Tags;
 	view?: ViewBag;
 	custom?: Custom;
@@ -954,12 +962,9 @@ export type Character = Omit<GeneratedCharacter, 'custom' | 'view' | 'traitSets'
 	view?: ViewBag;
 	custom?: Custom;
 	traitSets: TraitSet[];
-	portrait: Portrait;
+	portrait?: Portrait | null;
 	/** App-only: template set ids removed from this character. */
 	removedSets?: string[];
-	/** App-only: player name / nickname (not in the schema). */
-	player?: string;
-	nickname?: string;
 };
 
 export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
@@ -1070,7 +1075,7 @@ export function characterToSheetTemplate(character: Character, fallbackId?: stri
 	const id = trimmedString(getView(character)?.listing?.id) || trimmedString(fallbackId) || character.id;
 	return {
 		id,
-		version: 1,
 		character,
+		version: 1,
 	};
 }

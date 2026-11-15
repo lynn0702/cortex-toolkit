@@ -1,15 +1,12 @@
 {
 	"id": "terraverse",
-	"version": 1,
 	"character": {
-		"id": "template-terraverse",
-		"isTemplate": true,
 		"name": "",
-		"game": "Terraverse",
 		"pronouns": "",
+		"player": "",
+		"game": "Terraverse",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -821,6 +818,9 @@
 					}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-terraverse",
+		"isTemplate": true
+	},
+	"version": 1
 }

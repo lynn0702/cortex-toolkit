@@ -1,15 +1,12 @@
 {
 	"id": "misty-cove",
-	"version": 1,
 	"character": {
-		"id": "template-misty-cove",
-		"isTemplate": true,
 		"name": "",
-		"game": "Misty Cove",
 		"pronouns": "",
+		"player": "",
+		"game": "Misty Cove",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -500,6 +497,9 @@
 				"plural": "Complications",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-misty-cove",
+		"isTemplate": true
+	},
+	"version": 1
 }

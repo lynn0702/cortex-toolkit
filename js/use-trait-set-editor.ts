@@ -15,6 +15,7 @@ import {
 import { characterCurioFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './sheet-grid.ts';
 import {
+	DIE_LADDER,
 	getView,
 	ensureView,
 	isNameSet,
@@ -856,8 +857,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const allowed = characterCurioFunctions.getTraitSetRatings(ts);
 		const cur =
 			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
+		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
 		if (allowed.length > 0 && !allowed.includes(cur)) {
-			trait.rating = { type: 'Die', value: [allowed[0]], range: allowed.slice() };
+			trait.rating = isDefaultLadder
+				? { type: 'Die', value: [allowed[0]] }
+				: { type: 'Die', value: [allowed[0]], range: allowed.slice() };
+		} else if (!isDefaultLadder && allowed.length > 0 && trait.rating) {
+			trait.rating.range = allowed.slice();
 		}
 		if (!Array.isArray(ts.traits)) ts.traits = [];
 		ts.traits.push(trait);
@@ -1026,7 +1032,51 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (value: boolean) => {
 			const ts = traitSet.value as unknown as Record<string, any>;
 			if (!ts) return;
-			ts.pool = Boolean(value);
+			const next = Boolean(value);
+			ts.pool = next;
+			if (next) {
+				const scale = ratingLadder.value;
+				const defaultDie = Array.isArray(scale) && scale.length ? scale[0] : 8;
+				const cur = getRating(ts);
+				if (cur && cur.type !== 'Dice') {
+					const dice = ratingDice(cur);
+					const ownRange = Array.isArray(cur.range) && cur.range.length ? [...cur.range] : undefined;
+					ts.rating = {
+						type: 'Dice',
+						value: dice.length ? dice : [defaultDie],
+						...(ownRange ? { range: ownRange } : {}),
+						...((cur as any).out === true ? { out: true } : {}),
+					};
+				}
+				let hasRatedTrait = false;
+				if (Array.isArray(ts.traits)) {
+					ts.traits.forEach((ct: any) => {
+						if (!ct || typeof ct !== 'object' || !ct.rating || typeof ct.rating !== 'object') return;
+						hasRatedTrait = true;
+						const trCur = getRating(ct);
+						if (trCur) {
+							if (trCur.type !== 'Dice') {
+								const dice = ratingDice(trCur);
+								const ownRange = Array.isArray(trCur.range) && trCur.range.length ? [...trCur.range] : undefined;
+								ct.rating = {
+									type: 'Dice',
+									value: dice.length ? dice : [defaultDie],
+									...(ownRange ? { range: ownRange } : {}),
+									...((trCur as any).out === true ? { out: true } : {}),
+								};
+							}
+						} else {
+							const rawVals = Array.isArray(ct.rating.value)
+								? ct.rating.value.filter((v: unknown): v is number => typeof v === 'number' && v > 0)
+								: [];
+							ct.rating.value = rawVals.length ? rawVals : [defaultDie];
+						}
+					});
+				}
+				if (!ts.rating && !hasRatedTrait) {
+					ts.rating = { type: 'Dice', value: [defaultDie] };
+				}
+			}
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
@@ -1044,9 +1094,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (!ts) return;
 			if (Number(value) > 0) {
 				setRatingDie(ts, Number(value));
+				delete ts.pool;
 			} else {
 				preserveInheritedTraitTypes(ts);
 				delete ts.rating;
+				delete ts.pool;
 			}
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
@@ -1429,17 +1481,14 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const ratingDisplay = computed<'track' | 'rating'>({
 		get: () => {
 			const v = getView(traitSet.value);
-			return (v?.ratingDisplay as 'track' | 'rating') || (traitSet.value as any)?.ratingDisplay || 'track';
+			const raw = (v?.ratingDisplay as 'track' | 'rating') || (traitSet.value as any)?.ratingDisplay;
+			return raw === 'track' ? 'track' : 'rating';
 		},
 		set: (val: 'track' | 'rating') => {
 			const view = ensureView(traitSet.value);
-			if (val === 'track') {
-				delete view.ratingDisplay;
-				if (traitSet.value && typeof traitSet.value === 'object') {
-					delete (traitSet.value as any).ratingDisplay;
-				}
-			} else {
-				view.ratingDisplay = val;
+			view.ratingDisplay = val === 'track' ? 'track' : 'rating';
+			if (traitSet.value && typeof traitSet.value === 'object') {
+				delete (traitSet.value as any).ratingDisplay;
 			}
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},

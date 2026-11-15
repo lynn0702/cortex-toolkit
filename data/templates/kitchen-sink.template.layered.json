@@ -1,18 +1,11 @@
 {
 	"id": "kitchen-sink",
-	"version": 1,
-	"updatedAt": "2026-10-14T12:00:00.000Z",
 	"character": {
-		"id": "00000000-0000-4000-8000-000000000001",
-		"isTemplate": true,
-		"dateCreated": "2026-10-14T12:00:00.000Z",
-		"dateModified": "2026-10-14T12:00:00.000Z",
-		"dateTouched": "2026-10-14T12:00:00.000Z",
 		"name": "Kitchen Sink Showcase",
-		"player": "Style Audit",
-		"game": "Showcase",
 		"pronouns": "They / Them",
 		"description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
+		"player": "Style Audit",
+		"game": "Showcase",
 		"plotPoints": 3,
 		"notes": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.",
 		"tags": [
@@ -1558,6 +1551,13 @@
 				},
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "00000000-0000-4000-8000-000000000001",
+		"isTemplate": true,
+		"dateCreated": "2026-10-14T12:00:00.000Z",
+		"dateModified": "2026-10-14T12:00:00.000Z",
+		"dateTouched": "2026-10-14T12:00:00.000Z"
+	},
+	"updatedAt": "2026-10-14T12:00:00.000Z",
+	"version": 1
 }

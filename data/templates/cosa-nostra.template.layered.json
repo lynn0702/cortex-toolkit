@@ -1,15 +1,12 @@
 {
 	"id": "cosa-nostra",
-	"version": 1,
 	"character": {
-		"id": "template-cosa-nostra",
-		"isTemplate": true,
 		"name": "",
-		"game": "Cosa Nostra",
 		"pronouns": "",
+		"player": "",
+		"game": "Cosa Nostra",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -450,6 +447,9 @@
 				"plural": "SFX",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-cosa-nostra",
+		"isTemplate": true
+	},
+	"version": 1
 }

@@ -80,21 +80,14 @@ const inputFile = ref<HTMLInputElement | null>(null);
 
 const templateSheets = computed(() => props.characters.filter((c) => !!c.isTemplate));
 
-const charactersSorted = computed(() =>
-	[...props.characters].sort((a, b) => {
-		const aDate = Math.max(
-			new Date(a.dateCreated).getTime(),
-			new Date(a.dateModified).getTime(),
-			new Date(a.dateTouched).getTime(),
-		);
-		const bDate = Math.max(
-			new Date(b.dateCreated).getTime(),
-			new Date(b.dateModified).getTime(),
-			new Date(b.dateTouched).getTime(),
-		);
+const charactersSorted = computed(() => {
+	const ts = (d: unknown) => (typeof d === 'string' || typeof d === 'number' ? new Date(d).getTime() || 0 : 0);
+	return [...props.characters].sort((a, b) => {
+		const aDate = Math.max(ts(a.dateCreated), ts(a.dateModified), ts(a.dateTouched));
+		const bDate = Math.max(ts(b.dateCreated), ts(b.dateModified), ts(b.dateTouched));
 		return bDate - aDate;
-	}),
-);
+	});
+});
 
 const matchingCharacters = computed(() => {
 	const q = rosterSearch.value.toLowerCase().trim();
@@ -472,7 +465,14 @@ function processImportFiles(files: FileList | null | undefined) {
 					candidates = data;
 				} else if (data && data.characters && Array.isArray(data.characters)) {
 					candidates = data.characters;
-				} else if (data && typeof data === 'object' && data.id) {
+				} else if (
+					data &&
+					typeof data === 'object' &&
+					(data.id ||
+						typeof data.name === 'string' ||
+						Array.isArray(data.traitSets) ||
+						(data.sets && typeof data.sets === 'object' && !Array.isArray(data.sets)))
+				) {
 					candidates = [data];
 				} else if (data && data.data && typeof data.data === 'object') {
 					// Upstream envelope (e.g. { version: 2, data: {...} }): pass the

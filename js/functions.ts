@@ -1,7 +1,8 @@
 import * as traitHelpers from './character-curio-trait-helpers.ts';
-import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
+import { materializeCharacter, toLayeredEntity, orderCharacterKeys, orderTemplateKeys } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
 import {
+	DIE_LADDER,
 	VIEW_KEY,
 	getView,
 	ensureView,
@@ -9,6 +10,7 @@ import {
 	isNameSet as isNameSetModel,
 	getRating,
 	resolveRating,
+	resolvePlotPoints,
 	resolvePpDelta,
 	ratingDice,
 	setRatingDice,
@@ -245,6 +247,9 @@ export const characterCurioFunctions = {
 	// Layered <-> render seam (UI pass).
 	materializeCharacter: materializeCharacter,
 	toLayeredEntity: toLayeredEntity,
+	orderCharacterKeys: orderCharacterKeys,
+	orderTemplateKeys: orderTemplateKeys,
+	resolvePlotPoints: resolvePlotPoints,
 
 	arraysMatch: function (a: unknown, b: unknown) {
 		if (!Array.isArray(a) || !Array.isArray(b)) return false;
@@ -408,8 +413,8 @@ export const characterCurioFunctions = {
 		if (!char) return;
 		const n = Math.max(0, Math.floor(val));
 		char.plotPoints = n;
-		const t = this.ensureNameTrait(char, 'plotPoints');
-		if (t) {
+		const t = this.getNameTrait(char, 'plotPoints');
+		if (t && getRating(t)?.type === 'Counter') {
 			t.rating = { type: 'Counter', value: [n], range: [0, 20] };
 		}
 	},
@@ -614,13 +619,13 @@ export const characterCurioFunctions = {
 		if (!character || !Array.isArray(character.traitSets)) return null;
 		let set = character.traitSets.find((s: any) => isNameSetModel(s));
 		if (!set) {
-			set = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
+			set = { id: 'name', name: 'Name', traits: [] };
 			character.traitSets.unshift(set);
 		}
 		if (!Array.isArray(set.traits)) set.traits = [];
 		let trait = set.traits.find((t: any) => t && typeof t === 'object' && t.name === key);
 		if (!trait) {
-			trait = { name: key, description: '', traits: [], tags: [] };
+			trait = { name: key };
 			set.traits.push(trait);
 		}
 		return trait;
@@ -763,7 +768,7 @@ export const characterCurioFunctions = {
 				? (inner.character as Record<string, unknown>)
 				: inner;
 		const sets = target.traitSets;
-		if (sets !== undefined && !Array.isArray(sets)) return false;
+		if (sets !== undefined && sets !== null && !Array.isArray(sets)) return false;
 		if (Array.isArray(sets)) {
 			for (const ts of sets) {
 				if (!ts || typeof ts !== 'object') return false;
@@ -771,8 +776,22 @@ export const characterCurioFunctions = {
 				if (typeof body === 'string' && !allowedBodies.has(body)) return false;
 			}
 		}
+		const layeredSets = target.sets;
+		const hasLayeredSets = Boolean(layeredSets && typeof layeredSets === 'object' && !Array.isArray(layeredSets));
+		if (layeredSets !== undefined && layeredSets !== null && !hasLayeredSets) return false;
+		if (hasLayeredSets) {
+			for (const ts of Object.values(layeredSets as Record<string, unknown>)) {
+				if (ts === null) continue;
+				if (!ts || typeof ts !== 'object' || Array.isArray(ts)) return false;
+				const body = (ts as any).view?.style?.body;
+				if (typeof body === 'string' && !allowedBodies.has(body)) return false;
+			}
+		}
 		return Boolean(
-			(typeof inner.id === 'string' && inner.id.length > 0) || typeof target.name === 'string' || Array.isArray(sets),
+			(typeof inner.id === 'string' && inner.id.length > 0) ||
+			typeof target.name === 'string' ||
+			Array.isArray(sets) ||
+			hasLayeredSets,
 		);
 	},
 
@@ -795,7 +814,11 @@ export const characterCurioFunctions = {
 			unwrapped = true;
 		}
 		if (typeof inner.id !== 'string' || !inner.id.length) {
-			if (!unwrapped) return null;
+			const hasCharacterShape =
+				typeof inner.name === 'string' ||
+				Array.isArray(inner.traitSets) ||
+				Boolean(inner.sets && typeof inner.sets === 'object' && !Array.isArray(inner.sets));
+			if (!unwrapped && !hasCharacterShape) return null;
 			inner = Object.assign({}, inner);
 			inner.id = this.generateUUID();
 		}
@@ -1488,13 +1511,13 @@ export const characterCurioFunctions = {
 		};
 		cleanNode(snapshot);
 		this.pruneEmptyScaffolding(snapshot);
-		return {
-			$schema: this.TEMPLATE_SCHEMA_URL,
+		return orderTemplateKeys({
 			id: id,
-			version: meta && typeof meta.version === 'number' ? meta.version : this.TEMPLATE_FORMAT_VERSION,
+			character: orderCharacterKeys(snapshot),
 			updatedAt: new Date().toISOString(),
-			character: snapshot,
-		};
+			version: meta && typeof meta.version === 'number' ? meta.version : this.TEMPLATE_FORMAT_VERSION,
+			$schema: this.TEMPLATE_SCHEMA_URL,
+		});
 	},
 
 	// Pruner: inverse of the merge. Drops every value deep-equal to the
@@ -1694,7 +1717,7 @@ export const characterCurioFunctions = {
 		if (templateEntry && templateEntry.id) {
 			clean.sheet = { template: cloneDeep(templateEntry) };
 		}
-		return clean;
+		return orderCharacterKeys(clean);
 	},
 
 	renderInlineMarkdown: function (text: any) {
@@ -1838,122 +1861,34 @@ export const characterCurioFunctions = {
 	},
 
 	defaultCharacter: {
-		$schema: '../schema/0.1/character.schema.json',
-		version: '0.1',
-		id: '',
-		isTemplate: false,
-		dateCreated: '',
-		dateModified: '',
-		dateTouched: '',
 		name: '',
-		player: '',
-		game: '',
-		description: '',
-		pronouns: '',
 		traitSets: [
 			{
 				id: 'name',
 				name: 'Name',
-				noun: 'Trait',
-				plural: 'Traits',
-				tags: [],
 				rating: {
 					type: 'Die',
 					value: [8],
-					range: [4, 6, 8, 10, 12],
 				},
-				traits: [
-					{
-						name: 'pronouns',
-						description: '',
-						traits: [],
-						tags: [],
-						view: { visibility: 'hidden' },
-					},
-					{
-						name: 'description',
-						description: '',
-						traits: [],
-						tags: [],
-						view: { visibility: 'hidden' },
-					},
-					{
-						name: 'player',
-						description: '',
-						traits: [],
-						tags: [],
-						view: { visibility: 'hidden' },
-					},
-					{
-						name: 'game',
-						description: '',
-						traits: [],
-						tags: [],
-						view: { visibility: 'hidden' },
-					},
-					{
-						name: 'notes',
-						description: '',
-						traits: [],
-						tags: [],
-						view: { visibility: 'hidden' },
-					},
-					{
-						name: 'portrait',
-						description: '',
-						traits: [],
-						tags: [],
-						view: { visibility: 'hidden' },
-					},
-				],
-				view: {
-					style: {
-						header: 'default',
-						body: 'name',
-					},
-				},
+				traits: [],
 			},
 		],
-		portrait: {
-			url: '',
-			alt: '',
-			tags: [],
-			view: {
-				alignment: 'top-center',
-			},
-		},
-		plotPoints: 1,
-		notes: '',
-		tags: [],
-		view: {
-			pageCount: 1,
-		},
+		id: '',
+		dateCreated: '',
+		dateModified: '',
+		dateTouched: '',
+		version: '0.1',
+		$schema: '../schema/0.1/character.schema.json',
 	},
 
 	defaultTraitSet: {
 		name: 'New Set',
-		description: '',
-		noun: 'Trait',
-		plural: 'Traits',
 		traits: [],
-		tags: [],
-		view: {
-			ratingDisplay: 'rating',
-			style: {
-				header: 'default',
-				body: 'default',
-			},
-			notes: '',
-		},
 	},
 
 	defaultTrait: {
 		name: 'New Trait',
-		rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-		description: '',
-		traits: [],
-		tags: [],
-		custom: {},
+		rating: { type: 'Die', value: [6] },
 	},
 
 	// Built-in Set Presets (showcase TraitSet templates for Play & Edit)

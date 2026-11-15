@@ -433,6 +433,14 @@ const isNotesCard = computed(() => {
 	return Boolean(v?.notesMarkdown || p === 'notes');
 });
 
+const hasDieBlueprintPart = computed(() =>
+	activeParts.value.some(
+		(p) =>
+			(p.kind === 'rating' || p.kind === 'track' || p.kind.endsWith(':rating')) &&
+			(!p.blueprint.ratingType || p.blueprint.ratingType === 'Die'),
+	),
+);
+
 // Track label binding: uses view.labels.track (no references to labels.stress)
 const trackLabelText = computed({
 	get: () => getView(workingSet.value)?.labels?.track || '',
@@ -607,17 +615,14 @@ function toggleFrameBox() {
 const ratingDisplay = computed<'track' | 'rating'>({
 	get: () => {
 		const v = getView(workingSet.value);
-		return (v?.ratingDisplay as 'track' | 'rating') || (workingSet.value as any)?.ratingDisplay || 'track';
+		const raw = (v?.ratingDisplay as 'track' | 'rating') || (workingSet.value as any)?.ratingDisplay;
+		return raw === 'track' ? 'track' : 'rating';
 	},
 	set: (val: 'track' | 'rating') => {
 		const v = ensureView(workingSet.value);
-		if (val === 'track') {
-			delete v.ratingDisplay;
-			if (workingSet.value && typeof workingSet.value === 'object') {
-				delete (workingSet.value as any).ratingDisplay;
-			}
-		} else {
-			v.ratingDisplay = val;
+		v.ratingDisplay = val === 'track' ? 'track' : 'rating';
+		if (workingSet.value && typeof workingSet.value === 'object') {
+			delete (workingSet.value as any).ratingDisplay;
 		}
 	},
 });
@@ -1899,18 +1904,10 @@ function onDialogBackdropClick(event: MouseEvent) {
 					</div>
 				</section>
 
-				<!-- Rating Display (Full Track vs Single Die) -->
-				<section class="mini-frame-section" aria-label="Rating Display">
+				<!-- Rating Display (Single Die vs Full Track) -->
+				<section v-if="hasDieBlueprintPart" class="mini-frame-section" aria-label="Rating Display">
 					<div class="mini-section-label">RATING DISPLAY</div>
 					<div class="mini-btn-group" role="group" aria-label="Rating Display Mode">
-						<button
-							type="button"
-							class="mini-toggle-btn"
-							:class="{ active: (ratingDisplay || 'track') === 'track' }"
-							@click="ratingDisplay = 'track'"
-						>
-							Full Track
-						</button>
 						<button
 							type="button"
 							class="mini-toggle-btn"
@@ -1918,6 +1915,14 @@ function onDialogBackdropClick(event: MouseEvent) {
 							@click="ratingDisplay = 'rating'"
 						>
 							Single Die
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: ratingDisplay === 'track' }"
+							@click="ratingDisplay = 'track'"
+						>
+							Full Track
 						</button>
 					</div>
 				</section>

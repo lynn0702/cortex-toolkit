@@ -308,7 +308,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function getTraitSetClasses(traitSetArg: TraitSet) {
 		const classes: Record<string, boolean> = { 'trait-set': true };
 
-		const bodyStyle = getView(traitSetArg)?.style?.body || 'default';
+		const bodyStyle = getView(traitSetArg)?.style?.body || (isNameSet(traitSetArg) ? 'name' : 'default');
 		classes['trait-set-style-' + bodyStyle] = true;
 
 		if (bodyStyle === 'subtrait-columns' && getView(traitSetArg)?.branchArrows === false) {
@@ -424,7 +424,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getRatingDisplay(traitSetArg: TraitSet | null | undefined): 'track' | 'rating' {
-		return (traitSetArg as any)?.ratingDisplay || getView(traitSetArg)?.ratingDisplay || 'track';
+		const raw = (traitSetArg as any)?.ratingDisplay || getView(traitSetArg)?.ratingDisplay;
+		return raw === 'track' ? 'track' : 'rating';
 	}
 
 	// Trait-part layout (view.parts), or null for flex rows.
@@ -987,11 +988,16 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		t: any,
 	) {
 		if (props.submode === 'play') {
+			if (getRatingDisplay(traitSetArg) === 'rating' && isTraitOut(trait, traitSetArg)) {
+				selectElement(['trait', sArg, t]);
+				return;
+			}
 			const first = ratingDice(resolveRating(trait, [traitSetArg]))[0];
 			const targetVal = value || first;
 			if (value !== undefined && value !== null) {
 				if (!first || first !== value) {
 					setRatingDie(trait as unknown as Record<string, any>, value);
+					trait.isOut = false;
 					updateCharacter(props.character);
 				}
 			}
@@ -1015,11 +1021,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				typeof value === 'number' &&
 				value > 0 &&
 				getRatingDisplay(traitSetArg) !== 'rating' &&
-				firstDie(trait) !== value
+				(isTraitOut(trait, traitSetArg) || firstDie(trait) !== value)
 			) {
 				const prevRange = Array.isArray(getRating(trait)?.range)
 					? [...(getRating(trait)!.range as number[])]
 					: undefined;
+				trait.isOut = false;
 				setRatingDie(trait as unknown as Record<string, any>, value, prevRange);
 				updateCharacter(props.character);
 			} else {
@@ -1331,10 +1338,24 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return rows;
 	}
 
+	function resolvePipBubbleCount(
+		trait: Trait | undefined,
+		r: { value: Array<number | boolean>; range?: number[] },
+	): number {
+		if (Array.isArray(r.range) && r.range[0]) return r.range[0];
+		const setR = getRating(traitSet.value);
+		const inheritedSetCount =
+			setR?.type === 'Pip' ? (Array.isArray(setR.range) && setR.range[0] ? setR.range[0] : setR.value.length) : 0;
+		if (getRating(trait)?.type === 'Pip') {
+			return r.value.length || inheritedSetCount || 5;
+		}
+		return inheritedSetCount || r.value.length || 1;
+	}
+
 	function getTraitPipBubbles(trait: Trait | undefined): boolean[] {
 		const r = resolveTraitRating(trait);
 		if (r && r.type === 'Pip' && Array.isArray(r.value)) {
-			const count = Array.isArray(r.range) && r.range[0] ? r.range[0] : r.value.length || 5;
+			const count = resolvePipBubbleCount(trait, r);
 			const bubbles: boolean[] = [];
 			for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
 			return bubbles;
@@ -1346,11 +1367,16 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (props.submode === 'print' || !trait) return;
 		const r = resolveTraitRating(trait);
 		if (!r || r.type !== 'Pip') return;
-		const count = r.value.length || 5;
+		const count = resolvePipBubbleCount(trait, r);
 		const bubbles: boolean[] = [];
 		for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
 		bubbles[pipIndex] = !bubbles[pipIndex];
-		(trait as any).rating = { type: 'Pip', value: bubbles };
+		const hasExplicitType = getRating(trait)?.type === 'Pip';
+		(trait as any).rating = {
+			...(hasExplicitType ? { type: 'Pip' as const } : {}),
+			value: bubbles,
+			...(Array.isArray(r.range) && r.range.length ? { range: [...r.range] } : {}),
+		};
 		updateCharacter(props.character);
 	}
 

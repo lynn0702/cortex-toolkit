@@ -81,9 +81,10 @@ const isCustomPillar = ref(false);
 const selectedPillar = computed<string>({
 	get: () => {
 		if (isCustomPillar.value) return '__custom__';
-		const cur = (setPillar.value || resolvedPillar.value || 'prime').toLowerCase().trim();
-		if (STANDARD_PILLARS.includes(cur) || characterCustomPillars.value.includes(cur)) {
-			return cur;
+		const raw = setPillar.value.toLowerCase().trim();
+		if (!raw) return '';
+		if (STANDARD_PILLARS.includes(raw) || characterCustomPillars.value.includes(raw)) {
+			return raw;
 		}
 		return '__custom__';
 	},
@@ -142,14 +143,78 @@ const selectedPillar = computed<string>({
 							/>
 						</div>
 
-						<div class="editor-field" v-if="!isName">
-							<label :for="'trait-set-style-select-' + traitSetID">Style</label>
-							<select :id="'trait-set-style-select-' + traitSetID" name="traitSetStyle" v-model="styleBody">
-								<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">
-									{{ option.label }}
-								</option>
-							</select>
-							<div class="editor-checkbox-row mt-sm" v-if="styleBody === 'subtrait-columns'">
+						<div class="editor-grid-2" v-if="!isName && selectedPillar !== '__custom__' && !isCustomPillar">
+							<div class="editor-field">
+								<label :for="'trait-set-style-select-' + traitSetID">Style</label>
+								<select :id="'trait-set-style-select-' + traitSetID" name="traitSetStyle" v-model="styleBody">
+									<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">
+										{{ option.label }}
+									</option>
+								</select>
+							</div>
+							<div class="editor-field">
+								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
+								<select
+									:id="'trait-set-' + traitSetID + '-pillar-select'"
+									v-model="selectedPillar"
+									class="editor-select"
+									aria-label="Pillar"
+								>
+									<option value="">Auto</option>
+									<option value="identity">Identity</option>
+									<option value="prime">Prime</option>
+									<option value="plus">Plus</option>
+									<option value="play">Play</option>
+									<option v-for="cp in characterCustomPillars" :key="cp" :value="cp">
+										{{ cp.charAt(0).toUpperCase() + cp.slice(1) }}
+									</option>
+									<option value="__custom__">Custom...</option>
+								</select>
+							</div>
+						</div>
+						<template v-else>
+							<div class="editor-field" v-if="!isName">
+								<label :for="'trait-set-style-select-' + traitSetID">Style</label>
+								<select :id="'trait-set-style-select-' + traitSetID" name="traitSetStyle" v-model="styleBody">
+									<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">
+										{{ option.label }}
+									</option>
+								</select>
+							</div>
+							<div class="editor-field">
+								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
+								<div class="editor-row-inline">
+									<select
+										:id="'trait-set-' + traitSetID + '-pillar-select'"
+										v-model="selectedPillar"
+										class="editor-select flex-1"
+										aria-label="Pillar"
+									>
+										<option value="">Auto</option>
+										<option value="identity">Identity</option>
+										<option value="prime">Prime</option>
+										<option value="plus">Plus</option>
+										<option value="play">Play</option>
+										<option v-for="cp in characterCustomPillars" :key="cp" :value="cp">
+											{{ cp.charAt(0).toUpperCase() + cp.slice(1) }}
+										</option>
+										<option value="__custom__">Custom...</option>
+									</select>
+									<input
+										v-if="selectedPillar === '__custom__' || isCustomPillar"
+										type="text"
+										:id="'trait-set-' + traitSetID + '-pillar-custom'"
+										name="setPillarCustom"
+										v-model="setPillar"
+										placeholder="Custom pillar..."
+										class="flex-1"
+										aria-label="Custom pillar name"
+									/>
+								</div>
+							</div>
+						</template>
+						<div class="editor-field" v-if="!isName && styleBody === 'subtrait-columns'">
+							<div class="editor-checkbox-row">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-branch-arrows'"
@@ -603,79 +668,15 @@ const selectedPillar = computed<string>({
 
 						<TraitSetEditorRing />
 
-						<!-- PILLAR & COLUMNS WITHIN SET -->
-						<div
-							class="editor-grid-2"
-							v-if="allowsTraitColumns && styleBody !== 'pips' && selectedPillar !== '__custom__' && !isCustomPillar"
-						>
-							<div class="editor-field">
-								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
-								<select
-									:id="'trait-set-' + traitSetID + '-pillar-select'"
-									v-model="selectedPillar"
-									class="editor-select"
-									aria-label="Pillar"
-								>
-									<option value="prime">Prime</option>
-									<option value="plus">Plus</option>
-									<option value="play">Play</option>
-									<option value="identity">Identity</option>
-									<option v-for="cp in characterCustomPillars" :key="cp" :value="cp">
-										{{ cp.charAt(0).toUpperCase() + cp.slice(1) }}
-									</option>
-									<option value="__custom__">Custom...</option>
-								</select>
-							</div>
-							<div class="editor-field">
-								<label :for="'trait-set-' + traitSetID + '-columns'">Columns</label>
-								<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
-									<option :value="1">1 Column</option>
-									<option :value="2">2 Columns</option>
-									<option :value="3">3 Columns</option>
-								</select>
-							</div>
+						<!-- COLUMNS WITHIN SET -->
+						<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'pips'">
+							<label :for="'trait-set-' + traitSetID + '-columns'">Columns</label>
+							<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
+								<option :value="1">1 Column</option>
+								<option :value="2">2 Columns</option>
+								<option :value="3">3 Columns</option>
+							</select>
 						</div>
-						<template v-else>
-							<div class="editor-field">
-								<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
-								<div class="editor-row-inline">
-									<select
-										:id="'trait-set-' + traitSetID + '-pillar-select'"
-										v-model="selectedPillar"
-										class="editor-select flex-1"
-										aria-label="Pillar"
-									>
-										<option value="prime">Prime</option>
-										<option value="plus">Plus</option>
-										<option value="play">Play</option>
-										<option value="identity">Identity</option>
-										<option v-for="cp in characterCustomPillars" :key="cp" :value="cp">
-											{{ cp.charAt(0).toUpperCase() + cp.slice(1) }}
-										</option>
-										<option value="__custom__">Custom...</option>
-									</select>
-									<input
-										v-if="selectedPillar === '__custom__' || isCustomPillar"
-										type="text"
-										:id="'trait-set-' + traitSetID + '-pillar-custom'"
-										name="setPillarCustom"
-										v-model="setPillar"
-										placeholder="Custom pillar name..."
-										class="flex-1"
-										aria-label="Custom pillar name"
-									/>
-								</div>
-							</div>
-
-							<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'pips'">
-								<label :for="'trait-set-' + traitSetID + '-columns'">Columns</label>
-								<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
-									<option :value="1">1 Column</option>
-									<option :value="2">2 Columns</option>
-									<option :value="3">3 Columns</option>
-								</select>
-							</div>
-						</template>
 
 						<!-- LABEL POSITION (ladder rung names, horizontal or rotated vertical) -->
 						<div class="editor-field" v-if="styleBody === 'die-rows'">

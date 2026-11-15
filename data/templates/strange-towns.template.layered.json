@@ -1,15 +1,12 @@
 {
 	"id": "strange-towns",
-	"version": 1,
 	"character": {
-		"id": "template-strange-towns",
-		"isTemplate": true,
 		"name": "",
-		"game": "Strange Towns",
 		"pronouns": "",
+		"player": "",
+		"game": "Strange Towns",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -438,6 +435,9 @@
 				"plural": "Dice",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-strange-towns",
+		"isTemplate": true
+	},
+	"version": 1
 }

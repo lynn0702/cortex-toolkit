@@ -1,15 +1,12 @@
 {
 	"id": "safe-zone-survivor",
-	"version": 1,
 	"character": {
-		"id": "template-safe-zone-survivor",
-		"isTemplate": true,
 		"name": "",
-		"game": "Safe Zone",
 		"pronouns": "",
+		"player": "",
+		"game": "Safe Zone",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -572,6 +569,9 @@
 					"value": []
 				}
 			}
-		}
-	}
+		},
+		"id": "template-safe-zone-survivor",
+		"isTemplate": true
+	},
+	"version": 1
 }

@@ -4,11 +4,17 @@
 /**
  * A list of taxonomy tags attached to this entity. Tags may include letters, numbers, hyphens, periods, and forward slashes (for namespacing).
  */
-export type Tags = string[];
+export type Tags = string[] | null;
 /**
  * App presentation and view settings (layout, placement, style, features).
  */
 export type View = {
+  [k: string]: unknown;
+} | null;
+/**
+ * An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.
+ */
+export type Custom = {
   [k: string]: unknown;
 } | null;
 
@@ -17,66 +23,72 @@ export type View = {
  */
 export interface Character {
   /**
-   * JSON schema URI for character.schema.json.
-   */
-  $schema?: string | null;
-  /**
-   * Version of character.schema.json to use.
-   */
-  version: "0.1";
-  /**
-   * Whether this character represents a reusable template.
-   */
-  isTemplate?: boolean | null;
-  /**
-   * A unique identifier for the character.
-   */
-  id: string;
-  /**
-   * The date and time when the character was first created.
-   */
-  dateCreated: string;
-  /**
-   * The date and time when the character was last changed.
-   */
-  dateModified: string;
-  /**
-   * The date and time when the character was last loaded, viewed or interacted with.
-   */
-  dateTouched: string;
-  /**
    * The character’s name.
    */
   name: string;
   /**
-   * The name of the game or campaign that the character belongs to.
+   * An optional nickname or callsign for the character.
    */
-  game: string;
+  nickname?: string | null;
   /**
    * The character’s preferred pronouns.
    */
-  pronouns: string;
+  pronouns?: string | null;
   /**
    * A short summary or subtitle for the character.
    */
   description?: string | null;
   /**
-   * The character’s trait sets.
+   * The player’s name.
    */
-  traitSets: TraitSet[];
+  player?: string | null;
+  /**
+   * The name of the game or campaign that the character belongs to.
+   */
+  game?: string | null;
+  /**
+   * The character’s current number of plot points. Defaults to 1 when omitted or null.
+   */
+  plotPoints?: number | null;
+  /**
+   * Any additional notes about the character. Format: plaintext or Markdown.
+   */
+  notes?: string | null;
+  tags?: Tags;
   /**
    * An image to represent the character.
    */
-  portrait: {
-    url: string;
+  portrait?: {
+    url?: string | null;
     /**
      * A description of the image.
      */
-    alt: string;
-    tags: Tags;
+    alt?: string | null;
+    tags?: Tags;
     view?: View;
     custom?: Custom;
-  };
+  } | null;
+  view?: View;
+  custom?: Custom;
+  /**
+   * Layered name-keyed map of the character’s trait sets.
+   */
+  sets?: {
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The character’s trait sets (array render shape).
+   */
+  traitSets?: TraitSet[] | null;
+  /**
+   * File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.
+   */
+  prefs?: {
+    setOrder?: unknown[];
+    traitOrders?: {};
+    declinedTemplateVersions?: {};
+    [k: string]: unknown;
+  } | null;
   /**
    * Layout resolution: template names the sheet template whose values fill in anything not set locally (live: bare { id }; file export: full embedded template object).
    */
@@ -90,25 +102,37 @@ export interface Character {
     };
   } | null;
   /**
-   * File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.
+   * Pinned sheet template reference in layered form.
    */
-  prefs?: {
-    setOrder?: unknown[];
-    traitOrders?: {};
-    declinedTemplateVersions?: {};
-    [k: string]: unknown;
-  } | null;
+  template?: {} | string | null;
   /**
-   * The character’s current number of plot points.
+   * A unique identifier for the character.
    */
-  plotPoints: number;
+  id: string;
   /**
-   * Any additional notes about the character. Format: plaintext, Markdown or HTML.
+   * Whether this character represents a reusable template.
    */
-  notes: string;
-  tags: Tags;
-  view?: View;
-  custom?: Custom;
+  isTemplate?: boolean | null;
+  /**
+   * The date and time when the character was first created.
+   */
+  dateCreated?: string | null;
+  /**
+   * The date and time when the character was last changed.
+   */
+  dateModified?: string | null;
+  /**
+   * The date and time when the character was last loaded, viewed or interacted with.
+   */
+  dateTouched?: string | null;
+  /**
+   * Version of character.schema.json to use.
+   */
+  version?: "0.1" | null;
+  /**
+   * JSON schema URI for character.schema.json.
+   */
+  $schema?: string | null;
 }
 export interface TraitSet {
   /**
@@ -126,11 +150,11 @@ export interface TraitSet {
   /**
    * The singular noun used to describe a trait in this set.
    */
-  noun: string;
+  noun?: string | null;
   /**
    * The plural noun used to describe multiple traits in this set.
    */
-  plural: string;
+  plural?: string | null;
   /**
    * The traits in the trait set.
    */
@@ -139,7 +163,7 @@ export interface TraitSet {
    * Label for the secondary counter column header, e.g. 'XP'.
    */
   counterLabel?: string | null;
-  tags: Tags;
+  tags?: Tags;
   rating?: Rating;
   /**
    * Staging behaviour: adding a trait stages its whole array of available dice.
@@ -214,7 +238,7 @@ export interface Trait {
    * Any child traits attached this parent trait.
    */
   traits?: Trait[] | null;
-  tags: Tags;
+  tags?: Tags;
   view?: View;
   custom?: Custom;
 }
@@ -239,34 +263,28 @@ export interface Rating {
    */
   out?: boolean | null;
 }
-/**
- * An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.
- */
-export interface Custom {
-  [k: string]: unknown;
-}
 
 /**
  * A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.
  */
 export interface SheetTemplate {
   /**
-   * JSON schema URI for sheet-template.schema.json.
-   */
-  $schema?: string;
-  /**
    * Static template identifier. Assigned once, never regenerated; imports replace the same id instead of duplicating.
    */
   id: string;
   /**
-   * Template format version.
-   */
-  version?: number;
-  updatedAt?: string;
-  /**
    * Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.
    */
   character: {};
+  updatedAt?: string;
+  /**
+   * Template format version.
+   */
+  version?: number;
+  /**
+   * JSON schema URI for sheet-template.schema.json.
+   */
+  $schema?: string;
   [k: string]: unknown;
 }
 

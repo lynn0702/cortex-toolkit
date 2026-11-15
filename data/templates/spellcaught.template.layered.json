@@ -1,15 +1,12 @@
 {
 	"id": "spellcaught",
-	"version": 1,
 	"character": {
-		"id": "template-spellcaught",
-		"isTemplate": true,
 		"name": "",
-		"game": "Spellcaught",
 		"pronouns": "",
+		"player": "",
+		"game": "Spellcaught",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -625,6 +622,9 @@
 				"plural": "SFX",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-spellcaught",
+		"isTemplate": true
+	},
+	"version": 1
 }

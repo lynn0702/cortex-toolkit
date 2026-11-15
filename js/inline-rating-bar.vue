@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { DIE_LADDER, getView, ensureView, ratingDice, resolveRange, resolveRating, setRatingDie } from './model.ts';
+import {
+	DIE_LADDER,
+	getView,
+	ensureView,
+	hasOutRange,
+	isOutDie,
+	rangeTop,
+	ratingDice,
+	resolveRange,
+	resolveRating,
+	setRatingDie,
+} from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 
 const props = withDefaults(
@@ -57,6 +68,30 @@ const activeSingleDie = computed<number>(() => {
 	return ratingDice(resolved.value)[0] || 0;
 });
 
+const canPickOut = computed<boolean>(
+	() =>
+		Boolean(props.parentSet && getView(props.parentSet)?.style?.body === 'die-track') ||
+		hasOutRange(props.node, fallbacks.value),
+);
+
+const isNodeOut = computed<boolean>(() => isOutDie(props.node, fallbacks.value));
+
+const outLabel = computed<string>(() => {
+	const labels = props.parentSet ? getView(props.parentSet)?.labels : undefined;
+	if (labels && typeof labels.out === 'string' && labels.out.length > 0) return labels.out;
+	return 'OUT';
+});
+
+const isNodePool = computed<boolean>(() => {
+	if (typeof props.node?.pool === 'boolean') return props.node.pool;
+	return Boolean(props.parentSet?.pool === true);
+});
+
+const isNodeSpendable = computed<boolean>(() => {
+	if (typeof props.node?.spendable === 'boolean') return props.node.spendable;
+	return Boolean(props.parentSet?.spendable === true);
+});
+
 const activeDicePool = computed<number[]>(() => {
 	if (activeMode.value !== 'Dice') return [];
 	return ratingDice(resolved.value);
@@ -64,9 +99,29 @@ const activeDicePool = computed<number[]>(() => {
 
 const pipValues = computed<boolean[]>(() => {
 	if (activeMode.value !== 'Pip') return [];
-	const vals = resolved.value?.value;
-	if (!Array.isArray(vals) || vals.length === 0) return [false];
-	return vals.map((v) => Boolean(v));
+	const r = resolved.value;
+	const vals = Array.isArray(r?.value) ? r.value : [];
+	const setR = props.parentSet?.rating;
+	const inheritedSetCount =
+		setR?.type === 'Pip'
+			? Array.isArray(setR.range) && setR.range[0]
+				? Number(setR.range[0])
+				: Array.isArray(setR.value)
+					? setR.value.length
+					: 0
+			: 0;
+	const count =
+		Array.isArray(r?.range) && r.range[0]
+			? Number(r.range[0])
+			: props.node?.rating?.type === 'Pip'
+				? vals.length || inheritedSetCount || 1
+				: inheritedSetCount || vals.length || 1;
+	const clampedCount = Math.max(1, Math.min(12, Math.floor(count)));
+	const out: boolean[] = [];
+	for (let i = 0; i < clampedCount; i++) {
+		out.push(Boolean(vals[i] === true));
+	}
+	return out;
 });
 
 const counterBounds = computed<[number, number]>(() => {
@@ -112,21 +167,28 @@ function selectMode(mode: ModeOption) {
 	if (!props.node || activeMode.value === mode) return;
 	if (mode === 'None') {
 		delete props.node.rating;
+		delete props.node.pool;
 		if ('isOut' in props.node) delete props.node.isOut;
 		emit('change');
 		return;
 	}
 	const cur = resolved.value;
 	const ownRange = ownRangeIfPresent();
+	const hadOwnOut = Boolean(props.node?.rating?.out === true);
 	const defaultDie = dieScale.value.includes(8) ? 8 : dieScale.value[0] || 6;
 
 	if (mode === 'Die') {
-		const prevDice = cur ? ratingDice(cur) : [];
+		const prevDice = cur && !isNodeOut.value ? ratingDice(cur) : [];
 		const size = prevDice[0] || defaultDie;
 		delete props.node.rating;
+		delete props.node.pool;
+		if ('isOut' in props.node) props.node.isOut = false;
 		setRatingDie(props.node, size, ownRange);
+		if (hadOwnOut && props.node.rating && typeof props.node.rating === 'object') {
+			props.node.rating.out = true;
+		}
 	} else if (mode === 'Dice') {
-		const prevDice = cur ? ratingDice(cur) : [];
+		const prevDice = cur && !isNodeOut.value ? ratingDice(cur) : [];
 		const nextDice =
 			prevDice.length >= 2
 				? [...prevDice]
@@ -137,14 +199,21 @@ function selectMode(mode: ModeOption) {
 			type: 'Dice',
 			value: nextDice.sort((a, b) => b - a),
 			...(ownRange ? { range: ownRange } : {}),
+			...(hadOwnOut ? { out: true } : {}),
 		};
+		props.node.pool = true;
+		if ('isOut' in props.node) props.node.isOut = false;
 		syncDiceCountIfNeeded(nextDice.length);
 	} else if (mode === 'Pip') {
+		delete props.node.pool;
+		if ('isOut' in props.node) props.node.isOut = false;
 		props.node.rating = {
 			type: 'Pip',
 			value: [false, false, false],
 		};
 	} else if (mode === 'Counter') {
+		delete props.node.pool;
+		if ('isOut' in props.node) props.node.isOut = false;
 		props.node.rating = {
 			type: 'Counter',
 			value: [0],
@@ -159,6 +228,31 @@ function pickSingleDie(size: number) {
 	const ownRange = ownRangeIfPresent();
 	if ('isOut' in props.node) props.node.isOut = false;
 	setRatingDie(props.node, size, ownRange);
+	emit('change');
+}
+
+function pickOut() {
+	if (!props.node) return;
+	const ownRange = ownRangeIfPresent();
+	props.node.isOut = true;
+	setRatingDie(props.node, rangeTop(props.node, fallbacks.value) + 2, ownRange);
+	emit('change');
+}
+
+function toggleNodePool() {
+	if (!props.node) return;
+	const next = !isNodePool.value;
+	props.node.pool = next;
+	if (next && activeMode.value !== 'Dice') {
+		selectMode('Dice');
+		return;
+	}
+	emit('change');
+}
+
+function toggleNodeSpendable() {
+	if (!props.node) return;
+	props.node.spendable = !isNodeSpendable.value;
 	emit('change');
 }
 
@@ -311,12 +405,23 @@ function getDieDisplayValue(size: number, filled: boolean): string {
 					:key="'ir-die-' + size"
 					type="button"
 					class="inline-rating-die-btn"
-					:class="{ active: activeSingleDie === size }"
-					:aria-pressed="activeSingleDie === size"
+					:class="{ active: activeSingleDie === size && !isNodeOut }"
+					:aria-pressed="activeSingleDie === size && !isNodeOut"
 					:aria-label="`Set d${size}`"
 					@click.stop="pickSingleDie(size)"
 				>
-					<span class="diecon-wrapper" v-html="getDieDisplayValue(size, activeSingleDie === size)"></span>
+					<span class="diecon-wrapper" v-html="getDieDisplayValue(size, activeSingleDie === size && !isNodeOut)"></span>
+				</button>
+				<button
+					v-if="canPickOut"
+					type="button"
+					class="inline-rating-die-btn inline-rating-out-btn"
+					:class="{ active: isNodeOut }"
+					:aria-pressed="isNodeOut"
+					:aria-label="`Set ${outLabel}`"
+					@click.stop="pickOut"
+				>
+					<span class="inline-out-label">{{ outLabel }}</span>
 				</button>
 			</div>
 		</div>
@@ -349,6 +454,26 @@ function getDieDisplayValue(size: number, filled: boolean): string {
 					@click.stop="addPoolDie(size)"
 				>
 					<span class="diecon-wrapper" v-html="getDieDisplayValue(size, false)"></span>
+				</button>
+			</div>
+			<div class="inline-dice-options" role="group" aria-label="Dice options">
+				<button
+					type="button"
+					class="inline-dice-option-chip"
+					:class="{ active: isNodePool }"
+					:aria-pressed="isNodePool"
+					@click.stop="toggleNodePool"
+				>
+					Pool
+				</button>
+				<button
+					type="button"
+					class="inline-dice-option-chip"
+					:class="{ active: isNodeSpendable }"
+					:aria-pressed="isNodeSpendable"
+					@click.stop="toggleNodeSpendable"
+				>
+					Spendable
 				</button>
 			</div>
 		</div>

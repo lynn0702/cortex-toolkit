@@ -1,15 +1,12 @@
 {
 	"id": "titans-titan",
-	"version": 1,
 	"character": {
-		"id": "template-titans-titan",
-		"isTemplate": true,
 		"name": "",
-		"game": "Titans vs Leviathans",
 		"pronouns": "",
+		"player": "",
+		"game": "Titans vs Leviathans",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -414,6 +411,9 @@
 				"plural": "Sessions",
 				"traits": {}
 			}
-		}
-	}
+		},
+		"id": "template-titans-titan",
+		"isTemplate": true
+	},
+	"version": 1
 }

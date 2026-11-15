@@ -1,15 +1,12 @@
 {
 	"id": "solarpunk-citizen",
-	"version": 1,
 	"character": {
-		"id": "template-solarpunk-citizen",
-		"isTemplate": true,
 		"name": "",
-		"game": "Solarpunk",
 		"pronouns": "",
+		"player": "",
+		"game": "Solarpunk",
 		"plotPoints": 1,
 		"notes": "",
-		"player": "",
 		"portrait": {
 			"url": "",
 			"view": {
@@ -454,6 +451,9 @@
 					"Trick": {}
 				}
 			}
-		}
-	}
+		},
+		"id": "template-solarpunk-citizen",
+		"isTemplate": true
+	},
+	"version": 1
 }

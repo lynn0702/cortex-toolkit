@@ -15,6 +15,7 @@ import {
 	resolveVisibility,
 	nextVisibility,
 	DIE_LADDER,
+	hasOutRange,
 	rangeTop,
 	isOutDie,
 	applyTypeScopedRange,
@@ -277,6 +278,7 @@ function clearRating() {
 	if (!t) return;
 	confirmRatingChange.value = null;
 	delete t.rating;
+	delete t.pool;
 	if (t.isOut) t.isOut = false;
 	updateCharacter(props.character);
 }
@@ -290,24 +292,38 @@ const RATING_TYPES = ['Die', 'Dice', 'Counter', 'Pip'] as const;
 const ratingType = computed(() => resolveRating(trait.value, ancestorFallbacks.value)?.type ?? null);
 
 // Out is a range option for Die/Dice ratings, defaulted off. Surgical:
-// setting true opts the range in, false drops the key.
+// setting true opts the range in, false drops the key (and clears set-level outIndicator when inherited).
 const ratingHasOut = computed({
 	get() {
 		const r = resolveRating(trait.value, ancestorFallbacks.value);
-		return !!r && (r.type === 'Die' || r.type === 'Dice') && (r as any).out === true;
+		if (!r || (r.type !== 'Die' && r.type !== 'Dice')) return false;
+		return hasOutRange(trait.value, ancestorFallbacks.value);
 	},
 	set(value: boolean) {
 		const t = trait.value as unknown as Record<string, any>;
-		const r = t && t.rating;
+		if (!t) return;
 		const resolved = resolveRating(t, ancestorFallbacks.value);
-		if (!r || typeof r !== 'object' || !resolved || (resolved.type !== 'Die' && resolved.type !== 'Dice')) return;
+		if (!resolved || (resolved.type !== 'Die' && resolved.type !== 'Dice')) return;
+		if (!t.rating || typeof t.rating !== 'object') {
+			t.rating = {
+				type: resolved.type,
+				value: Array.isArray(resolved.value) ? [...resolved.value] : [],
+			};
+		}
+		const r = t.rating;
 		if (value) {
-			r.out = true;
+			if (!hasOutRange(undefined, ancestorFallbacks.value)) {
+				r.out = true;
+			}
 		} else {
 			delete r.out;
-			if (t.isOut) {
+			if (!isSubtraitMode.value && traitSet.value && getView(traitSet.value)?.outIndicator === true) {
+				ensureView(traitSet.value).outIndicator = false;
+			}
+			if (isOutDie(t, ancestorFallbacks.value) || t.isOut) {
 				t.isOut = false;
-				characterCurioFunctions.setTraitDice(trait.value, []);
+				const fallbackDie = dieRange.value[0] || 8;
+				setRatingDie(t, fallbackDie);
 			}
 		}
 		if (isSetSubtraitMode.value) {
@@ -357,24 +373,38 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	// the trait when its rating shape changes.
 	const ownPrevRange = cur && Array.isArray(cur.range) && cur.range.length ? [...cur.range] : undefined;
 	if ((cur?.type === 'Die' || cur?.type === 'Dice') && (type === 'Die' || type === 'Dice')) {
-		const dice = cur ? ratingDice(cur) : [];
+		const dice = cur && !isOut.value ? ratingDice(cur) : [];
 		const list = dice.length ? dice : [size];
-		if (type === 'Die') setRatingDie(t, list[0], ownPrevRange);
-		else
+		if (type === 'Die') {
+			t.isOut = false;
+			delete t.pool;
+			setRatingDie(t, list[0], ownPrevRange);
+		} else {
+			t.isOut = false;
 			t.rating = {
 				type: 'Dice',
 				value: list,
 				...(ownPrevRange ? { range: ownPrevRange } : {}),
 				...(cur && (cur as any).out === true ? { out: true } : {}),
 			};
+			t.pool = true;
+		}
 	} else if (type === 'Die') {
 		delete t.rating;
+		delete t.pool;
+		t.isOut = false;
 		setRatingDie(t, size);
 	} else if (type === 'Dice') {
+		t.isOut = false;
 		t.rating = { type: 'Dice', value: [size] };
+		t.pool = true;
 	} else if (type === 'Counter') {
+		delete t.pool;
+		t.isOut = false;
 		t.rating = { type: 'Counter', value: [0], range: [0, 20] };
 	} else {
+		delete t.pool;
+		t.isOut = false;
 		t.rating = { type: 'Pip', value: [false] };
 	}
 	if (isSetSubtraitMode.value) {
@@ -455,7 +485,20 @@ function commitPipBubbleCount(event: Event) {
 const pipBubbleCount = computed(() => {
 	const r = resolveRating(trait.value, ancestorFallbacks.value);
 	if (!r || r.type !== 'Pip') return 0;
-	return r.value.length;
+	if (Array.isArray(r.range) && r.range[0]) return r.range[0];
+	const setR = traitSet.value?.rating;
+	const inheritedSetCount =
+		setR?.type === 'Pip'
+			? Array.isArray(setR.range) && setR.range[0]
+				? Number(setR.range[0])
+				: Array.isArray(setR.value)
+					? setR.value.length
+					: 0
+			: 0;
+	if ((trait.value as any)?.rating?.type === 'Pip') {
+		return r.value.length || inheritedSetCount || 1;
+	}
+	return inheritedSetCount || r.value.length || 1;
 });
 
 function pipBubbleAt(index: number): boolean {
@@ -528,11 +571,33 @@ function toggleRangeOption(size: number) {
 const traitPool = computed({
 	get() {
 		const t = trait.value as unknown as Record<string, unknown> | undefined;
-		return t && typeof t.pool === 'boolean' ? t.pool : false;
+		if (t && typeof t.pool === 'boolean') return t.pool;
+		return Boolean(!isSubtraitMode.value && traitSet.value && (traitSet.value as any).pool === true);
 	},
 	set(val: any) {
 		if (!trait.value) return;
-		(trait.value as unknown as Record<string, any>).pool = Boolean(val);
+		const t = trait.value as unknown as Record<string, any>;
+		const next = Boolean(val);
+		t.pool = next;
+		if (next) {
+			const cur = resolveRating(t, ancestorFallbacks.value);
+			if (!cur || cur.type !== 'Dice') {
+				const scale = availableValues.value;
+				const defaultSize = Array.isArray(scale) && scale.length ? scale[0] : 8;
+				const prevDice = cur && !isOut.value ? ratingDice(cur) : [];
+				const ownPrevRange =
+					cur && (cur.type === 'Die' || cur.type === 'Dice') && Array.isArray(cur.range) && cur.range.length
+						? [...cur.range]
+						: undefined;
+				t.isOut = false;
+				t.rating = {
+					type: 'Dice',
+					value: prevDice.length ? prevDice : [defaultSize],
+					...(ownPrevRange ? { range: ownPrevRange } : {}),
+					...(cur && (cur as any).out === true ? { out: true } : {}),
+				};
+			}
+		}
 		updateCharacter(props.character);
 	},
 });
@@ -1235,13 +1300,26 @@ function getDieStepNext(currentSize: number, range: number[] = dieRange.value): 
 	return larger.length ? larger[0] : null;
 }
 
-const singleDieStepPrev = computed(() => getDieStepPrev(firstDieOf(trait.value)));
-const singleDieStepNext = computed(() => getDieStepNext(firstDieOf(trait.value)));
+const singleDieStepPrev = computed<number | null>(() => {
+	if (isOut.value) return rangeTop(trait.value, ancestorFallbacks.value);
+	return getDieStepPrev(firstDieOf(trait.value));
+});
+const singleDieStepNext = computed<number | 'out' | null>(() => {
+	if (isOut.value) return null;
+	const next = getDieStepNext(firstDieOf(trait.value));
+	if (next !== null) return next;
+	if (shouldShowTrackOut.value && firstDieOf(trait.value) > 0) {
+		return 'out';
+	}
+	return null;
+});
 
 function stepSingleDieDown() {
 	const prev = singleDieStepPrev.value;
 	if (prev !== null && trait.value) {
-		setRatingDie(trait.value as unknown as Record<string, any>, prev);
+		const t = trait.value as unknown as Record<string, any>;
+		t.isOut = false;
+		setRatingDie(t, prev);
 		updateCharacter(props.character);
 	}
 }
@@ -1249,7 +1327,14 @@ function stepSingleDieDown() {
 function stepSingleDieUp() {
 	const next = singleDieStepNext.value;
 	if (next !== null && trait.value) {
-		setRatingDie(trait.value as unknown as Record<string, any>, next);
+		const t = trait.value as unknown as Record<string, any>;
+		if (next === 'out') {
+			t.isOut = true;
+			setRatingDie(t, rangeTop(t, ancestorFallbacks.value) + 2);
+		} else {
+			t.isOut = false;
+			setRatingDie(t, next);
+		}
 		updateCharacter(props.character);
 	}
 }
@@ -1573,14 +1658,14 @@ const hasAdvancedTraitSettings = computed(() =>
 	Boolean(
 		traitTags.value.length > 0 ||
 		traitVisibility.value !== 'shown' ||
-		traitPool.value ||
+		(ratingType.value === 'Dice' ? (trait.value as any)?.pool === false : traitPool.value) ||
 		traitSpendable.value ||
 		editableOnSheet.value ||
 		hitchesDiffers.value ||
 		traitKeepsExtra.value !== 0 ||
 		traitPpDelta.value !== 0 ||
 		isCustomTraitRange.value ||
-		ratingHasOut.value ||
+		Boolean((trait.value?.rating as any)?.out === true) ||
 		(hasSfxChildren.value && Boolean((getView(trait.value) as any)?.badge)),
 	),
 );
@@ -1937,8 +2022,11 @@ const hasAdvancedTraitSettings = computed(() =>
 								-
 							</button>
 							<div class="die-rating-current">
-								<span v-html="getDieDisplayValue(firstDieOf(trait), firstDieOf(trait) > 0)"></span>
-								<span class="die-rating-text">d{{ firstDieOf(trait) }}</span>
+								<span v-if="isOut" class="out-badge active">{{ outLabel }}</span>
+								<template v-else>
+									<span v-html="getDieDisplayValue(firstDieOf(trait), firstDieOf(trait) > 0)"></span>
+									<span class="die-rating-text">d{{ firstDieOf(trait) }}</span>
+								</template>
 							</div>
 							<button
 								type="button"
@@ -2118,55 +2206,57 @@ const hasAdvancedTraitSettings = computed(() =>
 						<!-- PIP BUBBLE ROW -->
 						<div v-else-if="ratingType === 'Pip'">
 							<div class="pip-editor-row">
-								<div
-									v-for="bubbleIndex in pipBubbleCount"
-									:key="'pip-' + bubbleIndex"
-									class="pip-bubble-wrap"
-									tabindex="0"
-									role="checkbox"
-									:aria-checked="pipBubbleAt(bubbleIndex - 1) ? 'true' : 'false'"
-									:aria-label="'Pip ' + bubbleIndex"
-									@keydown.enter.prevent="togglePipBubble(bubbleIndex - 1)"
-									@keydown.space.prevent="togglePipBubble(bubbleIndex - 1)"
-									@click.stop="togglePipBubble(bubbleIndex - 1)"
-									:title="pipBubbleAt(bubbleIndex - 1) ? 'Unfill bubble' : 'Fill bubble'"
-								>
-									<div class="pip-bubble" :class="{ filled: pipBubbleAt(bubbleIndex - 1) }"></div>
+								<div class="pip-editor-bubbles" role="group" aria-label="Pips">
+									<div
+										v-for="bubbleIndex in pipBubbleCount"
+										:key="'pip-' + bubbleIndex"
+										class="pip-bubble-wrap"
+										tabindex="0"
+										role="checkbox"
+										:aria-checked="pipBubbleAt(bubbleIndex - 1) ? 'true' : 'false'"
+										:aria-label="'Pip ' + bubbleIndex"
+										@keydown.enter.prevent="togglePipBubble(bubbleIndex - 1)"
+										@keydown.space.prevent="togglePipBubble(bubbleIndex - 1)"
+										@click.stop="togglePipBubble(bubbleIndex - 1)"
+										:title="pipBubbleAt(bubbleIndex - 1) ? 'Unfill bubble' : 'Fill bubble'"
+									>
+										<div class="pip-bubble" :class="{ filled: pipBubbleAt(bubbleIndex - 1) }"></div>
+									</div>
+									<span class="pip-editor-count" v-if="pipBubbleCount === 0">No bubbles</span>
 								</div>
-								<span class="pip-editor-count" v-if="pipBubbleCount === 0">No bubbles</span>
-							</div>
-							<div class="num-stepper mt-sm" v-if="!isPlay">
-								<button
-									type="button"
-									class="btn-step"
-									@click.stop="setPipBubbleCount(pipBubbleCount - 1)"
-									:disabled="pipBubbleCount <= 1"
-									title="Fewer bubbles"
-									aria-label="Fewer bubbles"
-								>
-									-
-								</button>
-								<input
-									type="number"
-									:id="'trait-' + traitID + '-pip-count'"
-									name="pipBubbleCount"
-									min="1"
-									max="100"
-									:value="pipBubbleCount"
-									@change="commitPipBubbleCount($event)"
-									inputmode="numeric"
-									aria-label="Bubble count"
-									class="editor-input-short"
-								/>
-								<button
-									type="button"
-									class="btn-step"
-									@click.stop="setPipBubbleCount(pipBubbleCount + 1)"
-									title="More bubbles"
-									aria-label="More bubbles"
-								>
-									+
-								</button>
+								<div class="num-stepper pip-count-stepper" v-if="!isPlay">
+									<button
+										type="button"
+										class="btn-step"
+										@click.stop="setPipBubbleCount(pipBubbleCount - 1)"
+										:disabled="pipBubbleCount <= 1"
+										title="Fewer bubbles"
+										aria-label="Fewer bubbles"
+									>
+										-
+									</button>
+									<input
+										type="number"
+										:id="'trait-' + traitID + '-pip-count'"
+										name="pipBubbleCount"
+										min="1"
+										max="100"
+										:value="pipBubbleCount"
+										@change="commitPipBubbleCount($event)"
+										inputmode="numeric"
+										aria-label="Bubble count"
+										class="editor-input-short"
+									/>
+									<button
+										type="button"
+										class="btn-step"
+										@click.stop="setPipBubbleCount(pipBubbleCount + 1)"
+										title="More bubbles"
+										aria-label="More bubbles"
+									>
+										+
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>

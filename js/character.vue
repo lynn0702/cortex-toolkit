@@ -2,16 +2,19 @@
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue';
 import { characterCurioFunctions, characterCurioSetPresets, type SetPresetEntry } from './functions.ts';
 import {
+	DIE_LADDER,
 	getView,
 	ensureView,
 	isNameSet,
 	getRating,
+	ratingDice,
 	setRatingDie,
 	resolveVisibility,
 	isHiddenIn,
 	resolveSetPillar,
 	getPillarLabel,
 	resolveAltRoll,
+	resolvePlotPoints,
 	type Character,
 	type TraitSet,
 	type Trait,
@@ -171,6 +174,12 @@ function isSheetIdentityPartActive(
 	if (key === 'player') {
 		return shown && (Boolean(ch.player) || (Boolean(t) && !isSheetIdentityPartActive('description')));
 	}
+	if (key === 'description') {
+		return shown && (Boolean(ch.description) || Boolean(t));
+	}
+	if (key === 'pronouns') {
+		return shown && (Boolean(ch.pronouns) || Boolean(t));
+	}
 	if (key === 'game') {
 		return shown && (Boolean(ch.game) || Boolean(t));
 	}
@@ -188,28 +197,44 @@ function toggleSheetIdentityPart(
 	if (key === 'rating') {
 		let ns: any = (ch.traitSets || []).find((s) => isNameSet(s));
 		if (!ns) {
-			ns = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
+			ns = { id: 'name', name: 'Name', traits: [] };
 			if (!Array.isArray(ch.traitSets)) ch.traitSets = [];
 			ch.traitSets.unshift(ns);
 		}
 		if (getRating(ns)) {
 			delete ns.rating;
 		} else {
-			setRatingDie(ns, 8, [4, 6, 8, 10, 12]);
+			setRatingDie(ns, 8);
 		}
 		updateCharacter(ch);
 		return;
 	}
 	const currentlyActive = isSheetIdentityPartActive(key);
-	const t = characterCurioFunctions.ensureNameTrait(ch, key);
-	if (!t) return;
-	const v = ensureView(t) as Record<string, unknown>;
 	if (currentlyActive) {
-		v.visibility = 'hidden';
 		if (key === 'nickname') {
 			delete ensureView(ch).hasNickname;
 		}
+		const existing = characterCurioFunctions.getNameTrait(ch, key);
+		const fieldEmpty = key === 'portrait' ? !ch.portrait?.url : !(ch as any)[key];
+		const hasTemplate = Boolean((ch as any).sheet?.template);
+		if (!hasTemplate && fieldEmpty && !existing?.label) {
+			const ns = (ch.traitSets || []).find((s) => isNameSet(s));
+			if (ns && Array.isArray(ns.traits)) {
+				const idx = ns.traits.findIndex(
+					(item) => typeof item?.name === 'string' && item.name.toLowerCase() === key.toLowerCase(),
+				);
+				if (idx !== -1) ns.traits.splice(idx, 1);
+			}
+		} else {
+			const t = characterCurioFunctions.ensureNameTrait(ch, key);
+			if (t) {
+				(ensureView(t) as Record<string, unknown>).visibility = 'hidden';
+			}
+		}
 	} else {
+		const t = characterCurioFunctions.ensureNameTrait(ch, key);
+		if (!t) return;
+		const v = ensureView(t) as Record<string, unknown>;
 		delete v.visibility;
 		if (key === 'nickname') {
 			ensureView(ch).hasNickname = true;
@@ -470,15 +495,12 @@ function addOrganicTrait(page = 1) {
 		(character.traitSets || []).map((ts) => ts?.name),
 		'Traits',
 	);
-	traitSet.description = '';
-	traitSet.noun = 'Trait';
-	traitSet.plural = 'Traits';
 	traitSet.traits = [];
 	const tsView = ensureView(traitSet);
 	tsView.header = 'none';
-	tsView.ratingDisplay = 'rating';
-	tsView.style = { header: 'default', body: 'default' };
-	tsView.page = page ?? 1;
+	if ((page ?? 1) > 1) {
+		tsView.page = page;
+	}
 
 	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
 	if (!Array.isArray(character.traitSets)) character.traitSets = [];
@@ -491,21 +513,16 @@ function addTraitSet(page = 1) {
 	const character = props.character as Character;
 	if (!character) return;
 
-	const styleId = 'default';
 	const traitSet: any = structuredClone(characterCurioFunctions.defaultTraitSet);
 
 	traitSet.name = characterCurioFunctions.nextUniqueName(
 		(character.traitSets || []).map((ts) => ts?.name),
 		'New Set',
 	);
-	traitSet.noun = 'Trait';
-	traitSet.plural = 'Traits';
 	traitSet.traits = [];
-	const tsView = ensureView(traitSet);
-	tsView.ratingDisplay = 'rating';
-	tsView.style = { header: styleId, body: styleId };
-
-	tsView.page = page ?? 1;
+	if ((page ?? 1) > 1) {
+		ensureView(traitSet).page = page;
+	}
 	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
 
 	character.traitSets.push(traitSet);
@@ -579,11 +596,31 @@ function addTrait(traitSetID: number) {
 		(Array.isArray(traitSet.traits) ? traitSet.traits : []).map((tr) => tr?.name),
 		'New ' + noun,
 	);
-	const allowed = characterCurioFunctions.getTraitSetRatings(traitSet);
-	const cur =
-		trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
-	if (allowed.length > 0 && !allowed.includes(cur)) {
-		trait.rating = { type: 'Die', value: [allowed[0]], range: allowed.slice() };
+	const setR = getRating(traitSet);
+	if (setR?.type === 'Pip') {
+		trait.rating = { value: [false] };
+	} else if (setR?.type === 'Counter') {
+		trait.rating = { value: [typeof setR.value?.[0] === 'number' ? setR.value[0] : 0] };
+	} else if (setR?.type === 'Dice') {
+		const setDice = ratingDice(setR);
+		trait.rating = {
+			value: setDice.length ? [...setDice] : [8, 8],
+		};
+		if ((traitSet as any).pool === true) trait.pool = true;
+	} else if ((traitSet as any).rating === null) {
+		delete trait.rating;
+	} else {
+		const allowed = characterCurioFunctions.getTraitSetRatings(traitSet);
+		const cur =
+			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
+		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
+		if (allowed.length > 0 && !allowed.includes(cur)) {
+			trait.rating = isDefaultLadder
+				? { type: 'Die', value: [allowed[0]] }
+				: { type: 'Die', value: [allowed[0]], range: allowed.slice() };
+		} else if (!isDefaultLadder && allowed.length > 0 && trait.rating) {
+			trait.rating.range = allowed.slice();
+		}
 	}
 
 	if (!Array.isArray(traitSet.traits)) traitSet.traits = [];
@@ -624,7 +661,7 @@ function updateCharacter(character: Character) {
 
 function adjustPlotPoints(delta: number) {
 	if (!props.character) return;
-	const current = Number(props.character.plotPoints) || 0;
+	const current = resolvePlotPoints(props.character);
 	props.character.plotPoints = Math.max(0, current + delta);
 	updateCharacter(props.character);
 }
@@ -738,9 +775,85 @@ function countStagedDiceForSets(sets: TraitSet[]): number {
 	return count;
 }
 
+const sheetUsesPillars = computed<boolean>(() => {
+	if (!props.character) return false;
+	if (pageCount.value > 1) return true;
+	const allSets = Array.isArray(props.character.traitSets) ? props.character.traitSets : [];
+	const visibleBaseSets = allSets.filter((ts) => {
+		if (!ts || isHiddenIn(ts, 'play')) return false;
+		const vis = resolveVisibility(ts);
+		const v = getView(ts);
+		if (vis === 'play-only' || v?.playMutable === true) return false;
+		return true;
+	});
+	for (const ts of visibleBaseSets) {
+		const v = getView(ts);
+		if (typeof v?.pillar === 'string' && v.pillar.trim().length > 0) return true;
+		const frameObj = typeof v?.frame === 'object' ? v.frame : null;
+		if (
+			(v?.style?.body === 'portrait-ring' || frameObj?.array === 'ring' || frameObj?.array === 'arc') &&
+			visibleBaseSets.length > 1
+		) {
+			return true;
+		}
+		const place = v?.place;
+		if (place && typeof place === 'object') {
+			const rawW = (place as { width?: unknown }).width;
+			const w = typeof rawW === 'string' ? Number(rawW.replace(/%/g, '')) : Number(rawW);
+			if (Number.isFinite(w) && w > 0 && w < 99) return true;
+			const rawL = (place as { left?: unknown }).left;
+			const l = typeof rawL === 'string' ? Number(rawL.replace(/%/g, '')) : Number(rawL);
+			if (Number.isFinite(l) && l > 0.5) return true;
+		}
+	}
+	return false;
+});
+
 const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 	if (props.submode !== 'play' || !props.character) return [];
 	const allSets = Array.isArray(props.character.traitSets) ? props.character.traitSets : [];
+
+	if (!sheetUsesPillars.value) {
+		const sheetSets: MobilePillarSetItem[] = [];
+		const playSets: MobilePillarSetItem[] = [];
+		allSets.forEach((ts, idx) => {
+			if (isHiddenIn(ts, 'play')) return;
+			const vis = resolveVisibility(ts);
+			const v = getView(ts);
+			if (vis === 'play-only' || v?.playMutable === true) {
+				playSets.push({
+					traitSet: ts,
+					index: idx,
+					label: getMobileJumpPillLabel(ts, playSets.length),
+				});
+			} else {
+				sheetSets.push({
+					traitSet: ts,
+					index: idx,
+					label: getMobileJumpPillLabel(ts, sheetSets.length),
+				});
+			}
+		});
+		const cols: MobilePillarColumn[] = [];
+		if (sheetSets.length > 0) {
+			cols.push({
+				key: 'sheet',
+				label: 'Sheet',
+				sets: sheetSets,
+				stagedCount: countStagedDiceForSets(sheetSets.map((s) => s.traitSet)),
+			});
+		}
+		if (playSets.length > 0) {
+			cols.push({
+				key: 'play',
+				label: getPillarLabel(props.character, 'play'),
+				sets: playSets,
+				stagedCount: countStagedDiceForSets(playSets.map((s) => s.traitSet)),
+			});
+		}
+		return cols;
+	}
+
 	const byPillar = new Map<string, MobilePillarSetItem[]>();
 	const seenCustomKeys: string[] = [];
 	const standardOrder = ['prime', 'plus', 'play'];
@@ -971,24 +1084,27 @@ defineExpose({
 						v-if="isPillarPlay && pageIndex === 1 && mobilePillarColumns.length > 0"
 						ref="jumpStripRef"
 						class="mobile-set-jump-strip"
+						:class="{ 'is-unified-sheet-strip': isSingleMobilePillar && !sheetUsesPillars }"
 						aria-label="Character pillars"
 					>
 						<template v-if="isSingleMobilePillar">
-							<span class="jump-pillar-tag" :data-pillar-pill="mobilePillarColumns[0].key">
+							<span v-if="sheetUsesPillars" class="jump-pillar-tag" :data-pillar-pill="mobilePillarColumns[0].key">
 								<span class="jump-pill-label">{{ mobilePillarColumns[0].label }}</span>
 								<span v-if="mobilePillarColumns[0].stagedCount > 0" class="jump-pill-badge">{{
 									mobilePillarColumns[0].stagedCount
 								}}</span>
 							</span>
-							<button
-								v-for="sub in singlePillarSubItems"
-								:key="'jump-sub-' + sub.index"
-								type="button"
-								class="jump-pill jump-pill-sub"
-								@click.stop="scrollToSetInColumn(mobilePillarColumns[0].key, sub.index)"
-							>
-								<span class="jump-pill-label">{{ sub.label }}</span>
-							</button>
+							<template v-if="sheetUsesPillars || singlePillarSubItems.length > 2">
+								<button
+									v-for="sub in singlePillarSubItems"
+									:key="'jump-sub-' + sub.index"
+									type="button"
+									class="jump-pill jump-pill-sub"
+									@click.stop="scrollToSetInColumn(mobilePillarColumns[0].key, sub.index)"
+								>
+									<span class="jump-pill-label">{{ sub.label }}</span>
+								</button>
+							</template>
 						</template>
 						<template v-else>
 							<button
@@ -1029,7 +1145,11 @@ defineExpose({
 					</nav>
 
 					<!-- 2D MOBILE PILLAR & STACK DECK (PLAY MODE) -->
-					<div v-if="isPillarPlay && pageIndex === 1" class="mobile-pillar-track">
+					<div
+						v-if="isPillarPlay && pageIndex === 1"
+						class="mobile-pillar-track"
+						:class="{ 'is-single-pillar': isSingleMobilePillar }"
+					>
 						<div
 							v-for="col in mobilePillarColumns"
 							:key="'pillar-col-' + col.key"

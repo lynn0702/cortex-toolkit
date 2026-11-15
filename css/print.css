@@ -3457,7 +3457,7 @@ body:has(.character-sheet.submode-print) .main {
 	row-gap: 0.15rem;
 }
 
-.character-sheet .trait-title:not(.trait-title-stacked) > .trait-name {
+.character-sheet .trait-title:not(.trait-title-stacked) > :is(.trait-name, .trait-title-btn) {
 	flex: 1 1 auto;
 	min-width: 0;
 }
@@ -3467,18 +3467,30 @@ body:has(.character-sheet.submode-print) .main {
 	min-width: 0;
 }
 
+.character-sheet .trait-title:not(.trait-title-stacked) > .trait-value.multidie-value {
+	flex: 0 1 auto;
+	max-inline-size: 100%;
+	margin-inline-start: auto;
+	justify-content: flex-end;
+}
+
 /* Parts cells: dice wrap inside rating/track cells instead of spilling
    over neighbouring cells. Single-line rows render unchanged. The
    .character-sheet prefix outranks the dual-mode .trait-value rule
    (inline-flex, no shrink) so narrow tracks actually wrap. */
-.character-sheet .trait-parts .single-die-value {
+.character-sheet .trait-parts :is(.single-die-value, .multidie-value) {
 	display: flex;
 	flex-wrap: wrap;
 	flex-shrink: 1;
 	min-width: 0;
-	column-gap: 0.1rem;
+	max-inline-size: 100%;
+	column-gap: 0.25rem;
 	row-gap: 0.3rem;
 	align-items: center;
+}
+
+.character-sheet .trait-parts .single-die-value {
+	column-gap: 0.1rem;
 }
 
 .character-sheet .trait-parts .trait-part-track {
@@ -3544,6 +3556,23 @@ body:has(.character-sheet.submode-print) .main {
 		margin-left: 0.35rem;
 		font-size: 0.82rem;
 		transform: translateY(2px);
+		white-space: nowrap;
+
+		&:first-child {
+			margin-inline-start: 0;
+			height: auto;
+			min-block-size: 1.65rem;
+			padding: 0.2rem 0.45rem;
+			border-radius: 0.25rem;
+			font-family: var(--font-heading);
+			font-size: var(--text-meta);
+			font-weight: 800;
+			letter-spacing: 0.04em;
+			background: var(--color-primary);
+			color: var(--die-active-text);
+			transform: none;
+			cursor: pointer;
+		}
 	}
 }
 
@@ -3570,6 +3599,39 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 @media screen {
+	.character-sheet:not(.submode-print):not(.print-sheet)
+		.trait-parts.trait-parts-inline:not(:has(> .trait-part-track)):not(:has(> .trait-part-child-rating)):has(
+			> .trait-part-rating > :is(.multidie-value, .counter-value, .pip-value, .single-die-value.is-out-active)
+		) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: safe center;
+		gap: 0.25rem 0.5rem;
+
+		& > .trait-part-name {
+			flex: 1 1 auto;
+			min-inline-size: 0;
+			padding-inline-end: 0;
+		}
+
+		& > .trait-part-rating {
+			flex: 0 1 auto;
+			min-inline-size: 0;
+			max-inline-size: 100%;
+			margin-inline-start: auto;
+			justify-content: flex-end;
+		}
+
+		& > .trait-part-rating > .multidie-value {
+			justify-content: flex-end;
+		}
+
+		& > :is(.trait-part-description, .trait-part-block, .trait-part-subtraits) {
+			flex: 1 0 100%;
+			min-inline-size: 0;
+		}
+	}
+
 	.character-sheet:not(.submode-print):not(.print-sheet) .trait:has(> .trait-parts-inline > .trait-part-track) {
 		container: trait-track-row / inline-size;
 	}
@@ -3783,11 +3845,18 @@ body:has(.character-sheet.submode-print) .main {
 	overflow-wrap: break-word;
 }
 
-.character-sheet .trait-value,
+.character-sheet .trait-value:not(.multidie-value),
 .character-sheet .subtrait-value,
 .character-sheet .die-row-counter,
 .character-sheet .dice-count-track {
 	flex-shrink: 0;
+}
+
+.character-sheet .multidie-value {
+	flex-shrink: 1;
+	min-inline-size: 0;
+	max-inline-size: 100%;
+	justify-content: flex-end;
 }
 
 .character-sheet .die-row,

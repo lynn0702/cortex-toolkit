@@ -27,11 +27,17 @@
 					"description": "A description of the trait set."
 				},
 				"noun": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "The singular noun used to describe a trait in this set."
 				},
 				"plural": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "The plural noun used to describe multiple traits in this set."
 				},
 				"traits": {
@@ -95,10 +101,7 @@
 			"additionalProperties": false,
 			"required": [
 				"id",
-				"name",
-				"noun",
-				"plural",
-				"tags"
+				"name"
 			]
 		},
 		"trait": {
@@ -212,8 +215,7 @@
 			},
 			"additionalProperties": false,
 			"required": [
-				"name",
-				"tags"
+				"name"
 			]
 		},
 		"rating": {
@@ -265,7 +267,10 @@
 			"additionalProperties": false
 		},
 		"tags": {
-			"type": "array",
+			"type": [
+				"array",
+				"null"
+			],
 			"description": "A list of taxonomy tags attached to this entity. Tags may include letters, numbers, hyphens, periods, and forward slashes (for namespacing).",
 			"items": {
 				"type": "string",
@@ -281,63 +286,31 @@
 			"additionalProperties": true
 		},
 		"custom": {
-			"type": "object",
+			"type": [
+				"object",
+				"null"
+			],
 			"description": "An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.",
 			"additionalProperties": true
 		}
 	},
 	"properties": {
-		"$schema": {
-			"description": "JSON schema URI for character.schema.json.",
-			"type": [
-				"string",
-				"null"
-			]
-		},
-		"version": {
-			"description": "Version of character.schema.json to use.",
-			"type": "string",
-			"enum": [
-				"0.1"
-			]
-		},
-		"isTemplate": {
-			"type": [
-				"boolean",
-				"null"
-			],
-			"description": "Whether this character represents a reusable template."
-		},
-		"id": {
-			"type": "string",
-			"description": "A unique identifier for the character.",
-			"format": "uuid"
-		},
-		"dateCreated": {
-			"type": "string",
-			"format": "date-time",
-			"description": "The date and time when the character was first created."
-		},
-		"dateModified": {
-			"type": "string",
-			"format": "date-time",
-			"description": "The date and time when the character was last changed."
-		},
-		"dateTouched": {
-			"type": "string",
-			"format": "date-time",
-			"description": "The date and time when the character was last loaded, viewed or interacted with."
-		},
 		"name": {
 			"type": "string",
 			"description": "The character’s name."
 		},
-		"game": {
-			"type": "string",
-			"description": "The name of the game or campaign that the character belongs to."
+		"nickname": {
+			"type": [
+				"string",
+				"null"
+			],
+			"description": "An optional nickname or callsign for the character."
 		},
 		"pronouns": {
-			"type": "string",
+			"type": [
+				"string",
+				"null"
+			],
 			"description": "The character’s preferred pronouns."
 		},
 		"description": {
@@ -347,15 +320,42 @@
 			],
 			"description": "A short summary or subtitle for the character."
 		},
-		"traitSets": {
-			"type": "array",
-			"description": "The character’s trait sets.",
-			"items": {
-				"$ref": "#/$defs/traitSet"
-			}
+		"player": {
+			"type": [
+				"string",
+				"null"
+			],
+			"description": "The player’s name."
+		},
+		"game": {
+			"type": [
+				"string",
+				"null"
+			],
+			"description": "The name of the game or campaign that the character belongs to."
+		},
+		"plotPoints": {
+			"type": [
+				"integer",
+				"null"
+			],
+			"description": "The character’s current number of plot points. Defaults to 1 when omitted or null."
+		},
+		"notes": {
+			"type": [
+				"string",
+				"null"
+			],
+			"description": "Any additional notes about the character. Format: plaintext or Markdown."
+		},
+		"tags": {
+			"$ref": "#/$defs/tags"
 		},
 		"portrait": {
-			"type": "object",
+			"type": [
+				"object",
+				"null"
+			],
 			"description": "An image to represent the character.",
 			"properties": {
 				"url": {
@@ -369,11 +369,17 @@
 							"type": "string",
 							"description": "An empty string to indicate no image.",
 							"maxLength": 0
+						},
+						{
+							"type": "null"
 						}
 					]
 				},
 				"alt": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "A description of the image."
 				},
 				"tags": {
@@ -386,12 +392,50 @@
 					"$ref": "#/$defs/custom"
 				}
 			},
-			"required": [
-				"url",
-				"alt",
-				"tags"
-			],
 			"additionalProperties": false
+		},
+		"view": {
+			"$ref": "#/$defs/view"
+		},
+		"custom": {
+			"$ref": "#/$defs/custom"
+		},
+		"sets": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "Layered name-keyed map of the character’s trait sets.",
+			"additionalProperties": true
+		},
+		"traitSets": {
+			"type": [
+				"array",
+				"null"
+			],
+			"description": "The character’s trait sets (array render shape).",
+			"items": {
+				"$ref": "#/$defs/traitSet"
+			}
+		},
+		"prefs": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.",
+			"properties": {
+				"setOrder": {
+					"type": "array"
+				},
+				"traitOrders": {
+					"type": "object"
+				},
+				"declinedTemplateVersions": {
+					"type": "object"
+				}
+			},
+			"additionalProperties": true
 		},
 		"sheet": {
 			"type": [
@@ -419,57 +463,72 @@
 			],
 			"additionalProperties": false
 		},
-		"prefs": {
+		"template": {
 			"type": [
 				"object",
+				"string",
 				"null"
 			],
-			"description": "File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.",
-			"properties": {
-				"setOrder": {
-					"type": "array"
-				},
-				"traitOrders": {
-					"type": "object"
-				},
-				"declinedTemplateVersions": {
-					"type": "object"
-				}
-			},
-			"additionalProperties": true
+			"description": "Pinned sheet template reference in layered form."
 		},
-		"plotPoints": {
-			"type": "integer",
-			"description": "The character’s current number of plot points."
-		},
-		"notes": {
+		"id": {
 			"type": "string",
-			"description": "Any additional notes about the character. Format: plaintext, Markdown or HTML."
+			"description": "A unique identifier for the character.",
+			"format": "uuid"
 		},
-		"tags": {
-			"$ref": "#/$defs/tags"
+		"isTemplate": {
+			"type": [
+				"boolean",
+				"null"
+			],
+			"description": "Whether this character represents a reusable template."
 		},
-		"view": {
-			"$ref": "#/$defs/view"
+		"dateCreated": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time",
+			"description": "The date and time when the character was first created."
 		},
-		"custom": {
-			"$ref": "#/$defs/custom"
+		"dateModified": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time",
+			"description": "The date and time when the character was last changed."
+		},
+		"dateTouched": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time",
+			"description": "The date and time when the character was last loaded, viewed or interacted with."
+		},
+		"version": {
+			"description": "Version of character.schema.json to use.",
+			"type": [
+				"string",
+				"null"
+			],
+			"enum": [
+				"0.1",
+				null
+			]
+		},
+		"$schema": {
+			"description": "JSON schema URI for character.schema.json.",
+			"type": [
+				"string",
+				"null"
+			]
 		}
 	},
 	"required": [
-		"version",
 		"id",
-		"dateCreated",
-		"dateModified",
-		"dateTouched",
-		"name",
-		"game",
-		"pronouns",
-		"traitSets",
-		"portrait",
-		"plotPoints",
-		"notes",
-		"tags"
+		"name"
 	],
 	"additionalProperties": false
 }
