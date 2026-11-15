@@ -1072,7 +1072,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 	}
 	saveOpenCharacterIDs();
 	initHistory();
-	setMode('character', submode.value ?? 'edit', true);
+	setMode('character', templateId ? (submode.value ?? 'edit') : 'edit', true);
 
 	saveLocalData();
 }

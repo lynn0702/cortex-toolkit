@@ -849,7 +849,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (!ts) return;
 		const n = ts.noun && ts.noun.length ? ts.noun : 'Trait';
 		const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
-		trait.name = 'New ' + n;
+		trait.name = characterCurioFunctions.nextUniqueName(
+			(Array.isArray(ts.traits) ? ts.traits : []).map((tr: any) => tr?.name),
+			'New ' + n,
+		);
 		const allowed = characterCurioFunctions.getTraitSetRatings(ts);
 		const cur =
 			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
@@ -1917,6 +1920,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function promptDeleteTraitSet() {
 		if (isName.value) return;
+		const hasPopulatedTraits = (traitSet.value?.traits || []).some(
+			(t: any) =>
+				(typeof t?.name === 'string' && t.name.trim().length > 0) ||
+				(typeof t?.description === 'string' && t.description.trim().length > 0),
+		);
+		if (!hasPopulatedTraits) {
+			confirmDeleteTraitSet();
+			return;
+		}
 		showDeleteConfirm.value = true;
 	}
 

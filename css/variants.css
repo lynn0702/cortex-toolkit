@@ -1286,9 +1286,10 @@
 
 	/* SPLIT BRANCH (specialties both sides of the skill, e.g. Alien Us). */
 	.branch-split-head {
-		grid-template-columns:
-			var(--branch-split-left, minmax(0, 1.4fr)) var(--branch-gutter) var(--branch-split-center, minmax(0, 1fr))
-			var(--branch-gutter) var(--branch-split-right, minmax(0, 1.4fr));
+		grid-template-columns: var(--branch-split-left, minmax(0, 1.4fr)) var(--branch-gutter) var(
+				--branch-split-center,
+				minmax(0, 1fr)
+			) var(--branch-gutter) var(--branch-split-right, minmax(0, 1.4fr));
 		align-items: center;
 	}
 
@@ -1308,9 +1309,10 @@
 	}
 
 	.branch-split-row {
-		grid-template-columns:
-			var(--branch-split-left, minmax(0, 1.4fr)) var(--branch-gutter) var(--branch-split-center, minmax(0, 1fr))
-			var(--branch-gutter) var(--branch-split-right, minmax(0, 1.4fr));
+		grid-template-columns: var(--branch-split-left, minmax(0, 1.4fr)) var(--branch-gutter) var(
+				--branch-split-center,
+				minmax(0, 1fr)
+			) var(--branch-gutter) var(--branch-split-right, minmax(0, 1.4fr));
 
 		.branch-main {
 			justify-content: center;

@@ -1,0 +1,194 @@
+import { describe, it, expect } from 'vitest';
+import { mount } from '@vue/test-utils';
+import axe from 'axe-core';
+import CharacterView from '../js/character.vue';
+import NameEditor from '../js/name-editor.vue';
+import TraitSetEditor from '../js/trait-set-editor.vue';
+import { characterCurioFunctions } from '../js/functions.ts';
+import { getRating, getView, isNameSet, type Character } from '../js/model.ts';
+
+function freshBlankCharacter(id = 'jimmy-1'): Character {
+	const ch = structuredClone(characterCurioFunctions.defaultCharacter) as unknown as Character;
+	ch.id = id;
+	characterCurioFunctions.ensureTraitSetIds(ch);
+	characterCurioFunctions.assignLids(ch);
+	return ch;
+}
+
+describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
+	it('starts minimal with Name + d8 rating, compact header, inline name input, and zero starter sets to delete', async () => {
+		const ch = freshBlankCharacter();
+		expect(ch.traitSets).toHaveLength(1);
+		expect(isNameSet(ch.traitSets[0])).toBe(true);
+		expect(getRating(ch.traitSets[0])).toEqual({
+			type: 'Die',
+			value: [8],
+			range: [4, 6, 8, 10, 12],
+		});
+
+		const wrapper = mount(CharacterView, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				submode: 'edit',
+				editing: [],
+			},
+		});
+
+		expect(wrapper.find('.page-header-inner.is-compact-header').exists()).toBe(true);
+		expect(wrapper.find('.sheet-header-desc-box').exists()).toBe(false);
+		expect(wrapper.find('.sheet-meta-pronoun-cell').exists()).toBe(false);
+
+		const nameInput = wrapper.find('input.sheet-name-inline-input');
+		expect(nameInput.exists()).toBe(true);
+		await nameInput.setValue('Jimmy the Snitch');
+		expect(ch.name).toBe('Jimmy the Snitch');
+
+		const dieChips = wrapper.findAll('.sheet-name-die-chip');
+		expect(dieChips).toHaveLength(5);
+		expect(dieChips[2].classes()).toContain('active'); // d8
+
+		// Switch rating to d10 inline, then clear, then set d8 back
+		await dieChips[3].trigger('click');
+		expect(getRating(ch.traitSets[0])?.value).toEqual([10]);
+		await dieChips[3].trigger('click');
+		expect(getRating(ch.traitSets[0])).toBeUndefined();
+		await dieChips[2].trigger('click');
+		expect(getRating(ch.traitSets[0])?.value).toEqual([8]);
+
+		const editAxe = await axe.run(wrapper.element);
+		expect(editAxe.violations).toHaveLength(0);
+		wrapper.unmount();
+	});
+
+	it('stages sheet d8 rating in Play mode and syncs Sheet Rating in NameEditor', async () => {
+		const ch = freshBlankCharacter();
+		ch.name = 'Jimmy the Snitch';
+
+		const playWrapper = mount(CharacterView, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				submode: 'play',
+				editing: [],
+				dicePool: { items: [{ size: 8, qty: 1, source: 'Jimmy the Snitch' }] },
+			},
+		});
+
+		const stageBadge = playWrapper.find('[aria-label="Stage d8 Jimmy the Snitch"]');
+		expect(stageBadge.exists()).toBe(true);
+		await stageBadge.trigger('click');
+		expect(playWrapper.emitted('addDieToRoller')?.[0]?.[0]).toEqual({
+			size: 8,
+			qty: 1,
+			source: 'Jimmy the Snitch',
+			hitches: 1,
+			ppDelta: 0,
+		});
+
+		const playAxe = await axe.run(playWrapper.element);
+		expect(playAxe.violations).toHaveLength(0);
+		playWrapper.unmount();
+
+		const nameEditor = mount(NameEditor, {
+			props: {
+				character: ch,
+				open: true,
+				tab: 'sheet',
+			},
+		});
+		const ratingButtons = nameEditor.findAll('.editor-die-chip');
+		expect(ratingButtons).toHaveLength(6); // None + d4..d12
+		expect(ratingButtons[3].classes()).toContain('active'); // d8
+		await ratingButtons[0].trigger('click'); // None
+		expect(getRating(ch.traitSets[0])).toBeUndefined();
+		await ratingButtons[2].trigger('click'); // d6
+		expect(getRating(ch.traitSets[0])?.value).toEqual([6]);
+		nameEditor.unmount();
+	});
+
+	it('grows organically via + Trait, + Part, and + Set, round-trips losslessly, and deletes empty sets in 1 click', async () => {
+		const ch = freshBlankCharacter();
+		ch.name = 'Jimmy the Snitch';
+
+		const wrapper = mount(CharacterView, {
+			props: {
+				character: ch,
+				submode: 'edit',
+				editing: [],
+			},
+		});
+
+		const builderButtons = wrapper.findAll('.sheet-organic-builder .btn-sheet-add');
+		expect(builderButtons.map((b) => b.text().trim())).toEqual(['Trait', 'Part', 'Set', 'Presets']);
+
+		// 1. + Trait creates a clean headerless TraitSet and adds deduplicated traits
+		await builderButtons[0].trigger('click');
+		expect(ch.traitSets).toHaveLength(2);
+		expect(getView(ch.traitSets[1])?.header).toBe('none');
+		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait']);
+
+		await builderButtons[0].trigger('click');
+		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait', 'New Trait 2']);
+
+		// 2. + Part toggles Sheet Parts (shown = absence, never stored 'shown') and Trait Parts
+		await builderButtons[1].trigger('click');
+		expect(wrapper.find('.inline-add-part-area').exists()).toBe(true);
+		const sheetPartChips = wrapper.findAll('[aria-label="Sheet parts"] .organic-part-chip');
+		const pronounsChip = sheetPartChips.find((c) => c.text().includes('Pronouns'))!;
+		expect(pronounsChip.classes()).not.toContain('active');
+		await pronounsChip.trigger('click');
+		const pronounsTrait = characterCurioFunctions.getNameTrait(ch, 'pronouns');
+		expect(getView(pronounsTrait)?.visibility).toBeUndefined();
+		expect(wrapper.find('.sheet-meta-pronoun-cell input.sheet-part-inline-input').exists()).toBe(true);
+
+		const traitPartChips = wrapper.findAll('[aria-label="Trait parts"] .organic-part-chip');
+		const sfxChip = traitPartChips.find((c) => c.text().includes('SFX'))!;
+		await sfxChip.trigger('click');
+		expect(Boolean((getView(ch.traitSets[1])?.parts as any)?.block)).toBe(true);
+
+		// 3. + Set creates unique empty sets; empty set deletes in 1 click without confirm modal
+		await builderButtons[2].trigger('click');
+		expect(ch.traitSets).toHaveLength(3);
+		expect(ch.traitSets[2].name).toBe('New Set');
+		expect(ch.traitSets[2].traits).toHaveLength(0);
+
+		const emptySetEditor = mount(TraitSetEditor, {
+			props: {
+				character: ch,
+				traitSetID: 2,
+				open: true,
+			},
+		});
+		await emptySetEditor.find('button.editor-delete').trigger('click');
+		expect(emptySetEditor.emitted('removeTraitSet')?.[0]).toEqual([2]);
+		emptySetEditor.unmount();
+
+		// Non-empty set (index 1) still prompts confirmation before deletion
+		const populatedSetEditor = mount(TraitSetEditor, {
+			props: {
+				character: ch,
+				traitSetID: 1,
+				open: true,
+			},
+		});
+		await populatedSetEditor.find('button.editor-delete').trigger('click');
+		expect(populatedSetEditor.emitted('removeTraitSet')).toBeUndefined();
+		populatedSetEditor.unmount();
+
+		// 4. Lossless layered round-trip
+		const layered = characterCurioFunctions.toLayeredEntity(ch);
+		const rematerialized = characterCurioFunctions.materializeCharacter(layered, null);
+		expect(rematerialized.name).toBe('Jimmy the Snitch');
+		const rematNameSet = (rematerialized.traitSets ?? []).find((s: any) => isNameSet(s));
+		expect(getRating(rematNameSet)).toEqual({
+			type: 'Die',
+			value: [8],
+			range: [4, 6, 8, 10, 12],
+		});
+		const rematTraitsSet = (rematerialized.traitSets ?? []).find((s: any) => s.name === 'Traits');
+		expect((rematTraitsSet?.traits ?? []).map((t: any) => t.name)).toEqual(['New Trait', 'New Trait 2']);
+
+		wrapper.unmount();
+	});
+});

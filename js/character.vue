@@ -5,6 +5,8 @@ import {
 	getView,
 	ensureView,
 	isNameSet,
+	getRating,
+	setRatingDie,
 	resolveVisibility,
 	isHiddenIn,
 	resolveSetPillar,
@@ -17,6 +19,7 @@ import {
 	type CharacterCurioCustom,
 } from './model.ts';
 import {
+	buildParts,
 	getSheetSections as gridGetSheetSections,
 	getSheetGridStyle as gridGetSheetGridStyle,
 	type SheetSection,
@@ -56,13 +59,185 @@ const printBlank = ref(false);
 const printBW = ref(false);
 const showInlineAddSet = ref(false);
 const inlineAddPage = ref(1);
+const showInlineAddPart = ref(false);
+const inlineAddPartPage = ref(1);
 const inlineBuiltInPresets = Object.values(characterCurioSetPresets);
 const inlineCustomPresets = ref<SetPresetEntry[]>([]);
 
+const SHEET_QUICK_PARTS: ReadonlyArray<{
+	key: 'rating' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player' | 'notes';
+	label: string;
+}> = [
+	{ key: 'rating', label: 'Rating' },
+	{ key: 'description', label: 'Description' },
+	{ key: 'portrait', label: 'Portrait' },
+	{ key: 'pronouns', label: 'Pronouns' },
+	{ key: 'nickname', label: 'Nickname' },
+	{ key: 'game', label: 'Game' },
+	{ key: 'player', label: 'Player' },
+	{ key: 'notes', label: 'Notes' },
+];
+
+const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 'badge'; label: string }> = [
+	{ key: 'description', label: 'Description' },
+	{ key: 'block', label: 'SFX' },
+	{ key: 'track', label: 'Track' },
+	{ key: 'badge', label: 'Badge' },
+];
+
 function toggleInlineAdd(page = 1) {
+	const wasOpenHere = showInlineAddSet.value && inlineAddPage.value === page;
 	inlineAddPage.value = page;
 	inlineCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
-	showInlineAddSet.value = !showInlineAddSet.value;
+	showInlineAddPart.value = false;
+	showInlineAddSet.value = !wasOpenHere;
+}
+
+function toggleInlinePart(page = 1) {
+	const wasOpenHere = showInlineAddPart.value && inlineAddPartPage.value === page;
+	inlineAddPartPage.value = page;
+	showInlineAddSet.value = false;
+	showInlineAddPart.value = !wasOpenHere;
+}
+
+function lastNonNameSetIndex(page = 1): number {
+	const sets = props.character?.traitSets || [];
+	for (let i = sets.length - 1; i >= 0; i--) {
+		const ts = sets[i];
+		if (!ts || isNameSet(ts)) continue;
+		if ((getView(ts)?.page ?? 1) === page) return i;
+	}
+	return -1;
+}
+
+function isSheetIdentityPartActive(
+	key: 'rating' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player' | 'notes',
+): boolean {
+	const ch = props.character;
+	if (!ch) return false;
+	if (key === 'rating') {
+		const ns = (ch.traitSets || []).find((s) => isNameSet(s));
+		return Boolean(getRating(ns));
+	}
+	const t = characterCurioFunctions.getNameTrait(ch, key);
+	const shown = !t || resolveVisibility(t) !== 'hidden';
+	if (key === 'nickname') {
+		return shown && Boolean(ch.nickname || getView(ch)?.hasNickname);
+	}
+	if (key === 'portrait') {
+		if (ch.portrait?.url && shown) return true;
+		return Boolean(t) && resolveVisibility(t) !== 'hidden' && !isSheetIdentityPartActive('description');
+	}
+	if (key === 'player') {
+		return shown && (Boolean(ch.player) || (Boolean(t) && !isSheetIdentityPartActive('description')));
+	}
+	if (key === 'game') {
+		return shown && (Boolean(ch.game) || Boolean(t));
+	}
+	if (key === 'notes') {
+		return shown && (Boolean(ch.notes) || Boolean(t));
+	}
+	return shown;
+}
+
+function toggleSheetIdentityPart(
+	key: 'rating' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player' | 'notes',
+) {
+	const ch = props.character as Character;
+	if (!ch) return;
+	if (key === 'rating') {
+		let ns: any = (ch.traitSets || []).find((s) => isNameSet(s));
+		if (!ns) {
+			ns = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
+			if (!Array.isArray(ch.traitSets)) ch.traitSets = [];
+			ch.traitSets.unshift(ns);
+		}
+		if (getRating(ns)) {
+			delete ns.rating;
+		} else {
+			setRatingDie(ns, 8, [4, 6, 8, 10, 12]);
+		}
+		updateCharacter(ch);
+		return;
+	}
+	const currentlyActive = isSheetIdentityPartActive(key);
+	const t = characterCurioFunctions.ensureNameTrait(ch, key);
+	if (!t) return;
+	const v = ensureView(t) as Record<string, unknown>;
+	if (currentlyActive) {
+		v.visibility = 'hidden';
+		if (key === 'nickname') {
+			delete ensureView(ch).hasNickname;
+		}
+	} else {
+		delete v.visibility;
+		if (key === 'nickname') {
+			ensureView(ch).hasNickname = true;
+		}
+		if (key === 'portrait' && isSheetIdentityPartActive('description') && !ch.portrait?.url) {
+			selectElement(['name']);
+		}
+	}
+	updateCharacter(ch);
+}
+
+function isTargetSetPartActive(page: number, partKey: 'description' | 'block' | 'track' | 'badge'): boolean {
+	const idx = lastNonNameSetIndex(page);
+	if (idx === -1) return false;
+	const ts = props.character?.traitSets?.[idx];
+	const parts = getView(ts)?.parts as Record<string, unknown> | undefined;
+	if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return false;
+	return Boolean(parts[partKey]);
+}
+
+function toggleTargetSetPart(page: number, partKey: 'description' | 'block' | 'track' | 'badge') {
+	const ch = props.character as Character;
+	const idx = lastNonNameSetIndex(page);
+	if (!ch || idx === -1) return;
+	const ts = ch.traitSets[idx];
+	if (!ts) return;
+	const v = ensureView(ts);
+	const existing: Record<string, any> | null =
+		v.parts && typeof v.parts === 'object' && !Array.isArray(v.parts) ? { ...v.parts } : null;
+	if (!existing) {
+		const spec: Record<string, any> = {
+			rating: 'inline',
+			ratingDice: 5,
+			description: partKey === 'description',
+			block: partKey === 'block',
+			trackDice: partKey === 'track' ? 5 : 0,
+			badge: partKey === 'badge',
+		};
+		v.parts = buildParts(spec as any);
+	} else if (existing[partKey]) {
+		delete existing[partKey];
+		if (partKey === 'track') {
+			delete existing.trackLabel;
+		}
+		v.parts = existing;
+	} else {
+		const hasDesc = Boolean(existing.description) || partKey === 'description';
+		const hasBlock = Boolean(existing.block) || partKey === 'block';
+		const hasTrack = Boolean(existing.track) || partKey === 'track';
+		const hasBadge = Boolean(existing.badge) || partKey === 'badge';
+		const hasSub = Boolean(existing.subtraits);
+		const rebuilt = buildParts({
+			rating: existing.rating ? (Number(existing.rating.top) === 0 ? 'inline' : 'below') : 'none',
+			ratingDice: Array.isArray(existing.rating?.range) ? existing.rating.range.length : 5,
+			description: hasDesc,
+			block: hasBlock,
+			trackDice: hasTrack ? (Array.isArray(existing.track?.range) ? existing.track.range.length : 5) : 0,
+			subtraits: hasSub,
+			badge: hasBadge,
+		});
+		for (const [k, cell] of Object.entries(existing)) {
+			if (k.startsWith('child:') || k.startsWith('child_')) {
+				rebuilt[k] = cell;
+			}
+		}
+		v.parts = rebuilt;
+	}
+	updateCharacter(ch);
 }
 
 function removeInlineCustomPreset(id: string) {
@@ -297,6 +472,39 @@ function clearSelected() {
 // EDITING
 // New sets carry no place: they stack full-width in document order, which
 // lands them on their own row at the end of the target page (sparse).
+function addOrganicTrait(page = 1) {
+	const character = props.character as Character;
+	if (!character) return;
+	showInlineAddSet.value = false;
+	showInlineAddPart.value = false;
+
+	const existingSetIdx = lastNonNameSetIndex(page ?? 1);
+	if (existingSetIdx !== -1) {
+		addTrait(existingSetIdx);
+		return;
+	}
+
+	const traitSet: any = structuredClone(characterCurioFunctions.defaultTraitSet);
+	traitSet.name = characterCurioFunctions.nextUniqueName(
+		(character.traitSets || []).map((ts) => ts?.name),
+		'Traits',
+	);
+	traitSet.description = '';
+	traitSet.noun = 'Trait';
+	traitSet.plural = 'Traits';
+	traitSet.traits = [];
+	const tsView = ensureView(traitSet);
+	tsView.header = 'none';
+	tsView.style = { header: 'default', body: 'default' };
+	tsView.page = page ?? 1;
+
+	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
+	if (!Array.isArray(character.traitSets)) character.traitSets = [];
+	character.traitSets.push(traitSet);
+
+	addTrait(character.traitSets.length - 1);
+}
+
 function addTraitSet(page = 1) {
 	const character = props.character as Character;
 	if (!character) return;
@@ -304,23 +512,23 @@ function addTraitSet(page = 1) {
 	const styleId = 'default';
 	const traitSet: any = structuredClone(characterCurioFunctions.defaultTraitSet);
 
-	traitSet.name = 'New trait set';
+	traitSet.name = characterCurioFunctions.nextUniqueName(
+		(character.traitSets || []).map((ts) => ts?.name),
+		'New Set',
+	);
 	traitSet.noun = 'Trait';
 	traitSet.plural = 'Traits';
+	traitSet.traits = [];
 	const tsView = ensureView(traitSet);
 	tsView.style = { header: styleId, body: styleId };
 
 	tsView.page = page ?? 1;
 	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
-	const blank: any = structuredClone(characterCurioFunctions.defaultTrait);
-	blank.name = '';
-	delete blank.rating;
-	blank.description = '';
-	traitSet.traits.push(blank);
 
 	character.traitSets.push(traitSet);
 	updateCharacter(character);
 	showInlineAddSet.value = false;
+	showInlineAddPart.value = false;
 
 	const newTraitSetID = character.traitSets.length - 1;
 	selectElement(['traitSet', newTraitSetID]);
@@ -378,7 +586,10 @@ function addTrait(traitSetID: number) {
 	const noun = traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait';
 
 	const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
-	trait.name = 'New ' + noun;
+	trait.name = characterCurioFunctions.nextUniqueName(
+		(Array.isArray(traitSet.traits) ? traitSet.traits : []).map((tr) => tr?.name),
+		'New ' + noun,
+	);
 	const allowed = characterCurioFunctions.getTraitSetRatings(traitSet);
 	const cur =
 		trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
@@ -496,6 +707,11 @@ function countStagedDiceForSets(sets: TraitSet[]): number {
 	const names = new Set<string>();
 	for (const ts of sets) {
 		if (!ts) continue;
+		if (isNameSet(ts)) {
+			const charName = props.character?.name?.trim().toLowerCase();
+			if (charName) names.add(charName);
+			names.add('sheet');
+		}
 		if (ts.name?.trim()) names.add(ts.name.trim().toLowerCase());
 		if (ts.noun?.trim()) names.add(ts.noun.trim().toLowerCase());
 		for (const tr of ts.traits || []) {
@@ -895,19 +1111,97 @@ defineExpose({
 									</template>
 								</div>
 							</template>
-							<!-- BUTTON: ADD TRAIT SET -->
+							<!-- BUTTONS: ORGANIC SHEET BUILDER BAR -->
 							<div class="sheet-add-set-bar" v-if="submode === 'edit'">
-								<div class="add-set-slot slot-center">
+								<div class="add-set-slot slot-center sheet-organic-builder">
+									<button
+										type="button"
+										class="btn-sheet-add btn-sheet-add-primary"
+										@click.stop="addOrganicTrait(pageIndex)"
+									>
+										<i class="fas fa-plus" aria-hidden="true"></i> Trait
+									</button>
+									<button
+										type="button"
+										class="btn-sheet-add"
+										:class="{ active: showInlineAddPart && inlineAddPartPage === pageIndex }"
+										:aria-expanded="showInlineAddPart && inlineAddPartPage === pageIndex"
+										@click.stop="toggleInlinePart(pageIndex)"
+									>
+										<i class="fas fa-plus" aria-hidden="true"></i> Part
+									</button>
 									<button type="button" class="btn-sheet-add" @click.stop="addTraitSet(pageIndex)">
-										<i class="fas fa-plus" aria-hidden="true"></i> Add Set
+										<i class="fas fa-plus" aria-hidden="true"></i> Set
 									</button>
 									<button
 										type="button"
 										class="btn-sheet-add btn-presets-toggle"
+										:class="{ active: showInlineAddSet && inlineAddPage === pageIndex }"
+										:aria-expanded="showInlineAddSet && inlineAddPage === pageIndex"
 										@click.stop="toggleInlineAdd(pageIndex)"
 									>
 										<i class="fas fa-layer-group" aria-hidden="true"></i> Presets
 									</button>
+								</div>
+
+								<!-- INLINE PART PICKER -->
+								<div class="inline-add-part-area" v-if="showInlineAddPart && inlineAddPartPage === pageIndex">
+									<div class="inline-add-header">
+										<span class="inline-add-title"><i class="fas fa-sliders" aria-hidden="true"></i> Sheet Parts</span>
+										<button
+											type="button"
+											class="btn-inline-close"
+											title="Close"
+											aria-label="Close"
+											@click.stop="showInlineAddPart = false"
+										>
+											<i class="fas fa-times" aria-hidden="true"></i>
+										</button>
+									</div>
+									<div class="organic-part-chips" role="group" aria-label="Sheet parts">
+										<button
+											v-for="part in SHEET_QUICK_PARTS"
+											:key="'sheet-part-' + part.key"
+											type="button"
+											class="organic-part-chip"
+											:class="{ active: isSheetIdentityPartActive(part.key) }"
+											:aria-pressed="isSheetIdentityPartActive(part.key)"
+											@click.stop="toggleSheetIdentityPart(part.key)"
+										>
+											<i
+												:class="isSheetIdentityPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'"
+												aria-hidden="true"
+											></i>
+											{{ part.label }}
+										</button>
+									</div>
+									<template v-if="lastNonNameSetIndex(pageIndex) !== -1">
+										<div class="inline-part-subhead">Trait Parts</div>
+										<div class="organic-part-chips" role="group" aria-label="Trait parts">
+											<button
+												v-for="part in SET_QUICK_PARTS"
+												:key="'target-set-part-' + part.key"
+												type="button"
+												class="organic-part-chip"
+												:class="{ active: isTargetSetPartActive(pageIndex, part.key) }"
+												:aria-pressed="isTargetSetPartActive(pageIndex, part.key)"
+												@click.stop="toggleTargetSetPart(pageIndex, part.key)"
+											>
+												<i
+													:class="isTargetSetPartActive(pageIndex, part.key) ? 'fas fa-check' : 'fas fa-plus'"
+													aria-hidden="true"
+												></i>
+												{{ part.label }}
+											</button>
+											<button
+												type="button"
+												class="organic-part-chip organic-part-chip-more"
+												@click.stop="selectElement(['traitSet', lastNonNameSetIndex(pageIndex)])"
+											>
+												<i class="fas fa-sliders" aria-hidden="true"></i> Layout
+											</button>
+										</div>
+									</template>
 								</div>
 
 								<!-- INLINE NON-MODAL ADD AREA -->

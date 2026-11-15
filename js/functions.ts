@@ -1822,6 +1822,21 @@ export const characterCurioFunctions = {
 		return output.join('\n');
 	},
 
+	nextUniqueName: function (existingNames: Array<string | undefined | null>, base: string): string {
+		const trimmedBase = String(base || '').trim() || 'Item';
+		const used = new Set(
+			(existingNames || [])
+				.map((n) => (typeof n === 'string' ? n.trim().toLowerCase() : ''))
+				.filter((n) => n.length > 0),
+		);
+		if (!used.has(trimmedBase.toLowerCase())) return trimmedBase;
+		let idx = 2;
+		while (used.has(`${trimmedBase} ${idx}`.toLowerCase())) {
+			idx += 1;
+		}
+		return `${trimmedBase} ${idx}`;
+	},
+
 	defaultCharacter: {
 		$schema: '../schema/0.1/character.schema.json',
 		version: '0.1',
@@ -1839,140 +1854,62 @@ export const characterCurioFunctions = {
 			{
 				id: 'name',
 				name: 'Name',
-				traits: [],
+				noun: 'Trait',
+				plural: 'Traits',
+				tags: [],
+				rating: {
+					type: 'Die',
+					value: [8],
+					range: [4, 6, 8, 10, 12],
+				},
+				traits: [
+					{
+						name: 'pronouns',
+						description: '',
+						traits: [],
+						tags: [],
+						view: { visibility: 'hidden' },
+					},
+					{
+						name: 'description',
+						description: '',
+						traits: [],
+						tags: [],
+						view: { visibility: 'hidden' },
+					},
+					{
+						name: 'player',
+						description: '',
+						traits: [],
+						tags: [],
+						view: { visibility: 'hidden' },
+					},
+					{
+						name: 'game',
+						description: '',
+						traits: [],
+						tags: [],
+						view: { visibility: 'hidden' },
+					},
+					{
+						name: 'notes',
+						description: '',
+						traits: [],
+						tags: [],
+						view: { visibility: 'hidden' },
+					},
+					{
+						name: 'portrait',
+						description: '',
+						traits: [],
+						tags: [],
+						view: { visibility: 'hidden' },
+					},
+				],
 				view: {
 					style: {
 						header: 'default',
 						body: 'name',
-					},
-				},
-			},
-			{
-				name: 'Distinctions',
-				description: '',
-				noun: 'Distinction',
-				plural: 'Distinctions',
-				traits: [
-					{
-						name: '',
-						description: '',
-						traits: [],
-						tags: [],
-						custom: {},
-					},
-					{
-						name: '',
-						description: '',
-						traits: [],
-						tags: [],
-						custom: {},
-					},
-					{
-						name: '',
-						description: '',
-						traits: [],
-						tags: [],
-						custom: {},
-					},
-				],
-				tags: [],
-				view: {
-					features: {
-						description: true,
-						sfx: true,
-						subtraits: false,
-					},
-					altRoll: {
-						die: 4,
-						ppDelta: 1,
-						label: 'Hinder',
-					},
-					place: {
-						left: '0%',
-						top: 0,
-						width: '50%',
-						height: 2,
-					},
-					reservedSlots: 3,
-				},
-			},
-			{
-				name: 'Attributes',
-				description: '',
-				noun: 'Attribute',
-				plural: 'Attributes',
-				traits: [
-					{
-						name: 'Physical',
-						description: '',
-						traits: [],
-						tags: [],
-					},
-					{
-						name: 'Mental',
-						description: '',
-						traits: [],
-						tags: [],
-					},
-					{
-						name: 'Social',
-						description: '',
-						traits: [],
-						tags: [],
-					},
-				],
-				tags: [],
-				view: {
-					fixedNames: true,
-					features: {
-						description: false,
-						sfx: false,
-						subtraits: false,
-					},
-					place: {
-						left: '50%',
-						top: 0,
-						width: '50%',
-						height: 1,
-					},
-					reservedSlots: 3,
-					style: {
-						header: 'default',
-						body: 'default',
-					},
-				},
-			},
-			{
-				name: 'Skills',
-				description: '',
-				noun: 'Skill',
-				plural: 'Skills',
-				traits: [
-					{
-						name: '',
-						description: '',
-						traits: [],
-						tags: [],
-					},
-				],
-				tags: [],
-				view: {
-					fixedNames: true,
-					features: {
-						description: false,
-						sfx: false,
-						subtraits: false,
-					},
-					place: {
-						left: '50%',
-						top: 1,
-						width: '50%',
-						height: 1,
-					},
-					reservedSlots: 4,
-					style: {
-						header: 'default',
-						body: 'default',
 					},
 				},
 			},
@@ -1994,18 +1931,13 @@ export const characterCurioFunctions = {
 	},
 
 	defaultTraitSet: {
-		name: 'New trait set',
-		description: 'Trait set description',
-		noun: '',
-		plural: '',
+		name: 'New Set',
+		description: '',
+		noun: 'Trait',
+		plural: 'Traits',
 		traits: [],
 		tags: [],
 		view: {
-			features: {
-				description: false,
-				sfx: false,
-				subtraits: false,
-			},
 			style: {
 				header: 'default',
 				body: 'default',
@@ -2016,9 +1948,9 @@ export const characterCurioFunctions = {
 	},
 
 	defaultTrait: {
-		name: 'New trait',
+		name: 'New Trait',
 		rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-		description: 'Trait description',
+		description: '',
 		traits: [],
 		tags: [],
 		custom: {},

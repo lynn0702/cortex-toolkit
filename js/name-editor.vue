@@ -6,6 +6,9 @@ import {
 	ensureView,
 	isNameSet,
 	getRating,
+	ratingDice,
+	resolveRange,
+	setRatingDie,
 	resolveVisibility,
 	nextVisibility,
 	resolveSetPillar,
@@ -214,6 +217,32 @@ function openNameSetEditor() {
 	if (index === -1) return;
 	updateCharacter(props.character);
 	selectElement(['traitSet', index]);
+}
+
+const sheetRatingSet = computed(() => (props.character?.traitSets || []).find((s: any) => isNameSet(s)));
+const sheetRating = computed(() => getRating(sheetRatingSet.value));
+const sheetRatingDice = computed(() => ratingDice(sheetRating.value));
+const sheetRatingRange = computed(() => {
+	const r = resolveRange(sheetRatingSet.value);
+	return Array.isArray(r) && r.length > 0 ? r : [4, 6, 8, 10, 12];
+});
+
+function isSheetRatingDie(size: number): boolean {
+	return sheetRating.value?.type === 'Die' && sheetRatingDice.value[0] === size;
+}
+
+function setSheetRatingDie(size: number | null) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	if (size === null || isSheetRatingDie(size)) {
+		delete set.rating;
+	} else {
+		const prevRange = Array.isArray(sheetRating.value?.range)
+			? [...(sheetRating.value!.range as number[])]
+			: [4, 6, 8, 10, 12];
+		setRatingDie(set as Record<string, any>, size, prevRange);
+	}
+	updateCharacter(props.character);
 }
 
 const activePillarKeys = computed<string[]>(() => {
@@ -992,6 +1021,33 @@ function updateCharacter(character: any) {
 								placeholder="Character name"
 								aria-label="Character name"
 							/>
+						</div>
+
+						<div class="editor-field">
+							<label class="editor-field-label">Sheet Rating</label>
+							<div class="editor-die-chip-row" role="group" aria-label="Sheet rating">
+								<button
+									type="button"
+									class="editor-die-chip editor-die-chip-none"
+									:class="{ active: !sheetRating }"
+									:aria-pressed="!sheetRating"
+									@click="setSheetRatingDie(null)"
+								>
+									None
+								</button>
+								<button
+									v-for="size in sheetRatingRange"
+									:key="'sheet-rating-' + size"
+									type="button"
+									class="editor-die-chip"
+									:class="{ active: isSheetRatingDie(size) }"
+									:aria-pressed="isSheetRatingDie(size)"
+									:aria-label="'Sheet rating d' + size"
+									@click="setSheetRatingDie(size)"
+								>
+									<span class="diecon-wrapper" v-html="renderDicePreview(size, isSheetRatingDie(size))"></span>
+								</button>
+							</div>
 						</div>
 
 						<div class="editor-field">

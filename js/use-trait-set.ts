@@ -35,7 +35,7 @@ import {
 	resolveSubtraitNoun,
 	type AltRollOption,
 } from './model.ts';
-import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './sheet-grid.ts';
+import { KNOWN_PARTS, isKnownPart, buildParts, partsGrid, partCellStyle, partsGridStyle } from './sheet-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
 export type TraitSetApi = ReturnType<typeof useTraitSet>;
@@ -798,6 +798,100 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 	}
 
+	function stageSetDie(dieSize: number, sourceName?: string) {
+		if (props.submode !== 'play' || !dieSize) return;
+		emit('addDieToRoller', {
+			size: dieSize,
+			qty: 1,
+			source: sourceName || traitSet.value?.name || 'Sheet',
+			hitches: resolveHitches(traitSet.value),
+			ppDelta: 0,
+		});
+	}
+
+	function seedSetParts(ts: TraitSet): Record<string, any> {
+		const view = ensureView(ts);
+		if (view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts) && Object.keys(view.parts).length) {
+			return view.parts as Record<string, any>;
+		}
+		const scale = characterCurioFunctions.getTraitSetRatings(ts);
+		const trackOn = characterCurioFunctions.hasTrackPart(ts);
+		const tScale = characterCurioFunctions.getTrackScale(ts);
+		const traits = Array.isArray(ts?.traits) ? ts.traits : [];
+		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
+		const hasSfx = traits.some((t: any) => characterCurioFunctions.blockChildren(t, ts).length > 0);
+		const hasSub = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, ts).length > 0);
+		view.parts = buildParts({
+			rating: getRatingPlacement(ts) as 'inline' | 'above' | 'below' | 'none',
+			ratingDice: scale.length || 5,
+			trackDice: trackOn ? tScale.length || 5 : 0,
+			description: hasDesc,
+			block: hasSfx,
+			subtraits: hasSub,
+		}) as any;
+		return view.parts as Record<string, any>;
+	}
+
+	function isSetPartActive(partKey: 'description' | 'block' | 'track' | 'badge', tsArg?: TraitSet): boolean {
+		const ts = tsArg ?? traitSet.value;
+		if (!ts) return false;
+		if (partKey === 'track') return characterCurioFunctions.hasTrackPart(ts);
+		const raw = getView(ts)?.parts as Record<string, unknown> | undefined;
+		if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+			return Boolean(raw[partKey]);
+		}
+		const traits = Array.isArray(ts.traits) ? ts.traits : [];
+		if (partKey === 'description') {
+			return traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
+		}
+		if (partKey === 'block') {
+			return traits.some((t: any) => characterCurioFunctions.blockChildren(t, ts).length > 0);
+		}
+		return false;
+	}
+
+	function toggleSetPart(partKey: 'description' | 'block' | 'track' | 'badge', tsArg?: TraitSet) {
+		const ts = tsArg ?? traitSet.value;
+		if (!ts) return;
+		const cells = seedSetParts(ts);
+		if (partKey === 'track') {
+			if (characterCurioFunctions.hasTrackPart(ts)) {
+				delete cells.trackLabel;
+				delete cells.track;
+			} else {
+				const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+				const tScale = characterCurioFunctions.getTrackScale(ts);
+				cells.trackLabel = { left: '0%', top: maxTop + 1, width: '35%', height: 1, marker: 'L' };
+				cells.track = {
+					left: '35%',
+					top: maxTop + 1,
+					width: '65%',
+					height: 1,
+					ratingType: 'Die',
+					range: tScale.length ? tScale : [4, 6, 8, 10, 12],
+				};
+			}
+			updateCharacter(props.character);
+			return;
+		}
+		if (cells[partKey]) {
+			if (Object.keys(cells).length > 1) {
+				delete cells[partKey];
+				updateCharacter(props.character);
+			}
+			return;
+		}
+		const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+		cells[partKey] = {
+			left: '0%',
+			top: maxTop + 1,
+			width: '100%',
+			height: 1,
+			marker: partKey === 'badge' ? 'L' : 'T',
+		};
+		updateCharacter(props.character);
+	}
+
 	function handleSingleDieClick(
 		trait: Trait,
 		value: number | null | undefined,
@@ -829,6 +923,15 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 					ppDelta: 0,
 				});
 			}
+		} else if (
+			props.submode === 'edit' &&
+			typeof value === 'number' &&
+			value > 0 &&
+			getRatingDisplay(traitSetArg) !== 'rating'
+		) {
+			const prevRange = Array.isArray(getRating(trait)?.range) ? [...(getRating(trait)!.range as number[])] : undefined;
+			setRatingDie(trait as unknown as Record<string, any>, value, prevRange);
+			updateCharacter(props.character);
 		} else {
 			selectElement(['trait', sArg, t]);
 		}
@@ -1705,6 +1808,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		getAltRoll,
 		handleAltRollClick,
 		stageTrackDie,
+		stageSetDie,
+		isSetPartActive,
+		toggleSetPart,
 		getTraitPipBubbles,
 		toggleTraitPipBubble,
 		getDynamicChildParts,

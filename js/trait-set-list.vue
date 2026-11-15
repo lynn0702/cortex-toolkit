@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { getView, resolveSubtraitNoun } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
@@ -75,10 +76,20 @@ const {
 	getAltRoll,
 	handleAltRollClick,
 	stageTrackDie,
+	isSetPartActive,
+	toggleSetPart,
 	resolvedBorder,
 	traitArrayMode,
 	showPortraitHub,
 } = injectTraitSet();
+
+const showSetPartChips = ref(false);
+const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 'badge'; label: string }> = [
+	{ key: 'description', label: 'Description' },
+	{ key: 'block', label: 'SFX' },
+	{ key: 'track', label: 'Track' },
+	{ key: 'badge', label: 'Badge' },
+];
 
 function pipPlaceholder(trait: any): string {
 	const child = getPipChild(trait);
@@ -1677,7 +1688,7 @@ function hasTraitSetDescription(ts: any) {
 		</template>
 	</div>
 
-	<!-- BUTTON: ADD TRAIT -->
+	<!-- BUTTON: ADD TRAIT & PART -->
 	<transition appear>
 		<div
 			class="preview-button-container"
@@ -1687,12 +1698,53 @@ function hasTraitSetDescription(ts: any) {
 				(submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet)))
 			"
 		>
-			<div class="preview-button-container-inner">
+			<div class="preview-button-container-inner set-organic-actions">
 				<button type="button" class="preview-button" @click.stop="addTrait(s)">
 					<span
 						><i class="fas fa-plus" aria-hidden="true"></i>
 						{{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait' }}</span
 					>
+				</button>
+				<button
+					v-if="submode === 'edit'"
+					type="button"
+					class="preview-button preview-button-secondary"
+					:class="{ active: showSetPartChips }"
+					:aria-expanded="showSetPartChips"
+					@click.stop="showSetPartChips = !showSetPartChips"
+				>
+					<span><i class="fas fa-plus" aria-hidden="true"></i> Part</span>
+				</button>
+				<button
+					v-if="submode === 'edit' && (getView(traitSet)?.header === 'none' || !traitSet?.name)"
+					type="button"
+					class="preview-button preview-button-icon"
+					title="Set options"
+					aria-label="Configure trait set"
+					@click.stop="selectElement(['traitSet', s])"
+				>
+					<span><i class="fas fa-sliders" aria-hidden="true"></i></span>
+				</button>
+			</div>
+			<div v-if="submode === 'edit' && showSetPartChips" class="organic-part-chips" @click.stop>
+				<button
+					v-for="part in SET_QUICK_PARTS"
+					:key="part.key"
+					type="button"
+					class="organic-part-chip"
+					:class="{ active: isSetPartActive(part.key) }"
+					:aria-pressed="isSetPartActive(part.key)"
+					@click.stop="toggleSetPart(part.key)"
+				>
+					<i :class="isSetPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'" aria-hidden="true"></i>
+					{{ part.label }}
+				</button>
+				<button
+					type="button"
+					class="organic-part-chip organic-part-chip-more"
+					@click.stop="selectElement(['traitSet', s])"
+				>
+					<i class="fas fa-sliders" aria-hidden="true"></i> Layout
 				</button>
 			</div>
 		</div>

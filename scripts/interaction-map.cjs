@@ -1096,12 +1096,30 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 		await page.waitForSelector('.character-sheet.submode-edit', { timeout: 5000 });
 		await page.evaluate(async () => {
 			const ch = window.app.character;
-			const attrSet = ch.traitSets.find((s) => s && s.name === 'Attributes') || ch.traitSets[1];
-			if (attrSet && Array.isArray(attrSet.traits) && attrSet.traits[0]) {
-				attrSet.traits[0].name = attrSet.traits[0].name || 'Physical';
-				attrSet.traits[0].rating = { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] };
-				await window.app.updateCharacter(ch);
+			const nameSet = ch.traitSets.find((s) => s && s.id === 'name');
+			if (nameSet) delete nameSet.rating;
+			let attrSet = ch.traitSets.find((s) => s && s.name === 'Attributes');
+			if (!attrSet) {
+				attrSet = {
+					id: 'attributes',
+					name: 'Attributes',
+					noun: 'Attribute',
+					plural: 'Attributes',
+					traits: [
+						{
+							name: 'Physical',
+							description: '',
+							traits: [],
+							tags: [],
+							rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+						},
+					],
+					tags: [],
+					view: { pillar: 'prime', style: { header: 'default', body: 'default' } },
+				};
+				ch.traitSets.push(attrSet);
 			}
+			await window.app.updateCharacter(ch);
 		});
 		await page.locator('.header button[aria-label="Play"]').first().click();
 		await page.waitForSelector('.character-sheet.submode-play', { timeout: 5000 });
