@@ -58,6 +58,71 @@ export function isPlayMutableSet(traitSetArg: TraitSet): boolean {
 export function useTraitSet(props: TraitSetProps, emit: any) {
 	const traitSet = computed(() => props.character?.traitSets?.[props.traitSetID as any]);
 	const s = computed<number>(() => props.traitSetID as number);
+
+	const fallbackActiveTrait = ref<[number, number] | null>(null);
+	const fallbackActiveSet = ref<number | null>(null);
+	const fallbackActivePartSet = ref<number | null>(null);
+	const canvasInline = inject<{
+		activeTrait: { value: [number, number] | null };
+		activeSet: { value: number | null };
+		activePartSet: { value: number | null };
+		setActiveTrait: (target: [number, number] | null) => void;
+		setActiveSet: (setIdx: number | null) => void;
+		setActivePartSet: (setIdx: number | null) => void;
+	}>('curioCanvasInline', {
+		activeTrait: fallbackActiveTrait,
+		activeSet: fallbackActiveSet,
+		activePartSet: fallbackActivePartSet,
+		setActiveTrait: (target) => {
+			fallbackActiveTrait.value = target;
+			if (target) fallbackActiveSet.value = null;
+		},
+		setActiveSet: (setIdx) => {
+			fallbackActiveSet.value = setIdx;
+			if (setIdx !== null) fallbackActiveTrait.value = null;
+		},
+		setActivePartSet: (setIdx) => {
+			fallbackActivePartSet.value = setIdx;
+		},
+	});
+
+	function isCanvasTraitActive(sArg: number, tIdx: number | null | undefined): boolean {
+		if (props.submode !== 'edit' || typeof tIdx !== 'number') return false;
+		const cur = canvasInline.activeTrait.value;
+		return Boolean(cur && cur[0] === sArg && cur[1] === tIdx);
+	}
+
+	function toggleCanvasTrait(sArg: number, tIdx: number | null | undefined) {
+		if (props.submode !== 'edit' || typeof tIdx !== 'number') return;
+		if (isCanvasTraitActive(sArg, tIdx)) {
+			canvasInline.setActiveTrait(null);
+		} else {
+			canvasInline.setActiveTrait([sArg, tIdx]);
+		}
+	}
+
+	function closeCanvasTrait() {
+		canvasInline.setActiveTrait(null);
+	}
+
+	function isCanvasSetActive(sArg: number): boolean {
+		if (props.submode !== 'edit') return false;
+		return canvasInline.activeSet.value === sArg;
+	}
+
+	function closeCanvasSet() {
+		canvasInline.setActiveSet(null);
+	}
+
+	function isCanvasPartDrawerOpen(sArg: number): boolean {
+		if (props.submode !== 'edit') return false;
+		return canvasInline.activePartSet.value === sArg;
+	}
+
+	function toggleCanvasPartDrawer(sArg: number) {
+		if (props.submode !== 'edit') return;
+		canvasInline.setActivePartSet(isCanvasPartDrawerOpen(sArg) ? null : sArg);
+	}
 	const traitSets = computed(() => props.character?.traitSets ?? []);
 	const character = computed(() => props.character);
 	const submode = computed(() => props.submode);
@@ -793,6 +858,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				source: trait.name,
 				hitches: resolveHitches(trait, [traitSetArg]),
 			});
+		} else if (props.submode === 'edit') {
+			toggleCanvasTrait(Number(sArg), typeof t === 'number' ? t : null);
 		} else {
 			selectElement(['trait', sArg, t]);
 		}
@@ -809,6 +876,26 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		});
 	}
 
+	function stepTraitCounter(trait: Trait, traitSetArg: TraitSet, delta: number) {
+		if (props.submode === 'print' || !trait) return;
+		const resolved = resolveRating(trait, [traitSetArg]);
+		if (resolved?.type !== 'Counter') return;
+		const bounds =
+			Array.isArray(resolved.range) && resolved.range.length >= 2
+				? [Number(resolved.range[0]) || 0, Number(resolved.range[1]) || 20]
+				: [0, 20];
+		const lo = Math.min(bounds[0], bounds[1]);
+		const hi = Math.max(bounds[0], bounds[1]);
+		const cur = typeof resolved.value?.[0] === 'number' ? (resolved.value[0] as number) : lo;
+		const next = Math.max(lo, Math.min(hi, cur + delta));
+		(trait as unknown as Record<string, any>).rating = {
+			type: 'Counter',
+			value: [next],
+			range: [lo, hi],
+		};
+		updateCharacter(props.character);
+	}
+
 	function seedSetParts(ts: TraitSet): Record<string, any> {
 		const view = ensureView(ts);
 		if (view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts) && Object.keys(view.parts).length) {
@@ -823,7 +910,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const hasSub = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, ts).length > 0);
 		view.parts = buildParts({
 			rating: getRatingPlacement(ts) as 'inline' | 'above' | 'below' | 'none',
-			ratingDice: scale.length || 5,
+			ratingDice: getRatingDisplay(ts) === 'rating' ? 1 : scale.length || 5,
 			trackDice: trackOn ? tScale.length || 5 : 0,
 			description: hasDesc,
 			block: hasSfx,
@@ -923,15 +1010,21 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 					ppDelta: 0,
 				});
 			}
-		} else if (
-			props.submode === 'edit' &&
-			typeof value === 'number' &&
-			value > 0 &&
-			getRatingDisplay(traitSetArg) !== 'rating'
-		) {
-			const prevRange = Array.isArray(getRating(trait)?.range) ? [...(getRating(trait)!.range as number[])] : undefined;
-			setRatingDie(trait as unknown as Record<string, any>, value, prevRange);
-			updateCharacter(props.character);
+		} else if (props.submode === 'edit') {
+			if (
+				typeof value === 'number' &&
+				value > 0 &&
+				getRatingDisplay(traitSetArg) !== 'rating' &&
+				firstDie(trait) !== value
+			) {
+				const prevRange = Array.isArray(getRating(trait)?.range)
+					? [...(getRating(trait)!.range as number[])]
+					: undefined;
+				setRatingDie(trait as unknown as Record<string, any>, value, prevRange);
+				updateCharacter(props.character);
+			} else {
+				toggleCanvasTrait(Number(sArg), typeof t === 'number' ? t : null);
+			}
 		} else {
 			selectElement(['trait', sArg, t]);
 		}
@@ -1811,6 +1904,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		stageSetDie,
 		isSetPartActive,
 		toggleSetPart,
+		stepTraitCounter,
+		isCanvasTraitActive,
+		toggleCanvasTrait,
+		closeCanvasTrait,
+		isCanvasSetActive,
+		closeCanvasSet,
+		isCanvasPartDrawerOpen,
+		toggleCanvasPartDrawer,
 		getTraitPipBubbles,
 		toggleTraitPipBubble,
 		getDynamicChildParts,

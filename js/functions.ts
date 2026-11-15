@@ -1938,11 +1938,11 @@ export const characterCurioFunctions = {
 		traits: [],
 		tags: [],
 		view: {
+			ratingDisplay: 'rating',
 			style: {
 				header: 'default',
 				body: 'default',
 			},
-			outIndicator: true,
 			notes: '',
 		},
 	},

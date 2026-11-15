@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue';
 import { characterCurioFunctions, characterCurioSetPresets, type SetPresetEntry } from './functions.ts';
 import {
 	getView,
@@ -19,7 +19,6 @@ import {
 	type CharacterCurioCustom,
 } from './model.ts';
 import {
-	buildParts,
 	getSheetSections as gridGetSheetSections,
 	getSheetGridStyle as gridGetSheetGridStyle,
 	type SheetSection,
@@ -64,25 +63,64 @@ const inlineAddPartPage = ref(1);
 const inlineBuiltInPresets = Object.values(characterCurioSetPresets);
 const inlineCustomPresets = ref<SetPresetEntry[]>([]);
 
+const canvasInlineTrait = ref<[number, number] | null>(null);
+const canvasInlineSet = ref<number | null>(null);
+const canvasInlinePartSet = ref<number | null>(null);
+
+function setCanvasInlineTrait(target: [number, number] | null) {
+	canvasInlineTrait.value = target;
+	if (target) {
+		canvasInlineSet.value = null;
+	}
+}
+
+function setCanvasInlineSet(setIdx: number | null) {
+	canvasInlineSet.value = setIdx;
+	if (setIdx !== null) {
+		canvasInlineTrait.value = null;
+	}
+}
+
+function setCanvasInlinePartSet(setIdx: number | null) {
+	canvasInlinePartSet.value = setIdx;
+	if (setIdx !== null) {
+		showInlineAddPart.value = false;
+		showInlineAddSet.value = false;
+	}
+}
+
+provide('curioCanvasInline', {
+	activeTrait: canvasInlineTrait,
+	activeSet: canvasInlineSet,
+	activePartSet: canvasInlinePartSet,
+	setActiveTrait: setCanvasInlineTrait,
+	setActiveSet: setCanvasInlineSet,
+	setActivePartSet: setCanvasInlinePartSet,
+});
+
+watch(
+	() => props.submode,
+	(mode) => {
+		if (mode !== 'edit') {
+			canvasInlineTrait.value = null;
+			canvasInlineSet.value = null;
+			canvasInlinePartSet.value = null;
+		}
+	},
+);
+
 const SHEET_QUICK_PARTS: ReadonlyArray<{
-	key: 'rating' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player' | 'notes';
+	key: 'rating' | 'notes' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player';
 	label: string;
 }> = [
 	{ key: 'rating', label: 'Rating' },
+	{ key: 'notes', label: 'Notes' },
 	{ key: 'description', label: 'Description' },
 	{ key: 'portrait', label: 'Portrait' },
 	{ key: 'pronouns', label: 'Pronouns' },
 	{ key: 'nickname', label: 'Nickname' },
 	{ key: 'game', label: 'Game' },
 	{ key: 'player', label: 'Player' },
-	{ key: 'notes', label: 'Notes' },
-];
-
-const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 'badge'; label: string }> = [
-	{ key: 'description', label: 'Description' },
-	{ key: 'block', label: 'SFX' },
-	{ key: 'track', label: 'Track' },
-	{ key: 'badge', label: 'Badge' },
 ];
 
 function toggleInlineAdd(page = 1) {
@@ -90,6 +128,7 @@ function toggleInlineAdd(page = 1) {
 	inlineAddPage.value = page;
 	inlineCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
 	showInlineAddPart.value = false;
+	canvasInlinePartSet.value = null;
 	showInlineAddSet.value = !wasOpenHere;
 }
 
@@ -97,6 +136,7 @@ function toggleInlinePart(page = 1) {
 	const wasOpenHere = showInlineAddPart.value && inlineAddPartPage.value === page;
 	inlineAddPartPage.value = page;
 	showInlineAddSet.value = false;
+	canvasInlinePartSet.value = null;
 	showInlineAddPart.value = !wasOpenHere;
 }
 
@@ -177,65 +217,6 @@ function toggleSheetIdentityPart(
 		if (key === 'portrait' && isSheetIdentityPartActive('description') && !ch.portrait?.url) {
 			selectElement(['name']);
 		}
-	}
-	updateCharacter(ch);
-}
-
-function isTargetSetPartActive(page: number, partKey: 'description' | 'block' | 'track' | 'badge'): boolean {
-	const idx = lastNonNameSetIndex(page);
-	if (idx === -1) return false;
-	const ts = props.character?.traitSets?.[idx];
-	const parts = getView(ts)?.parts as Record<string, unknown> | undefined;
-	if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return false;
-	return Boolean(parts[partKey]);
-}
-
-function toggleTargetSetPart(page: number, partKey: 'description' | 'block' | 'track' | 'badge') {
-	const ch = props.character as Character;
-	const idx = lastNonNameSetIndex(page);
-	if (!ch || idx === -1) return;
-	const ts = ch.traitSets[idx];
-	if (!ts) return;
-	const v = ensureView(ts);
-	const existing: Record<string, any> | null =
-		v.parts && typeof v.parts === 'object' && !Array.isArray(v.parts) ? { ...v.parts } : null;
-	if (!existing) {
-		const spec: Record<string, any> = {
-			rating: 'inline',
-			ratingDice: 5,
-			description: partKey === 'description',
-			block: partKey === 'block',
-			trackDice: partKey === 'track' ? 5 : 0,
-			badge: partKey === 'badge',
-		};
-		v.parts = buildParts(spec as any);
-	} else if (existing[partKey]) {
-		delete existing[partKey];
-		if (partKey === 'track') {
-			delete existing.trackLabel;
-		}
-		v.parts = existing;
-	} else {
-		const hasDesc = Boolean(existing.description) || partKey === 'description';
-		const hasBlock = Boolean(existing.block) || partKey === 'block';
-		const hasTrack = Boolean(existing.track) || partKey === 'track';
-		const hasBadge = Boolean(existing.badge) || partKey === 'badge';
-		const hasSub = Boolean(existing.subtraits);
-		const rebuilt = buildParts({
-			rating: existing.rating ? (Number(existing.rating.top) === 0 ? 'inline' : 'below') : 'none',
-			ratingDice: Array.isArray(existing.rating?.range) ? existing.rating.range.length : 5,
-			description: hasDesc,
-			block: hasBlock,
-			trackDice: hasTrack ? (Array.isArray(existing.track?.range) ? existing.track.range.length : 5) : 0,
-			subtraits: hasSub,
-			badge: hasBadge,
-		});
-		for (const [k, cell] of Object.entries(existing)) {
-			if (k.startsWith('child:') || k.startsWith('child_')) {
-				rebuilt[k] = cell;
-			}
-		}
-		v.parts = rebuilt;
 	}
 	updateCharacter(ch);
 }
@@ -495,6 +476,7 @@ function addOrganicTrait(page = 1) {
 	traitSet.traits = [];
 	const tsView = ensureView(traitSet);
 	tsView.header = 'none';
+	tsView.ratingDisplay = 'rating';
 	tsView.style = { header: 'default', body: 'default' };
 	tsView.page = page ?? 1;
 
@@ -520,6 +502,7 @@ function addTraitSet(page = 1) {
 	traitSet.plural = 'Traits';
 	traitSet.traits = [];
 	const tsView = ensureView(traitSet);
+	tsView.ratingDisplay = 'rating';
 	tsView.style = { header: styleId, body: styleId };
 
 	tsView.page = page ?? 1;
@@ -531,10 +514,13 @@ function addTraitSet(page = 1) {
 	showInlineAddPart.value = false;
 
 	const newTraitSetID = character.traitSets.length - 1;
-	selectElement(['traitSet', newTraitSetID]);
+	setCanvasInlineSet(newTraitSetID);
 	nextTick(() => {
-		const nameInput = document.querySelector<HTMLInputElement>('input[name="traitSetName"]');
+		const nameInput = rootEl.value?.querySelector<HTMLInputElement>(
+			`[data-set-index="${newTraitSetID}"] input.trait-set-name-inline-input`,
+		);
 		nameInput?.focus();
+		nameInput?.select();
 	});
 }
 
@@ -542,6 +528,9 @@ function removeTraitSet(traitSetID: number) {
 	const character = props.character as Character;
 	if (isNameSet(character?.traitSets?.[traitSetID])) return;
 
+	canvasInlineSet.value = null;
+	canvasInlineTrait.value = null;
+	canvasInlinePartSet.value = null;
 	clearSelected();
 
 	const entry = characterCurioFunctions.resolveTemplateFor(character, rootTemplates());
@@ -603,10 +592,22 @@ function addTrait(traitSetID: number) {
 	updateCharacter(character);
 
 	const newTraitID = traitSet.traits.length - 1;
-	selectElement(['trait', traitSetID, newTraitID]);
+	if (props.submode === 'edit') {
+		setCanvasInlineTrait([traitSetID, newTraitID]);
+		nextTick(() => {
+			const input = rootEl.value?.querySelector<HTMLInputElement>(
+				`[data-set-index="${traitSetID}"] input.trait-name-inline-input`,
+			);
+			input?.focus();
+			input?.select();
+		});
+	} else {
+		selectElement(['trait', traitSetID, newTraitID]);
+	}
 }
 
 function removeTrait(traitSetID: number, traitID: number) {
+	canvasInlineTrait.value = null;
 	clearSelected();
 
 	setTimeout(() => {
@@ -1175,33 +1176,6 @@ defineExpose({
 											{{ part.label }}
 										</button>
 									</div>
-									<template v-if="lastNonNameSetIndex(pageIndex) !== -1">
-										<div class="inline-part-subhead">Trait Parts</div>
-										<div class="organic-part-chips" role="group" aria-label="Trait parts">
-											<button
-												v-for="part in SET_QUICK_PARTS"
-												:key="'target-set-part-' + part.key"
-												type="button"
-												class="organic-part-chip"
-												:class="{ active: isTargetSetPartActive(pageIndex, part.key) }"
-												:aria-pressed="isTargetSetPartActive(pageIndex, part.key)"
-												@click.stop="toggleTargetSetPart(pageIndex, part.key)"
-											>
-												<i
-													:class="isTargetSetPartActive(pageIndex, part.key) ? 'fas fa-check' : 'fas fa-plus'"
-													aria-hidden="true"
-												></i>
-												{{ part.label }}
-											</button>
-											<button
-												type="button"
-												class="organic-part-chip organic-part-chip-more"
-												@click.stop="selectElement(['traitSet', lastNonNameSetIndex(pageIndex)])"
-											>
-												<i class="fas fa-sliders" aria-hidden="true"></i> Layout
-											</button>
-										</div>
-									</template>
 								</div>
 
 								<!-- INLINE NON-MODAL ADD AREA -->

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { getView, resolveSubtraitNoun } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
+import InlineRatingBar from './inline-rating-bar.vue';
 
 const {
 	traitSet,
@@ -78,18 +78,34 @@ const {
 	stageTrackDie,
 	isSetPartActive,
 	toggleSetPart,
+	stepTraitCounter,
+	isCanvasTraitActive,
+	toggleCanvasTrait,
+	closeCanvasTrait,
+	isCanvasPartDrawerOpen,
+	toggleCanvasPartDrawer,
 	resolvedBorder,
 	traitArrayMode,
 	showPortraitHub,
 } = injectTraitSet();
 
-const showSetPartChips = ref(false);
 const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 'badge'; label: string }> = [
 	{ key: 'description', label: 'Description' },
 	{ key: 'block', label: 'SFX' },
 	{ key: 'track', label: 'Track' },
 	{ key: 'badge', label: 'Badge' },
 ];
+
+function onTraitNameInlineInput(trait: any, event: Event) {
+	if (!trait) return;
+	trait.name = (event.target as HTMLInputElement).value;
+	updateCharacter(character.value);
+}
+
+function onTraitNameInlineEnter(event: KeyboardEvent) {
+	if (event.isComposing || event.keyCode === 229) return;
+	(event.target as HTMLElement | null)?.blur?.();
+}
 
 function pipPlaceholder(trait: any): string {
 	const child = getPipChild(trait);
@@ -267,7 +283,25 @@ function hasTraitSetDescription(ts: any) {
 										</button>
 									</template>
 									<template v-else>
+										<input
+											v-if="
+												submode === 'edit' &&
+												!printBlank &&
+												!item.isPlaceholder &&
+												isCanvasTraitActive(s, item.originalIndex)
+											"
+											type="text"
+											class="trait-name-inline-input"
+											:value="item.trait.name"
+											:placeholder="(traitSet.noun || 'Trait') + ' name'"
+											:aria-label="(traitSet.noun || 'Trait') + ' name'"
+											@click.stop
+											@input="onTraitNameInlineInput(item.trait, $event)"
+											@keydown.enter="onTraitNameInlineEnter"
+											@keydown.escape.stop.prevent="closeCanvasTrait()"
+										/>
 										<button
+											v-else
 											type="button"
 											class="trait-title-btn"
 											:aria-label="
@@ -393,9 +427,72 @@ function hasTraitSetDescription(ts: any) {
 										@keydown.enter.prevent="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
 										@keydown.space.prevent="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
 									></span>
+									<button
+										v-if="submode === 'edit' && !printBlank && !item.isPlaceholder"
+										type="button"
+										class="btn-canvas-edit-rating"
+										:aria-expanded="isCanvasTraitActive(s, item.originalIndex)"
+										:aria-label="`Edit ${item.trait.name || 'trait'} rating`"
+										title="Edit rating"
+										@click.stop="toggleCanvasTrait(s, item.originalIndex)"
+									>
+										<i class="fas fa-sliders" aria-hidden="true"></i>
+									</button>
 								</div>
 								<div class="trait-value counter-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Counter'">
-									<span class="counter-display">{{ resolveTraitRating(item.trait)?.value?.[0] ?? 0 }}</span>
+									<template v-if="(submode === 'play' || submode === 'edit') && !printBlank && !item.isPlaceholder">
+										<button
+											type="button"
+											class="btn-canvas-counter-step"
+											:aria-label="`Decrease ${item.trait.name || 'trait'} counter`"
+											@click.stop="stepTraitCounter(item.trait, traitSet, -1)"
+										>
+											-
+										</button>
+										<button
+											v-if="submode === 'edit'"
+											type="button"
+											class="counter-display counter-display-btn"
+											:aria-expanded="isCanvasTraitActive(s, item.originalIndex)"
+											:aria-label="`Edit ${item.trait.name || 'trait'} rating`"
+											@click.stop="toggleCanvasTrait(s, item.originalIndex)"
+										>
+											{{ resolveTraitRating(item.trait)?.value?.[0] ?? 0 }}
+										</button>
+										<span v-else class="counter-display">{{ resolveTraitRating(item.trait)?.value?.[0] ?? 0 }}</span>
+										<button
+											type="button"
+											class="btn-canvas-counter-step"
+											:aria-label="`Increase ${item.trait.name || 'trait'} counter`"
+											@click.stop="stepTraitCounter(item.trait, traitSet, 1)"
+										>
+											+
+										</button>
+									</template>
+									<span v-else class="counter-display">{{
+										!printBlank ? (resolveTraitRating(item.trait)?.value?.[0] ?? 0) : ''
+									}}</span>
+								</div>
+								<div
+									class="trait-value unrated-value"
+									v-else-if="
+										!printBlank &&
+										!item.isPlaceholder &&
+										!resolveTraitRating(item.trait) &&
+										!getSetRatingDie(traitSet) &&
+										getRatingDisplay(traitSet) === 'rating'
+									"
+								>
+									<button
+										v-if="submode === 'edit'"
+										type="button"
+										class="btn-canvas-add-rating"
+										:aria-expanded="isCanvasTraitActive(s, item.originalIndex)"
+										:aria-label="`Add rating to ${item.trait.name || 'trait'}`"
+										@click.stop="toggleCanvasTrait(s, item.originalIndex)"
+									>
+										<i class="fas fa-plus" aria-hidden="true"></i> Rating
+									</button>
 								</div>
 								<div class="trait-value multidie-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Dice'">
 									<div
@@ -1184,7 +1281,25 @@ function hasTraitSetDescription(ts: any) {
 
 									<!-- NORMAL TRAIT NAME -->
 									<template v-else>
+										<input
+											v-if="
+												submode === 'edit' &&
+												!printBlank &&
+												!item.isPlaceholder &&
+												isCanvasTraitActive(s, item.originalIndex)
+											"
+											type="text"
+											class="trait-name-inline-input"
+											:value="item.trait.name"
+											:placeholder="(traitSet.noun || 'Trait') + ' name'"
+											:aria-label="(traitSet.noun || 'Trait') + ' name'"
+											@click.stop
+											@input="onTraitNameInlineInput(item.trait, $event)"
+											@keydown.enter="onTraitNameInlineEnter"
+											@keydown.escape.stop.prevent="closeCanvasTrait()"
+										/>
 										<button
+											v-else
 											type="button"
 											class="trait-title-btn"
 											:aria-label="
@@ -1294,6 +1409,93 @@ function hasTraitSetDescription(ts: any) {
 
 									<!-- NONE RATING POSITION: NO VALUE -->
 									<div class="trait-value" v-else-if="!printBlank && getRatingPlacement(traitSet) === 'none'"></div>
+
+									<!-- PIP-RATED TRAIT -->
+									<div class="trait-value pip-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Pip'">
+										<span
+											v-for="(filled, pIdx) in getTraitPipBubbles(item.trait)"
+											:key="pIdx"
+											class="pip-bubble"
+											:class="{ filled: !printBlank && filled }"
+											role="checkbox"
+											:tabindex="printBlank ? -1 : 0"
+											:aria-checked="filled ? 'true' : 'false'"
+											:aria-label="`Pip ${pIdx + 1} of ${item.trait.name || 'trait'}`"
+											@click.stop="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
+											@keydown.enter.prevent="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
+											@keydown.space.prevent="!printBlank ? toggleTraitPipBubble(item.trait, pIdx) : null"
+										></span>
+										<button
+											v-if="submode === 'edit' && !printBlank && !item.isPlaceholder"
+											type="button"
+											class="btn-canvas-edit-rating"
+											:aria-expanded="isCanvasTraitActive(s, item.originalIndex)"
+											:aria-label="`Edit ${item.trait.name || 'trait'} rating`"
+											title="Edit rating"
+											@click.stop="toggleCanvasTrait(s, item.originalIndex)"
+										>
+											<i class="fas fa-sliders" aria-hidden="true"></i>
+										</button>
+									</div>
+
+									<!-- COUNTER-RATED TRAIT -->
+									<div class="trait-value counter-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Counter'">
+										<template v-if="(submode === 'play' || submode === 'edit') && !printBlank && !item.isPlaceholder">
+											<button
+												type="button"
+												class="btn-canvas-counter-step"
+												:aria-label="`Decrease ${item.trait.name || 'trait'} counter`"
+												@click.stop="stepTraitCounter(item.trait, traitSet, -1)"
+											>
+												-
+											</button>
+											<button
+												v-if="submode === 'edit'"
+												type="button"
+												class="counter-display counter-display-btn"
+												:aria-expanded="isCanvasTraitActive(s, item.originalIndex)"
+												:aria-label="`Edit ${item.trait.name || 'trait'} rating`"
+												@click.stop="toggleCanvasTrait(s, item.originalIndex)"
+											>
+												{{ resolveTraitRating(item.trait)?.value?.[0] ?? 0 }}
+											</button>
+											<span v-else class="counter-display">{{ resolveTraitRating(item.trait)?.value?.[0] ?? 0 }}</span>
+											<button
+												type="button"
+												class="btn-canvas-counter-step"
+												:aria-label="`Increase ${item.trait.name || 'trait'} counter`"
+												@click.stop="stepTraitCounter(item.trait, traitSet, 1)"
+											>
+												+
+											</button>
+										</template>
+										<span v-else class="counter-display">{{
+											!printBlank ? (resolveTraitRating(item.trait)?.value?.[0] ?? 0) : ''
+										}}</span>
+									</div>
+
+									<!-- UNRATED TRAIT IN SINGLE-BADGE SET -->
+									<div
+										class="trait-value unrated-value"
+										v-else-if="
+											!printBlank &&
+											!item.isPlaceholder &&
+											!resolveTraitRating(item.trait) &&
+											!getSetRatingDie(traitSet) &&
+											getRatingDisplay(traitSet) === 'rating'
+										"
+									>
+										<button
+											v-if="submode === 'edit'"
+											type="button"
+											class="btn-canvas-add-rating"
+											:aria-expanded="isCanvasTraitActive(s, item.originalIndex)"
+											:aria-label="`Add rating to ${item.trait.name || 'trait'}`"
+											@click.stop="toggleCanvasTrait(s, item.originalIndex)"
+										>
+											<i class="fas fa-plus" aria-hidden="true"></i> Rating
+										</button>
+									</div>
 
 									<!-- DICE-RATED TRAIT -->
 									<div class="trait-value multidie-value" v-else-if="resolveTraitRating(item.trait)?.type === 'Dice'">
@@ -1683,6 +1885,27 @@ function hasTraitSetDescription(ts: any) {
 							</ul>
 						</div>
 					</transition>
+					<InlineRatingBar
+						v-if="
+							submode === 'edit' && !printBlank && !item.isPlaceholder && isCanvasTraitActive(s, item.originalIndex)
+						"
+						:node="item.trait"
+						:parent-set="traitSet"
+						:dice-config="getView(character)?.diceConfig"
+						:subject-label="item.trait.name || traitSet.noun || 'Trait'"
+						show-more
+						show-delete
+						@change="updateCharacter(character)"
+						@close="closeCanvasTrait()"
+						@open-more="
+							closeCanvasTrait();
+							selectElement(['trait', s, item.originalIndex]);
+						"
+						@delete="
+							closeCanvasTrait();
+							removeTrait(s, item.originalIndex);
+						"
+					/>
 				</div>
 			</template>
 		</template>
@@ -1709,9 +1932,9 @@ function hasTraitSetDescription(ts: any) {
 					v-if="submode === 'edit'"
 					type="button"
 					class="preview-button preview-button-secondary"
-					:class="{ active: showSetPartChips }"
-					:aria-expanded="showSetPartChips"
-					@click.stop="showSetPartChips = !showSetPartChips"
+					:class="{ active: isCanvasPartDrawerOpen(s) }"
+					:aria-expanded="isCanvasPartDrawerOpen(s)"
+					@click.stop="toggleCanvasPartDrawer(s)"
 				>
 					<span><i class="fas fa-plus" aria-hidden="true"></i> Part</span>
 				</button>
@@ -1726,26 +1949,43 @@ function hasTraitSetDescription(ts: any) {
 					<span><i class="fas fa-sliders" aria-hidden="true"></i></span>
 				</button>
 			</div>
-			<div v-if="submode === 'edit' && showSetPartChips" class="organic-part-chips" @click.stop>
-				<button
-					v-for="part in SET_QUICK_PARTS"
-					:key="part.key"
-					type="button"
-					class="organic-part-chip"
-					:class="{ active: isSetPartActive(part.key) }"
-					:aria-pressed="isSetPartActive(part.key)"
-					@click.stop="toggleSetPart(part.key)"
-				>
-					<i :class="isSetPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'" aria-hidden="true"></i>
-					{{ part.label }}
-				</button>
-				<button
-					type="button"
-					class="organic-part-chip organic-part-chip-more"
-					@click.stop="selectElement(['traitSet', s])"
-				>
-					<i class="fas fa-sliders" aria-hidden="true"></i> Layout
-				</button>
+			<div v-if="submode === 'edit' && isCanvasPartDrawerOpen(s)" class="set-inline-part-drawer" @click.stop>
+				<div class="inline-add-header">
+					<span class="inline-add-title"><i class="fas fa-sliders" aria-hidden="true"></i> Trait Parts</span>
+					<button
+						type="button"
+						class="btn-inline-close"
+						title="Close"
+						aria-label="Close trait parts"
+						@click.stop="toggleCanvasPartDrawer(s)"
+					>
+						<i class="fas fa-times" aria-hidden="true"></i>
+					</button>
+				</div>
+				<div class="organic-part-chips" role="group" aria-label="Trait parts">
+					<button
+						v-for="part in SET_QUICK_PARTS"
+						:key="part.key"
+						type="button"
+						class="organic-part-chip"
+						:class="{ active: isSetPartActive(part.key) }"
+						:aria-pressed="isSetPartActive(part.key)"
+						@click.stop="toggleSetPart(part.key)"
+					>
+						<i :class="isSetPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'" aria-hidden="true"></i>
+						{{ part.label }}
+					</button>
+					<button
+						type="button"
+						class="organic-part-chip organic-part-chip-more"
+						@click.stop="
+							toggleCanvasPartDrawer(s);
+							selectElement(['traitSet', s]);
+						"
+					>
+						<i class="fas fa-sliders" aria-hidden="true"></i> Layout
+					</button>
+				</div>
 			</div>
 		</div>
 	</transition>

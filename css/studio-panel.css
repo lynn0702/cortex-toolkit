@@ -138,6 +138,38 @@
 		overflow-x: hidden;
 	}
 
+	.studio-panel:not(.is-play) {
+		top: auto;
+		bottom: 0;
+		max-height: min(74dvh, calc(100dvh - var(--header-size) - 0.75rem));
+		border-radius: var(--drawer-radius) var(--drawer-radius) 0 0;
+		border-top: 1px solid var(--studio-border);
+		border-left: none;
+		border-right: none;
+		box-shadow: 0 -0.5rem 1.75rem color-mix(in oklch, var(--text-main) 35%, transparent);
+		padding-bottom: env(safe-area-inset-bottom, 0px);
+		transform: translateY(0);
+		transition: transform var(--transition-sheet);
+
+		&.position-right.panel-collapsed,
+		&.position-left.panel-collapsed {
+			transform: translateY(105%);
+			pointer-events: none;
+		}
+
+		&.position-right .studio-action-collapse-desktop i {
+			transform: rotate(90deg);
+		}
+
+		&.position-left .studio-action-collapse-desktop i {
+			transform: rotate(-90deg);
+		}
+	}
+
+	.play-shell.panel-open:not(:has(.studio-panel.is-play)) .sheet-column {
+		padding-bottom: min(76dvh, 30rem);
+	}
+
 	.studio-panel-body,
 	.studio-panel .editor,
 	.studio-panel .editor-fields {

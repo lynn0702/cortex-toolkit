@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { ensureView, getRating, getView, ratingDice, resolveRange, resolveVisibility, setRatingDie } from './model.ts';
+import { computed, ref, watch } from 'vue';
+import { ensureView, getRating, getView, ratingDice, resolveVisibility } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { normalizeZoom } from './frame-geometry.ts';
 import { injectTraitSet } from './use-trait-set.ts';
+import InlineRatingBar from './inline-rating-bar.vue';
 
 const {
 	traitSet,
@@ -178,30 +179,51 @@ const showNotesFieldInEdit = computed(
 
 const nameSetRating = computed(() => getRating(traitSet.value));
 const nameSetDice = computed(() => ratingDice(nameSetRating.value));
-const nameSetDieRange = computed(() => {
-	const r = resolveRange(traitSet.value);
-	return Array.isArray(r) && r.length > 0 ? r : [4, 6, 8, 10, 12];
-});
-const hasRatedNameSet = computed(
-	() => (nameSetRating.value?.type === 'Die' || nameSetRating.value?.type === 'Dice') && nameSetDice.value.length > 0,
-);
-const showInlineNameDieStrip = computed(() => Boolean(nameSetRating.value) || isCompactHeader.value);
+const hasRatedNameSet = computed(() => Boolean(nameSetRating.value));
+const showNameRatingBar = ref(false);
 
-function isNameDieActive(size: number): boolean {
-	return nameSetRating.value?.type === 'Die' && nameSetDice.value[0] === size;
+watch(
+	() => submode.value,
+	(mode) => {
+		if (mode !== 'edit') {
+			showNameRatingBar.value = false;
+		}
+	},
+);
+
+const nameSetPips = computed<boolean[]>(() => {
+	if (nameSetRating.value?.type !== 'Pip') return [];
+	const vals = nameSetRating.value.value;
+	return Array.isArray(vals) && vals.length ? vals.map((v) => Boolean(v)) : [false];
+});
+
+const nameSetCounter = computed<number>(() => {
+	if (nameSetRating.value?.type !== 'Counter') return 0;
+	const v = nameSetRating.value.value?.[0];
+	return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+});
+
+function toggleNamePip(index: number) {
+	const ts = traitSet.value as Record<string, any> | undefined;
+	if (!ts || !character.value || submode.value === 'print') return;
+	const next = [...nameSetPips.value];
+	if (index < 0 || index >= next.length) return;
+	next[index] = !next[index];
+	ts.rating = { type: 'Pip', value: next };
+	updateCharacter(character.value);
 }
 
-function toggleNameSetDie(size: number) {
+function stepNameCounter(delta: number) {
 	const ts = traitSet.value as Record<string, any> | undefined;
-	if (!ts || !character.value) return;
-	if (isNameDieActive(size)) {
-		delete ts.rating;
-	} else {
-		const prevRange = Array.isArray(nameSetRating.value?.range)
-			? [...(nameSetRating.value!.range as number[])]
-			: [4, 6, 8, 10, 12];
-		setRatingDie(ts, size, prevRange);
-	}
+	if (!ts || !character.value || submode.value === 'print') return;
+	const r = nameSetRating.value;
+	if (r?.type !== 'Counter') return;
+	const bounds =
+		Array.isArray(r.range) && r.range.length >= 2 ? [Number(r.range[0]) || 0, Number(r.range[1]) || 20] : [0, 20];
+	const lo = Math.min(bounds[0], bounds[1]);
+	const hi = Math.max(bounds[0], bounds[1]);
+	const next = Math.max(lo, Math.min(hi, nameSetCounter.value + delta));
+	ts.rating = { type: 'Counter', value: [next], range: [lo, hi] };
 	updateCharacter(character.value);
 }
 
@@ -365,39 +387,38 @@ function adjustPlotPoints(delta: number) {
 								@click.stop
 								@keydown.enter="onInlineEnter"
 							/>
-							<div
-								v-if="nameSetRating?.type === 'Dice' && nameSetDice.length > 0"
-								class="sheet-name-dice-pool"
-								@click.stop="selectElement(['name'])"
+							<button
+								v-if="hasRatedNameSet"
+								type="button"
+								class="sheet-name-rating-trigger"
+								:class="{ active: showNameRatingBar }"
+								:aria-expanded="showNameRatingBar"
+								aria-label="Edit sheet rating"
+								title="Edit rating"
+								@click.stop="showNameRatingBar = !showNameRatingBar"
 							>
-								<span
-									v-for="(dieSize, dIdx) in nameSetDice"
-									:key="'edit-nd-' + dIdx"
-									class="sheet-name-rating-badge diecon-wrapper"
-									v-html="renderDieValue(dieSize, true)"
-								></span>
-							</div>
-							<div
-								v-else-if="showInlineNameDieStrip"
-								class="sheet-name-die-strip"
-								role="group"
-								aria-label="Sheet rating"
-								@click.stop
-							>
-								<button
-									v-for="size in nameSetDieRange"
-									:key="'name-die-' + size"
-									type="button"
-									class="sheet-name-die-chip"
-									:class="{ active: isNameDieActive(size) }"
-									:aria-pressed="isNameDieActive(size)"
-									:aria-label="(isNameDieActive(size) ? 'Clear sheet d' : 'Set sheet d') + size"
-									:title="(isNameDieActive(size) ? 'Clear d' : 'Set d') + size"
-									@click.stop="toggleNameSetDie(size)"
+								<template
+									v-if="(nameSetRating?.type === 'Die' || nameSetRating?.type === 'Dice') && nameSetDice.length > 0"
 								>
-									<span class="diecon-wrapper" v-html="renderDieValue(size, isNameDieActive(size))"></span>
-								</button>
-							</div>
+									<span
+										v-for="(dieSize, dIdx) in nameSetDice"
+										:key="'edit-nd-' + dIdx"
+										class="sheet-name-rating-badge diecon-wrapper"
+										v-html="renderDieValue(dieSize, true)"
+									></span>
+								</template>
+								<span v-else-if="nameSetRating?.type === 'Pip'" class="sheet-name-pip-group">
+									<span
+										v-for="(filled, pIdx) in nameSetPips"
+										:key="'edit-np-' + pIdx"
+										class="pip-bubble"
+										:class="{ filled }"
+									></span>
+								</span>
+								<span v-else-if="nameSetRating?.type === 'Counter'" class="counter-display">
+									{{ nameSetCounter }}
+								</span>
+							</button>
 							<button
 								v-if="isCompactHeader && !hasCustomNameLabel"
 								type="button"
@@ -414,7 +435,10 @@ function adjustPlotPoints(delta: number) {
 							<div class="sheet-cell-content name-content" v-if="!printBlank && name" v-html="renderText(name)"></div>
 							<div class="sheet-blank-line" v-else></div>
 
-							<div v-if="hasRatedNameSet" class="sheet-name-play-dice">
+							<div
+								v-if="(nameSetRating?.type === 'Die' || nameSetRating?.type === 'Dice') && nameSetDice.length > 0"
+								class="sheet-name-play-dice"
+							>
 								<span
 									v-for="(dieSize, dIdx) in nameSetDice"
 									:key="'play-nd-' + dIdx"
@@ -429,6 +453,43 @@ function adjustPlotPoints(delta: number) {
 										submode === 'print' ? renderDieValueForPrint(dieSize, !printBlank) : renderDieValue(dieSize, true)
 									"
 								></span>
+							</div>
+							<div v-else-if="nameSetRating?.type === 'Pip'" class="trait-value pip-value" @click.stop>
+								<span
+									v-for="(filled, pIdx) in nameSetPips"
+									:key="'play-np-' + pIdx"
+									class="pip-bubble"
+									:class="{ filled: !printBlank && filled }"
+									:role="submode === 'play' ? 'checkbox' : undefined"
+									:tabindex="submode === 'play' ? 0 : undefined"
+									:aria-checked="submode === 'play' ? (filled ? 'true' : 'false') : undefined"
+									:aria-label="submode === 'play' ? `Sheet pip ${pIdx + 1}` : undefined"
+									@click.stop="submode === 'play' ? toggleNamePip(pIdx) : null"
+									@keydown.enter.stop.prevent="submode === 'play' ? toggleNamePip(pIdx) : null"
+									@keydown.space.stop.prevent="submode === 'play' ? toggleNamePip(pIdx) : null"
+								></span>
+							</div>
+							<div v-else-if="nameSetRating?.type === 'Counter'" class="trait-value counter-value" @click.stop>
+								<template v-if="submode === 'play'">
+									<button
+										type="button"
+										class="btn-canvas-counter-step"
+										aria-label="Decrease sheet counter"
+										@click.stop="stepNameCounter(-1)"
+									>
+										-
+									</button>
+									<span class="counter-display">{{ nameSetCounter }}</span>
+									<button
+										type="button"
+										class="btn-canvas-counter-step"
+										aria-label="Increase sheet counter"
+										@click.stop="stepNameCounter(1)"
+									>
+										+
+									</button>
+								</template>
+								<span v-else class="counter-display">{{ !printBlank ? nameSetCounter : '' }}</span>
 							</div>
 						</template>
 
@@ -449,6 +510,15 @@ function adjustPlotPoints(delta: number) {
 							</button>
 						</div>
 					</div>
+
+					<InlineRatingBar
+						v-if="submode === 'edit' && showNameRatingBar && traitSet"
+						:node="traitSet"
+						:dice-config="getView(character)?.diceConfig"
+						:subject-label="name || 'Sheet'"
+						@change="updateCharacter(character)"
+						@close="showNameRatingBar = false"
+					/>
 
 					<div class="sheet-inline-part-row" v-if="showPlayerFieldInEdit" @click.stop>
 						<span class="sheet-cell-label">{{ playerLabel }}</span>

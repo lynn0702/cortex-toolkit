@@ -63,9 +63,26 @@ const {
 	effectiveAlignment,
 	effectiveZoom,
 	effectivePortraitStyle,
+	isCanvasSetActive,
+	closeCanvasSet,
 } = ts;
 
 const isName = computed(() => isNameSet(traitSet.value));
+
+function onSetNameInlineInput(event: Event) {
+	if (!traitSet.value) return;
+	traitSet.value.name = (event.target as HTMLInputElement).value;
+	updateCharacter(props.character);
+}
+
+function onSetNameInlineEnter(event: KeyboardEvent) {
+	if (event.isComposing || event.keyCode === 229) return;
+	if (traitSet.value && !String(traitSet.value.name || '').trim()) {
+		traitSet.value.name = 'New Set';
+		updateCharacter(props.character);
+	}
+	closeCanvasSet();
+}
 
 const canRemoveSetInPlay = computed(() => {
 	if (isName.value) return false;
@@ -79,7 +96,10 @@ const headerMode = computed(() => {
 	return h === 'top' || h === 'bottom' || h === 'none' ? h : 'sidebar';
 });
 const hasHeader = computed(
-	() => !isName.value && Boolean(traitSet.value?.name) && getView(traitSet.value)?.header !== 'none',
+	() =>
+		!isName.value &&
+		(Boolean(traitSet.value?.name) || isCanvasSetActive(s.value)) &&
+		getView(traitSet.value)?.header !== 'none',
 );
 
 const showRingActions = computed(() => {
@@ -212,7 +232,53 @@ watch(rootEl, (el) => {
 		/>
 
 		<div class="trait-set-header" v-if="hasHeader && headerMode !== 'bottom'">
-			<transition appear>
+			<div v-if="submode === 'edit' && isCanvasSetActive(s)" class="trait-set-header-inline-edit" @click.stop>
+				<input
+					type="text"
+					class="trait-set-name-inline-input"
+					:value="traitSet.name"
+					placeholder="Set name"
+					aria-label="Set name"
+					@input="onSetNameInlineInput"
+					@keydown.enter="onSetNameInlineEnter"
+					@keydown.escape.stop.prevent="closeCanvasSet()"
+				/>
+				<button
+					type="button"
+					class="btn-inline-rating-icon"
+					title="Set options"
+					aria-label="Set options"
+					@click.stop="
+						closeCanvasSet();
+						selectElement(['traitSet', s]);
+					"
+				>
+					<i class="fas fa-sliders" aria-hidden="true"></i>
+				</button>
+				<button
+					v-if="!(traitSet.traits && traitSet.traits.length)"
+					type="button"
+					class="btn-inline-rating-icon is-danger"
+					title="Delete set"
+					aria-label="Delete set"
+					@click.stop="
+						closeCanvasSet();
+						removeTraitSet(s);
+					"
+				>
+					<i class="fas fa-trash" aria-hidden="true"></i>
+				</button>
+				<button
+					type="button"
+					class="btn-inline-rating-icon"
+					title="Done"
+					aria-label="Done"
+					@click.stop="closeCanvasSet()"
+				>
+					<i class="fas fa-check" aria-hidden="true"></i>
+				</button>
+			</div>
+			<transition v-else appear>
 				<div
 					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
 					:role="submode === 'edit' ? 'button' : undefined"

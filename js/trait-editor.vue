@@ -272,6 +272,15 @@ function addRating() {
 	updateCharacter(props.character);
 }
 
+function clearRating() {
+	const t = trait.value as unknown as Record<string, any> | undefined;
+	if (!t) return;
+	confirmRatingChange.value = null;
+	delete t.rating;
+	if (t.isOut) t.isOut = false;
+	updateCharacter(props.character);
+}
+
 // Rating type control: Die | Dice | Counter | Pip. Die<->Dice preserves
 // the dice (one becomes a one-item list, a list's first item becomes the
 // single die); every other change starts from that type's default. The
@@ -359,6 +368,7 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 				...(cur && (cur as any).out === true ? { out: true } : {}),
 			};
 	} else if (type === 'Die') {
+		delete t.rating;
 		setRatingDie(t, size);
 	} else if (type === 'Dice') {
 		t.rating = { type: 'Dice', value: [size] };
@@ -1547,6 +1557,33 @@ function checkScrollPosition() {
 function getDieDisplayValue(val: any, isFilled = false) {
 	return characterCurioFunctions.renderDieconSVG(val, isFilled, '', getView(props.character)?.diceConfig);
 }
+
+const isCustomTraitRange = computed(() => {
+	if (isRangeInherited.value) return false;
+	const r = trait.value?.rating?.range;
+	if (!Array.isArray(r)) return false;
+	if (ratingType.value === 'Counter') {
+		return !(r.length === 2 && r[0] === 0 && r[1] === 20);
+	}
+	const std = [4, 6, 8, 10, 12];
+	return !(r.length === std.length && r.every((v: number, i: number) => v === std[i]));
+});
+
+const hasAdvancedTraitSettings = computed(() =>
+	Boolean(
+		traitTags.value.length > 0 ||
+		traitVisibility.value !== 'shown' ||
+		traitPool.value ||
+		traitSpendable.value ||
+		editableOnSheet.value ||
+		hitchesDiffers.value ||
+		traitKeepsExtra.value !== 0 ||
+		traitPpDelta.value !== 0 ||
+		isCustomTraitRange.value ||
+		ratingHasOut.value ||
+		(hasSfxChildren.value && Boolean((getView(trait.value) as any)?.badge)),
+	),
+);
 </script>
 
 <template>
@@ -1697,28 +1734,7 @@ function getDieDisplayValue(val: any, isFilled = false) {
 
 					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
-						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
-					</div>
-
-					<div class="editor-field" v-if="!isPlay">
-						<TagEditor
-							v-model="traitTags"
-							:input-id="
-								'trait-tags-' +
-								traitSetID +
-								'-' +
-								traitID +
-								(subtraitID !== null && subtraitID !== undefined ? '-' + subtraitID : '')
-							"
-							label="Tags"
-						/>
-					</div>
-
-					<div class="editor-field" v-if="!isPlay">
-						<div class="name-heading-row">
-							<label>Visibility</label>
-							<visibility-eye :state="traitVisibility" @toggle="traitVisibility = nextVisibility(traitVisibility)" />
-						</div>
+						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description" rows="2"></textarea>
 					</div>
 
 					<!-- COUNTER / XP FIELD -->
@@ -1823,7 +1839,19 @@ function getDieDisplayValue(val: any, isFilled = false) {
 					</div>
 
 					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideUnratedSetDie">
-						<div class="editor-label" v-if="!isPlay || isRatedTrait">Rating</div>
+						<div class="name-heading-row" v-if="!isPlay || isRatedTrait">
+							<div class="editor-label">Rating</div>
+							<button
+								v-if="isRatedTrait && !isPlay"
+								type="button"
+								class="btn-unset-rating"
+								title="Remove rating"
+								aria-label="Remove rating"
+								@click.stop="clearRating()"
+							>
+								None
+							</button>
+						</div>
 
 						<!-- UNRATED: the gate offers to add one -->
 						<div class="editor-button-container my-2" v-if="!isRatedTrait && !isPlay">
@@ -2143,133 +2171,6 @@ function getDieDisplayValue(val: any, isFilled = false) {
 						</div>
 					</div>
 
-					<!-- RATING RANGE (the die ladder Die/Dice ratings may take) -->
-					<div
-						class="editor-field"
-						v-if="
-							!isPlay &&
-							isRatedTrait &&
-							(ratingType === 'Die' || ratingType === 'Dice') &&
-							!isListStyle &&
-							!isLabeledPipsSet &&
-							!hideUnratedSetDie
-						"
-					>
-						<div class="editor-label">Range<template v-if="isRangeInherited"> · inherited</template></div>
-						<div class="rating-scale-container">
-							<div class="rating-scale-chips">
-								<button
-									type="button"
-									v-for="size in [4, 6, 8, 10, 12]"
-									:key="'range-' + size"
-									class="rating-scale-chip"
-									:class="{ active: isRangeIncluded(size) }"
-									@click.stop="toggleRangeOption(size)"
-									:title="(isRangeIncluded(size) ? 'Exclude d' : 'Include d') + size"
-								>
-									<span v-html="getDieDisplayValue(size)"></span>
-									<span class="chip-label">d{{ size }}</span>
-								</button>
-								<button
-									type="button"
-									class="rating-scale-chip rating-scale-chip-out"
-									:class="{ active: ratingHasOut }"
-									@click.stop="ratingHasOut = !ratingHasOut"
-									:title="(ratingHasOut ? 'Disable' : 'Enable') + ' Out marker'"
-								>
-									<span class="chip-label chip-out-label">OUT</span>
-								</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- OPTIONS (only what the shape makes meaningful) -->
-					<div class="editor-field" v-if="!isPlay && isRatedTrait && !isListStyle && !isLabeledPipsSet">
-						<div class="editor-label">Options</div>
-						<div class="editor-row-inline flex-wrap">
-							<div class="editor-checkbox-row">
-								<input
-									type="checkbox"
-									:id="'trait-' + traitID + '-pool'"
-									:true-value="true"
-									:false-value="false"
-									v-model="traitPool"
-								/>
-								<label
-									:for="'trait-' + traitID + '-pool'"
-									title="Adding the trait stages its whole array of available dice"
-									>Pool</label
-								>
-							</div>
-							<div class="editor-checkbox-row">
-								<input
-									type="checkbox"
-									:id="'trait-' + traitID + '-spendable'"
-									:true-value="true"
-									:false-value="false"
-									v-model="traitSpendable"
-								/>
-								<label :for="'trait-' + traitID + '-spendable'">Spendable</label>
-							</div>
-							<div class="editor-checkbox-row">
-								<input
-									type="checkbox"
-									:id="'trait-' + traitID + '-editable-sheet'"
-									:true-value="true"
-									:false-value="false"
-									v-model="editableOnSheet"
-								/>
-								<label
-									:for="'trait-' + traitID + '-editable-sheet'"
-									title="Allow this trait or its detail/text to be edited directly on the sheet in play/edit mode"
-									>Editable on sheet</label
-								>
-							</div>
-						</div>
-						<div class="editor-toggles mt-sm" v-if="hitchesDiffers">
-							<div><label :for="'trait-' + traitID + '-hitches'">Hitches</label></div>
-							<div>
-								<input
-									type="number"
-									:id="'trait-' + traitID + '-hitches'"
-									name="traitHitches"
-									min="0"
-									max="12"
-									v-model.number="traitHitches"
-									class="editor-input-short"
-								/>
-							</div>
-						</div>
-						<div class="editor-toggles mt-sm" v-if="!isPlay">
-							<div><label :for="'trait-' + traitID + '-keeps-extra'">Keeps Extra</label></div>
-							<div>
-								<input
-									type="number"
-									:id="'trait-' + traitID + '-keeps-extra'"
-									name="traitKeepsExtra"
-									min="0"
-									max="4"
-									v-model.number="traitKeepsExtra"
-									class="editor-input-short"
-								/>
-							</div>
-						</div>
-						<div class="editor-toggles mt-sm" v-if="!isPlay">
-							<div><label :for="'trait-' + traitID + '-pp-delta'">PP Delta</label></div>
-							<div>
-								<input
-									type="number"
-									:id="'trait-' + traitID + '-pp-delta'"
-									name="traitPpDelta"
-									min="-5"
-									max="5"
-									v-model.number="traitPpDelta"
-									class="editor-input-short"
-								/>
-							</div>
-						</div>
-					</div>
-
 					<!-- SUBTRAITS -->
 					<div class="editor-field" v-if="!isPlay || childSubtraits.length > 0">
 						<div class="editor-label">Subtraits</div>
@@ -2320,64 +2221,216 @@ function getDieDisplayValue(val: any, isFilled = false) {
 						</div>
 					</div>
 
-					<!-- BADGE -->
-					<div class="editor-field" v-if="!isPlay && hasSfxChildren">
-						<div class="editor-label">Badge</div>
-						<div class="editor-row-inline flex-wrap mb-sm">
-							<div class="flex-1 min-w-8rem">
-								<label class="editor-sub-label">Text</label>
-								<input
-									type="text"
-									:value="badgeValue('text')"
-									@change="setBadgeValue('text', targetValue($event))"
-									:placeholder="badgeValue('text') || 'Badge'"
-								/>
-							</div>
-							<div class="min-w-7rem">
-								<label class="editor-sub-label">Shape</label>
-								<select
-									:value="badgeValue('shape') || 'vertical-bar'"
-									@change="setBadgeValue('shape', targetValue($event))"
-								>
-									<option value="vertical-bar">Vertical bar</option>
-									<option value="pill">Pill</option>
-									<option value="square">Square</option>
-									<option value="chamfer">Chamfer</option>
-								</select>
-							</div>
-							<div class="w-full">
-								<div class="editor-sub-label">Color</div>
-								<ColorPicker
-									compact
-									:allow-custom="false"
-									:show-swatches="false"
-									:model-value="badgeValue('color') || 'black'"
-									:input-id="'trait-' + traitSetID + '-' + traitID + '-badge-color'"
-									label="Badge Color"
-									:tokens="badgeColorTokens"
-									@update:model-value="setBadgeValue('color', $event)"
-								/>
-							</div>
-							<div class="flex-1 min-w-8rem">
-								<label class="editor-sub-label">Icon</label>
-								<input
-									type="text"
-									:value="badgeValue('icon')"
-									@change="setBadgeValue('icon', targetValue($event))"
-									placeholder="fa-bolt"
-								/>
+					<!-- SECONDARY / ADVANCED MECHANICS -->
+					<details class="editor-group" v-if="!isPlay" :open="hasAdvancedTraitSettings">
+						<summary class="editor-group-title">Advanced</summary>
+
+						<!-- RATING RANGE (the die ladder Die/Dice ratings may take) -->
+						<div
+							class="editor-field"
+							v-if="
+								isRatedTrait &&
+								(ratingType === 'Die' || ratingType === 'Dice') &&
+								!isListStyle &&
+								!isLabeledPipsSet &&
+								!hideUnratedSetDie
+							"
+						>
+							<div class="editor-label">Range<template v-if="isRangeInherited"> · inherited</template></div>
+							<div class="rating-scale-container">
+								<div class="rating-scale-chips">
+									<button
+										type="button"
+										v-for="size in [4, 6, 8, 10, 12]"
+										:key="'range-' + size"
+										class="rating-scale-chip"
+										:class="{ active: isRangeIncluded(size) }"
+										@click.stop="toggleRangeOption(size)"
+										:title="(isRangeIncluded(size) ? 'Exclude d' : 'Include d') + size"
+									>
+										<span v-html="getDieDisplayValue(size)"></span>
+										<span class="chip-label">d{{ size }}</span>
+									</button>
+									<button
+										type="button"
+										class="rating-scale-chip rating-scale-chip-out"
+										:class="{ active: ratingHasOut }"
+										@click.stop="ratingHasOut = !ratingHasOut"
+										:title="(ratingHasOut ? 'Disable' : 'Enable') + ' Out marker'"
+									>
+										<span class="chip-label chip-out-label">OUT</span>
+									</button>
+								</div>
 							</div>
 						</div>
-						<div class="mb-sm">
-							<label class="editor-sub-label">Prefix</label>
-							<input
-								type="text"
-								:value="prefixValue()"
-								@change="setPrefixValue(targetValue($event))"
-								:placeholder="prefixValue()"
+
+						<!-- OPTIONS (only what the shape makes meaningful) -->
+						<div class="editor-field" v-if="isRatedTrait && !isListStyle && !isLabeledPipsSet">
+							<div class="editor-label">Options</div>
+							<div class="editor-row-inline flex-wrap">
+								<div class="editor-checkbox-row">
+									<input
+										type="checkbox"
+										:id="'trait-' + traitID + '-pool'"
+										:true-value="true"
+										:false-value="false"
+										v-model="traitPool"
+									/>
+									<label
+										:for="'trait-' + traitID + '-pool'"
+										title="Adding the trait stages its whole array of available dice"
+										>Pool</label
+									>
+								</div>
+								<div class="editor-checkbox-row">
+									<input
+										type="checkbox"
+										:id="'trait-' + traitID + '-spendable'"
+										:true-value="true"
+										:false-value="false"
+										v-model="traitSpendable"
+									/>
+									<label :for="'trait-' + traitID + '-spendable'">Spendable</label>
+								</div>
+								<div class="editor-checkbox-row">
+									<input
+										type="checkbox"
+										:id="'trait-' + traitID + '-editable-sheet'"
+										:true-value="true"
+										:false-value="false"
+										v-model="editableOnSheet"
+									/>
+									<label
+										:for="'trait-' + traitID + '-editable-sheet'"
+										title="Allow this trait or its detail/text to be edited directly on the sheet in play/edit mode"
+										>Editable on sheet</label
+									>
+								</div>
+							</div>
+							<div class="editor-toggles mt-sm" v-if="hitchesDiffers">
+								<div><label :for="'trait-' + traitID + '-hitches'">Hitches</label></div>
+								<div>
+									<input
+										type="number"
+										:id="'trait-' + traitID + '-hitches'"
+										name="traitHitches"
+										min="0"
+										max="12"
+										v-model.number="traitHitches"
+										class="editor-input-short"
+									/>
+								</div>
+							</div>
+							<div class="editor-toggles mt-sm">
+								<div><label :for="'trait-' + traitID + '-keeps-extra'">Keeps Extra</label></div>
+								<div>
+									<input
+										type="number"
+										:id="'trait-' + traitID + '-keeps-extra'"
+										name="traitKeepsExtra"
+										min="0"
+										max="4"
+										v-model.number="traitKeepsExtra"
+										class="editor-input-short"
+									/>
+								</div>
+							</div>
+							<div class="editor-toggles mt-sm">
+								<div><label :for="'trait-' + traitID + '-pp-delta'">PP Delta</label></div>
+								<div>
+									<input
+										type="number"
+										:id="'trait-' + traitID + '-pp-delta'"
+										name="traitPpDelta"
+										min="-5"
+										max="5"
+										v-model.number="traitPpDelta"
+										class="editor-input-short"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div class="editor-field">
+							<div class="name-heading-row">
+								<label>Visibility</label>
+								<visibility-eye :state="traitVisibility" @toggle="traitVisibility = nextVisibility(traitVisibility)" />
+							</div>
+						</div>
+
+						<div class="editor-field">
+							<TagEditor
+								v-model="traitTags"
+								:input-id="
+									'trait-tags-' +
+									traitSetID +
+									'-' +
+									traitID +
+									(subtraitID !== null && subtraitID !== undefined ? '-' + subtraitID : '')
+								"
+								label="Tags"
 							/>
 						</div>
-					</div>
+
+						<!-- BADGE -->
+						<div class="editor-field" v-if="hasSfxChildren">
+							<div class="editor-label">Badge</div>
+							<div class="editor-row-inline flex-wrap mb-sm">
+								<div class="flex-1 min-w-8rem">
+									<label class="editor-sub-label">Text</label>
+									<input
+										type="text"
+										:value="badgeValue('text')"
+										@change="setBadgeValue('text', targetValue($event))"
+										:placeholder="badgeValue('text') || 'Badge'"
+									/>
+								</div>
+								<div class="min-w-7rem">
+									<label class="editor-sub-label">Shape</label>
+									<select
+										:value="badgeValue('shape') || 'vertical-bar'"
+										@change="setBadgeValue('shape', targetValue($event))"
+									>
+										<option value="vertical-bar">Vertical bar</option>
+										<option value="pill">Pill</option>
+										<option value="square">Square</option>
+										<option value="chamfer">Chamfer</option>
+									</select>
+								</div>
+								<div class="w-full">
+									<div class="editor-sub-label">Color</div>
+									<ColorPicker
+										compact
+										:allow-custom="false"
+										:show-swatches="false"
+										:model-value="badgeValue('color') || 'black'"
+										:input-id="'trait-' + traitSetID + '-' + traitID + '-badge-color'"
+										label="Badge Color"
+										:tokens="badgeColorTokens"
+										@update:model-value="setBadgeValue('color', $event)"
+									/>
+								</div>
+								<div class="flex-1 min-w-8rem">
+									<label class="editor-sub-label">Icon</label>
+									<input
+										type="text"
+										:value="badgeValue('icon')"
+										@change="setBadgeValue('icon', targetValue($event))"
+										placeholder="fa-bolt"
+									/>
+								</div>
+							</div>
+							<div class="mb-sm">
+								<label class="editor-sub-label">Prefix</label>
+								<input
+									type="text"
+									:value="prefixValue()"
+									@change="setPrefixValue(targetValue($event))"
+									:placeholder="prefixValue()"
+								/>
+							</div>
+						</div>
+					</details>
 				</div>
 			</div>
 		</div>

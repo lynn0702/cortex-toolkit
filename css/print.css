@@ -3798,11 +3798,37 @@ body:has(.character-sheet.submode-print) .main {
 	min-width: 0;
 }
 
-.character-sheet .trait-set-style-two-columns-detailed .single-die-value .diecon,
-.character-sheet .trait-set-style-subtrait-columns .single-die-value .diecon {
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-two-columns-detailed .single-die-value .diecon,
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-subtrait-columns .single-die-value .diecon {
 	width: var(--diecon-scale-size);
 	height: var(--diecon-scale-size);
 	font-size: var(--diecon-scale-size);
+}
+
+/* Interactive screen modes (Edit & Play) enforce one uniform diecon tap-target size (2rem) everywhere on the sheet. */
+.character-sheet:not(.submode-print):not(.print-sheet) .attached-stress-track {
+	--face-size: var(--diecon-size);
+}
+
+.character-sheet:not(.submode-print):not(.print-sheet) .attached-stress-die {
+	font-size: var(--diecon-size);
+}
+
+.character-sheet:not(.submode-print):not(.print-sheet)
+	:is(
+		.trait-value,
+		.single-die-value,
+		.subtrait-value,
+		.attached-stress-track,
+		.set-rating-die,
+		.sheet-name-rating-trigger,
+		.sheet-name-play-dice,
+		.inline-rating-bar
+	)
+	.diecon {
+	width: var(--diecon-size);
+	height: var(--diecon-size);
+	font-size: var(--diecon-size);
 }
 
 .character-sheet .trait-set-style-two-columns-detailed .trait-title {

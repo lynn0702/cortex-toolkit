@@ -44,17 +44,47 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		await nameInput.setValue('Jimmy the Snitch');
 		expect(ch.name).toBe('Jimmy the Snitch');
 
-		const dieChips = wrapper.findAll('.sheet-name-die-chip');
-		expect(dieChips).toHaveLength(5);
-		expect(dieChips[2].classes()).toContain('active'); // d8
+		// Compact single-die trigger (not a permanent 5-die array) opens InlineRatingBar on tap
+		expect(wrapper.findAll('.sheet-name-die-chip')).toHaveLength(0);
+		const ratingTrigger = wrapper.find('button.sheet-name-rating-trigger');
+		expect(ratingTrigger.exists()).toBe(true);
+		expect(wrapper.find('.inline-rating-bar').exists()).toBe(false);
 
-		// Switch rating to d10 inline, then clear, then set d8 back
-		await dieChips[3].trigger('click');
+		await ratingTrigger.trigger('click');
+		expect(wrapper.find('.inline-rating-bar').exists()).toBe(true);
+
+		const inlineAxe = await axe.run(wrapper.element);
+		expect(inlineAxe.violations).toHaveLength(0);
+
+		// Switch rating to d10 inline, then None, then Pip, then Counter, then back to d8
+		await wrapper.find('.inline-rating-bar button[aria-label="Set d10"]').trigger('click');
 		expect(getRating(ch.traitSets[0])?.value).toEqual([10]);
-		await dieChips[3].trigger('click');
+
+		const modeButtons = () => wrapper.findAll('.inline-rating-bar .inline-rating-mode-btn');
+		await modeButtons()
+			.find((b) => b.text() === 'None')!
+			.trigger('click');
 		expect(getRating(ch.traitSets[0])).toBeUndefined();
-		await dieChips[2].trigger('click');
+
+		await modeButtons()
+			.find((b) => b.text() === 'Pip')!
+			.trigger('click');
+		expect(getRating(ch.traitSets[0])?.type).toBe('Pip');
+		expect(getRating(ch.traitSets[0])?.value).toEqual([false, false, false]);
+
+		await modeButtons()
+			.find((b) => b.text() === 'Counter')!
+			.trigger('click');
+		expect(getRating(ch.traitSets[0])?.type).toBe('Counter');
+
+		await modeButtons()
+			.find((b) => b.text() === 'Die')!
+			.trigger('click');
+		await wrapper.find('.inline-rating-bar button[aria-label="Set d8"]').trigger('click');
 		expect(getRating(ch.traitSets[0])?.value).toEqual([8]);
+
+		await wrapper.find('.inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
+		expect(wrapper.find('.inline-rating-bar').exists()).toBe(false);
 
 		const editAxe = await axe.run(wrapper.element);
 		expect(editAxe.violations).toHaveLength(0);
@@ -122,19 +152,73 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		const builderButtons = wrapper.findAll('.sheet-organic-builder .btn-sheet-add');
 		expect(builderButtons.map((b) => b.text().trim())).toEqual(['Trait', 'Part', 'Set', 'Presets']);
 
-		// 1. + Trait creates a clean headerless TraitSet and adds deduplicated traits
+		// 1. + Trait creates a clean headerless TraitSet with compact ratingDisplay ('rating') and stays calmly on canvas
 		await builderButtons[0].trigger('click');
 		expect(ch.traitSets).toHaveLength(2);
 		expect(getView(ch.traitSets[1])?.header).toBe('none');
+		expect(getView(ch.traitSets[1])?.ratingDisplay).toBe('rating');
 		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait']);
+		expect(wrapper.emitted('selectElement')).toBeUndefined();
+		expect(wrapper.find('input.trait-name-inline-input').exists()).toBe(true);
+		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(true);
+		// Single active die rendered per trait on canvas, NOT a 5-die full array
+		expect(wrapper.find('.trait').findAll('.single-die-value [role="button"]')).toHaveLength(1);
 
 		await builderButtons[0].trigger('click');
 		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait', 'New Trait 2']);
+		expect(wrapper.emitted('selectElement')).toBeUndefined();
 
-		// 2. + Part toggles Sheet Parts (shown = absence, never stored 'shown') and Trait Parts
+		// Switch New Trait 2 to multi-die ('Dice': [10, 10]) via InlineRatingBar, close, then tap multi-die directly on canvas
+		await wrapper
+			.findAll('.trait .inline-rating-bar .inline-rating-mode-btn')
+			.find((b) => b.text() === 'Dice')!
+			.trigger('click');
+		// Clear the default 2x d6 and add 2x d10
+		await wrapper.find('.inline-pool-die-chip').trigger('click');
+		await wrapper.find('.inline-pool-die-chip').trigger('click');
+		await wrapper.find('.inline-dice-palette button[aria-label="Add d10"]').trigger('click');
+		await wrapper.find('.inline-dice-palette button[aria-label="Add d10"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10, 10]);
+		await wrapper.find('.trait .inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
+		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(false);
+
+		const secondTrait = wrapper.findAll('.trait')[1];
+		const multiDieBadges = secondTrait.findAll('.multidie-badge-wrap > span[role="button"]');
+		expect(multiDieBadges).toHaveLength(2);
+		await multiDieBadges[0].trigger('click');
+		expect(wrapper.emitted('selectElement')).toBeUndefined();
+		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(true);
+
+		// Remove one d10 and add a d8 right from the main canvas
+		await wrapper.find('.inline-pool-die-chip[aria-label="Remove d10"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10]);
+		await wrapper.find('.inline-dice-palette button[aria-label="Add d8"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10, 8]);
+
+		// Switch that trait to Counter and step directly from the canvas
+		await wrapper
+			.findAll('.trait .inline-rating-bar .inline-rating-mode-btn')
+			.find((b) => b.text() === 'Counter')!
+			.trigger('click');
+		await wrapper.find('.trait .inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
+		await wrapper.find('.counter-value button[aria-label*="Increase"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([1]);
+
+		// 2. + Part toggles Sheet Parts (Notes ordered second; no duplicate Trait Parts inside Sheet Parts)
 		await builderButtons[1].trigger('click');
 		expect(wrapper.find('.inline-add-part-area').exists()).toBe(true);
+		expect(wrapper.find('.inline-add-part-area [aria-label="Trait parts"]').exists()).toBe(false);
 		const sheetPartChips = wrapper.findAll('[aria-label="Sheet parts"] .organic-part-chip');
+		expect(sheetPartChips.map((c) => c.text().trim())).toEqual([
+			'Rating',
+			'Notes',
+			'Description',
+			'Portrait',
+			'Pronouns',
+			'Nickname',
+			'Game',
+			'Player',
+		]);
 		const pronounsChip = sheetPartChips.find((c) => c.text().includes('Pronouns'))!;
 		expect(pronounsChip.classes()).not.toContain('active');
 		await pronounsChip.trigger('click');
@@ -142,16 +226,23 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(getView(pronounsTrait)?.visibility).toBeUndefined();
 		expect(wrapper.find('.sheet-meta-pronoun-cell input.sheet-part-inline-input').exists()).toBe(true);
 
-		const traitPartChips = wrapper.findAll('[aria-label="Trait parts"] .organic-part-chip');
+		// Set-level + Part opens its own distinct Trait Parts drawer
+		const setPartBtn = wrapper.findAll('.set-organic-actions button').find((b) => b.text().trim() === 'Part')!;
+		await setPartBtn.trigger('click');
+		expect(wrapper.find('.set-inline-part-drawer').exists()).toBe(true);
+		const traitPartChips = wrapper.findAll('.set-inline-part-drawer [aria-label="Trait parts"] .organic-part-chip');
 		const sfxChip = traitPartChips.find((c) => c.text().includes('SFX'))!;
 		await sfxChip.trigger('click');
 		expect(Boolean((getView(ch.traitSets[1])?.parts as any)?.block)).toBe(true);
 
-		// 3. + Set creates unique empty sets; empty set deletes in 1 click without confirm modal
+		// 3. + Set creates unique empty sets calmly inline on canvas; empty set deletes in 1 click without confirm modal
 		await builderButtons[2].trigger('click');
 		expect(ch.traitSets).toHaveLength(3);
 		expect(ch.traitSets[2].name).toBe('New Set');
 		expect(ch.traitSets[2].traits).toHaveLength(0);
+		expect(getView(ch.traitSets[2])?.ratingDisplay).toBe('rating');
+		expect(wrapper.emitted('selectElement')).toBeUndefined();
+		expect(wrapper.find('input.trait-set-name-inline-input').exists()).toBe(true);
 
 		const emptySetEditor = mount(TraitSetEditor, {
 			props: {
