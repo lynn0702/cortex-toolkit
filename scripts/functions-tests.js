@@ -122,20 +122,42 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 			presets['trait-list'] &&
 			presets['pip-track'] &&
 			presets['framed-ring'] &&
-			presets['cut-corner-block'] &&
+			!presets['cut-corner-block'] &&
 			presets['notes'] &&
 			presets['divider-line'],
-		'8 built-in structural set presets exist',
+		'7 built-in structural set presets exist (cut-corner-block retired)',
 	);
 	const inst = F.instantiateSetPreset(presets['pool'], { traitSets: [] }, 1);
 	ok(
 		inst &&
 			inst.name === 'Pool' &&
 			inst.traits[0].name === '' &&
-			inst.view.pillar === 'play' &&
+			inst.view.pillar === undefined &&
 			inst.view.visibility === 'play-only' &&
 			inst.view.playMutable === true,
-		'instantiateSetPreset clones with empty slot and assigns id',
+		'instantiateSetPreset clones with empty slot, omits forced play pillar, and assigns id',
+	);
+	const customTrackTrait = {
+		name: 'Physical',
+		rating: { type: 'Die', value: [8] },
+		traits: [
+			{ name: 'Injured', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }, view: { part: 'track' } },
+		],
+	};
+	const customTrackSet = {
+		name: 'Attributes',
+		view: {
+			labels: { track: 'Stress' },
+			parts: {
+				trackLabel: { left: '0%', top: 1, width: '30%', height: 1 },
+				track: { left: '30%', top: 1, width: '70%', height: 1 },
+			},
+		},
+		traits: [customTrackTrait],
+	};
+	ok(
+		F.getTrackCompanion(customTrackSet, customTrackTrait)?.name === 'Injured',
+		'getTrackCompanion resolves individual view.part=track companion even when renamed away from set track label',
 	);
 
 	// ---- Phase 3a: derivePresetId, collision check, saveCustomSetPreset, getTrackScale, renderDieGeometrySVG

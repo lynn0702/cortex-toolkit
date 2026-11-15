@@ -17,18 +17,14 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		expect(tmpl.character.traitSets.length).toBe(8);
 	});
 
-	it('verifies characterCurioSetPresets contains the 3 Framed Presets with empty slots', () => {
+	it('verifies characterCurioSetPresets contains Framed Ring & Divider Line presets and retires cut-corner-block', () => {
 		const ringPreset = characterCurioSetPresets['framed-ring'];
 		expect(ringPreset, 'framed-ring preset must exist').toBeDefined();
 		expect(ringPreset?.preset?.view?.frame?.shape).toBe('circle');
 		expect(ringPreset?.preset?.view?.frame?.array).toBe('ring');
 		expect(ringPreset?.preset?.traits?.every((t: any) => t.name === '')).toBe(true);
 
-		const blockPreset = characterCurioSetPresets['cut-corner-block'];
-		expect(blockPreset, 'cut-corner-block preset must exist').toBeDefined();
-		expect(blockPreset?.preset?.view?.border?.shape).toBe('block');
-		expect(blockPreset?.preset?.view?.border?.corner).toBe('cut');
-		expect(blockPreset?.preset?.traits?.every((t: any) => t.name === '')).toBe(true);
+		expect(characterCurioSetPresets['cut-corner-block']).toBeUndefined();
 
 		const linePreset = characterCurioSetPresets['divider-line'];
 		expect(linePreset, 'divider-line preset must exist').toBeDefined();

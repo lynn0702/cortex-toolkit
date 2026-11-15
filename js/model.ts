@@ -832,6 +832,8 @@ export interface CharacterCurioCustom {
 
 	// character-scope
 	pageCount?: number;
+	/** Explicit user-created pillar order for Play deck columns. */
+	pillars?: string[];
 	pageOrientation?: 'portrait' | 'landscape';
 	orientation?: 'portrait' | 'landscape';
 	diceConfig?: DiceConfig;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { nextTick } from 'vue';
 import { getView, resolveSubtraitNoun } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
@@ -82,12 +83,32 @@ const {
 	isCanvasTraitActive,
 	toggleCanvasTrait,
 	closeCanvasTrait,
+	isInlineTrackLabelOpen,
+	openInlineTrackLabel,
+	setTraitTrackLabel,
+	finalizeTraitTrackLabel,
+	isPoolAddOpen,
+	togglePoolAdd,
+	canMutatePoolOnCanvas,
+	getPoolAddRange,
+	addDieToPoolTrait,
+	removeDieFromPoolTrait,
 	isCanvasPartDrawerOpen,
 	toggleCanvasPartDrawer,
 	resolvedBorder,
 	traitArrayMode,
 	showPortraitHub,
 } = injectTraitSet();
+
+function startInlineTrackLabel(tIdx: number | null | undefined, ev: Event) {
+	openInlineTrackLabel(tIdx);
+	const parent = (ev.currentTarget as HTMLElement | null)?.parentElement;
+	nextTick(() => {
+		const input = parent?.querySelector<HTMLInputElement>('input.track-label-inline-input');
+		input?.focus();
+		input?.select();
+	});
+}
 
 const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 'badge'; label: string }> = [
 	{ key: 'description', label: 'Description' },
@@ -283,23 +304,43 @@ function hasTraitSetDescription(ts: any) {
 										</button>
 									</template>
 									<template v-else>
-										<input
+										<div
 											v-if="
-												submode === 'edit' &&
+												(submode === 'edit' || isPlayMutableSet(traitSet)) &&
 												!printBlank &&
 												!item.isPlaceholder &&
 												isCanvasTraitActive(s, item.originalIndex)
 											"
-											type="text"
-											class="trait-name-inline-input"
-											:value="item.trait.name"
-											:placeholder="(traitSet.noun || 'Trait') + ' name'"
-											:aria-label="(traitSet.noun || 'Trait') + ' name'"
+											class="trait-name-inline-wrap"
 											@click.stop
-											@input="onTraitNameInlineInput(item.trait, $event)"
-											@keydown.enter="onTraitNameInlineEnter"
-											@keydown.escape.stop.prevent="closeCanvasTrait()"
-										/>
+										>
+											<input
+												type="text"
+												class="trait-name-inline-input"
+												:value="item.trait.name"
+												:placeholder="(traitSet.noun || 'Trait') + ' name'"
+												:aria-label="(traitSet.noun || 'Trait') + ' name'"
+												@click.stop
+												@input="onTraitNameInlineInput(item.trait, $event)"
+												@keydown.enter="onTraitNameInlineEnter"
+												@keydown.escape.stop.prevent="closeCanvasTrait()"
+												@blur="submode === 'play' ? closeCanvasTrait() : null"
+											/>
+											<button
+												v-if="submode === 'play'"
+												type="button"
+												class="btn-inline-rating-icon"
+												title="Trait options"
+												aria-label="Trait options"
+												@mousedown.prevent
+												@click.stop="
+													closeCanvasTrait();
+													selectElement(['trait', s, item.originalIndex]);
+												"
+											>
+												<i class="fas fa-sliders" aria-hidden="true"></i>
+											</button>
+										</div>
 										<button
 											v-else
 											type="button"
@@ -553,6 +594,64 @@ function hasTraitSetDescription(ts: any) {
 												></i>
 											</button>
 										</div>
+										<div
+											class="die-play-controls"
+											v-else-if="
+												!printBlank &&
+												!item.isPlaceholder &&
+												canMutatePoolOnCanvas(item.trait, traitSet) &&
+												getTraitDice(item.trait).length > 1
+											"
+										>
+											<button
+												type="button"
+												class="btn-play-spend"
+												@click.stop="removeDieFromPoolTrait(s, item.originalIndex, dIdx)"
+												title="Remove die"
+												:aria-label="`Remove d${dieSize} from ${item.trait.name || 'pool'}`"
+											>
+												<i class="fas fa-xmark" aria-hidden="true"></i>
+											</button>
+										</div>
+									</div>
+									<button
+										v-if="!printBlank && !item.isPlaceholder && canMutatePoolOnCanvas(item.trait, traitSet)"
+										type="button"
+										class="btn-pool-add-die"
+										:class="{ active: isPoolAddOpen(item.originalIndex) }"
+										:aria-expanded="isPoolAddOpen(item.originalIndex)"
+										:aria-label="`Add die to ${item.trait.name || 'pool'}`"
+										title="Add die"
+										@click.stop="togglePoolAdd(item.originalIndex)"
+									>
+										<i
+											:class="isPoolAddOpen(item.originalIndex) ? 'fas fa-times' : 'fas fa-plus'"
+											aria-hidden="true"
+										></i>
+									</button>
+									<div
+										v-if="
+											!printBlank &&
+											!item.isPlaceholder &&
+											canMutatePoolOnCanvas(item.trait, traitSet) &&
+											isPoolAddOpen(item.originalIndex)
+										"
+										class="pool-add-picker"
+										role="group"
+										:aria-label="`Add die size to ${item.trait.name || 'pool'}`"
+										@click.stop
+									>
+										<button
+											v-for="addSize in getPoolAddRange(item.trait, traitSet)"
+											:key="'pg-pool-add-' + addSize"
+											type="button"
+											class="btn-pool-die-option"
+											:aria-label="`Add d${addSize} to ${item.trait.name || 'pool'}`"
+											:title="`Add d${addSize}`"
+											@click.stop="addDieToPoolTrait(s, item.originalIndex, addSize)"
+										>
+											<span v-html="renderDieValueForPrint(addSize, false)"></span>
+										</button>
 									</div>
 								</div>
 								<div
@@ -738,7 +837,32 @@ function hasTraitSetDescription(ts: any) {
 								:style="partCellStyle(partsGridFor(traitSet), 'trackLabel')"
 							>
 								<div class="attached-stress-divider" v-if="!isPartsInline(traitSet)"></div>
-								<span class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
+								<template v-if="submode === 'play' && !printBlank && !item.isPlaceholder">
+									<input
+										v-if="isInlineTrackLabelOpen(item.originalIndex)"
+										type="text"
+										class="track-label-inline-input"
+										:value="getTraitTrackLabel(traitSet, item.trait)"
+										:placeholder="getTraitSetLabel(traitSet, 'track')"
+										:aria-label="`Track label for ${item.trait.name || 'trait'}`"
+										@click.stop
+										@input="setTraitTrackLabel(s, item.originalIndex, ($event.target as HTMLInputElement).value)"
+										@keydown.enter="onTraitNameInlineEnter($event)"
+										@keydown.escape.prevent="finalizeTraitTrackLabel(s, item.originalIndex)"
+										@blur="finalizeTraitTrackLabel(s, item.originalIndex)"
+									/>
+									<button
+										v-else
+										type="button"
+										class="attached-stress-label attached-stress-label-btn"
+										:aria-label="`Edit track label for ${item.trait.name || 'trait'}`"
+										title="Edit track label"
+										@click.stop="startInlineTrackLabel(item.originalIndex, $event)"
+									>
+										{{ getTraitTrackLabel(traitSet, item.trait) }}
+									</button>
+								</template>
+								<span v-else class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
 							</div>
 							<!-- TRACK CELLS -->
 							<div
@@ -1306,23 +1430,43 @@ function hasTraitSetDescription(ts: any) {
 
 									<!-- NORMAL TRAIT NAME -->
 									<template v-else>
-										<input
+										<div
 											v-if="
-												submode === 'edit' &&
+												(submode === 'edit' || isPlayMutableSet(traitSet)) &&
 												!printBlank &&
 												!item.isPlaceholder &&
 												isCanvasTraitActive(s, item.originalIndex)
 											"
-											type="text"
-											class="trait-name-inline-input"
-											:value="item.trait.name"
-											:placeholder="(traitSet.noun || 'Trait') + ' name'"
-											:aria-label="(traitSet.noun || 'Trait') + ' name'"
+											class="trait-name-inline-wrap"
 											@click.stop
-											@input="onTraitNameInlineInput(item.trait, $event)"
-											@keydown.enter="onTraitNameInlineEnter"
-											@keydown.escape.stop.prevent="closeCanvasTrait()"
-										/>
+										>
+											<input
+												type="text"
+												class="trait-name-inline-input"
+												:value="item.trait.name"
+												:placeholder="(traitSet.noun || 'Trait') + ' name'"
+												:aria-label="(traitSet.noun || 'Trait') + ' name'"
+												@click.stop
+												@input="onTraitNameInlineInput(item.trait, $event)"
+												@keydown.enter="onTraitNameInlineEnter"
+												@keydown.escape.stop.prevent="closeCanvasTrait()"
+												@blur="submode === 'play' ? closeCanvasTrait() : null"
+											/>
+											<button
+												v-if="submode === 'play'"
+												type="button"
+												class="btn-inline-rating-icon"
+												title="Trait options"
+												aria-label="Trait options"
+												@mousedown.prevent
+												@click.stop="
+													closeCanvasTrait();
+													selectElement(['trait', s, item.originalIndex]);
+												"
+											>
+												<i class="fas fa-sliders" aria-hidden="true"></i>
+											</button>
+										</div>
 										<button
 											v-else
 											type="button"
@@ -1583,6 +1727,64 @@ function hasTraitSetDescription(ts: any) {
 													></i>
 												</button>
 											</div>
+											<div
+												class="die-play-controls"
+												v-else-if="
+													!printBlank &&
+													!item.isPlaceholder &&
+													canMutatePoolOnCanvas(item.trait, traitSet) &&
+													getTraitDice(item.trait).length > 1
+												"
+											>
+												<button
+													type="button"
+													class="btn-play-spend"
+													@click.stop="removeDieFromPoolTrait(s, item.originalIndex, dIdx)"
+													title="Remove die"
+													:aria-label="`Remove d${dieSize} from ${item.trait.name || 'pool'}`"
+												>
+													<i class="fas fa-xmark" aria-hidden="true" />
+												</button>
+											</div>
+										</div>
+										<button
+											v-if="!printBlank && !item.isPlaceholder && canMutatePoolOnCanvas(item.trait, traitSet)"
+											type="button"
+											class="btn-pool-add-die"
+											:class="{ active: isPoolAddOpen(item.originalIndex) }"
+											:aria-expanded="isPoolAddOpen(item.originalIndex)"
+											:aria-label="`Add die to ${item.trait.name || 'pool'}`"
+											title="Add die"
+											@click.stop="togglePoolAdd(item.originalIndex)"
+										>
+											<i
+												:class="isPoolAddOpen(item.originalIndex) ? 'fas fa-times' : 'fas fa-plus'"
+												aria-hidden="true"
+											></i>
+										</button>
+										<div
+											v-if="
+												!printBlank &&
+												!item.isPlaceholder &&
+												canMutatePoolOnCanvas(item.trait, traitSet) &&
+												isPoolAddOpen(item.originalIndex)
+											"
+											class="pool-add-picker"
+											role="group"
+											:aria-label="`Add die size to ${item.trait.name || 'pool'}`"
+											@click.stop
+										>
+											<button
+												v-for="addSize in getPoolAddRange(item.trait, traitSet)"
+												:key="'std-pool-add-' + addSize"
+												type="button"
+												class="btn-pool-die-option"
+												:aria-label="`Add d${addSize} to ${item.trait.name || 'pool'}`"
+												:title="`Add d${addSize}`"
+												@click.stop="addDieToPoolTrait(s, item.originalIndex, addSize)"
+											>
+												<span v-html="renderDieValueForPrint(addSize, false)"></span>
+											</button>
 										</div>
 									</div>
 
@@ -1828,7 +2030,32 @@ function hasTraitSetDescription(ts: any) {
 							<div class="attached-stress-block" v-if="hasTrackPart(traitSet)">
 								<div class="attached-stress-divider"></div>
 								<div class="attached-stress-header">
-									<span class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
+									<template v-if="submode === 'play' && !printBlank && !item.isPlaceholder">
+										<input
+											v-if="isInlineTrackLabelOpen(item.originalIndex)"
+											type="text"
+											class="track-label-inline-input"
+											:value="getTraitTrackLabel(traitSet, item.trait)"
+											:placeholder="getTraitSetLabel(traitSet, 'track')"
+											:aria-label="`Track label for ${item.trait.name || 'trait'}`"
+											@click.stop
+											@input="setTraitTrackLabel(s, item.originalIndex, ($event.target as HTMLInputElement).value)"
+											@keydown.enter="onTraitNameInlineEnter($event)"
+											@keydown.escape.prevent="finalizeTraitTrackLabel(s, item.originalIndex)"
+											@blur="finalizeTraitTrackLabel(s, item.originalIndex)"
+										/>
+										<button
+											v-else
+											type="button"
+											class="attached-stress-label attached-stress-label-btn"
+											:aria-label="`Edit track label for ${item.trait.name || 'trait'}`"
+											title="Edit track label"
+											@click.stop="startInlineTrackLabel(item.originalIndex, $event)"
+										>
+											{{ getTraitTrackLabel(traitSet, item.trait) }}
+										</button>
+									</template>
+									<span v-else class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
 								</div>
 								<div class="attached-stress-track">
 									<span

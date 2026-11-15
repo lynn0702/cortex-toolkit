@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ensureView, getView, isNameSet, isRingBadgeTrait } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
-import { computed, ref, onMounted, watch } from 'vue';
+import { computed, nextTick, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetPips from './trait-set-pips.vue';
@@ -64,10 +64,30 @@ const {
 	effectiveZoom,
 	effectivePortraitStyle,
 	isCanvasSetActive,
+	openCanvasSet,
 	closeCanvasSet,
+	isPlayMutableSet,
 } = ts;
 
 const isName = computed(() => isNameSet(traitSet.value));
+const isHeaderInteractive = computed(
+	() =>
+		submode.value === 'edit' ||
+		(submode.value === 'play' && Boolean(traitSet.value && isPlayMutableSet(traitSet.value))),
+);
+
+function onHeaderActivate() {
+	if (submode.value === 'edit') {
+		selectElement(['traitSet', s.value]);
+		return;
+	}
+	if (submode.value === 'play' && traitSet.value && isPlayMutableSet(traitSet.value)) {
+		openCanvasSet(s.value);
+		nextTick(() => {
+			rootEl.value?.querySelector<HTMLInputElement>('input.trait-set-name-inline-input')?.focus();
+		});
+	}
+}
 
 function onSetNameInlineInput(event: Event) {
 	if (!traitSet.value) return;
@@ -236,15 +256,15 @@ watch(rootEl, (el) => {
 			v-if="submode === 'play' && canRemoveSetInPlay"
 			type="button"
 			class="trait-set-play-remove-btn"
-			title="Remove card from session"
-			aria-label="Remove card from session"
+			title="Remove set"
+			aria-label="Remove set"
 			@click.stop="removeTraitSet(s)"
 		>
 			<i class="fas fa-times" aria-hidden="true"></i>
 		</button>
 
 		<div class="trait-set-header" v-if="hasHeader && headerMode !== 'bottom'">
-			<div v-if="submode === 'edit' && isCanvasSetActive(s)" class="trait-set-header-inline-edit" @click.stop>
+			<div v-if="isCanvasSetActive(s)" class="trait-set-header-inline-edit" @click.stop>
 				<input
 					type="text"
 					class="trait-set-name-inline-input"
@@ -256,6 +276,7 @@ watch(rootEl, (el) => {
 					@keydown.escape.stop.prevent="closeCanvasSet()"
 				/>
 				<button
+					v-if="submode === 'edit'"
 					type="button"
 					class="btn-inline-rating-icon"
 					title="Set options"
@@ -293,12 +314,18 @@ watch(rootEl, (el) => {
 			<transition v-else appear>
 				<div
 					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
-					:role="submode === 'edit' ? 'button' : undefined"
-					:tabindex="submode === 'edit' ? 0 : undefined"
-					:aria-label="submode === 'edit' ? 'Edit ' + (traitSet.name || 'trait set') : undefined"
-					@keydown.enter.prevent="submode === 'edit' ? selectElement(['traitSet', s]) : null"
-					@keydown.space.prevent="submode === 'edit' ? selectElement(['traitSet', s]) : null"
-					@click.stop="submode === 'edit' ? selectElement(['traitSet', s]) : null"
+					:role="isHeaderInteractive ? 'button' : undefined"
+					:tabindex="isHeaderInteractive ? 0 : undefined"
+					:aria-label="
+						submode === 'edit'
+							? 'Edit ' + (traitSet.name || 'trait set')
+							: isHeaderInteractive
+								? 'Rename ' + (traitSet.name || 'set')
+								: undefined
+					"
+					@keydown.enter.prevent="isHeaderInteractive ? onHeaderActivate() : null"
+					@keydown.space.prevent="isHeaderInteractive ? onHeaderActivate() : null"
+					@click.stop="isHeaderInteractive ? onHeaderActivate() : null"
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<span

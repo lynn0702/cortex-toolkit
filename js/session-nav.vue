@@ -128,12 +128,12 @@ function safeImageUrl(url: any) {
 					type="button"
 					class="sheet-bar-btn sheet-bar-add-card"
 					@click.stop="emit('addPlayCard')"
-					title="Add play card"
-					aria-label="Add play card"
+					title="Add set"
+					aria-label="Add set"
 					v-if="submode === 'play'"
 				>
 					<i class="fas fa-plus" aria-hidden="true"></i>
-					<span class="sheet-bar-btn-label">Card</span>
+					<span class="sheet-bar-btn-label">Set</span>
 				</button>
 
 				<button

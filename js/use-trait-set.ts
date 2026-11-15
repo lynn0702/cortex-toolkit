@@ -86,14 +86,21 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		},
 	});
 
+	function canInlineEditOnCanvas(): boolean {
+		return (
+			props.submode === 'edit' ||
+			(props.submode === 'play' && Boolean(traitSet.value && isPlayMutableSet(traitSet.value)))
+		);
+	}
+
 	function isCanvasTraitActive(sArg: number, tIdx: number | null | undefined): boolean {
-		if (props.submode !== 'edit' || typeof tIdx !== 'number') return false;
+		if (!canInlineEditOnCanvas() || typeof tIdx !== 'number') return false;
 		const cur = canvasInline.activeTrait.value;
 		return Boolean(cur && cur[0] === sArg && cur[1] === tIdx);
 	}
 
 	function toggleCanvasTrait(sArg: number, tIdx: number | null | undefined) {
-		if (props.submode !== 'edit' || typeof tIdx !== 'number') return;
+		if (!canInlineEditOnCanvas() || typeof tIdx !== 'number') return;
 		if (isCanvasTraitActive(sArg, tIdx)) {
 			canvasInline.setActiveTrait(null);
 		} else {
@@ -106,12 +113,50 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function isCanvasSetActive(sArg: number): boolean {
-		if (props.submode !== 'edit') return false;
+		if (!canInlineEditOnCanvas()) return false;
 		return canvasInline.activeSet.value === sArg;
+	}
+
+	function openCanvasSet(sArg: number) {
+		if (!canInlineEditOnCanvas()) return;
+		canvasInline.setActiveSet(sArg);
 	}
 
 	function closeCanvasSet() {
 		canvasInline.setActiveSet(null);
+	}
+
+	const activeTrackLabelIndex = ref<number | null>(null);
+	const activePoolAddIndex = ref<number | null>(null);
+
+	function isInlineTrackLabelOpen(tIdx: number | null | undefined): boolean {
+		return props.submode === 'play' && typeof tIdx === 'number' && activeTrackLabelIndex.value === tIdx;
+	}
+
+	function openInlineTrackLabel(tIdx: number | null | undefined) {
+		if (props.submode !== 'play' || typeof tIdx !== 'number') return;
+		activeTrackLabelIndex.value = tIdx;
+	}
+
+	function closeInlineTrackLabel() {
+		activeTrackLabelIndex.value = null;
+	}
+
+	function isPoolAddOpen(tIdx: number | null | undefined): boolean {
+		return (
+			(props.submode === 'edit' || props.submode === 'play') &&
+			typeof tIdx === 'number' &&
+			activePoolAddIndex.value === tIdx
+		);
+	}
+
+	function togglePoolAdd(tIdx: number | null | undefined) {
+		if ((props.submode !== 'edit' && props.submode !== 'play') || typeof tIdx !== 'number') return;
+		activePoolAddIndex.value = activePoolAddIndex.value === tIdx ? null : tIdx;
+	}
+
+	function closePoolAdd() {
+		activePoolAddIndex.value = null;
 	}
 
 	function isCanvasPartDrawerOpen(sArg: number): boolean {
@@ -677,6 +722,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			fillPlaceholder(sArg);
 			return;
 		}
+		if (props.submode === 'play' && traitSet.value && isPlayMutableSet(traitSet.value)) {
+			canvasInline.setActiveTrait([Number(sArg), item.originalIndex]);
+			return;
+		}
 		selectElement(['trait', sArg, item.originalIndex]);
 	}
 
@@ -684,9 +733,19 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const set = props.character.traitSets[sArg];
 		if (!set) return;
 		if (!Array.isArray(set.traits)) set.traits = [];
-		set.traits.push(createBlankSlotTrait(set));
+		const nextSlot = createBlankSlotTrait(set);
+		if (!getRating(set) && (set as any).rating !== null && getView(set)?.style?.body !== 'list') {
+			const scale = characterCurioFunctions.getTraitSetRatings(set);
+			nextSlot.rating = { type: 'Die', value: [scale.includes(8) ? 8 : scale[0] || 8] };
+		}
+		set.traits.push(nextSlot);
 		updateCharacter(props.character);
-		selectElement(['trait', sArg, set.traits.length - 1]);
+		const newIdx = set.traits.length - 1;
+		if (props.submode === 'play' && isPlayMutableSet(set)) {
+			canvasInline.setActiveTrait([Number(sArg), newIdx]);
+		} else {
+			selectElement(['trait', sArg, newIdx]);
+		}
 	}
 
 	function createBlankSlotTrait(traitSetArg: TraitSet): any {
@@ -1183,6 +1242,46 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return isOutDie(companion, traitSetArg ? [traitSetArg] : undefined);
 	}
 
+	function setTraitTrackLabel(sArg: any, t: any, rawName: string) {
+		if (props.submode !== 'play') return;
+		const set = props.character.traitSets[sArg];
+		const trait = set?.traits?.[t];
+		if (!trait) return;
+		if (!Array.isArray(trait.traits)) trait.traits = [];
+		let companion: any = getTrackCompanion(set, trait);
+		if (!companion) {
+			companion = {
+				name: rawName,
+				rating: { type: 'Die', value: [], range: getTrackScale(set).slice() },
+				view: { part: 'track' },
+			};
+			(trait.traits as any[]).push(companion);
+		} else {
+			companion.name = rawName;
+			ensureView(companion).part = 'track';
+		}
+		updateCharacter(props.character);
+	}
+
+	function finalizeTraitTrackLabel(sArg: any, t: any) {
+		const set = props.character?.traitSets?.[sArg];
+		const trait = set?.traits?.[t];
+		if (trait && Array.isArray(trait.traits)) {
+			const companion: any = getTrackCompanion(set, trait);
+			if (companion && !String(companion.name || '').trim()) {
+				const hasVal = (getTraitDice(companion)[0] || 0) > 0 || Boolean(companion.isOut);
+				if (!hasVal) {
+					const idx = trait.traits.indexOf(companion);
+					if (idx !== -1) trait.traits.splice(idx, 1);
+				} else {
+					companion.name = getTrackLabel(set);
+				}
+				updateCharacter(props.character);
+			}
+		}
+		closeInlineTrackLabel();
+	}
+
 	function handleTrackClick(sArg: any, t: any, size: number) {
 		if (props.submode === 'print') return;
 		const set = props.character.traitSets[sArg];
@@ -1193,8 +1292,18 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (companion) {
 			const cur = getTraitDice(companion)[0] || 0;
 			if (cur === size) {
-				const idx = trait.traits.indexOf(companion);
-				if (idx !== -1) trait.traits.splice(idx, 1);
+				const customNamed =
+					getView(companion)?.part === 'track' &&
+					Boolean(String(companion.name || '').trim()) &&
+					String(companion.name || '').trim() !== getTrackLabel(set);
+				if (customNamed || companion.isOut) {
+					if (companion.rating && typeof companion.rating === 'object') {
+						companion.rating.value = [];
+					}
+				} else {
+					const idx = trait.traits.indexOf(companion);
+					if (idx !== -1) trait.traits.splice(idx, 1);
+				}
 			} else {
 				characterCurioFunctions.setTraitDice(companion, [size]);
 			}
@@ -1223,7 +1332,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) {
 				r.out = Boolean(companion.isOut);
 			}
-			if (!companion.isOut && !((getTraitDice(companion)[0] || 0) > 0)) {
+			const customNamed =
+				getView(companion)?.part === 'track' &&
+				Boolean(String(companion.name || '').trim()) &&
+				String(companion.name || '').trim() !== getTrackLabel(set);
+			if (!companion.isOut && !((getTraitDice(companion)[0] || 0) > 0) && !customNamed) {
 				trait.traits.splice(trait.traits.indexOf(companion), 1);
 			}
 		}
@@ -1778,6 +1891,69 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return false;
 	}
 
+	function canMutatePoolOnCanvas(trait: Trait, traitSetArg?: TraitSet): boolean {
+		if (props.printBlank) return false;
+		if (props.submode === 'edit') return true;
+		if (props.submode !== 'play') return false;
+		const ts = traitSetArg ?? traitSet.value;
+		return Boolean(
+			nodePool(trait) === true ||
+			(ts && nodePool(ts) === true) ||
+			isSpendable(trait, ts) ||
+			(ts && isPlayMutableSet(ts)),
+		);
+	}
+
+	function getPoolAddRange(trait: Trait, traitSetArg?: TraitSet): number[] {
+		const ts = traitSetArg ?? traitSet.value;
+		const resolved = resolveRating(trait, ts ? [ts] : undefined);
+		if (resolved && Array.isArray(resolved.range) && resolved.range.length > 0) {
+			return resolved.range;
+		}
+		const rCell = (getView(ts)?.parts as Record<string, any> | undefined)?.rating;
+		if (rCell && Array.isArray(rCell.range) && rCell.range.length > 0) {
+			return rCell.range;
+		}
+		const setLadder = ts ? getTraitSetRatings(ts) : [];
+		return setLadder.length > 0 ? setLadder : [4, 6, 8, 10, 12];
+	}
+
+	function addDieToPoolTrait(sArg: any, tIdx: any, dieSize: number) {
+		if (props.submode === 'print') return;
+		const set = props.character?.traitSets?.[sArg];
+		const trait = set?.traits?.[tIdx];
+		if (!trait || !Number.isFinite(dieSize) || dieSize <= 0) return;
+		const cur = characterCurioFunctions.getTraitDice(trait, [set]);
+		characterCurioFunctions.setTraitDice(trait, [...cur, Number(dieSize)]);
+		if ((trait as any).rating && typeof (trait as any).rating === 'object') {
+			(trait as any).rating.type = 'Dice';
+		}
+		updateCharacter(props.character);
+	}
+
+	function removeDieFromPoolTrait(sArg: any, tIdx: any, dieIndex: number) {
+		if (props.submode === 'print') return;
+		const set = props.character?.traitSets?.[sArg];
+		const trait = set?.traits?.[tIdx];
+		if (!trait) return;
+		const cur = characterCurioFunctions.getTraitDice(trait, [set]);
+		if (dieIndex < 0 || dieIndex >= cur.length) return;
+		const next = [...cur];
+		next.splice(dieIndex, 1);
+		characterCurioFunctions.setTraitDice(trait, next);
+		if (next.length > 0 && (trait as any).rating && typeof (trait as any).rating === 'object') {
+			(trait as any).rating.type = 'Dice';
+		}
+		const viewBag = getView(trait);
+		if (viewBag && Array.isArray(viewBag.spentDice)) {
+			viewBag.spentDice = viewBag.spentDice
+				.filter((i: number) => i !== dieIndex)
+				.map((i: number) => (i > dieIndex ? i - 1 : i));
+			if (!viewBag.spentDice.length) delete viewBag.spentDice;
+		}
+		updateCharacter(props.character);
+	}
+
 	function getTraitSetSlotCount(traitSetArg: TraitSet) {
 		const custom = getView(traitSetArg);
 		const bodyStyle = custom?.style?.body;
@@ -1935,7 +2111,20 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		toggleCanvasTrait,
 		closeCanvasTrait,
 		isCanvasSetActive,
+		openCanvasSet,
 		closeCanvasSet,
+		isInlineTrackLabelOpen,
+		openInlineTrackLabel,
+		closeInlineTrackLabel,
+		setTraitTrackLabel,
+		finalizeTraitTrackLabel,
+		isPoolAddOpen,
+		togglePoolAdd,
+		closePoolAdd,
+		canMutatePoolOnCanvas,
+		getPoolAddRange,
+		addDieToPoolTrait,
+		removeDieFromPoolTrait,
 		isCanvasPartDrawerOpen,
 		toggleCanvasPartDrawer,
 		getTraitPipBubbles,

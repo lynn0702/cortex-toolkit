@@ -3620,6 +3620,10 @@ body:has(.character-sheet.submode-print) .main {
 			max-inline-size: 100%;
 			margin-inline-start: auto;
 			justify-content: flex-end;
+
+			&:has(.pool-add-picker) {
+				flex: 1 1 100%;
+			}
 		}
 
 		& > .trait-part-rating > .multidie-value {

@@ -413,12 +413,12 @@ function buildEdges() {
 	add('play_identity', 'play_traits', 1, ['mobileTouch'], 'Tap .jump-pill[data-pillar-pill="prime"] (or swipe pillar)');
 	add('play_traits', 'play_identity', 1, ['mobileTouch'], 'Tap .jump-pill[data-pillar-pill="identity"] (or swipe)');
 
-	// Play Preset Card Gallery (direct + Card in SessionNav on Desktop and Jump Strip on Mobile):
-	add('play_identity', 'play_preset_gallery', 1, ['mobileTouch'], 'Tap .jump-pill-add-card ("+ Card")');
-	add('play_traits', 'play_preset_gallery', 1, ['mobileTouch'], 'Tap .jump-pill-add-card ("+ Card")');
-	add('play_identity', 'play_preset_gallery', 1, DESKTOP_PROFILES, 'Click .session-nav .sheet-bar-add-card ("+ Card")');
-	add('play_traits', 'play_preset_gallery', 1, DESKTOP_PROFILES, 'Click .session-nav .sheet-bar-add-card ("+ Card")');
-	add('play_preset_gallery', 'play_traits', 1, ALL_PROFILES, 'Close gallery modal or add preset card');
+	// Play Preset Set Gallery (direct + Set in SessionNav on Desktop and sticky Pillar/Jump bar on Mobile):
+	add('play_identity', 'play_preset_gallery', 1, ['mobileTouch'], 'Tap .jump-pill-add-card ("+ Set")');
+	add('play_traits', 'play_preset_gallery', 1, ['mobileTouch'], 'Tap .jump-pill-add-card ("+ Set")');
+	add('play_identity', 'play_preset_gallery', 1, DESKTOP_PROFILES, 'Click .session-nav .sheet-bar-add-card ("+ Set")');
+	add('play_traits', 'play_preset_gallery', 1, DESKTOP_PROFILES, 'Click .session-nav .sheet-bar-add-card ("+ Set")');
+	add('play_preset_gallery', 'play_traits', 1, ALL_PROFILES, 'Close gallery modal or add preset set');
 
 	// Inspecting a trait in Play:
 	add('play_traits', 'play_trait_inspector', 1, ALL_PROFILES, 'Click/tap .trait-title-btn');
@@ -699,11 +699,11 @@ const TASK_JOURNEYS = [
 	},
 	{
 		id: 'T15',
-		task: 'Add a temporary Play session card from Play Traits view',
+		task: 'Add a temporary Play set from Play Traits view',
 		from: 'play_traits',
 		to: 'play_preset_gallery',
 		actionCost: { desktopPointer: 1, desktopKeyboard: 1, mobileTouch: 1 },
-		actionDesc: 'Click/tap "Add to Session" on preset card (+1)',
+		actionDesc: 'Click/tap "Add Set" on preset (+1)',
 	},
 	{
 		id: 'T16',
@@ -1169,17 +1169,27 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			});
 		}
 
-		// J12: Play Sheet -> Add Temporary Play Session Card (2 interactions on both Desktop Page & Mobile Pillars!)
-		await measureJourney('J12', 'Play Sheet -> Add Play Session Card', 2, async (act) => {
+		// J12: Play Sheet -> Add Temporary Play Set (2 interactions on both Desktop Page & Mobile Pillars!)
+		await measureJourney('J12', 'Play Sheet -> Add Play Set', 2, async (act) => {
 			if (isMobile) {
-				await act.click('.jump-pill-add-card', 'Tap + Card in Jump Strip');
+				const candidates = page.locator('.jump-pill-add-card');
+				const total = await candidates.count();
+				let picked = candidates.first();
+				for (let i = 0; i < total; i++) {
+					const loc = candidates.nth(i);
+					if (await isInViewport(loc, width, height)) {
+						picked = loc;
+						break;
+					}
+				}
+				await act.click(picked, 'Tap + Set in active Pillar bar');
 			} else {
-				await act.click('.session-nav .sheet-bar-add-card', 'Click + Card in SessionNav');
+				await act.click('.session-nav .sheet-bar-add-card', 'Click + Set in SessionNav');
 			}
 			await page.waitForSelector('dialog.modal-style-gallery[open]', { timeout: 5000 });
 			await act.click(
-				page.locator('dialog.modal-style-gallery[open] button', { hasText: 'Add to Session' }),
-				'Add first Play preset card to session',
+				page.locator('dialog.modal-style-gallery[open] button', { hasText: 'Add Set' }),
+				'Add first Play preset set to pillar',
 			);
 		});
 

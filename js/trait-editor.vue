@@ -1199,6 +1199,9 @@ function syncPoolCount(count: number) {
 function addDieToTrait(size: number) {
 	const current = [...dice.value, size].sort((a, b) => b - a);
 	characterCurioFunctions.setTraitDice(trait.value, current);
+	if (trait.value && (trait.value as any).rating && typeof (trait.value as any).rating === 'object') {
+		(trait.value as any).rating.type = 'Dice';
+	}
 	syncPoolCount(current.length);
 	updateCharacter(props.character);
 }
@@ -1209,6 +1212,19 @@ function removeDieFromTrait(size: number) {
 	if (idx !== -1) {
 		current.splice(idx, 1);
 		characterCurioFunctions.setTraitDice(trait.value, current);
+		if (
+			current.length > 0 &&
+			trait.value &&
+			(trait.value as any).rating &&
+			typeof (trait.value as any).rating === 'object'
+		) {
+			(trait.value as any).rating.type = 'Dice';
+		}
+		const viewBag = getView(trait.value);
+		if (viewBag && Array.isArray(viewBag.spentDice)) {
+			viewBag.spentDice = viewBag.spentDice.filter((i: number) => i !== idx).map((i: number) => (i > idx ? i - 1 : i));
+			if (!viewBag.spentDice.length) delete viewBag.spentDice;
+		}
 		syncPoolCount(current.length);
 		updateCharacter(props.character);
 	}
@@ -1219,6 +1235,21 @@ function removeDieAtIndex(index: number) {
 	if (index >= 0 && index < current.length) {
 		current.splice(index, 1);
 		characterCurioFunctions.setTraitDice(trait.value, current);
+		if (
+			current.length > 0 &&
+			trait.value &&
+			(trait.value as any).rating &&
+			typeof (trait.value as any).rating === 'object'
+		) {
+			(trait.value as any).rating.type = 'Dice';
+		}
+		const viewBag = getView(trait.value);
+		if (viewBag && Array.isArray(viewBag.spentDice)) {
+			viewBag.spentDice = viewBag.spentDice
+				.filter((i: number) => i !== index)
+				.map((i: number) => (i > index ? i - 1 : i));
+			if (!viewBag.spentDice.length) delete viewBag.spentDice;
+		}
 		syncPoolCount(current.length);
 		updateCharacter(props.character);
 	}
@@ -2055,7 +2086,7 @@ const hasAdvancedTraitSettings = computed(() =>
 
 						<!-- DICE LIST EDITOR -->
 						<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
-							<div class="editor-die-steppers" v-if="!isPlay">
+							<div class="editor-die-steppers">
 								<div
 									v-for="size in dieRange"
 									:key="'stepper-' + size"
@@ -2068,7 +2099,7 @@ const hasAdvancedTraitSettings = computed(() =>
 											type="button"
 											class="btn-step"
 											@click.stop="removeDieFromTrait(size)"
-											:disabled="getDieCount(size) === 0"
+											:disabled="getDieCount(size) === 0 || (isPlay && dice.length <= 1)"
 											:aria-label="'Remove d' + size"
 											:title="'Remove d' + size"
 										>
@@ -2114,6 +2145,16 @@ const hasAdvancedTraitSettings = computed(() =>
 												aria-label="Step up"
 											>
 												+
+											</button>
+											<button
+												v-if="dice.length > 1"
+												type="button"
+												class="btn-remove-die"
+												@click.stop="removeDieAtIndex(dIdx)"
+												title="Remove die"
+												aria-label="Remove die"
+											>
+												×
 											</button>
 										</template>
 										<template v-else>

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { defineComponent, h, reactive } from 'vue';
+import { defineComponent, h, nextTick, reactive } from 'vue';
 import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
@@ -13,7 +13,7 @@ import Character from '../js/character.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
 import PageLayoutMini from '../js/page-layout-mini.vue';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
-import { characterCurioFunctions } from '../js/functions.ts';
+import { characterCurioFunctions, characterCurioSetPresets } from '../js/functions.ts';
 import { dicePool } from '../js/dice-pool.ts';
 import { useTraitSet } from '../js/use-trait-set.ts';
 
@@ -624,7 +624,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		const savedPreset = (savedEvents![0] as any)[0];
 		expect(savedPreset.id).toBe('overload-tracker');
 		expect(savedPreset.label).toBe('Overload Tracker');
-		expect(savedPreset.preset.view.pillar).toBe('play');
+		expect(savedPreset.preset.view.pillar).toBeUndefined();
 
 		// Verify collision blocks saving duplicate custom preset
 		expect(wrapper.find('.mini-collision-alert').exists()).toBe(true);
@@ -3036,6 +3036,198 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			await runAxeAudit(multiWrapper.element as HTMLElement);
 			multiWrapper.unmount();
+		});
+	});
+
+	describe('Sets, Pillars, Play Pools, & Individual Track Labels', () => {
+		it('keeps organic Play sheet unified without surprise PLAY pillar, supports + Pillar inline form, and places sticky + Set in every pillar', async () => {
+			const organicChar: any = reactive({
+				id: 'organic-play-sheet',
+				name: 'Jimmy',
+				plotPoints: 1,
+				portrait: {},
+				view: { pageCount: 1 },
+				traitSets: [
+					{
+						id: 'name',
+						name: 'Name',
+						noun: 'Trait',
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+						view: { style: { header: 'default', body: 'name' } },
+						traits: [],
+					},
+					{
+						id: 'traits',
+						name: 'Traits',
+						noun: 'Trait',
+						view: { style: { header: 'default', body: 'list' } },
+						traits: [{ id: 't1', name: 'Snitch', rating: { type: 'Die', value: [8] }, traits: [] }],
+					},
+				],
+			});
+
+			const wrapper = mount(Character, {
+				props: {
+					character: organicChar,
+					submode: 'play',
+					editing: [],
+					isDesktopPillars: true,
+				},
+				attachTo: document.body,
+			});
+
+			// Single unified pillar in Play mode with both + Set and + Pillar in the jump strip (and no noisy pillar tag)
+			const strip = wrapper.find('.mobile-set-jump-strip');
+			expect(strip.classes()).toContain('is-unified-sheet-strip');
+			expect(strip.find('.jump-pillar-tag').exists()).toBe(false);
+			expect(strip.find('.jump-pill-add-card').text()).toContain('Set');
+			expect(strip.find('.jump-pill-add-pillar').text()).toContain('Pillar');
+			expect(wrapper.findAll('.mobile-pillar-column').length).toBe(1);
+
+			// Open Add Set gallery (teleported to body), verify framed-ring / divider-line / cut-corner-block are excluded in Play mode, and add Dice Pool
+			await strip.find('.jump-pill-add-card').trigger('click');
+			await nextTick();
+			const modalEl = document.body.querySelector('dialog[aria-label="Add set"]')!;
+			expect(modalEl).toBeTruthy();
+			const presetTitles = Array.from(modalEl.querySelectorAll('.preset-gallery-name')).map((el) =>
+				(el.textContent || '').trim(),
+			);
+			expect(presetTitles).toContain('Dice Pool');
+			expect(presetTitles).toContain('Trait List');
+			expect(presetTitles).toContain('Trait + Track');
+			expect(presetTitles).not.toContain('Framed Ring');
+			expect(presetTitles).not.toContain('Divider Line');
+			expect(presetTitles).not.toContain('Cut-Corner Card');
+
+			const poolCard = Array.from(modalEl.querySelectorAll('.preset-gallery-card')).find((c) =>
+				(c.textContent || '').includes('Dice Pool'),
+			)!;
+			(poolCard.querySelector('.btn-preset-add') as HTMLButtonElement).click();
+			await nextTick();
+
+			// Adding a Play set does NOT split into a surprise PLAY pillar
+			expect(wrapper.findAll('.mobile-pillar-column').length).toBe(1);
+			expect(organicChar.traitSets[2].view.playMutable).toBe(true);
+			expect(organicChar.traitSets[2].view.visibility).toBe('play-only');
+
+			// Click + Pillar, submit "Scene", and verify existing sets stay unified in SHEET while Scene appears with sticky + Set
+			await wrapper.find('.jump-pill-add-pillar').trigger('click');
+			await nextTick();
+			const pillarInput = wrapper.find('.pillar-inline-input');
+			expect(pillarInput.exists()).toBe(true);
+			await pillarInput.setValue('Scene');
+			await wrapper.find('.pillar-inline-form').trigger('submit');
+			await nextTick();
+
+			const cols = wrapper.findAll('.mobile-pillar-column');
+			expect(cols.length).toBe(2);
+			expect(wrapper.findAll('.jump-pill[data-pillar-pill]').map((el) => el.text().trim())).toEqual(['Sheet', 'Scene']);
+			expect(wrapper.findAll('.substack-pill-add-set').length).toBe(2);
+
+			await runAxeAudit(wrapper.element as HTMLElement);
+			wrapper.unmount();
+		});
+
+		it('adds dice to a Play pool on canvas and preserves Dice pool type when reduced to 1 die', async () => {
+			const char: any = reactive({
+				id: 'pool-char',
+				name: 'Pool Tester',
+				plotPoints: 1,
+				portrait: {},
+				view: { pageCount: 1 },
+				traitSets: [],
+			});
+			const poolPreset = characterCurioSetPresets['pool']!;
+			const poolSet: any = characterCurioFunctions.instantiateSetPreset(poolPreset, char, 1);
+			poolSet.spendable = false;
+			poolSet.view = { ...(poolSet.view || {}), visibility: 'play-only', playMutable: true };
+			char.traitSets.push(poolSet);
+
+			const block = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body,
+			});
+
+			const poolTrait = char.traitSets[0].traits[0];
+			expect(poolTrait.rating.type).toBe('Dice');
+			expect(poolTrait.rating.value).toEqual([6, 6]);
+
+			// Open inline + die picker on canvas and append d10
+			const addBtn = block.find('.btn-pool-add-die');
+			expect(addBtn.exists()).toBe(true);
+			await addBtn.trigger('click');
+			await nextTick();
+
+			const d10Btn = block
+				.findAll('.pool-add-picker .btn-pool-die-option')
+				.find((b) => b.attributes('title') === 'Add d10')!;
+			expect(d10Btn).toBeTruthy();
+			await d10Btn.trigger('click');
+			await nextTick();
+			expect(poolTrait.rating.value).toEqual([6, 6, 10]);
+
+			// Remove two dice so 1 remains, ensuring rating.type stays Dice
+			const removeBtns = block.findAll('.btn-play-spend');
+			expect(removeBtns.length).toBe(3);
+			await removeBtns[0].trigger('click');
+			await nextTick();
+			await block.findAll('.btn-play-spend')[0].trigger('click');
+			await nextTick();
+			expect(poolTrait.rating.value.length).toBe(1);
+			expect(poolTrait.rating.type).toBe('Dice');
+			expect(block.find('.btn-pool-add-die').exists()).toBe(true);
+
+			await runAxeAudit(block.element as HTMLElement);
+			block.unmount();
+		});
+
+		it('edits individual trait track labels in Play mode without mutating sibling tracks or set track noun', async () => {
+			const char: any = reactive({
+				id: 'track-char',
+				name: 'Track Tester',
+				plotPoints: 1,
+				portrait: {},
+				view: { pageCount: 1 },
+				traitSets: [],
+			});
+			const trackPreset = characterCurioSetPresets['trait-track']!;
+			const trackSet: any = characterCurioFunctions.instantiateSetPreset(trackPreset, char, 1);
+			trackSet.view = { ...(trackSet.view || {}), visibility: 'play-only', playMutable: true };
+			trackSet.traits.push({
+				id: 'second-trait',
+				name: 'Second',
+				rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+				traits: [],
+			});
+			char.traitSets.push(trackSet);
+
+			const block = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body,
+			});
+
+			const labelBtns = block.findAll('.attached-stress-label-btn');
+			expect(labelBtns.length).toBe(2);
+			expect(labelBtns[0].text().trim()).toBe('Track');
+			expect(labelBtns[1].text().trim()).toBe('Track');
+
+			await labelBtns[0].trigger('click');
+			await nextTick();
+			const input = block.find('.track-label-inline-input');
+			expect(input.exists()).toBe(true);
+			await input.setValue('Injured');
+			await input.trigger('blur');
+			await nextTick();
+
+			const updatedBtns = block.findAll('.attached-stress-label-btn');
+			expect(updatedBtns[0].text().trim()).toBe('Injured');
+			expect(updatedBtns[1].text().trim()).toBe('Track');
+			expect(char.traitSets[0].view.labels?.track).toBeUndefined();
+			expect(char.traitSets[0].traits[0].traits[0].name).toBe('Injured');
+			expect(char.traitSets[0].traits[0].traits[0].view.part).toBe('track');
+
+			await runAxeAudit(block.element as HTMLElement);
+			block.unmount();
 		});
 	});
 });

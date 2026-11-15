@@ -1509,9 +1509,9 @@ function onFileImportSelected(ev: Event) {
 			const parsed = JSON.parse(e.target?.result as string);
 			const importedSet = parsed.traitSet || parsed;
 			workingSet.value = createDefaultWorkingSet(importedSet);
-			saveStatusMessage.value = `Imported card "${workingSet.value.name || 'Card'}".`;
+			saveStatusMessage.value = `Imported set "${workingSet.value.name || 'Set'}".`;
 		} catch (err) {
-			saveErrorMessage.value = 'Invalid card JSON file.';
+			saveErrorMessage.value = 'Invalid set JSON file.';
 		}
 	};
 	reader.readAsText(file);
@@ -1570,7 +1570,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 				<span class="mini-header-icon" aria-hidden="true">
 					<i class="fas fa-th-large"></i>
 				</span>
-				<h2 id="trait-set-mini-title" class="mini-title">Card Builder</h2>
+				<h2 id="trait-set-mini-title" class="mini-title">Set Builder</h2>
 			</div>
 			<div class="mini-header-actions">
 				<button
@@ -1586,7 +1586,7 @@ function onDialogBackdropClick(event: MouseEvent) {
 		</header>
 
 		<div class="mini-body">
-			<section class="mini-card-preview-section" aria-label="Live Card Preview">
+			<section class="mini-card-preview-section" aria-label="Live Set Preview">
 				<div class="preview-mode-bar">
 					<span class="preview-mode-title">LIVE PREVIEW</span>
 					<div class="preview-mode-toggles">
@@ -1615,17 +1615,17 @@ function onDialogBackdropClick(event: MouseEvent) {
 			</section>
 
 			<div class="mini-authoring-column">
-				<!-- Step 1: Card Identity & Style -->
-				<section class="mini-card-style-section" aria-label="Card & Style">
+				<!-- Step 1: Set Identity & Style -->
+				<section class="mini-card-style-section" aria-label="Set & Style">
 					<div class="mini-identity-row">
 						<label class="mini-field">
-							<span class="mini-field-label">Card Title</span>
+							<span class="mini-field-label">Set Title</span>
 							<input
 								v-model="workingSet.name"
 								type="text"
 								class="mini-input"
-								placeholder="Card title"
-								aria-label="Card Title"
+								placeholder="Set title"
+								aria-label="Set Title"
 							/>
 						</label>
 						<label class="mini-field mini-field-noun">
@@ -2507,16 +2507,16 @@ function onDialogBackdropClick(event: MouseEvent) {
 						<i class="fas fa-bookmark"></i> Save Preset
 					</button>
 
-					<!-- Card JSON Export & Import -->
+					<!-- Set JSON Export & Import -->
 					<div class="mini-json-card-actions">
-						<button type="button" class="btn-json-action" title="Export standalone .json card" @click="exportCardJson">
+						<button type="button" class="btn-json-action" title="Export standalone .json set" @click="exportCardJson">
 							<i class="fas fa-file-download"></i> Export JSON
 						</button>
 
 						<button
 							type="button"
 							class="btn-json-action"
-							title="Import standalone .json card"
+							title="Import standalone .json set"
 							@click="triggerImportCardJson"
 						>
 							<i class="fas fa-file-upload"></i> Import JSON

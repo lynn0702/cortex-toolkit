@@ -684,7 +684,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 							class="roster-button roster-button-card-builder"
 							@click.stop="showTraitSetMini = true"
 						>
-							<span><i class="fas fa-th-large" aria-hidden="true"></i> Card Builder</span>
+							<span><i class="fas fa-th-large" aria-hidden="true"></i> Set Builder</span>
 						</button>
 
 						<button

@@ -503,6 +503,8 @@ export const characterCurioFunctions = {
 	// uses `parts.track` or specifies `view.labels.track`.
 	getTrackCompanion: function (traitSetArg: any, trait: any): any {
 		if (!trait || typeof trait !== 'object' || !Array.isArray(trait.traits)) return undefined;
+		const explicitPart = trait.traits.find((c: any) => c && typeof c === 'object' && getView(c)?.part === 'track');
+		if (explicitPart) return explicitPart;
 		const view = getView(traitSetArg);
 		const explicitLabel = typeof view?.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
 		if (explicitLabel) {
@@ -1915,7 +1917,6 @@ export const characterCurioFunctions = {
 				],
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'top',
@@ -1947,7 +1948,6 @@ export const characterCurioFunctions = {
 				],
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'top',
@@ -1966,21 +1966,27 @@ export const characterCurioFunctions = {
 		'trait-list': {
 			id: 'trait-list',
 			label: 'Trait List',
-			blurb: 'Three open rated slots.',
+			blurb: 'Open rated trait slots.',
 			preset: {
 				name: 'Traits',
 				noun: 'Trait',
 				plural: 'Traits',
 				description: '',
-				traits: [],
+				traits: [
+					{
+						name: '',
+						description: '',
+						traits: [],
+						tags: [],
+						rating: { type: 'Die', value: [8] },
+					},
+				],
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'top',
 					outIndicator: true,
-					reservedSlots: 3,
 					ratingDisplay: 'rating',
 					style: { header: 'default', body: 'default' },
 				},
@@ -1999,7 +2005,6 @@ export const characterCurioFunctions = {
 				traits: [],
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'top',
@@ -2018,7 +2023,6 @@ export const characterCurioFunctions = {
 				description: '',
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'top',
@@ -2042,34 +2046,6 @@ export const characterCurioFunctions = {
 				],
 			},
 		},
-		'cut-corner-block': {
-			id: 'cut-corner-block',
-			label: 'Cut-Corner Card',
-			blurb: 'Angled frame with 2 open slots.',
-			preset: {
-				name: 'Card',
-				noun: 'Trait',
-				plural: 'Traits',
-				description: '',
-				traits: [],
-				tags: [],
-				view: {
-					pillar: 'play',
-					visibility: 'play-only',
-					playMutable: true,
-					outIndicator: true,
-					reservedSlots: 2,
-					ratingDisplay: 'rating',
-					header: 'top',
-					border: {
-						shape: 'block',
-						corner: 'cut',
-						color: 'accent',
-					},
-					style: { header: 'default', body: 'default' },
-				},
-			},
-		},
 		notes: {
 			id: 'notes',
 			label: 'Notes',
@@ -2082,7 +2058,6 @@ export const characterCurioFunctions = {
 				traits: [],
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'top',
@@ -2103,7 +2078,6 @@ export const characterCurioFunctions = {
 				traits: [],
 				tags: [],
 				view: {
-					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
 					header: 'none',
@@ -2160,8 +2134,8 @@ export const characterCurioFunctions = {
 		delete cloned.id;
 		const v = ensureView(cloned);
 		delete v.place;
-		if (!v.pillar || typeof v.pillar !== 'string' || !v.pillar.trim().length) {
-			v.pillar = 'play';
+		if (v.pillar === 'play') {
+			delete v.pillar;
 		}
 		const rawLabel =
 			options?.label !== undefined

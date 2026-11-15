@@ -103,12 +103,11 @@ provide('curioCanvasInline', {
 
 watch(
 	() => props.submode,
-	(mode) => {
-		if (mode !== 'edit') {
-			canvasInlineTrait.value = null;
-			canvasInlineSet.value = null;
-			canvasInlinePartSet.value = null;
-		}
+	() => {
+		canvasInlineTrait.value = null;
+		canvasInlineSet.value = null;
+		canvasInlinePartSet.value = null;
+		isAddingPillar.value = false;
 	},
 );
 
@@ -264,7 +263,12 @@ function openPlayMini() {
 const showPlayPresetPicker = ref(false);
 const showPlayMini = ref(false);
 const miniOrigin = ref<'edit' | 'play'>('play');
-const playBuiltInPresets = Object.values(characterCurioSetPresets);
+const targetPlayPillar = ref<string | null>(null);
+const isAddingPillar = ref(false);
+const newPillarName = ref('');
+const pillarInputRef = ref<HTMLInputElement | HTMLInputElement[] | null>(null);
+const PLAY_EXCLUDED_PRESET_IDS = new Set(['framed-ring', 'divider-line']);
+const playBuiltInPresets = Object.values(characterCurioSetPresets).filter((p) => !PLAY_EXCLUDED_PRESET_IDS.has(p.id));
 const playCustomPresets = ref<SetPresetEntry[]>([]);
 const isMobileViewport = ref(
 	typeof window !== 'undefined' && Boolean(window.matchMedia && window.matchMedia('(max-width: 768px)').matches),
@@ -559,15 +563,30 @@ function removeTraitSet(traitSetID: number) {
 	updateCharacter(character);
 }
 
+function stampPlaySetOptions(traitSet: any) {
+	const v = ensureView(traitSet) as Record<string, unknown>;
+	v.visibility = 'play-only';
+	v.playMutable = true;
+	if (sheetUsesPillars.value) {
+		const pKey = targetPlayPillar.value || activeMobilePillarKey.value || mobilePillarColumns.value[0]?.key || 'sheet';
+		v.pillar = pKey;
+	} else {
+		delete v.pillar;
+	}
+}
+
 function addPresetSet(preset: SetPresetEntry, page?: number) {
 	const character = props.character as Character;
 	if (!character || !preset) return;
 	const traitSet: any = characterCurioFunctions.instantiateSetPreset(preset, character, page ?? 1);
-	if (props.submode === 'edit' && Boolean(characterCurioSetPresets[preset.id])) {
+	if (props.submode === 'play') {
+		stampPlaySetOptions(traitSet);
+	} else if (props.submode === 'edit' && Boolean(characterCurioSetPresets[preset.id])) {
 		const v = ensureView(traitSet) as Record<string, unknown>;
 		if (v.visibility === 'play-only') delete v.visibility;
 		if (v.pillar === 'play') delete v.pillar;
 	}
+	targetPlayPillar.value = null;
 	character.traitSets.push(traitSet);
 	updateCharacter(character);
 	showInlineAddSet.value = false;
@@ -576,7 +595,7 @@ function addPresetSet(preset: SetPresetEntry, page?: number) {
 	if (props.submode === 'edit') {
 		selectElement(['traitSet', newTraitSetID]);
 	} else if (props.submode === 'play') {
-		const pKey = resolveSetPillar(traitSet);
+		const pKey = sheetUsesPillars.value ? resolveSetPillar(traitSet) : 'sheet';
 		nextTick(() => scrollToPillar(pKey, newTraitSetID));
 	}
 }
@@ -592,13 +611,11 @@ function applyMiniSet(builtSet: any) {
 		);
 	}
 	if (miniOrigin.value === 'play') {
-		const v = ensureView(traitSet) as Record<string, unknown>;
-		v.visibility = 'play-only';
-		v.playMutable = true;
-		v.pillar = 'play';
+		stampPlaySetOptions(traitSet);
 	} else if ((inlineAddPage.value ?? 1) > 1) {
 		ensureView(traitSet).page = inlineAddPage.value;
 	}
+	targetPlayPillar.value = null;
 	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
 	if (!Array.isArray(character.traitSets)) character.traitSets = [];
 	character.traitSets.push(traitSet);
@@ -608,14 +625,83 @@ function applyMiniSet(builtSet: any) {
 	if (props.submode === 'edit') {
 		selectElement(['traitSet', newTraitSetID]);
 	} else if (props.submode === 'play') {
-		const pKey = resolveSetPillar(traitSet);
+		const pKey = sheetUsesPillars.value ? resolveSetPillar(traitSet) : 'sheet';
 		nextTick(() => scrollToPillar(pKey, newTraitSetID));
 	}
 }
 
-function openPlayPresetPicker() {
+function openPlayPresetPicker(pillarKey?: string) {
+	targetPlayPillar.value = typeof pillarKey === 'string' && pillarKey.trim().length > 0 ? pillarKey.trim() : null;
 	playCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
 	showPlayPresetPicker.value = true;
+}
+
+function startAddPillar() {
+	isAddingPillar.value = true;
+	newPillarName.value = '';
+	nextTick(() => {
+		const el = Array.isArray(pillarInputRef.value) ? pillarInputRef.value[0] : pillarInputRef.value;
+		el?.focus();
+	});
+}
+
+function cancelAddPillar() {
+	isAddingPillar.value = false;
+	newPillarName.value = '';
+}
+
+function onPillarInputKeydown(event: KeyboardEvent) {
+	if (event.isComposing || event.keyCode === 229) return;
+	if (event.key === 'Escape') {
+		event.preventDefault();
+		cancelAddPillar();
+	} else if (event.key === 'Enter') {
+		event.preventDefault();
+		confirmAddPillar();
+	}
+}
+
+function confirmAddPillar() {
+	const character = props.character as Character;
+	if (!character) return;
+	const existingCols = mobilePillarColumns.value;
+	const rawLabel = newPillarName.value.trim() || `Pillar ${existingCols.length + 1}`;
+	const baseSlug =
+		rawLabel
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '') || 'pillar';
+	const wasUnified = !sheetUsesPillars.value;
+	const charView = ensureView(character);
+	const existingKeys = wasUnified
+		? ['sheet']
+		: Array.isArray(charView.pillars) && charView.pillars.length > 0
+			? [...charView.pillars]
+			: existingCols.map((c) => c.key);
+	const taken = new Set(existingKeys);
+	let newKey = baseSlug;
+	let suffix = 2;
+	while (taken.has(newKey)) {
+		newKey = `${baseSlug}-${suffix++}`;
+	}
+	if (wasUnified && Array.isArray(character.traitSets)) {
+		for (const ts of character.traitSets) {
+			if (!ts || isHiddenIn(ts, 'play')) continue;
+			const tsView = ensureView(ts);
+			if (!tsView.pillar) {
+				tsView.pillar = 'sheet';
+			}
+		}
+	}
+	existingKeys.push(newKey);
+	charView.pillars = existingKeys;
+	if (!charView.labels || typeof charView.labels !== 'object') charView.labels = {};
+	if (!charView.labels.pillars || typeof charView.labels.pillars !== 'object') charView.labels.pillars = {};
+	charView.labels.pillars[newKey] = rawLabel;
+	isAddingPillar.value = false;
+	newPillarName.value = '';
+	updateCharacter(character);
+	nextTick(() => scrollToPillar(newKey));
 }
 
 function removePlayCustomPreset(id: string) {
@@ -669,7 +755,8 @@ function addTrait(traitSetID: number) {
 	updateCharacter(character);
 
 	const newTraitID = traitSet.traits.length - 1;
-	if (props.submode === 'edit') {
+	const isPlayMutable = Boolean(getView(traitSet)?.playMutable || resolveVisibility(traitSet) === 'play-only');
+	if (props.submode === 'edit' || (props.submode === 'play' && isPlayMutable)) {
 		setCanvasInlineTrait([traitSetID, newTraitID]);
 		nextTick(() => {
 			const input = rootEl.value?.querySelector<HTMLInputElement>(
@@ -817,6 +904,8 @@ function countStagedDiceForSets(sets: TraitSet[]): number {
 
 const sheetUsesPillars = computed<boolean>(() => {
 	if (!props.character) return false;
+	const explicitPillars = getView(props.character)?.pillars;
+	if (Array.isArray(explicitPillars) && explicitPillars.length > 0) return true;
 	if (pageCount.value > 1) return true;
 	const allSets = Array.isArray(props.character.traitSets) ? props.character.traitSets : [];
 	const visibleBaseSets = allSets.filter((ts) => {
@@ -855,45 +944,28 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 
 	if (!sheetUsesPillars.value) {
 		const sheetSets: MobilePillarSetItem[] = [];
-		const playSets: MobilePillarSetItem[] = [];
 		allSets.forEach((ts, idx) => {
 			if (isHiddenIn(ts, 'play')) return;
-			const vis = resolveVisibility(ts);
-			const v = getView(ts);
-			if (vis === 'play-only' || v?.playMutable === true) {
-				playSets.push({
-					traitSet: ts,
-					index: idx,
-					label: getMobileJumpPillLabel(ts, playSets.length),
-				});
-			} else {
-				sheetSets.push({
-					traitSet: ts,
-					index: idx,
-					label: getMobileJumpPillLabel(ts, sheetSets.length),
-				});
-			}
+			sheetSets.push({
+				traitSet: ts,
+				index: idx,
+				label: getMobileJumpPillLabel(ts, sheetSets.length),
+			});
 		});
-		const cols: MobilePillarColumn[] = [];
-		if (sheetSets.length > 0) {
-			cols.push({
+		return [
+			{
 				key: 'sheet',
-				label: 'Sheet',
+				label: getPillarLabel(props.character, 'sheet'),
 				sets: sheetSets,
 				stagedCount: countStagedDiceForSets(sheetSets.map((s) => s.traitSet)),
-			});
-		}
-		if (playSets.length > 0) {
-			cols.push({
-				key: 'play',
-				label: getPillarLabel(props.character, 'play'),
-				sets: playSets,
-				stagedCount: countStagedDiceForSets(playSets.map((s) => s.traitSet)),
-			});
-		}
-		return cols;
+			},
+		];
 	}
 
+	const explicitPillars = Array.isArray(getView(props.character)?.pillars)
+		? getView(props.character)!.pillars!.filter((k): k is string => typeof k === 'string' && k.trim().length > 0)
+		: [];
+	const explicitSet = new Set<string>(explicitPillars);
 	const byPillar = new Map<string, MobilePillarSetItem[]>();
 	const seenCustomKeys: string[] = [];
 	const standardOrder = ['prime', 'plus', 'play'];
@@ -901,14 +973,19 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 	const ensureBucket = (key: string) => {
 		if (!byPillar.has(key)) {
 			byPillar.set(key, []);
-			if (key !== 'identity' && !standardOrder.includes(key)) {
+			if (key !== 'identity' && !standardOrder.includes(key) && !explicitSet.has(key)) {
 				seenCustomKeys.push(key);
 			}
 		}
 		return byPillar.get(key)!;
 	};
 
-	ensureBucket('identity');
+	for (const expKey of explicitPillars) {
+		ensureBucket(expKey);
+	}
+	if (!explicitPillars.length) {
+		ensureBucket('identity');
+	}
 
 	allSets.forEach((ts, idx) => {
 		if (isHiddenIn(ts, 'play')) return;
@@ -921,13 +998,14 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 		});
 	});
 
-	const orderedKeys: string[] = ['identity'];
-	for (const stdKey of standardOrder) {
-		if (byPillar.has(stdKey)) orderedKeys.push(stdKey);
-	}
-	for (const customKey of seenCustomKeys) {
-		if (byPillar.has(customKey)) orderedKeys.push(customKey);
-	}
+	const orderedKeys: string[] = [];
+	const pushUnique = (k: string) => {
+		if (byPillar.has(k) && !orderedKeys.includes(k)) orderedKeys.push(k);
+	};
+	for (const expKey of explicitPillars) pushUnique(expKey);
+	pushUnique('identity');
+	for (const stdKey of standardOrder) pushUnique(stdKey);
+	for (const customKey of seenCustomKeys) pushUnique(customKey);
 
 	return orderedKeys
 		.map((key) => {
@@ -940,7 +1018,7 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 				stagedCount: countStagedDiceForSets(setsForCount),
 			};
 		})
-		.filter((col) => col.sets.length > 0);
+		.filter((col) => col.sets.length > 0 || explicitSet.has(col.key));
 });
 
 function columnStackItems(col: MobilePillarColumn): { index: number; label: string }[] {
@@ -1145,6 +1223,14 @@ defineExpose({
 									<span class="jump-pill-label">{{ sub.label }}</span>
 								</button>
 							</template>
+							<button
+								type="button"
+								class="jump-pill jump-pill-add-card jump-pill-add-set"
+								title="Add Set"
+								@click.stop="openPlayPresetPicker()"
+							>
+								<i class="fas fa-plus" aria-hidden="true"></i> <span class="jump-pill-label">Set</span>
+							</button>
 						</template>
 						<template v-else>
 							<button
@@ -1161,13 +1247,37 @@ defineExpose({
 								<span v-if="col.stagedCount > 0" class="jump-pill-badge">{{ col.stagedCount }}</span>
 							</button>
 						</template>
+						<form v-if="isAddingPillar" class="pillar-inline-form" @submit.prevent="confirmAddPillar" @click.stop>
+							<input
+								ref="pillarInputRef"
+								v-model="newPillarName"
+								type="text"
+								class="pillar-inline-input"
+								placeholder="Pillar name..."
+								aria-label="New pillar name"
+								@keydown="onPillarInputKeydown"
+							/>
+							<button type="submit" class="btn-pillar-inline" title="Create pillar" aria-label="Create pillar">
+								<i class="fas fa-check" aria-hidden="true"></i>
+							</button>
+							<button
+								type="button"
+								class="btn-pillar-inline btn-pillar-inline-cancel"
+								title="Cancel"
+								aria-label="Cancel"
+								@click.stop="cancelAddPillar"
+							>
+								<i class="fas fa-times" aria-hidden="true"></i>
+							</button>
+						</form>
 						<button
+							v-else
 							type="button"
-							class="jump-pill jump-pill-add-card"
-							title="Add Play Card / Set Preset"
-							@click.stop="openPlayPresetPicker"
+							class="jump-pill jump-pill-add-pillar"
+							title="Add Pillar"
+							@click.stop="startAddPillar"
 						>
-							<i class="fas fa-plus" aria-hidden="true"></i> <span class="jump-pill-label">Card</span>
+							<i class="fas fa-plus" aria-hidden="true"></i> <span class="jump-pill-label">Pillar</span>
 						</button>
 						<button
 							v-if="!isMobileViewport && submode === 'play'"
@@ -1196,7 +1306,7 @@ defineExpose({
 							class="mobile-pillar-column"
 							:data-pillar-key="col.key"
 						>
-							<div class="mobile-substack-bar" v-if="!isSingleMobilePillar && columnStackItems(col).length > 1">
+							<div class="mobile-substack-bar" v-if="!isSingleMobilePillar">
 								<button
 									v-for="sub in columnStackItems(col)"
 									:key="'substack-' + col.key + '-' + sub.index"
@@ -1205,6 +1315,15 @@ defineExpose({
 									@click.stop="scrollToSetInColumn(col.key, sub.index)"
 								>
 									{{ sub.label }}
+								</button>
+								<button
+									type="button"
+									class="substack-pill substack-pill-add-set jump-pill-add-card"
+									:title="'Add set to ' + col.label"
+									:aria-label="'Add set to ' + col.label"
+									@click.stop="openPlayPresetPicker(col.key)"
+								>
+									<i class="fas fa-plus" aria-hidden="true"></i> Set
 								</button>
 							</div>
 
@@ -1225,13 +1344,8 @@ defineExpose({
 								@addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 
-							<button
-								v-if="col.key === 'play'"
-								type="button"
-								class="btn-mobile-add-play-card"
-								@click.stop="openPlayPresetPicker"
-							>
-								<i class="fas fa-plus" aria-hidden="true"></i> Add Play Card
+							<button type="button" class="btn-mobile-add-play-card" @click.stop="openPlayPresetPicker(col.key)">
+								<i class="fas fa-plus" aria-hidden="true"></i> Add Set
 							</button>
 						</div>
 					</div>
@@ -1349,7 +1463,7 @@ defineExpose({
 												<i class="fas fa-plus" aria-hidden="true"></i> Blank Set
 											</button>
 											<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
-												<i class="fas fa-th-large" aria-hidden="true"></i> Card Builder
+												<i class="fas fa-th-large" aria-hidden="true"></i> Set Builder
 											</button>
 											<button
 												type="button"
@@ -1383,6 +1497,11 @@ defineExpose({
 									</div>
 								</div>
 							</div>
+							<div class="sheet-add-set-bar" v-else-if="submode === 'play' && pageIndex === pageCount">
+								<button type="button" class="btn-mobile-add-play-card" @click.stop="openPlayPresetPicker()">
+									<i class="fas fa-plus" aria-hidden="true"></i> Add Set
+								</button>
+							</div>
 						</div>
 					</div>
 					<!-- .mobile-carousel-track -->
@@ -1396,7 +1515,7 @@ defineExpose({
 		<teleport to="body">
 			<ModalDialog
 				:open="showPlayPresetPicker"
-				label="Add play card"
+				label="Add set"
 				dialog-class="modal-style-gallery"
 				@close="showPlayPresetPicker = false"
 			>
@@ -1405,9 +1524,9 @@ defineExpose({
 				</button>
 				<div class="modal-inner">
 					<div class="modal-header-actions">
-						<h2><i class="fas fa-gamepad" aria-hidden="true"></i> Add Play Card</h2>
+						<h2><i class="fas fa-layer-group" aria-hidden="true"></i> Add Set</h2>
 						<button type="button" class="btn-preset-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
-							<i class="fas fa-th-large" aria-hidden="true"></i> Card Builder
+							<i class="fas fa-th-large" aria-hidden="true"></i> Set Builder
 						</button>
 					</div>
 					<div class="preset-gallery-grid">
@@ -1415,14 +1534,14 @@ defineExpose({
 							v-for="preset in playBuiltInPresets"
 							:key="'play-builtin-' + preset.id"
 							:preset="preset"
-							action-label="Add to Session"
+							action-label="Add Set"
 							@add="addPresetSet(preset)"
 						/>
 						<PresetGalleryCard
 							v-for="preset in playCustomPresets"
 							:key="'play-custom-' + preset.id"
 							:preset="preset"
-							action-label="Add to Session"
+							action-label="Add Set"
 							deletable
 							delete-label="Delete saved preset"
 							@add="addPresetSet(preset)"
@@ -1434,7 +1553,7 @@ defineExpose({
 			<TraitSetMini
 				v-if="showPlayMini"
 				:character="props.character"
-				:apply-label="miniOrigin === 'play' ? 'Add to Session' : 'Add to Sheet'"
+				:apply-label="miniOrigin === 'play' ? 'Add Set' : 'Add to Sheet'"
 				@apply-to-set="applyMiniSet"
 				@close="showPlayMini = false"
 				@saved="playCustomPresets = characterCurioFunctions.getCustomSetPresets()"
