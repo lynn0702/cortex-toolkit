@@ -68,24 +68,49 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		activeTrait: { value: [number, number] | null };
 		activeSet: { value: number | null };
 		activePartSet: { value: number | null };
+		activePartTrait?: { value: [number, number] | null };
 		setActiveTrait: (target: [number, number] | null) => void;
 		setActiveSet: (setIdx: number | null) => void;
 		setActivePartSet: (setIdx: number | null) => void;
+		setActivePartTrait?: (target: [number, number] | null, triggerEl?: HTMLElement | null) => void;
 		requestCanvasFocus?: (targetEl?: HTMLElement | null) => void;
 	}>('curioCanvasInline', {
 		activeTrait: fallbackActiveTrait,
 		activeSet: fallbackActiveSet,
 		activePartSet: fallbackActivePartSet,
+		activePartTrait: fallbackTraitPartMenu,
 		setActiveTrait: (target) => {
 			fallbackActiveTrait.value = target;
-			if (target) fallbackActiveSet.value = null;
+			if (target) {
+				fallbackActiveSet.value = null;
+				if (
+					fallbackTraitPartMenu.value &&
+					(fallbackTraitPartMenu.value[0] !== target[0] || fallbackTraitPartMenu.value[1] !== target[1])
+				) {
+					fallbackTraitPartMenu.value = null;
+				}
+			} else {
+				fallbackTraitPartMenu.value = null;
+			}
 		},
 		setActiveSet: (setIdx) => {
 			fallbackActiveSet.value = setIdx;
-			if (setIdx !== null) fallbackActiveTrait.value = null;
+			if (setIdx !== null) {
+				fallbackActiveTrait.value = null;
+				fallbackTraitPartMenu.value = null;
+			}
 		},
 		setActivePartSet: (setIdx) => {
 			fallbackActivePartSet.value = setIdx;
+			if (setIdx !== null) fallbackTraitPartMenu.value = null;
+		},
+		setActivePartTrait: (target) => {
+			fallbackTraitPartMenu.value = target;
+			if (target && fallbackActiveTrait.value) {
+				if (fallbackActiveTrait.value[0] !== target[0] || fallbackActiveTrait.value[1] !== target[1]) {
+					fallbackActiveTrait.value = null;
+				}
+			}
 		},
 		requestCanvasFocus: () => {},
 	});
@@ -105,31 +130,43 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function toggleCanvasTrait(sArg: number, tIdx: number | null | undefined) {
 		if (!canInlineEditOnCanvas() || typeof tIdx !== 'number') return;
-		fallbackTraitPartMenu.value = null;
 		if (isCanvasTraitActive(sArg, tIdx)) {
 			canvasInline.setActiveTrait(null);
 		} else {
+			if (canvasInline.setActivePartTrait) canvasInline.setActivePartTrait(null);
+			else fallbackTraitPartMenu.value = null;
+			canvasInline.setActiveTrait([sArg, tIdx]);
+		}
+	}
+
+	function openCanvasTrait(sArg: number, tIdx: number | null | undefined) {
+		if (!canInlineEditOnCanvas() || typeof tIdx !== 'number') return;
+		if (!isCanvasTraitActive(sArg, tIdx)) {
 			canvasInline.setActiveTrait([sArg, tIdx]);
 		}
 	}
 
 	function closeCanvasTrait() {
-		fallbackTraitPartMenu.value = null;
+		if (canvasInline.setActivePartTrait) canvasInline.setActivePartTrait(null);
+		else fallbackTraitPartMenu.value = null;
 		canvasInline.setActiveTrait(null);
 	}
 
 	function isTraitPartMenuOpen(sArg: number, tIdx: number | null | undefined): boolean {
-		if (!isCanvasTraitActive(sArg, tIdx) || typeof tIdx !== 'number') return false;
-		const cur = fallbackTraitPartMenu.value;
+		if (props.submode !== 'edit' || typeof tIdx !== 'number') return false;
+		const cur = (canvasInline.activePartTrait ?? fallbackTraitPartMenu).value;
 		return Boolean(cur && cur[0] === sArg && cur[1] === tIdx);
 	}
 
 	function toggleTraitPartMenu(sArg: number, tIdx: number | null | undefined, triggerEl?: HTMLElement | null) {
-		if (!isCanvasTraitActive(sArg, tIdx) || typeof tIdx !== 'number') return;
+		if (props.submode !== 'edit' || typeof tIdx !== 'number') return;
 		const opening = !isTraitPartMenuOpen(sArg, tIdx);
-		fallbackTraitPartMenu.value = opening ? [sArg, tIdx] : null;
-		if (opening) {
-			canvasInline.requestCanvasFocus?.(triggerEl?.closest?.('.trait') as HTMLElement | null);
+		const targetEl = (triggerEl?.closest?.('.trait') as HTMLElement | null) || triggerEl || null;
+		if (canvasInline.setActivePartTrait) {
+			canvasInline.setActivePartTrait(opening ? [sArg, tIdx] : null, targetEl);
+		} else {
+			fallbackTraitPartMenu.value = opening ? [sArg, tIdx] : null;
+			if (opening) canvasInline.requestCanvasFocus?.(targetEl);
 		}
 	}
 
@@ -355,7 +392,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function getTraitSetLabel(traitSetArg: TraitSet, key: string) {
 		const labels = getView(traitSetArg)?.labels;
-		if (labels && labels[key] !== undefined && labels[key] !== null && String(labels[key]).length) {
+		if (labels && typeof labels[key] === 'string') {
 			return labels[key];
 		}
 		const style = getView(traitSetArg)?.style?.body;
@@ -640,8 +677,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function getCounterLabel(traitSetArg: TraitSet) {
-		return traitSetArg?.counterLabel || getView(traitSetArg)?.counterLabel || 'XP';
+	function getCounterLabel(traitSetArg: TraitSet): string {
+		const fromLabels = (getView(traitSetArg)?.labels as Record<string, unknown> | undefined)?.counter;
+		if (typeof fromLabels === 'string') return fromLabels;
+		const fromView = getView(traitSetArg)?.counterLabel;
+		if (typeof fromView === 'string') return fromView;
+		const fromSet = (traitSetArg as any)?.counterLabel;
+		if (typeof fromSet === 'string') return fromSet;
+		return '';
 	}
 
 	function getTraitCounter(trait: Trait) {
@@ -1146,6 +1189,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				rating: { type: 'Die', value: [6] },
 			});
 			ensureExplicitPartCell(ts, 'subtraits');
+			openCanvasTrait(s.value, tIdx);
 			updateCharacter(props.character);
 			return;
 		}
@@ -1160,6 +1204,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				view: { part: 'block' },
 			});
 			ensureExplicitPartCell(ts, 'block');
+			openCanvasTrait(s.value, tIdx);
 			updateCharacter(props.character);
 			return;
 		}
@@ -1325,8 +1370,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getTraitTrackLabel(traitSetArg: TraitSet, trait: Trait): string {
+		const explicitSetLabel = getView(traitSetArg)?.labels?.track;
 		const companion = getTrackCompanion(traitSetArg, trait);
 		if (companion && typeof companion.name === 'string' && companion.name.trim().length > 0) {
+			if (explicitSetLabel === '' && companion.name.trim() === 'Track' && getView(companion)?.part !== 'track') {
+				return '';
+			}
 			return companion.name.trim();
 		}
 		return getTrackLabel(traitSetArg);
@@ -1410,7 +1459,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 					const idx = trait.traits.indexOf(companion);
 					if (idx !== -1) trait.traits.splice(idx, 1);
 				} else {
-					companion.name = getTrackLabel(set);
+					companion.name = getTrackLabel(set) || 'Track';
 				}
 				updateCharacter(props.character);
 			}
@@ -1444,7 +1493,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				characterCurioFunctions.setTraitDice(companion, [size]);
 			}
 		} else {
-			const name = getTrackLabel(set);
+			const name = getTrackLabel(set) || 'Track';
 			(trait.traits as any[]).push({ name, rating: { type: 'Die', value: [size], range: getTrackScale(set).slice() } });
 		}
 		updateCharacter(props.character);
@@ -1458,7 +1507,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!Array.isArray(trait.traits)) trait.traits = [];
 		let companion: any = getTrackCompanion(set, trait);
 		if (!companion) {
-			const name = getTrackLabel(set);
+			const name = getTrackLabel(set) || 'Track';
 			const scale = getTrackScale(set);
 			companion = { name, rating: { type: 'Die', value: [scale[0] || 4], range: scale.slice(), out: true } };
 			(trait.traits as any[]).push(companion);
@@ -1511,7 +1560,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// the list of bubbles, range[0] the bubble count.
 	function getPipTrack(traitSetArg: TraitSet): { count: number; filled: number } {
 		const rating = getRating(traitSetArg);
-		let count = 25;
+		let count = 5;
 		let filled = 0;
 		if (rating && rating.type === 'Pip') {
 			if (Array.isArray(rating.range) && typeof rating.range[0] === 'number' && rating.range[0] > 0) {
@@ -2252,6 +2301,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		stepTraitCounter,
 		isCanvasTraitActive,
 		toggleCanvasTrait,
+		openCanvasTrait,
 		closeCanvasTrait,
 		isTraitPartMenuOpen,
 		toggleTraitPartMenu,

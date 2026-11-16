@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { nextTick } from 'vue';
-import { getView, resolveSubtraitNoun } from './model.ts';
+import { computed, nextTick } from 'vue';
+import { getView, resolveCurrencyLabel, resolveSubtraitNoun } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { useCuriosityGraph } from './curiosity-graph.ts';
 import { injectTraitSet } from './use-trait-set.ts';
@@ -115,11 +115,14 @@ function resolveTraitRefTitle(tr: any): string {
 	return graph.resolveCuriosity(tr?.ref)?.name || tr?.name || 'Curiosity';
 }
 
+const currencyLabel = computed(() => resolveCurrencyLabel(character.value));
+
 function formatAltRollPpTag(ppDelta: number | undefined | null): string {
 	if (!ppDelta) return '';
-	if (ppDelta === 1) return '+PP';
-	if (ppDelta === -1) return '-PP';
-	return (ppDelta > 0 ? '+' : '') + ppDelta + 'PP';
+	const cur = currencyLabel.value;
+	if (ppDelta === 1) return `+${cur}`;
+	if (ppDelta === -1) return `-${cur}`;
+	return (ppDelta > 0 ? '+' : '') + ppDelta + cur;
 }
 
 function formatAltRollAriaLabel(tr: any, ts: any): string {
@@ -127,6 +130,14 @@ function formatAltRollAriaLabel(tr: any, ts: any): string {
 	const die = alt?.die || 4;
 	const tag = formatAltRollPpTag(alt?.ppDelta);
 	return tag ? `Take d${die} ${tag}` : `Take d${die}`;
+}
+
+function formatAltRollTitle(tr: any, ts: any): string {
+	const alt = getAltRoll(tr, ts);
+	const die = alt?.die || 4;
+	const ppDelta = alt?.ppDelta;
+	if (!ppDelta) return `Take d${die}`;
+	return `Take d${die} (${ppDelta > 0 ? '+' : ''}${ppDelta} ${currencyLabel.value})`;
 }
 
 function startInlineTrackLabel(tIdx: number | null | undefined, ev: Event) {
@@ -843,18 +854,12 @@ function hasTraitSetDescription(ts: any) {
 										type="button"
 										class="btn-hinder-pill"
 										@click.stop="handleAltRollClick(item.trait, traitSet)"
-										:title="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
+										:title="formatAltRollTitle(item.trait, traitSet)"
 										:aria-label="formatAltRollAriaLabel(item.trait, traitSet)"
 									>
 										<span aria-hidden="true">d{{ getAltRoll(item.trait, traitSet)?.die || 4 }}</span
 										><span v-if="getAltRoll(item.trait, traitSet)?.ppDelta" class="hinder-pp-tag" aria-hidden="true">{{
-											getAltRoll(item.trait, traitSet)!.ppDelta === 1
-												? '+PP'
-												: getAltRoll(item.trait, traitSet)!.ppDelta === -1
-													? '-PP'
-													: (getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') +
-														getAltRoll(item.trait, traitSet)!.ppDelta +
-														'PP'
+											formatAltRollPpTag(getAltRoll(item.trait, traitSet)?.ppDelta)
 										}}</span>
 									</button>
 									<span
@@ -943,7 +948,7 @@ function hasTraitSetDescription(ts: any) {
 										}"
 										role="button"
 										tabindex="0"
-										:aria-label="`Stage d${size} ${getTraitTrackLabel(traitSet, item.trait)} from ${item.trait.name || 'trait'}`"
+										:aria-label="`Stage d${size}${getTraitTrackLabel(traitSet, item.trait) ? ' ' + getTraitTrackLabel(traitSet, item.trait) : ''} from ${item.trait.name || 'trait'}`"
 										:aria-pressed="getTrackValue(item.trait, traitSet) === size ? 'true' : 'false'"
 										@click.stop="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
 										@keydown.enter.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
@@ -2047,7 +2052,7 @@ function hasTraitSetDescription(ts: any) {
 											type="button"
 											class="btn-hinder-pill"
 											@click.stop="handleAltRollClick(item.trait, traitSet)"
-											:title="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
+											:title="formatAltRollTitle(item.trait, traitSet)"
 											:aria-label="formatAltRollAriaLabel(item.trait, traitSet)"
 										>
 											<span aria-hidden="true">d{{ getAltRoll(item.trait, traitSet)?.die || 4 }}</span
@@ -2055,15 +2060,7 @@ function hasTraitSetDescription(ts: any) {
 												v-if="getAltRoll(item.trait, traitSet)?.ppDelta"
 												class="hinder-pp-tag"
 												aria-hidden="true"
-												>{{
-													getAltRoll(item.trait, traitSet)!.ppDelta === 1
-														? '+PP'
-														: getAltRoll(item.trait, traitSet)!.ppDelta === -1
-															? '-PP'
-															: (getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') +
-																getAltRoll(item.trait, traitSet)!.ppDelta +
-																'PP'
-												}}</span
+												>{{ formatAltRollPpTag(getAltRoll(item.trait, traitSet)?.ppDelta) }}</span
 											>
 										</button>
 										<span
@@ -2378,9 +2375,7 @@ function hasTraitSetDescription(ts: any) {
 						"
 					/>
 					<div
-						v-if="
-							submode === 'edit' && !printBlank && !item.isPlaceholder && isCanvasTraitActive(s, item.originalIndex)
-						"
+						v-if="submode === 'edit' && !printBlank && !item.isPlaceholder"
 						class="trait-active-part-bar"
 						@click.stop
 					>
@@ -2389,6 +2384,9 @@ function hasTraitSetDescription(ts: any) {
 							class="btn-trait-part-toggle"
 							:class="{ active: isTraitPartMenuOpen(s, item.originalIndex) }"
 							:aria-expanded="isTraitPartMenuOpen(s, item.originalIndex)"
+							:aria-label="
+								'Part options for ' + (item.trait.name || (traitSet.noun || 'Trait') + ' ' + (item.originalIndex + 1))
+							"
 							@click.stop="toggleTraitPartMenu(s, item.originalIndex, $event.currentTarget as HTMLElement)"
 						>
 							<i class="fas fa-plus" aria-hidden="true"></i> Part

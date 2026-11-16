@@ -113,6 +113,19 @@ function onHeaderActivate() {
 	}
 }
 
+function onHeaderDiePlayActivate(event: Event, dieSize: number) {
+	if (submode.value !== 'play') return;
+	if (event.type === 'keydown') {
+		event.preventDefault();
+	}
+	event.stopPropagation();
+	emit('addDieToRoller', {
+		size: dieSize,
+		qty: 1,
+		source: traitSet.value?.name,
+	});
+}
+
 function onSetNameInlineInput(event: Event) {
 	if (!traitSet.value) return;
 	traitSet.value.name = (event.target as HTMLInputElement).value;
@@ -163,6 +176,26 @@ const showRingActions = computed(() => {
 });
 
 const setSfxEntries = computed(() => characterCurioFunctions.blockChildren(traitSet.value));
+
+const isSetTrulyEmpty = computed(() => {
+	const setNode = traitSet.value;
+	if (!setNode || isName.value) return false;
+	if (Array.isArray(setNode.traits) && setNode.traits.length > 0) return false;
+	const r = getRating(setNode);
+	if (
+		r &&
+		(ratingDice(r).length > 0 ||
+			(r.type === 'Pip' && Array.isArray(r.value) && r.value.length > 0) ||
+			r.type === 'Counter')
+	) {
+		return false;
+	}
+	if (effectiveImageUrl.value) return false;
+	if (setNode.ref) return false;
+	if (setSfxEntries.value.length > 0) return false;
+	if (typeof setNode.description === 'string' && setNode.description.trim().length > 0) return false;
+	return true;
+});
 
 const BODY_COMPONENTS: Record<string, any> = {
 	name: TraitSetName,
@@ -332,18 +365,16 @@ watch(rootEl, (el) => {
 						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die' && ratingDice(getRating(traitSet)).length > 0"
 						class="trait-set-header-rating diecon-wrapper"
 						v-html="renderDieValue((getRating(traitSet)?.value?.[0] as number) || 8, true)"
-						role="button"
-						tabindex="0"
-						:aria-label="`Stage d${(getRating(traitSet)?.value?.[0] as number) || 8} ${traitSet.name}`"
-						@click.stop="
+						:role="submode === 'play' ? 'button' : undefined"
+						:tabindex="submode === 'play' ? 0 : undefined"
+						:aria-label="
 							submode === 'play'
-								? emit('addDieToRoller', {
-										size: (getRating(traitSet)?.value?.[0] as number) || 8,
-										qty: 1,
-										source: traitSet.name,
-									})
-								: null
+								? `Stage d${(getRating(traitSet)?.value?.[0] as number) || 8} ${traitSet.name}`
+								: undefined
 						"
+						@click="onHeaderDiePlayActivate($event, (getRating(traitSet)?.value?.[0] as number) || 8)"
+						@keydown.enter="onHeaderDiePlayActivate($event, (getRating(traitSet)?.value?.[0] as number) || 8)"
+						@keydown.space="onHeaderDiePlayActivate($event, (getRating(traitSet)?.value?.[0] as number) || 8)"
 					></span>
 					<span
 						v-else-if="
@@ -359,23 +390,21 @@ watch(rootEl, (el) => {
 							:key="'hdr-d-' + dIdx"
 							class="trait-set-header-rating diecon-wrapper"
 							v-html="renderDieValue(dieSize, true)"
-							role="button"
-							tabindex="0"
-							:aria-label="`Stage d${dieSize} ${traitSet.name}`"
-							@click.stop="
-								submode === 'play'
-									? emit('addDieToRoller', {
-											size: dieSize,
-											qty: 1,
-											source: traitSet.name,
-										})
-									: null
-							"
+							:role="submode === 'play' ? 'button' : undefined"
+							:tabindex="submode === 'play' ? 0 : undefined"
+							:aria-label="submode === 'play' ? `Stage d${dieSize} ${traitSet.name}` : undefined"
+							@click="onHeaderDiePlayActivate($event, dieSize)"
+							@keydown.enter="onHeaderDiePlayActivate($event, dieSize)"
+							@keydown.space="onHeaderDiePlayActivate($event, dieSize)"
 						></span>
 					</span>
 					<div
 						class="trait-set-header-counter"
-						v-if="headerTop && traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter')"
+						v-if="
+							headerTop &&
+							traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter') &&
+							getCounterLabel(traitSet).length > 0
+						"
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
@@ -400,7 +429,7 @@ watch(rootEl, (el) => {
 					</option>
 				</select>
 				<button
-					v-if="!(traitSet.traits && traitSet.traits.length) && (submode === 'edit' || isCanvasSetActive(s))"
+					v-if="isSetTrulyEmpty && (submode === 'edit' || isCanvasSetActive(s))"
 					type="button"
 					class="sheet-header-settings-btn set-header-action-btn is-danger"
 					title="Delete set"
@@ -469,7 +498,7 @@ watch(rootEl, (el) => {
 						</option>
 					</select>
 					<button
-						v-if="!(traitSet.traits && traitSet.traits.length) && (submode === 'edit' || isCanvasSetActive(s))"
+						v-if="isSetTrulyEmpty && (submode === 'edit' || isCanvasSetActive(s))"
 						type="button"
 						class="sheet-header-settings-btn set-header-action-btn is-danger"
 						title="Delete set"
@@ -625,18 +654,16 @@ watch(rootEl, (el) => {
 						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die' && ratingDice(getRating(traitSet)).length > 0"
 						class="trait-set-header-rating diecon-wrapper"
 						v-html="renderDieValue((getRating(traitSet)?.value?.[0] as number) || 8, true)"
-						role="button"
-						tabindex="0"
-						:aria-label="`Stage d${(getRating(traitSet)?.value?.[0] as number) || 8} ${traitSet.name}`"
-						@click.stop="
+						:role="submode === 'play' ? 'button' : undefined"
+						:tabindex="submode === 'play' ? 0 : undefined"
+						:aria-label="
 							submode === 'play'
-								? emit('addDieToRoller', {
-										size: (getRating(traitSet)?.value?.[0] as number) || 8,
-										qty: 1,
-										source: traitSet.name,
-									})
-								: null
+								? `Stage d${(getRating(traitSet)?.value?.[0] as number) || 8} ${traitSet.name}`
+								: undefined
 						"
+						@click="onHeaderDiePlayActivate($event, (getRating(traitSet)?.value?.[0] as number) || 8)"
+						@keydown.enter="onHeaderDiePlayActivate($event, (getRating(traitSet)?.value?.[0] as number) || 8)"
+						@keydown.space="onHeaderDiePlayActivate($event, (getRating(traitSet)?.value?.[0] as number) || 8)"
 					></span>
 					<span
 						v-else-if="
@@ -652,23 +679,21 @@ watch(rootEl, (el) => {
 							:key="'btm-hdr-d-' + dIdx"
 							class="trait-set-header-rating diecon-wrapper"
 							v-html="renderDieValue(dieSize, true)"
-							role="button"
-							tabindex="0"
-							:aria-label="`Stage d${dieSize} ${traitSet.name}`"
-							@click.stop="
-								submode === 'play'
-									? emit('addDieToRoller', {
-											size: dieSize,
-											qty: 1,
-											source: traitSet.name,
-										})
-									: null
-							"
+							:role="submode === 'play' ? 'button' : undefined"
+							:tabindex="submode === 'play' ? 0 : undefined"
+							:aria-label="submode === 'play' ? `Stage d${dieSize} ${traitSet.name}` : undefined"
+							@click="onHeaderDiePlayActivate($event, dieSize)"
+							@keydown.enter="onHeaderDiePlayActivate($event, dieSize)"
+							@keydown.space="onHeaderDiePlayActivate($event, dieSize)"
 						></span>
 					</span>
 					<div
 						class="trait-set-header-counter"
-						v-if="headerTop && traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter')"
+						v-if="
+							headerTop &&
+							traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter') &&
+							getCounterLabel(traitSet).length > 0
+						"
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>

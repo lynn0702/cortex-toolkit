@@ -141,7 +141,7 @@ const ringSlots = computed<RingSlot[]>(() => {
 });
 const badgeLabel = computed(() => {
 	const st = ringBadgeTrait.value;
-	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Scale';
+	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Ring Die';
 });
 const badgeKeepCount = computed(() => {
 	const extra = ringBadgeTrait.value ? keepsExtraDice(ringBadgeTrait.value) : 1;

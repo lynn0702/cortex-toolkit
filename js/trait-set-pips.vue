@@ -88,7 +88,7 @@ function commitPipRowName(traitSetIndex: number, itemIndex: number, event: Event
 				class="pip-play-stepper"
 				v-if="submode === 'play' && !printBlank"
 				role="group"
-				:aria-label="(traitSet.name || 'XP') + ' Track'"
+				:aria-label="(traitSet.name || 'Pip') + ' Track'"
 			>
 				<button
 					type="button"
@@ -104,7 +104,7 @@ function commitPipRowName(traitSetIndex: number, itemIndex: number, event: Event
 					class="pip-play-stepper-count"
 					role="spinbutton"
 					tabindex="0"
-					:aria-label="(traitSet.name || 'XP') + ' Track'"
+					:aria-label="(traitSet.name || 'Pip') + ' Track'"
 					:aria-valuemin="0"
 					:aria-valuemax="getPipTrack(traitSet).count"
 					:aria-valuenow="getPipTrack(traitSet).filled"

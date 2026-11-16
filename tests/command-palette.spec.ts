@@ -211,6 +211,10 @@ describe('CommandPalette', () => {
 		await input.setValue('');
 		await runAxeAudit(wrapper.element as HTMLElement);
 
+		await input.setValue('Export Character JSON');
+		await input.trigger('keydown', { key: 'Enter' });
+		expect(wrapper.emitted('exportCharacter')?.[0]?.[0]).toBe('char-1');
+
 		wrapper.unmount();
 	});
 });

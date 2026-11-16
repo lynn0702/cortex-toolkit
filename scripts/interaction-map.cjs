@@ -354,7 +354,7 @@ function buildEdges() {
 
 	// --- Create Mode: Canvas <-> StudioPanel Inspectors ---
 	add('create_canvas', 'create_sheet_tab', 1, ['mobileTouch'], 'Tap .sheet-header-meta-box (when at top of sheet)');
-	add('create_canvas', 'create_set_inspector', 1, ALL_PROFILES, 'Click/tap .trait-set-header-inner[role="button"]');
+	add('create_canvas', 'create_set_inspector', 1, ALL_PROFILES, 'Click/tap .set-header-settings-btn');
 	add('create_canvas', 'create_trait_inspector', 1, ALL_PROFILES, 'Click/tap .trait-title-btn');
 	add('create_canvas', 'create_inline_presets', 1, ALL_PROFILES, 'Click/tap .btn-presets-toggle ("Presets")');
 
@@ -946,13 +946,13 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 
 		// J03: Inspect Set A -> Switch to Set B on sheet canvas
 		await measureJourney('J03', 'Create Canvas -> Inspect Set A -> Inspect Set B', isMobile ? 3 : 2, async (act) => {
-			const headers = page.locator('.trait-set-header-inner[role="button"]');
-			await act.click(headers.nth(0), 'Inspect Trait Set 1');
+			const settingsBtns = page.locator('.set-header-settings-btn');
+			await act.click(settingsBtns.nth(0), 'Inspect Trait Set 1');
 			await page.waitForSelector('.studio-panel input[name="traitSetName"]', { timeout: 5000 });
 			if (isMobile) {
 				await act.click('button[aria-label="Collapse panel"]', 'Collapse mobile StudioPanel overlay');
 			}
-			await act.click(headers.nth(1), 'Inspect Trait Set 2');
+			await act.click(settingsBtns.nth(1), 'Inspect Trait Set 2');
 			await page.waitForSelector('.studio-panel input[name="traitSetName"]', { timeout: 5000 });
 		});
 
@@ -1189,7 +1189,7 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			}
 			await page.waitForSelector('dialog.modal-style-gallery[open]', { timeout: 5000 });
 			await act.click(
-				page.locator('dialog.modal-style-gallery[open] button', { hasText: 'Add Set' }),
+				page.locator('dialog.modal-style-gallery[open] button.preset-card-action'),
 				'Add first Play preset set to pillar',
 			);
 		});

@@ -313,6 +313,25 @@ export function resolvePlotPoints(curiosity: unknown): number {
 	return Math.max(0, Math.floor(Number(rec.plotPoints) || 0));
 }
 
+/** Resolve custom currency/Plot Point short label from view labels or plotPoints trait. */
+export function resolveCurrencyLabel(entity: unknown): string {
+	if (!entity || typeof entity !== 'object') return 'PP';
+	const viewPp = (getView(entity)?.labels as Record<string, unknown> | undefined)?.pp;
+	if (typeof viewPp === 'string' && viewPp.trim().length) return viewPp.trim();
+	const sets = (entity as { traitSets?: unknown[] }).traitSets;
+	if (Array.isArray(sets)) {
+		const nameSet = sets.find((s) => isNameSet(s)) as
+			{ traits?: Array<{ name?: unknown; label?: unknown }> } | undefined;
+		const ppTrait = Array.isArray(nameSet?.traits)
+			? nameSet.traits.find((t) => t && typeof t === 'object' && t.name === 'plotPoints')
+			: undefined;
+		if (typeof ppTrait?.label === 'string' && ppTrait.label.trim().length) {
+			return ppTrait.label.trim();
+		}
+	}
+	return 'PP';
+}
+
 /** Resolve Plot Point delta (`ppDelta`) on a node or its ancestor chain. */
 export function resolvePpDelta(node: unknown, ancestors: unknown[] = []): number {
 	const chain: Array<unknown> = [node, ...(Array.isArray(ancestors) ? ancestors : [])];

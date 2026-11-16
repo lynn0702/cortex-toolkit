@@ -44,6 +44,7 @@ import {
 	getView,
 	getTemplateTitle,
 	hasPlotPoints,
+	resolveCurrencyLabel,
 	resolvePlotPoints,
 	getCuriosityGame,
 	getCuriosityThumbnailUrl,
@@ -246,11 +247,7 @@ const activePlayPlotPoints = computed(() => {
 });
 
 function resolveEntityPpBaseLabel(entity: any): string {
-	if (!entity) return 'PP';
-	const viewPp = (getView(entity)?.labels as Record<string, unknown> | undefined)?.pp;
-	if (typeof viewPp === 'string' && viewPp.trim().length) return viewPp.trim();
-	const custom = characterCurioFunctions.getNameTrait(entity, 'plotPoints')?.label;
-	return typeof custom === 'string' && custom.trim().length ? custom.trim() : 'PP';
+	return resolveCurrencyLabel(entity);
 }
 
 const activePlayPlotPointsLabel = computed(() => {
@@ -2814,6 +2811,7 @@ defineExpose({
 		@addCharacter="isAddCharacterModalOpen = true"
 		@saveSession="saveLocalData"
 		@openSheetProperties="openSheetPropertiesFromHeader"
+		@exportCharacter="character && exportCharacter(character.id)"
 	/>
 
 	<!-- PLAY SHELL: STUDIO PANEL (INSPECTOR + ROLLER) + SHEET VIEWPORT -->
@@ -3229,6 +3227,7 @@ defineExpose({
 		@selectElement="selectElement"
 		@navigate="setMode"
 		@loadCharacter="loadCharacter"
+		@exportCharacter="exportCharacter"
 		@toggleTheme="toggleDarkMode"
 	/>
 

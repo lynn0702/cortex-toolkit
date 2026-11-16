@@ -995,15 +995,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const endWord = computed({
 		get: () => {
 			const view = getView(traitSet.value);
-			if (view && typeof view.endWord === 'string') return view.endWord;
 			if (view && view.labels && typeof view.labels.out === 'string') return view.labels.out;
+			if (view && typeof view.endWord === 'string') return view.endWord;
 			return 'OUT';
 		},
 		set: (val: string) => {
-			setCustomProperty('endWord', val);
+			const str = typeof val === 'string' ? val : '';
+			setCustomProperty('endWord', str);
 			const view = ensureView(traitSet.value);
 			if (!view.labels) view.labels = {};
-			view.labels.out = val;
+			view.labels.out = str;
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
@@ -1454,19 +1455,19 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const trackLabel = computed({
 		get: () => {
 			const labels = getView(traitSet.value)?.labels;
-			if (labels && typeof labels.track === 'string' && labels.track.length) return labels.track;
+			if (labels && typeof labels.track === 'string') return labels.track;
 			return characterCurioFunctions.getTrackLabel(traitSet.value);
 		},
 		set: (val: string) => {
 			const view = ensureView(traitSet.value);
 			const prev = getView(traitSet.value)?.labels?.track ?? characterCurioFunctions.getTrackLabel(traitSet.value);
 			if (!view.labels || typeof view.labels !== 'object') view.labels = {};
-			if (typeof val === 'string' && val.length) view.labels.track = val;
+			if (typeof val === 'string') view.labels.track = val;
 			else delete view.labels.track;
 			// Keep track companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
-			const next = typeof val === 'string' && val.length ? val : characterCurioFunctions.getTrackLabel(traitSet.value);
-			if (next !== prev && Array.isArray((traitSet.value as any)?.traits)) {
+			const next = typeof val === 'string' ? val : '';
+			if (prev.length > 0 && next.length > 0 && next !== prev && Array.isArray((traitSet.value as any)?.traits)) {
 				(traitSet.value as any).traits.forEach((tr: any) => {
 					if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
 					const hit = tr.traits.findIndex((st: any) => st && typeof st === 'object' && st.name === prev);
@@ -1505,10 +1506,39 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const counterLabel = computed({
-		get: () => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP',
+		get: () => {
+			const v = getView(traitSet.value);
+			const fromLabels = (v?.labels as Record<string, unknown> | undefined)?.counter;
+			if (typeof fromLabels === 'string') return fromLabels;
+			if (typeof v?.counterLabel === 'string') return v.counterLabel;
+			if (typeof traitSet.value?.counterLabel === 'string') return traitSet.value.counterLabel;
+			return '';
+		},
 		set: (val: string) => {
-			setProperty('counterLabel', val);
-			setCustomProperty('counterLabel', val);
+			const view = ensureView(traitSet.value);
+			const str = typeof val === 'string' ? val : '';
+			if (!view.labels || typeof view.labels !== 'object') view.labels = {};
+			if (str.length > 0) view.labels.counter = str;
+			else delete view.labels.counter;
+			delete view.counterLabel;
+			if (traitSet.value && typeof traitSet.value === 'object') {
+				delete (traitSet.value as any).counterLabel;
+			}
+			updateCharacter(props.character);
+		},
+	});
+
+	const ringNoun = computed({
+		get: () => {
+			const v = getView(traitSet.value)?.ringNoun;
+			return typeof v === 'string' ? v : '';
+		},
+		set: (val: string) => {
+			const view = ensureView(traitSet.value);
+			const trimmed = typeof val === 'string' ? val.trim() : '';
+			if (trimmed.length) view.ringNoun = trimmed;
+			else delete view.ringNoun;
+			updateCharacter(props.character);
 		},
 	});
 
@@ -1518,10 +1548,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (rating && rating.type === 'Pip' && Array.isArray(rating.value)) {
 				return rating.value.length;
 			}
-			return 25;
+			return 5;
 		},
 		set: (val: number) => {
-			setPipTrack(Math.max(1, parseInt(String(val), 10) || 25), pipsFilled.value);
+			setPipTrack(Math.max(1, parseInt(String(val), 10) || 5), pipsFilled.value);
 		},
 	});
 
@@ -1970,12 +2000,21 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function promptDeleteTraitSet() {
 		if (isName.value) return;
-		const hasPopulatedTraits = (traitSet.value?.traits || []).some(
+		const setNode = traitSet.value;
+		const hasPopulatedTraits = (setNode?.traits || []).some(
 			(t: any) =>
 				(typeof t?.name === 'string' && t.name.trim().length > 0) ||
 				(typeof t?.description === 'string' && t.description.trim().length > 0),
 		);
-		if (!hasPopulatedTraits) {
+		const setR = getRating(setNode);
+		const hasSetRating = Boolean(
+			setR &&
+			(ratingDice(setR).length > 0 ||
+				(setR.type === 'Pip' && Array.isArray(setR.value) && setR.value.length > 0) ||
+				setR.type === 'Counter'),
+		);
+		const hasSetMediaOrRef = Boolean(frameImageUrl.value || imageURL.value || setNode?.ref);
+		if (!hasPopulatedTraits && !hasSetRating && !hasSetMediaOrRef) {
 			confirmDeleteTraitSet();
 			return;
 		}
@@ -2045,9 +2084,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// Inputs bind :value/@change (and placeholder) to it.
 	function styleLabel(key: string) {
 		const labels = getView(traitSet.value)?.labels;
-		if (labels && labels[key] !== undefined && labels[key] !== null && String(labels[key]).length) {
+		if (labels && typeof labels[key] === 'string') {
 			return labels[key];
 		}
+		return characterCurioFunctions.labelDefaultForStyle(styleBody.value, key);
+	}
+
+	function styleLabelPlaceholder(key: string) {
 		return characterCurioFunctions.labelDefaultForStyle(styleBody.value, key);
 	}
 
@@ -2055,18 +2098,27 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
 		ctk.labels ??= {};
-		ctk.labels[key] = value;
+		ctk.labels[key] = typeof value === 'string' ? value : '';
 
 		updateCharacter(props.character);
 	}
 
 	// Labels group content: style-region headings, nouns, stress label, or
-	// hinder sentence. The group hides when nothing in it applies, so no
+	// counter column. The group hides when nothing in it applies, so no
 	// editor section can render empty.
 	const hasLabelContent = computed(() => {
 		const body = styleBody.value;
-		if (body === 'subtrait-columns' || body === 'dice-count') return true;
-		if (hasTrackPart.value) return true;
+		if (
+			body === 'subtrait-columns' ||
+			body === 'dice-count' ||
+			body === 'three-column-table' ||
+			body === 'paired-slots'
+		) {
+			return true;
+		}
+		if (hasCounterTrait.value || hasTrackPart.value || traitArrayMode.value === 'ring' || Boolean(ringNoun.value)) {
+			return true;
+		}
 		return body !== 'pips' && body !== 'name';
 	});
 
@@ -2324,6 +2376,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		ratingDisplay,
 		labelPosition,
 		counterLabel,
+		ringNoun,
 		pipCount,
 		pipsPerRow,
 		pipsConnected,
@@ -2383,6 +2436,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		resetRingPlacement,
 		setCustomProperty,
 		styleLabel,
+		styleLabelPlaceholder,
 		setStyleLabel,
 		hasLabelContent,
 		setImageConfig,

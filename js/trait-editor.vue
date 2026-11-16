@@ -259,8 +259,15 @@ const isListStyle = computed(() => {
 });
 
 const hasSfxChildren = computed(() => characterCurioFunctions.blockChildren(trait.value, traitSet.value).length > 0);
+const hasBadge = computed(() => Boolean((getView(trait.value) as any)?.badge));
 
-const counterLabel = computed(() => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP');
+const counterLabel = computed(() => {
+	const fromLabels = (getView(traitSet.value)?.labels as Record<string, unknown> | undefined)?.counter;
+	if (typeof fromLabels === 'string' && fromLabels.length) return fromLabels;
+	const legacy = getView(traitSet.value)?.counterLabel ?? traitSet.value?.counterLabel;
+	if (typeof legacy === 'string' && legacy.length) return legacy;
+	return 'Counter';
+});
 
 const counterValue = computed({
 	get() {
@@ -837,20 +844,20 @@ function findThreeColEffectChild(): any {
 
 const tableCol1Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
-	if (labels && labels.col1) return labels.col1;
-	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col1') || 'TALENT';
+	if (labels && typeof labels.col1 === 'string') return labels.col1;
+	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col1') || 'ITEM';
 });
 
 const tableCol2Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
-	if (labels && labels.col2) return labels.col2;
-	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col2') || 'ACTIVATION';
+	if (labels && typeof labels.col2 === 'string') return labels.col2;
+	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col2') || 'TRIGGER';
 });
 
 const tableCol3Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
-	if (labels && labels.col3) return labels.col3;
-	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col3') || 'EFFECT';
+	if (labels && typeof labels.col3 === 'string') return labels.col3;
+	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col3') || 'DETAIL';
 });
 
 const tableCol3Text = computed({
@@ -938,7 +945,9 @@ const isOut = computed(() => isOutDie(trait.value, ancestorFallbacks.value));
 
 const outLabel = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
-	if (labels && typeof labels.out === 'string' && labels.out.length) return labels.out;
+	if (labels && typeof labels.out === 'string') return labels.out;
+	const endWord = getView(traitSet.value)?.endWord;
+	if (typeof endWord === 'string') return endWord;
 	return 'OUT';
 });
 
@@ -1750,7 +1759,7 @@ const hasAdvancedTraitSettings = computed(() =>
 		traitPpDelta.value !== 0 ||
 		isCustomTraitRange.value ||
 		Boolean((trait.value?.rating as any)?.out === true) ||
-		(hasSfxChildren.value && Boolean((getView(trait.value) as any)?.badge)),
+		hasBadge.value,
 	),
 );
 </script>
@@ -2603,7 +2612,7 @@ const hasAdvancedTraitSettings = computed(() =>
 						</div>
 
 						<!-- BADGE -->
-						<div class="editor-field" v-if="hasSfxChildren">
+						<div class="editor-field" v-if="hasSfxChildren || hasBadge">
 							<div class="editor-label">Badge</div>
 							<div class="editor-row-inline flex-wrap mb-sm">
 								<div class="flex-1 min-w-8rem">
@@ -2650,7 +2659,7 @@ const hasAdvancedTraitSettings = computed(() =>
 									/>
 								</div>
 							</div>
-							<div class="mb-sm">
+							<div class="mb-sm" v-if="hasSfxChildren">
 								<label class="editor-sub-label">Prefix</label>
 								<input
 									type="text"

@@ -702,7 +702,7 @@
 
 .trait.is-selected,
 .trait.selected {
-	outline: 2px solid var(--color-interactive, #0284c7);
+	outline: 2px solid var(--color-interactive);
 
 	outline-offset: 2px;
 
@@ -710,7 +710,7 @@
 }
 
 .trait-set.is-selected {
-	box-shadow: 0 0 0 2px var(--color-interactive, #0284c7);
+	box-shadow: 0 0 0 2px var(--color-interactive);
 }
 
 @media (prefers-reduced-motion: reduce) {

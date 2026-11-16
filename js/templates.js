@@ -16676,6 +16676,9 @@ const characterCurioLibraryTemplates = [
 							subtraits: false,
 						},
 						outIndicator: true,
+						labels: {
+							out: '💥 OUT',
+						},
 						ratingLadder: [6, 8, 10, 12],
 						place: {
 							left: '50%',

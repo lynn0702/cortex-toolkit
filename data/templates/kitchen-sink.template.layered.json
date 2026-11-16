@@ -727,6 +727,9 @@
 						"subtraits": false
 					},
 					"outIndicator": true,
+					"labels": {
+						"out": "💥 OUT"
+					},
 					"ratingLadder": [
 						6,
 						8,

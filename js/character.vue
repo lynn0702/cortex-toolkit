@@ -79,6 +79,7 @@ const inlineCustomPresets = ref<SetPresetEntry[]>([]);
 const canvasInlineTrait = ref<[number, number] | null>(null);
 const canvasInlineSet = ref<number | null>(null);
 const canvasInlinePartSet = ref<number | null>(null);
+const canvasInlinePartTrait = ref<[number, number] | null>(null);
 
 function requestCanvasFocus(targetEl?: HTMLElement | null) {
 	if (Array.isArray(props.editing) && props.editing.length > 0) {
@@ -100,6 +101,12 @@ function requestCanvasFocus(targetEl?: HTMLElement | null) {
 function setCanvasInlineTrait(target: [number, number] | null) {
 	canvasInlineTrait.value = target;
 	if (target) {
+		if (
+			canvasInlinePartTrait.value &&
+			(canvasInlinePartTrait.value[0] !== target[0] || canvasInlinePartTrait.value[1] !== target[1])
+		) {
+			canvasInlinePartTrait.value = null;
+		}
 		canvasInlineSet.value = null;
 		showInlineAddSet.value = false;
 		isAddingPillar.value = false;
@@ -112,6 +119,8 @@ function setCanvasInlineTrait(target: [number, number] | null) {
 				requestCanvasFocus(el);
 			});
 		}
+	} else {
+		canvasInlinePartTrait.value = null;
 	}
 }
 
@@ -119,6 +128,8 @@ function setCanvasInlineSet(setIdx: number | null) {
 	canvasInlineSet.value = setIdx;
 	if (setIdx !== null) {
 		canvasInlineTrait.value = null;
+		canvasInlinePartTrait.value = null;
+		canvasInlinePartSet.value = null;
 		showInlineAddSet.value = false;
 		isAddingPillar.value = false;
 		if (props.submode === 'edit') {
@@ -133,6 +144,7 @@ function setCanvasInlineSet(setIdx: number | null) {
 function setCanvasInlinePartSet(setIdx: number | null) {
 	canvasInlinePartSet.value = setIdx;
 	if (setIdx !== null) {
+		canvasInlinePartTrait.value = null;
 		showInlineAddSet.value = false;
 		isAddingPillar.value = false;
 		if (props.submode === 'edit') {
@@ -141,13 +153,34 @@ function setCanvasInlinePartSet(setIdx: number | null) {
 	}
 }
 
+function setCanvasInlinePartTrait(target: [number, number] | null, triggerEl?: HTMLElement | null) {
+	canvasInlinePartTrait.value = target;
+	if (target) {
+		if (
+			canvasInlineTrait.value &&
+			(canvasInlineTrait.value[0] !== target[0] || canvasInlineTrait.value[1] !== target[1])
+		) {
+			canvasInlineTrait.value = null;
+		}
+		canvasInlineSet.value = null;
+		canvasInlinePartSet.value = null;
+		showInlineAddSet.value = false;
+		isAddingPillar.value = false;
+		if (props.submode === 'edit') {
+			requestCanvasFocus(triggerEl);
+		}
+	}
+}
+
 provide('curioCanvasInline', {
 	activeTrait: canvasInlineTrait,
 	activeSet: canvasInlineSet,
 	activePartSet: canvasInlinePartSet,
+	activePartTrait: canvasInlinePartTrait,
 	setActiveTrait: setCanvasInlineTrait,
 	setActiveSet: setCanvasInlineSet,
 	setActivePartSet: setCanvasInlinePartSet,
+	setActivePartTrait: setCanvasInlinePartTrait,
 	requestCanvasFocus,
 });
 
@@ -158,6 +191,7 @@ watch(
 			canvasInlineTrait.value = null;
 			canvasInlineSet.value = null;
 			canvasInlinePartSet.value = null;
+			canvasInlinePartTrait.value = null;
 			showInlineAddSet.value = false;
 			isAddingPillar.value = false;
 		}
@@ -170,6 +204,7 @@ watch(
 		canvasInlineTrait.value = null;
 		canvasInlineSet.value = null;
 		canvasInlinePartSet.value = null;
+		canvasInlinePartTrait.value = null;
 		isAddingPillar.value = false;
 	},
 );
@@ -179,6 +214,7 @@ function toggleInlineAdd(page = 1, triggerEl?: HTMLElement | null) {
 	inlineAddPage.value = page;
 	inlineCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
 	canvasInlinePartSet.value = null;
+	canvasInlinePartTrait.value = null;
 	isAddingPillar.value = false;
 	showInlineAddSet.value = !wasOpenHere;
 	if (!wasOpenHere && props.submode === 'edit') {
@@ -553,6 +589,7 @@ function openPlayPresetPicker(pillarKey?: string) {
 function startAddPillar(triggerEl?: HTMLElement | null) {
 	showInlineAddSet.value = false;
 	canvasInlinePartSet.value = null;
+	canvasInlinePartTrait.value = null;
 	isAddingPillar.value = true;
 	newPillarName.value = '';
 	if (props.submode === 'edit') {

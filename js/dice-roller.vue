@@ -730,7 +730,7 @@ function hinderSuggestion(sug: FlattenedTraitSuggestion) {
 	const alt = sug.altRoll;
 	const dieSize = alt?.die || 4;
 	const ppDelta = alt ? alt.ppDelta : 1;
-	const altTag = alt?.label || 'Hinder';
+	const altTag = alt?.label || 'Alt';
 	const sourceLabel = `${sug.name} (${altTag})`;
 	addWordToPool(activePool.value, currentPoolId.value, sourceLabel, 'hinder');
 	addDiceToTargetPool(
@@ -1986,7 +1986,7 @@ defineExpose({
 								v-if="sug.canHinder"
 								type="button"
 								class="presearch-hinder-btn"
-								:aria-label="`${sug.altRoll?.label || 'Hinder'} ${sug.name} as d${sug.altRoll?.die || 4} for ${sug.altRoll ? (sug.altRoll.ppDelta > 0 ? `+${sug.altRoll.ppDelta}` : sug.altRoll.ppDelta) : '+1'} PP`"
+								:aria-label="`${sug.altRoll?.label || 'Alt'} ${sug.name} as d${sug.altRoll?.die || 4} for ${sug.altRoll ? (sug.altRoll.ppDelta > 0 ? `+${sug.altRoll.ppDelta}` : sug.altRoll.ppDelta) : '+1'} PP`"
 								@click.stop="hinderSuggestion(sug)"
 							>
 								{{

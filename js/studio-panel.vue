@@ -197,7 +197,7 @@ const ringBadgeTrait = computed(() => {
 
 const ringBadgeLabel = computed(() => {
 	const st = ringBadgeTrait.value;
-	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Scale';
+	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Ring Die';
 });
 
 const scaleDieValue = computed<number>(() => {

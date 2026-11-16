@@ -11,7 +11,7 @@ Never build from asserted constants, memory, or invented schema keys. Measure ev
 ## What to verify before editing
 
 1. **Model and `view` keys**: Read `js/model.ts`, `js/sheet-grid.ts`, and `js/frame-geometry.ts` (not prose summaries) to confirm live interfaces (`ViewBag`, `Rating`, `Portrait`, `PlaceRect`, `PartCell`, `FrameConfig`) and `KNOWN_PARTS`.
-2. **Schema & validation constraints**: Check `schema/0.1/*.schema.json` and `scripts/validate.js` for required fields, allowed patterns (for example, `tags` must match `/^[A-Za-z0-9-./]+$/`), and retired keys/body IDs that fail validation.
+2. **Schema & validation constraints**: Check `schema/0.2/*.schema.json` and `scripts/validate.js` for required fields, allowed patterns (for example, `tags` must match `/^[A-Za-z0-9-./]+$/`), and retired keys/body IDs that fail validation.
 3. **Reference sheet example**: Inspect `data/templates/Dreamer_Architect.curio.json` when verifying current layered sheet structure in practice.
 4. **Icons and fonts**: Before using any `fa-*` class in a template or component, check `scripts/generate-fa-subset.py` and `css/fontawesome.css` so only included subset icons are referenced (or add the icon to the subset script and rebuild). Check `css/fonts.css` for self-hosted font families.
 5. **Layout styles and tokens**: Search `css/*.css` (excluding built bundles) and `js/*.vue` to verify existing `--*` custom properties, class names, and breakpoints before adding CSS.

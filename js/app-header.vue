@@ -27,6 +27,7 @@ const emit = defineEmits<{
 	(e: 'addCharacter'): void;
 	(e: 'saveSession'): void;
 	(e: 'openSheetProperties'): void;
+	(e: 'exportCharacter'): void;
 }>();
 
 const supportsNativePopover =
@@ -298,6 +299,11 @@ onUnmounted(() => {
 						>
 							<i class="fas fa-print" aria-hidden="true"></i>
 							<span>Print</span>
+						</button>
+
+						<button type="button" class="mobile-sheet-action-btn" @click="onAction(() => emit('exportCharacter'))">
+							<i class="fas fa-download" aria-hidden="true"></i>
+							<span>Export JSON</span>
 						</button>
 
 						<button

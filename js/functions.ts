@@ -465,7 +465,7 @@ export const characterCurioFunctions = {
 		if (!traitSetArg) return 'Track';
 		const view = getView(traitSetArg);
 		const labels = view?.labels;
-		if (labels && typeof labels.track === 'string' && labels.track.length) return labels.track;
+		if (labels && typeof labels.track === 'string') return labels.track;
 		return 'Track';
 	},
 
@@ -611,10 +611,10 @@ export const characterCurioFunctions = {
 	// Custom labels live in custom.characterCurio.labels under the same keys;
 	// anything absent here (or unset there) renders as ''.
 	defaultTraitSetLabels: {
-		'subtrait-columns': { left: 'SKILL', right: 'SPECIALTIES' },
-		'three-column-table': { col1: 'TALENT', col2: 'ACTIVATION', col3: 'EFFECT' },
+		'subtrait-columns': { left: 'TRAIT', right: 'SUBTRAITS' },
+		'three-column-table': { col1: 'ITEM', col2: 'TRIGGER', col3: 'DETAIL' },
 		'dice-count': { rating: 'RATING', dice: '/ DICE' },
-		'paired-slots': { slot0: 'COMPLICATION', slot1: 'BONUS' },
+		'paired-slots': { slot0: 'LEFT', slot1: 'RIGHT' },
 	} as Record<string, Record<string, string>>,
 
 	labelDefaultForStyle: function (style: string | undefined, key: string) {
@@ -628,7 +628,7 @@ export const characterCurioFunctions = {
 
 	// Chrome words shared by every set body; settable via view.labels.*.
 	commonLabelDefaults: {
-		out: '💥 OUT',
+		out: 'OUT',
 	} as Record<string, string>,
 
 	// The name block is the first trait set — see model.isNameSet.

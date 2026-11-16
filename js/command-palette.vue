@@ -8,6 +8,7 @@ import {
 	isNameSet,
 	keepsExtraDice,
 	resolveAltRoll,
+	resolveCurrencyLabel,
 	resolveHitches,
 	resolvePpDelta,
 	getCuriosityGame,
@@ -59,6 +60,7 @@ const emit = defineEmits<{
 	(e: 'selectElement', selector: unknown[]): void;
 	(e: 'navigate', mode: string, submode: string | null): void;
 	(e: 'loadCharacter', id: string): void;
+	(e: 'exportCharacter', id: string): void;
 	(e: 'toggleTheme'): void;
 }>();
 
@@ -86,9 +88,12 @@ function normalizeTags(raw: unknown): string[] {
 	return raw.map((t) => String(t || '').trim()).filter((t) => t.length > 0);
 }
 
+const currencyLabel = computed(() => resolveCurrencyLabel(props.character));
+
 function formatAltNotation(alt: AltRollOption): string {
+	const cur = currencyLabel.value;
 	const sign = alt.ppDelta > 0 ? '+' : '';
-	const deltaStr = alt.ppDelta === 1 ? '+ PP' : `${sign}${alt.ppDelta} PP`;
+	const deltaStr = alt.ppDelta === 1 ? `+ ${cur}` : `${sign}${alt.ppDelta} ${cur}`;
 	return `d${alt.die} ${deltaStr}`;
 }
 
@@ -312,6 +317,18 @@ const allItems = computed<PaletteItem[]>(() => {
 		if (props.mode !== 'character' || props.submode !== 'print') {
 			items.push(makeAction('print', 'fa-print', 'Open Print View', 'Preview printable sheet', ['mode', 'print']));
 		}
+		if (ch.id) {
+			items.push(
+				makeAction('export-json', 'fa-download', 'Export Character JSON', 'Download .curio.json file', [
+					'export',
+					'download',
+					'json',
+					'save',
+					'backup',
+					'curio',
+				]),
+			);
+		}
 	}
 	if (props.mode !== 'roster') {
 		items.push(
@@ -490,6 +507,7 @@ function activateItem(item: PaletteItem, keepOpen = false) {
 		if (item.actionId === 'play') emit('navigate', 'character', 'play');
 		else if (item.actionId === 'edit') emit('navigate', 'character', 'edit');
 		else if (item.actionId === 'print') emit('navigate', 'character', 'print');
+		else if (item.actionId === 'export-json' && props.character?.id) emit('exportCharacter', props.character.id);
 		else if (item.actionId === 'roster') emit('navigate', 'roster', null);
 		else if (item.actionId === 'toggle-pool-side') emit('togglePoolSide');
 		else if (item.actionId === 'roll-pool') emit('rollPool');
@@ -700,7 +718,7 @@ function handleKeydown(event: KeyboardEvent) {
 						class="palette-action-btn"
 						@click.stop="stageItem(activeItem, false, true)"
 					>
-						<i class="fas fa-dice" aria-hidden="true"></i> {{ activeItem.altRoll?.label || 'Hinder' }} d{{
+						<i class="fas fa-dice" aria-hidden="true"></i> {{ activeItem.altRoll?.label || 'Alt' }} d{{
 							activeItem.altRoll?.die || 4
 						}}
 					</button>

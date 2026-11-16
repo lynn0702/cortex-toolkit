@@ -6,12 +6,12 @@ description: >-
 
 # Vocabulary Check
 
-Check all new or edited JSON, schemas, templates, and example payloads against the live Character Curio data model (`js/model.ts`, `js/sheet-grid.ts`, `js/use-trait-set-editor.ts`, `schema/0.1/*.schema.json`, `scripts/validate.js`).
+Check all new or edited JSON, schemas, templates, and example payloads against the live Character Curio data model (`js/model.ts`, `js/sheet-grid.ts`, `js/use-trait-set-editor.ts`, `schema/0.2/*.schema.json`, `scripts/validate.js`).
 
 ## Branding and file conventions
 
 - **App & format identity**: `character-curio` / `"Character Curio"`; character files end in `.curio.json`; storage keys are `characterCurioData` and `characterCurioRollLog`.
-- **Schema references**: `https://characters.lynnjones.rocks/schema/0.1/...` or relative `../schema/0.1/character.schema.json`.
+- **Schema references**: `https://characters.lynnjones.rocks/schema/0.2/...` or relative `../schema/0.2/curiosity.schema.json`.
 - **External URLs & attribution**: `'cortex'` is used only for system attribution; DriveThruRPG image URLs stay verbatim; keep all code, JSON keys, and docs free of retired naming.
 - **Canonical reference character**: `data/templates/Dreamer_Architect.curio.json`.
 

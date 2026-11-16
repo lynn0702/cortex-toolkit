@@ -40,6 +40,7 @@ const {
 	headerAlign,
 	verticalAlign,
 	styleLabel,
+	styleLabelPlaceholder,
 	setStyleLabel,
 	hasLabelContent,
 	description,
@@ -48,6 +49,7 @@ const {
 	hasCounterTrait,
 	allowsTraitColumns,
 	traitColumns,
+	traitArrayMode,
 	needsDiceUI,
 	hasTrackPart,
 	trackLabel,
@@ -62,6 +64,7 @@ const {
 	ratingDisplay,
 	labelPosition,
 	counterLabel,
+	ringNoun,
 	restorableTraitNames,
 	restoreTrait,
 	setVisibility,
@@ -440,24 +443,6 @@ const selectedPillar = computed<string>({
 							<TagEditor v-model="tags" :input-id="'trait-set-tags-' + traitSetID" label="Tags" />
 						</div>
 
-						<!-- COUNTER COLUMN HEADER (shown when set has Counter traits) -->
-						<div class="editor-field" v-if="hasCounterTrait">
-							<div class="editor-label">Counter Column</div>
-							<div class="editor-row-inline mt-sm">
-								<label :for="'trait-set-' + traitSetID + '-counter-label'" class="editor-sub-label"
-									>Header Label:</label
-								>
-								<input
-									type="text"
-									:id="'trait-set-' + traitSetID + '-counter-label'"
-									name="counterLabel"
-									v-model="counterLabel"
-									placeholder="XP"
-									class="editor-input-short"
-								/>
-							</div>
-						</div>
-
 						<!-- RESTORE TEMPLATE TRAITS (D19) -->
 						<div class="editor-field" v-if="restorableTraitNames.length">
 							<div class="editor-label">Restore Removed Traits</div>
@@ -492,7 +477,7 @@ const selectedPillar = computed<string>({
 										name="subHeadingLeft"
 										:value="styleLabel('left')"
 										@change="setStyleLabel('left', targetValue($event))"
-										:placeholder="styleLabel('left')"
+										:placeholder="styleLabelPlaceholder('left')"
 									/>
 								</div>
 								<div class="flex-1">
@@ -503,7 +488,7 @@ const selectedPillar = computed<string>({
 										name="subHeadingRight"
 										:value="styleLabel('right')"
 										@change="setStyleLabel('right', targetValue($event))"
-										:placeholder="styleLabel('right')"
+										:placeholder="styleLabelPlaceholder('right')"
 									/>
 								</div>
 								<div class="flex-1">
@@ -516,7 +501,7 @@ const selectedPillar = computed<string>({
 										name="subHeadingCenter"
 										:value="styleLabel('center')"
 										@change="setStyleLabel('center', targetValue($event))"
-										:placeholder="styleLabel('center')"
+										:placeholder="styleLabelPlaceholder('center')"
 									/>
 								</div>
 							</div>
@@ -534,7 +519,7 @@ const selectedPillar = computed<string>({
 										name="diceCountRatingLabel"
 										:value="styleLabel('rating')"
 										@change="setStyleLabel('rating', targetValue($event))"
-										:placeholder="styleLabel('rating')"
+										:placeholder="styleLabelPlaceholder('rating')"
 									/>
 								</div>
 								<div class="flex-1">
@@ -545,7 +530,72 @@ const selectedPillar = computed<string>({
 										name="diceCountDiceLabel"
 										:value="styleLabel('dice')"
 										@change="setStyleLabel('dice', targetValue($event))"
-										:placeholder="styleLabel('dice')"
+										:placeholder="styleLabelPlaceholder('dice')"
+									/>
+								</div>
+							</div>
+						</div>
+						<div class="editor-field" v-if="styleBody === 'three-column-table'">
+							<div class="editor-label">Column Headings</div>
+							<div class="editor-row-inline mt-sm">
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-col1'" class="editor-sub-label">Column 1</label>
+									<input
+										type="text"
+										:id="'trait-set-' + traitSetID + '-col1'"
+										name="tableHeadingCol1"
+										:value="styleLabel('col1')"
+										@change="setStyleLabel('col1', targetValue($event))"
+										:placeholder="styleLabelPlaceholder('col1')"
+									/>
+								</div>
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-col2'" class="editor-sub-label">Column 2</label>
+									<input
+										type="text"
+										:id="'trait-set-' + traitSetID + '-col2'"
+										name="tableHeadingCol2"
+										:value="styleLabel('col2')"
+										@change="setStyleLabel('col2', targetValue($event))"
+										:placeholder="styleLabelPlaceholder('col2')"
+									/>
+								</div>
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-col3'" class="editor-sub-label">Column 3</label>
+									<input
+										type="text"
+										:id="'trait-set-' + traitSetID + '-col3'"
+										name="tableHeadingCol3"
+										:value="styleLabel('col3')"
+										@change="setStyleLabel('col3', targetValue($event))"
+										:placeholder="styleLabelPlaceholder('col3')"
+									/>
+								</div>
+							</div>
+						</div>
+						<div class="editor-field" v-if="styleBody === 'paired-slots'">
+							<div class="editor-label">Slot Headings</div>
+							<div class="editor-row-inline mt-sm">
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-slot0'" class="editor-sub-label">First Slot</label>
+									<input
+										type="text"
+										:id="'trait-set-' + traitSetID + '-slot0'"
+										name="pairedSlotLabel0"
+										:value="styleLabel('slot0')"
+										@change="setStyleLabel('slot0', targetValue($event))"
+										:placeholder="styleLabelPlaceholder('slot0')"
+									/>
+								</div>
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-slot1'" class="editor-sub-label">Second Slot</label>
+									<input
+										type="text"
+										:id="'trait-set-' + traitSetID + '-slot1'"
+										name="pairedSlotLabel1"
+										:value="styleLabel('slot1')"
+										@change="setStyleLabel('slot1', targetValue($event))"
+										:placeholder="styleLabelPlaceholder('slot1')"
 									/>
 								</div>
 							</div>
@@ -577,6 +627,17 @@ const selectedPillar = computed<string>({
 							</div>
 						</div>
 
+						<div class="editor-field" v-if="traitArrayMode === 'ring' || Boolean(ringNoun)">
+							<label :for="'trait-set-' + traitSetID + '-ring-noun'">Ring Die Noun</label>
+							<input
+								type="text"
+								:id="'trait-set-' + traitSetID + '-ring-noun'"
+								name="ringNoun"
+								v-model="ringNoun"
+								placeholder="Trait"
+							/>
+						</div>
+
 						<div class="editor-field" v-if="hasTrackPart">
 							<label :for="'trait-set-' + traitSetID + '-track-label-words'">Track Label</label>
 							<input
@@ -586,6 +647,24 @@ const selectedPillar = computed<string>({
 								v-model="trackLabel"
 								placeholder="Track"
 							/>
+						</div>
+
+						<!-- COUNTER COLUMN HEADER (shown when set has Counter traits) -->
+						<div class="editor-field" v-if="hasCounterTrait">
+							<div class="editor-label">Counter Column</div>
+							<div class="editor-row-inline mt-sm">
+								<label :for="'trait-set-' + traitSetID + '-counter-label'" class="editor-sub-label"
+									>Header Label:</label
+								>
+								<input
+									type="text"
+									:id="'trait-set-' + traitSetID + '-counter-label'"
+									name="counterLabel"
+									v-model="counterLabel"
+									placeholder="Count"
+									class="editor-input-short"
+								/>
+							</div>
 						</div>
 					</details>
 

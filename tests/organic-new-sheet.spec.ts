@@ -4,6 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import CharacterView from '../js/character.vue';
 import NameEditor from '../js/name-editor.vue';
+import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetEditor from '../js/trait-set-editor.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import JsonEditor from '../js/json-editor.vue';
@@ -897,5 +898,144 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(app.find('.toast-notification').exists()).toBe(false);
 		void vm;
 		app.unmount();
+	});
+
+	it('avoids hidden game defaults (blank Counter header, explicit blank labels, neutral defaults) and keeps per-trait + Part persistent', async () => {
+		const ch = reactive(freshBlankCharacter('slice-1a-defaults')) as any;
+		ch.traitSets.push({
+			name: 'Progress',
+			noun: 'Step',
+			plural: 'Steps',
+			view: { header: 'top', outIndicator: true, style: { header: 'default', body: 'default' } },
+			traits: [
+				{ name: 'Clock', rating: { type: 'Counter', value: [2], range: [0, 10] } },
+				{ name: 'Risk', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
+			],
+		});
+		ch.traitSets.push({
+			name: 'Branches',
+			noun: 'Branch',
+			view: { header: 'top', style: { header: 'default', body: 'subtrait-columns' } },
+			traits: [{ name: 'Craft', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }, traits: [] }],
+		});
+		ch.traitSets.push({
+			name: 'Pips',
+			view: { header: 'top', style: { header: 'default', body: 'pips' } },
+			traits: [],
+		});
+
+		const wrapper = mount(CharacterView, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				submode: 'edit',
+				editing: [],
+			},
+		});
+
+		// 1. Counter header is blank by default (never 'XP'); pips default to 5; subtrait-columns defaults to TRAIT / SUBTRAITS
+		expect(wrapper.find('[data-set-index="1"] .trait-set-header-counter').exists()).toBe(false);
+		expect(wrapper.findAll('[data-set-index="2"] .branch-head-col').map((n) => n.text().trim())).toEqual([
+			'TRAIT',
+			'SUBTRAITS',
+		]);
+		expect(wrapper.findAll('[data-set-index="3"] .pip-bubble')).toHaveLength(5);
+
+		// 2. Per-trait + Part stays visible in Edit mode even while set header is focused or rating bar is closed
+		await wrapper.find('[data-set-index="1"] .trait-set-header-inner').trigger('click');
+		expect(wrapper.find('input.trait-set-name-inline-input').exists()).toBe(true);
+		const partToggles = wrapper.findAll('[data-set-index="1"] .btn-trait-part-toggle');
+		expect(partToggles).toHaveLength(2);
+		expect(partToggles[0].attributes('aria-label')).toContain('Part');
+		expect((await axe.run(wrapper.element)).violations).toHaveLength(0);
+
+		// Toggling + Badge on a trait with no SFX reveals Badge editor (without Prefix) inside TraitEditor
+		await partToggles[0].trigger('click');
+		const badgeChip = wrapper
+			.findAll('[data-set-index="1"] [aria-label="Trait parts"] .organic-part-chip')
+			.find((c) => c.text().includes('Badge'))!;
+		await badgeChip.trigger('click');
+		expect(getView(ch.traitSets[1].traits[0])?.badge).toBeTruthy();
+
+		const traitEd = mount(TraitEditor, {
+			props: {
+				character: ch,
+				traitSetID: 1,
+				traitID: 0,
+				open: true,
+				submode: 'edit',
+			},
+		});
+		expect(traitEd.find('.editor-field .editor-label').exists()).toBe(true);
+		expect(traitEd.text()).toContain('Badge');
+		expect(traitEd.text()).not.toContain('Prefix');
+		traitEd.unmount();
+
+		// 3. TraitSetEditor stores counter label under view.labels.counter and clears labels to explicit ""
+		const setEd = mount(TraitSetEditor, {
+			props: { character: ch, traitSetID: 1, open: true },
+		});
+		const counterInput = setEd.find('input[name="counterLabel"]');
+		expect(counterInput.exists()).toBe(true);
+		expect((counterInput.element as HTMLInputElement).value).toBe('');
+		await counterInput.setValue('Marks');
+		await counterInput.trigger('change');
+		expect(getView(ch.traitSets[1])?.labels?.counter).toBe('Marks');
+		expect((ch.traitSets[1] as any).counterLabel).toBeUndefined();
+		await nextTick();
+		expect(wrapper.find('[data-set-index="1"] .trait-set-header-counter').text().trim()).toBe('Marks');
+
+		await counterInput.setValue('');
+		await counterInput.trigger('change');
+		await nextTick();
+		expect(getView(ch.traitSets[1])?.labels?.counter).toBeUndefined();
+		expect(wrapper.find('[data-set-index="1"] .trait-set-header-counter').exists()).toBe(false);
+		setEd.unmount();
+
+		const branchEd = mount(TraitSetEditor, {
+			props: { character: ch, traitSetID: 2, open: true },
+		});
+		const leftHeading = branchEd.find('input[name="subHeadingLeft"]');
+		await leftHeading.setValue('');
+		await leftHeading.trigger('change');
+		await nextTick();
+		expect(getView(ch.traitSets[2])?.labels?.left).toBe('');
+		expect(wrapper.findAll('[data-set-index="2"] .branch-head-col')[0].text().trim()).toBe('');
+		branchEd.unmount();
+
+		wrapper.unmount();
+	});
+
+	it('guards populated traitless sets from 1-click deletion and avoids nested interactive buttons on set-header dice in Edit mode', async () => {
+		const ch = freshBlankCharacter('slice-1b-header');
+		ch.traitSets.push({
+			name: 'Showcase Pool',
+			noun: 'Die',
+			rating: { type: 'Dice', value: [10, 10, 10] },
+			view: { header: 'top', style: { header: 'default', body: 'default' } },
+			traits: [],
+		} as any);
+
+		const blockWrap = mount(TraitSetBlock, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				traitSetID: 1,
+				submode: 'edit',
+				editing: [],
+			},
+		});
+
+		expect(blockWrap.find('button[aria-label="Delete set"]').exists()).toBe(false);
+		expect(blockWrap.findAll('.trait-set-header-inner [role="button"]')).toHaveLength(0);
+		expect((await axe.run(blockWrap.element)).violations).toHaveLength(0);
+		blockWrap.unmount();
+
+		const populatedEditor = mount(TraitSetEditor, {
+			props: { character: ch, traitSetID: 1, open: true },
+		});
+		await populatedEditor.find('button.editor-delete').trigger('click');
+		expect(populatedEditor.emitted('removeTraitSet')).toBeUndefined();
+		populatedEditor.unmount();
 	});
 });
