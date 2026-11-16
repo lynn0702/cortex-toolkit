@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, ref } from 'vue';
+import { computed, defineAsyncComponent, getCurrentInstance, nextTick, ref } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import {
 	getView,
@@ -21,8 +21,9 @@ import {
 import PortraitRing from './portrait-ring.vue';
 import TraitSetFrame from './trait-set-frame.vue';
 import ModalDialog from './modal-dialog.vue';
-import TraitSetMini from './trait-set-mini.vue';
 import { SHOWCASE_TEMPLATES, DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
+
+const TraitSetMini = defineAsyncComponent(() => import('./trait-set-mini.vue'));
 
 declare const characterCurioLibraryTemplates: any;
 

@@ -2,6 +2,7 @@ node_modules/
 .git/
 js/app.min.js
 js/app.min.js.*
+js/chunks/
 js/templates.bundle.js
 css/app.min.css
 js/model.generated.ts

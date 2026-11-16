@@ -76,6 +76,7 @@ watch(
 		await nextTick();
 		inputRef.value?.focus();
 	},
+	{ immediate: true },
 );
 
 const totalPoolCount = computed(() => (props.playerPoolCount || 0) + (props.oppositionPoolCount || 0));

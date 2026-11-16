@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, toRaw, watch } from 'vue';
+import { computed, defineAsyncComponent, nextTick, ref, toRaw, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import {
 	ensureView,
@@ -10,12 +10,13 @@ import {
 	resolveRating,
 	resolveSubtraitNoun,
 } from './model.ts';
-import TraitEditor from './trait-editor.vue';
-import TraitSetEditor from './trait-set-editor.vue';
-import NameEditor from './name-editor.vue';
 import DiceRoller from './dice-roller.vue';
-import JsonEditor from './json-editor.vue';
 import type { NamedPool } from './dice-pool.ts';
+
+const TraitEditor = defineAsyncComponent(() => import('./trait-editor.vue'));
+const TraitSetEditor = defineAsyncComponent(() => import('./trait-set-editor.vue'));
+const NameEditor = defineAsyncComponent(() => import('./name-editor.vue'));
+const JsonEditor = defineAsyncComponent(() => import('./json-editor.vue'));
 
 const props = withDefaults(
 	defineProps<{

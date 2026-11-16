@@ -2,6 +2,7 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { inferFontFamilyFromUrl, parseExternalFontUrl } from './font-url.ts';
+import { SELF_HOSTED_FONTS, isSelfHostedFont } from './self-hosted-fonts.ts';
 
 interface FontOption {
 	family: string;
@@ -10,7 +11,7 @@ interface FontOption {
 	externalUrl?: string;
 }
 
-const BUNDLED_SHEET_FONTS = ['Josefin Sans', 'Open Sans', 'Alegreya Sans SC'] as const;
+const BUNDLED_SHEET_FONTS = SELF_HOSTED_FONTS;
 
 const CURATED_GOOGLE_FONTS: ReadonlyArray<{ family: string; category: 'Sans' | 'Serif' | 'Slab' | 'Display' }> = [
 	{ family: 'Cinzel', category: 'Display' },
@@ -48,7 +49,9 @@ function ensureCatalogFontsLoaded() {
 	if (typeof document === 'undefined') return;
 	const id = 'gfont-curio-catalog';
 	if (document.getElementById(id)) return;
-	const params = CURATED_GOOGLE_FONTS.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join('&');
+	const remoteCatalog = CURATED_GOOGLE_FONTS.filter((f) => !isSelfHostedFont(f.family));
+	if (remoteCatalog.length === 0) return;
+	const params = remoteCatalog.map((f) => `family=${encodeURIComponent(f.family)}:wght@400;700`).join('&');
 	const link = document.createElement('link');
 	link.id = id;
 	link.rel = 'stylesheet';

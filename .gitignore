@@ -12,6 +12,7 @@ smoke-shots/
 *.zip
 js/app.min.js
 js/app.min.js.map
+js/chunks/
 js/templates.bundle.js
 css/app.min.css
 _site/

@@ -173,7 +173,8 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 			expect(btn.attributes('title')).toBe(DICE_PRESETS[i].name);
 			expect(btn.attributes('aria-label')).toBe(DICE_PRESETS[i].name);
 			expect(btn.text()).not.toContain(DICE_PRESETS[i].name);
-			expect(btn.text()).toBe('4681012');
+			expect(btn.text()).toBe('');
+			expect(btn.findAll('svg.diecon .diecon-numeral')).toHaveLength(5);
 			expect(btn.html()).not.toContain('linearGradient');
 			const dice = btn.findAll('.editor-dice-preset-die');
 			expect(dice).toHaveLength(5);

@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, provide, reactive, ref, toRaw, watch } from 'vue';
+import {
+	computed,
+	defineAsyncComponent,
+	nextTick,
+	onMounted,
+	onUnmounted,
+	provide,
+	reactive,
+	ref,
+	toRaw,
+	watch,
+} from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { characterCurioStorage } from './storage.ts';
 import { cloneDeep } from './clone-deep.ts';
@@ -15,19 +26,20 @@ import {
 	pullInToRoot,
 	type SpawnCuriosityOptions,
 } from './curiosity-graph.ts';
-import Roster from './roster.vue';
 import Character from './character.vue';
 import StudioPanel from './studio-panel.vue';
 import AppHeader from './app-header.vue';
 import AppFooter from './app-footer.vue';
 import SessionNav from './session-nav.vue';
 import CuriosityWebBar from './curiosity-web-bar.vue';
-import AddCharacterModal from './add-character-modal.vue';
 import ModalDialog from './modal-dialog.vue';
-import CommandPalette from './command-palette.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
+
+const Roster = defineAsyncComponent(() => import('./roster.vue'));
+const AddCharacterModal = defineAsyncComponent(() => import('./add-character-modal.vue'));
+const CommandPalette = defineAsyncComponent(() => import('./command-palette.vue'));
 import {
 	getView,
 	getTemplateTitle,
@@ -52,7 +64,15 @@ const sheetTemplates = ref<any[]>([]);
 const prefs = ref<any>({ version: 1, global: {}, characters: {} });
 const playViewMode = ref('split');
 const isAddCharacterModalOpen = ref(false);
+const hasOpenedAddModal = ref(false);
 const isPaletteOpen = ref(false);
+const hasOpenedPalette = ref(false);
+watch(isAddCharacterModalOpen, (v) => {
+	if (v) hasOpenedAddModal.value = true;
+});
+watch(isPaletteOpen, (v) => {
+	if (v) hasOpenedPalette.value = true;
+});
 const sessionCharacterSearch = ref('');
 const mode = ref('roster');
 const submode = ref<string | null>(null);
@@ -3107,6 +3127,7 @@ defineExpose({
 	<!-- /.play-shell -->
 
 	<add-character-modal
+		v-if="hasOpenedAddModal || isAddCharacterModalOpen"
 		:open="isAddCharacterModalOpen"
 		:items="availableToOpen"
 		:search="sessionCharacterSearch"
@@ -3120,6 +3141,7 @@ defineExpose({
 	/>
 
 	<CommandPalette
+		v-if="hasOpenedPalette || isPaletteOpen"
 		:open="isPaletteOpen"
 		:character="character"
 		:characters="characters"

@@ -11,6 +11,22 @@ const SHOTS = process.argv.includes('--shots');
 const SHOT_DIR = path.join(ROOT, 'smoke-shots');
 const AXE_MIN_PATH = path.join(ROOT, 'node_modules', 'axe-core', 'axe.min.js');
 
+function buildSelfHostedFontPattern() {
+	try {
+		const css = fs.readFileSync(path.join(ROOT, 'css', 'fonts.css'), 'utf8');
+		const families = [...new Set([...css.matchAll(/font-family:\s*['"]([^'"]+)['"]/g)].map((m) => m[1].trim()))];
+		if (families.length > 0) {
+			const alts = families.map((fam) => fam.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '(?:\\+|%20|\\s)'));
+			return new RegExp(alts.join('|'), 'i');
+		}
+	} catch {
+		// fall back to base defaults
+	}
+	return /josefin|open(?:\+|%20)sans|alegreya/i;
+}
+
+const SELF_HOSTED_FONT_RE = buildSelfHostedFontPattern();
+
 async function runLiveAxeAudit(page, stageLabel, errors) {
 	if (!fs.existsSync(AXE_MIN_PATH)) return;
 	const hasAxe = await page.evaluate(() => Boolean(window.axe));
@@ -22,33 +38,12 @@ async function runLiveAxeAudit(page, stageLabel, errors) {
 				values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
 			},
 		});
-		const out = [];
-		for (const v of res.violations) {
-			const nodes = v.nodes.filter((n) => {
-				// Die polygon SVGs (<svg class="diecon"><text>8</text></svg>) pair geometric die
-				// silhouettes with inner numerals and idiomatic "d8" accessible names.
-				if (v.id === 'label-content-name-mismatch') {
-					const sel = Array.isArray(n.target) ? n.target[n.target.length - 1] : '';
-					const el = typeof sel === 'string' && sel ? document.querySelector(sel) : null;
-					if (
-						(el && el.querySelector && el.querySelector('svg.diecon')) ||
-						(typeof n.html === 'string' && n.html.includes('diecon'))
-					) {
-						return false;
-					}
-				}
-				return true;
-			});
-			if (nodes.length > 0) {
-				out.push({
-					id: v.id,
-					impact: v.impact,
-					help: v.help,
-					targets: nodes.slice(0, 3).map((n) => n.target),
-				});
-			}
-		}
-		return out;
+		return res.violations.map((v) => ({
+			id: v.id,
+			impact: v.impact,
+			help: v.help,
+			targets: v.nodes.slice(0, 3).map((n) => n.target),
+		}));
 	});
 	for (const v of violations) {
 		errors.push(`[${stageLabel}] axe ${v.id} (${v.impact}): ${v.help} -> ${JSON.stringify(v.targets)}`);
@@ -155,8 +150,8 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 	});
 	page.on('request', (req) => {
 		const url = req.url();
-		if (/fonts\.googleapis\.com/i.test(url) && /josefin|open(?:\+|%20)sans|alegreya/i.test(url)) {
-			fontRequests.push(`[${tag}] blocked remote base-font request: ${url}`);
+		if (/fonts\.googleapis\.com/i.test(url) && SELF_HOSTED_FONT_RE.test(url)) {
+			fontRequests.push(`[${tag}] blocked remote self-hosted font request: ${url}`);
 		}
 	});
 

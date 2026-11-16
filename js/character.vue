@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue';
+import {
+	computed,
+	defineAsyncComponent,
+	getCurrentInstance,
+	nextTick,
+	onMounted,
+	onUnmounted,
+	provide,
+	ref,
+	watch,
+} from 'vue';
 import { characterCurioFunctions, characterCurioSetPresets, type SetPresetEntry } from './functions.ts';
 import {
 	DIE_LADDER,
@@ -32,10 +42,11 @@ import {
 } from './sheet-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
 import ModalDialog from './modal-dialog.vue';
-import PrintToolbar from './print-toolbar.vue';
-import TraitSetMini from './trait-set-mini.vue';
 import PresetGalleryCard from './preset-gallery-card.vue';
 import { isHexColor, isLightHex } from './color-palette.ts';
+
+const PrintToolbar = defineAsyncComponent(() => import('./print-toolbar.vue'));
+const TraitSetMini = defineAsyncComponent(() => import('./trait-set-mini.vue'));
 
 const props = defineProps<{
 	submode?: string | null;

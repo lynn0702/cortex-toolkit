@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { defineComponent, h, nextTick, reactive } from 'vue';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import DiceRoller from '../js/dice-roller.vue';
@@ -1667,6 +1667,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				},
 				attachTo: document.body,
 			});
+			await flushPromises();
 			const crumbText = studio.find('.studio-breadcrumb').text();
 			expect(crumbText).toContain('Attributes');
 			expect(crumbText).toContain('Track');
@@ -1815,6 +1816,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				},
 				attachTo: document.body,
 			});
+			await flushPromises();
 			const crumbText = studioLvl3.find('.studio-breadcrumb').text();
 			expect(crumbText).toContain('Attributes');
 			expect(crumbText).toContain('Agility');

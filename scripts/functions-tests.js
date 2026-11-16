@@ -267,14 +267,34 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	for (const size of [4, 6, 8, 10, 12, 20]) {
 		const svg = F.renderDieconSVG(size, true);
 		ok(
-			svg.includes('<text ') &&
+			svg.includes('class="diecon-numeral"') &&
+				svg.includes('<path ') &&
 				svg.includes('stroke="none"') &&
-				svg.includes('font-family="\'Open Sans\', sans-serif"') &&
-				!svg.includes('dominant-baseline="central"'),
-			`renderDieconSVG(${size}) uses self-hosted Open Sans with alphabetic baseline and stroke="none"`,
+				!svg.includes('<text'),
+			`renderDieconSVG(${size}) renders Open Sans 800 vector path numerals with stroke="none"`,
 		);
 		ok(F.renderDieconSVG(size, true) === svg, `renderDieconSVG(${size}) returns deterministic cached SVG strings`);
 	}
+
+	const { SELF_HOSTED_FONTS, isSelfHostedFont } = require('../js/self-hosted-fonts.ts');
+	const splashFonts = JSON.parse(
+		require('node:fs').readFileSync(
+			require('node:path').join(__dirname, '..', 'data', 'templates', 'Dreamer_Architect.curio.json'),
+			'utf8',
+		),
+	)?.view?.theme?.fonts;
+	for (const fam of Object.values(splashFonts || {})) {
+		if (typeof fam === 'string' && fam.trim()) {
+			ok(
+				isSelfHostedFont(fam),
+				`splash showcase font "${fam}" from Dreamer_Architect.curio.json is registered in SELF_HOSTED_FONTS`,
+			);
+		}
+	}
+	ok(
+		SELF_HOSTED_FONTS.length >= 3 && !isSelfHostedFont('Cinzel'),
+		'SELF_HOSTED_FONTS distinguishes bundled splash fonts from on-demand catalog Google Fonts',
+	);
 
 	const customSvg = F.renderDieconSVG(4, true, 'extra" onclick="alert(1)', {
 		style: 'custom',

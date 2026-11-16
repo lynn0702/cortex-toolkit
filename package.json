@@ -22,7 +22,7 @@
 		"stage": "npm run gate && git add -A",
 		"gate": "node scripts/gate.js",
 		"format": "prettier --write --cache .",
-		"build": "npm run format && npm run types && vite build && node scripts/combine-templates.js && node scripts/version-assets.js",
+		"build": "node scripts/fetch-fonts.mjs --ensure && npm run format && npm run types && vite build && node scripts/combine-templates.js && node scripts/version-assets.js",
 		"dev": "vite",
 		"watch": "vite build --watch",
 		"serve": "node scripts/serve.js",

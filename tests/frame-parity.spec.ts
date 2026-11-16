@@ -581,8 +581,10 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 		it('Item 7: prevents inherited frame stroke from corrupting diecon numerals', async () => {
 			for (const size of [4, 6, 8, 10, 12, 20]) {
 				const svg = characterCurioFunctions.renderDieconSVG(size, true);
-				expect(svg).toContain('<text ');
+				expect(svg).toContain('class="diecon-numeral"');
+				expect(svg).toContain('<path ');
 				expect(svg).toContain('stroke="none"');
+				expect(svg).not.toContain('<text');
 			}
 
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
@@ -591,10 +593,10 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				const wrapper = mount(TraitSetBlock, {
 					props: { character, traitSetID, submode: 'play', editing: [] },
 				});
-				const numerals = wrapper.findAll('svg.diecon text');
+				const numerals = wrapper.findAll('svg.diecon .diecon-numeral');
 				expect(numerals.length).toBeGreaterThan(0);
-				for (const textEl of numerals) {
-					expect(textEl.attributes('stroke')).toBe('none');
+				for (const numEl of numerals) {
+					expect(numEl.attributes('stroke')).toBe('none');
 				}
 				wrapper.unmount();
 			}

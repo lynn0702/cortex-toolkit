@@ -57,6 +57,7 @@ function checkVHtml(dir) {
 	for (const entry of entries) {
 		const full = path.join(dir, entry.name);
 		if (entry.isDirectory()) {
+			if (entry.name === 'chunks') continue;
 			checkVHtml(full);
 		} else if (
 			/\.(vue|ts|js)$/.test(entry.name) &&
@@ -142,6 +143,7 @@ function checkIcons(dir) {
 	for (const entry of entries) {
 		const full = path.join(dir, entry.name);
 		if (entry.isDirectory()) {
+			if (entry.name === 'chunks') continue;
 			checkIcons(full);
 		} else if (
 			/\.(vue|ts)$/.test(entry.name) &&
@@ -222,18 +224,60 @@ if (staticStyle > 0 || emptyRulesets > 0 || importantCount > 4 || zHard > 3) {
 	process.exit(1);
 }
 
+// Verify splash showcase fonts in Dreamer_Architect.curio.json are self-hosted in css/fonts.css
+const fontsCss = fs.readFileSync(path.join(root, 'css', 'fonts.css'), 'utf8');
+const bundledFontSet = new Set(
+	[...fontsCss.matchAll(/font-family:\s*['"]([^'"]+)['"]/g)].map((m) => m[1].trim().toLowerCase()),
+);
+const splashJson = JSON.parse(
+	fs.readFileSync(path.join(root, 'data', 'templates', 'Dreamer_Architect.curio.json'), 'utf8'),
+);
+const customSplashFontUrls = splashJson?.view?.theme?.customFonts || {};
+for (const fam of Object.values(splashJson?.view?.theme?.fonts || {})) {
+	if (typeof fam !== 'string' || !fam.trim()) continue;
+	const trimmed = fam.trim();
+	if (customSplashFontUrls[trimmed]) continue;
+	if (!bundledFontSet.has(trimmed.toLowerCase())) {
+		console.error(
+			`[FAIL] Splash font "${trimmed}" in Dreamer_Architect.curio.json is missing from css/fonts.css (run node scripts/fetch-fonts.mjs --ensure)`,
+		);
+		process.exit(1);
+	}
+}
+
 const cssGzipKb = zlib.gzipSync(fs.readFileSync(path.join(root, 'css', 'app.min.css'))).length / 1024;
-const jsGzipKb = zlib.gzipSync(fs.readFileSync(path.join(root, 'js', 'app.min.js'))).length / 1024;
+const appMinPath = path.join(root, 'js', 'app.min.js');
+const appMinText = fs.readFileSync(appMinPath, 'utf8');
+const entryOnlyGzipKb = zlib.gzipSync(Buffer.from(appMinText, 'utf8')).length / 1024;
+const bootChunkNames = new Set(
+	[...appMinText.slice(0, 4096).matchAll(/from\s*["']\.\/chunks\/([^"']+\.js)["']/g)].map((m) => m[1]),
+);
+let bootGzipKb = entryOnlyGzipKb;
+let lazyGzipKb = 0;
+const chunksDir = path.join(root, 'js', 'chunks');
+if (fs.existsSync(chunksDir)) {
+	for (const f of fs.readdirSync(chunksDir)) {
+		if (!f.endsWith('.js')) continue;
+		const gz = zlib.gzipSync(fs.readFileSync(path.join(chunksDir, f))).length / 1024;
+		if (bootChunkNames.has(f)) bootGzipKb += gz;
+		else lazyGzipKb += gz;
+	}
+}
 const CSS_GZIP_LIMIT_KB = 90;
-const JS_GZIP_LIMIT_KB = 280;
-if (cssGzipKb > CSS_GZIP_LIMIT_KB || jsGzipKb > JS_GZIP_LIMIT_KB) {
+const JS_BOOT_GZIP_LIMIT_KB = 210;
+const JS_TOTAL_GZIP_LIMIT_KB = 310;
+if (
+	cssGzipKb > CSS_GZIP_LIMIT_KB ||
+	bootGzipKb > JS_BOOT_GZIP_LIMIT_KB ||
+	bootGzipKb + lazyGzipKb > JS_TOTAL_GZIP_LIMIT_KB
+) {
 	console.error(
-		`[FAIL] Gzip bundle budget exceeded: css=${cssGzipKb.toFixed(1)}kB (max ${CSS_GZIP_LIMIT_KB}kB), js=${jsGzipKb.toFixed(1)}kB (max ${JS_GZIP_LIMIT_KB}kB)`,
+		`[FAIL] Gzip bundle budget exceeded: css=${cssGzipKb.toFixed(1)}kB (max ${CSS_GZIP_LIMIT_KB}kB), bootJs=${bootGzipKb.toFixed(1)}kB (max ${JS_BOOT_GZIP_LIMIT_KB}kB), totalJs=${(bootGzipKb + lazyGzipKb).toFixed(1)}kB (max ${JS_TOTAL_GZIP_LIMIT_KB}kB)`,
 	);
 	process.exit(1);
 }
 console.log(
-	`[PASS] CSS Validation (${allCssFiles.length} files, 0 warnings), Style Controls (!important=${importantCount}/4, staticStyle=0) & Gzip Budgets (CSS=${cssGzipKb.toFixed(1)}kB/${CSS_GZIP_LIMIT_KB}kB, JS=${jsGzipKb.toFixed(1)}kB/${JS_GZIP_LIMIT_KB}kB)`,
+	`[PASS] CSS Validation (${allCssFiles.length} files, 0 warnings), Style Controls (!important=${importantCount}/4, staticStyle=0), Splash Fonts (${bundledFontSet.size} bundled) & Gzip Budgets (CSS=${cssGzipKb.toFixed(1)}kB/${CSS_GZIP_LIMIT_KB}kB, BootJS=${bootGzipKb.toFixed(1)}kB/${JS_BOOT_GZIP_LIMIT_KB}kB, DeferredJS=${lazyGzipKb.toFixed(1)}kB)`,
 );
 
 console.log('\n=========================================');
