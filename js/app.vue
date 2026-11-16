@@ -560,6 +560,7 @@ onMounted(async () => {
 	setViewY();
 	await bootFromStorage();
 	parseRouteHash();
+	storeReady.value = true;
 	window.addEventListener('hashchange', () => parseRouteHash());
 	window.addEventListener('keydown', (e) => handleGlobalKeydown(e));
 	window.addEventListener('pointerdown', (e) => handleGlobalPointerDown(e), true);
@@ -2444,7 +2445,6 @@ async function bootFromStorage() {
 		showToast('Could not open the local library — starting empty.');
 	}
 
-	storeReady.value = true;
 	characterCurioStorage.requestPersistence();
 }
 
@@ -2737,6 +2737,7 @@ defineExpose({
 
 	<!-- PLAY SHELL: STUDIO PANEL (INSPECTOR + ROLLER) + SHEET VIEWPORT -->
 	<div
+		v-show="storeReady || isPreview || Boolean(character)"
 		class="play-shell"
 		:data-mode="mode"
 		:data-submode="submode || ''"
@@ -2851,7 +2852,7 @@ defineExpose({
 
 				<!-- CHARACTER SHEET -->
 				<roster
-					v-if="mode === 'roster'"
+					v-if="mode === 'roster' && storeReady"
 					:characters="characters"
 					:sheetTemplates="sheetTemplates"
 					@createCharacter="createCharacter"

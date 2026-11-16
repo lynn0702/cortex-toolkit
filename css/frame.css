@@ -140,7 +140,7 @@
 
 	li {
 		padding: 0;
-		color: var(--color-label);
+		color: var(--text-secondary);
 		font-weight: bold;
 		text-transform: uppercase;
 		cursor: pointer;

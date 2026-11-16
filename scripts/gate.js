@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const { execSync } = require('child_process');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 
 const root = path.resolve(__dirname, '..');
 
@@ -77,7 +79,46 @@ function checkVHtml(dir) {
 	}
 }
 checkVHtml(path.join(root, 'js'));
-console.log('[PASS] Security Audit: all v-html instances use vetted renderers');
+
+// Verify index.html security & SEO head metadata + inline script CSP SHA-256 hash
+const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
+if (!/<meta\s+name="description"\s+content="[^"]{20,}"/i.test(indexHtml)) {
+	console.error('[FAIL] index.html is missing a non-empty <meta name="description"> tag');
+	process.exit(1);
+}
+if (!/<meta\s+name="referrer"\s+content="strict-origin-when-cross-origin"/i.test(indexHtml)) {
+	console.error('[FAIL] index.html is missing <meta name="referrer" content="strict-origin-when-cross-origin">');
+	process.exit(1);
+}
+const cspMatch = indexHtml.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i);
+const inlineScriptMatch = indexHtml.match(/<script>([\s\S]*?)<\/script>/i);
+if (!cspMatch) {
+	console.error('[FAIL] index.html is missing <meta http-equiv="Content-Security-Policy">');
+	process.exit(1);
+}
+if (inlineScriptMatch && cspMatch.index > inlineScriptMatch.index) {
+	console.error('[FAIL] <meta http-equiv="Content-Security-Policy"> must appear before inline <script> in index.html');
+	process.exit(1);
+}
+const cspContent = cspMatch[1];
+if (
+	!cspContent.includes("object-src 'none'") ||
+	!cspContent.includes("base-uri 'self'") ||
+	/frame-ancestors/i.test(cspContent)
+) {
+	console.error(
+		"[FAIL] CSP meta tag must include object-src 'none', base-uri 'self', and omit header-only frame-ancestors",
+	);
+	process.exit(1);
+}
+if (inlineScriptMatch) {
+	const expectedHash = `sha256-${crypto.createHash('sha256').update(inlineScriptMatch[1], 'utf8').digest('base64')}`;
+	if (!cspContent.includes(`'${expectedHash}'`)) {
+		console.error(`[FAIL] index.html CSP script-src hash mismatch! Expected '${expectedHash}'`);
+		process.exit(1);
+	}
+}
+console.log('[PASS] Security Audit: all v-html instances use vetted renderers & CSP hash verified');
 
 // 7. Icon Subset Coverage
 console.log('\n[GATE] === 7. Icon Subset Coverage ===');
@@ -125,6 +166,75 @@ if (missingIcons.size > 0) {
 	process.exit(1);
 }
 console.log('[PASS] Icon Subset Coverage: all fa-* classes exist in css/fontawesome.css');
+
+// 8. CSS Syntax Validation (Lightning CSS), Style Controls & Gzip Payload Budgets
+console.log('\n[GATE] === 8. CSS Validation, Style Controls & Payload Budgets ===');
+const lcssPath = require.resolve('lightningcss', {
+	paths: [path.join(root, 'node_modules', 'vite'), root],
+});
+const lightningcss = require(lcssPath);
+const allCssFiles = fs.readdirSync(path.join(root, 'css')).filter((f) => f.endsWith('.css'));
+for (const file of allCssFiles) {
+	const full = path.join(root, 'css', file);
+	const res = lightningcss.transform({
+		filename: `css/${file}`,
+		code: fs.readFileSync(full),
+		minify: false,
+		errorRecovery: true,
+	});
+	if (res.warnings && res.warnings.length > 0) {
+		console.error(`[FAIL] Lightning CSS syntax warning(s) in css/${file}:`);
+		for (const w of res.warnings) {
+			console.error(`  line ${w.loc?.line}:${w.loc?.column} - ${w.message}`);
+		}
+		process.exit(1);
+	}
+}
+
+const sourceScreenCss = allCssFiles.filter(
+	(f) => !['app.min.css', 'print.css', 'fonts.css', 'fontawesome.css'].includes(f),
+);
+let importantCount = 0;
+let zHard = 0;
+let emptyRulesets = 0;
+for (const file of sourceScreenCss) {
+	const s = fs.readFileSync(path.join(root, 'css', file), 'utf8');
+	importantCount += (s.match(/!important/g) || []).length;
+	zHard += (s.match(/z-index:\s*\d+/g) || []).length;
+	emptyRulesets += (s.match(/\{\s*\}/g) || []).length;
+}
+let staticStyle = 0;
+(function walkVue(dir) {
+	for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+		const fp = path.join(dir, e.name);
+		if (e.isDirectory()) walkVue(fp);
+		else if (e.name.endsWith('.vue')) {
+			const s = fs.readFileSync(fp, 'utf8');
+			staticStyle += (s.match(/\sstyle="/g) || []).length;
+		}
+	}
+})(path.join(root, 'js'));
+
+if (staticStyle > 0 || emptyRulesets > 0 || importantCount > 4 || zHard > 3) {
+	console.error(
+		`[FAIL] Style control budget exceeded: ${JSON.stringify({ staticStyle, emptyRulesets, importantCount, zHard })}`,
+	);
+	process.exit(1);
+}
+
+const cssGzipKb = zlib.gzipSync(fs.readFileSync(path.join(root, 'css', 'app.min.css'))).length / 1024;
+const jsGzipKb = zlib.gzipSync(fs.readFileSync(path.join(root, 'js', 'app.min.js'))).length / 1024;
+const CSS_GZIP_LIMIT_KB = 90;
+const JS_GZIP_LIMIT_KB = 280;
+if (cssGzipKb > CSS_GZIP_LIMIT_KB || jsGzipKb > JS_GZIP_LIMIT_KB) {
+	console.error(
+		`[FAIL] Gzip bundle budget exceeded: css=${cssGzipKb.toFixed(1)}kB (max ${CSS_GZIP_LIMIT_KB}kB), js=${jsGzipKb.toFixed(1)}kB (max ${JS_GZIP_LIMIT_KB}kB)`,
+	);
+	process.exit(1);
+}
+console.log(
+	`[PASS] CSS Validation (${allCssFiles.length} files, 0 warnings), Style Controls (!important=${importantCount}/4, staticStyle=0) & Gzip Budgets (CSS=${cssGzipKb.toFixed(1)}kB/${CSS_GZIP_LIMIT_KB}kB, JS=${jsGzipKb.toFixed(1)}kB/${JS_GZIP_LIMIT_KB}kB)`,
+);
 
 console.log('\n=========================================');
 console.log(' ALL GATES PASSED (Definition of Done) ');

@@ -110,6 +110,20 @@ function resolveTraitRefTitle(tr: any): string {
 	return graph.resolveCuriosity(tr?.ref)?.name || tr?.name || 'Curiosity';
 }
 
+function formatAltRollPpTag(ppDelta: number | undefined | null): string {
+	if (!ppDelta) return '';
+	if (ppDelta === 1) return '+PP';
+	if (ppDelta === -1) return '-PP';
+	return (ppDelta > 0 ? '+' : '') + ppDelta + 'PP';
+}
+
+function formatAltRollAriaLabel(tr: any, ts: any): string {
+	const alt = getAltRoll(tr, ts);
+	const die = alt?.die || 4;
+	const tag = formatAltRollPpTag(alt?.ppDelta);
+	return tag ? `Take d${die} ${tag}` : `Take d${die}`;
+}
+
 function startInlineTrackLabel(tIdx: number | null | undefined, ev: Event) {
 	openInlineTrackLabel(tIdx);
 	const parent = (ev.currentTarget as HTMLElement | null)?.parentElement;
@@ -803,7 +817,7 @@ function hasTraitSetDescription(ts: any) {
 										class="btn-hinder-pill"
 										@click.stop="handleAltRollClick(item.trait, traitSet)"
 										:title="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
-										:aria-label="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
+										:aria-label="formatAltRollAriaLabel(item.trait, traitSet)"
 									>
 										<span aria-hidden="true">d{{ getAltRoll(item.trait, traitSet)?.die || 4 }}</span
 										><span v-if="getAltRoll(item.trait, traitSet)?.ppDelta" class="hinder-pp-tag" aria-hidden="true">{{
@@ -1943,7 +1957,7 @@ function hasTraitSetDescription(ts: any) {
 											class="btn-hinder-pill"
 											@click.stop="handleAltRollClick(item.trait, traitSet)"
 											:title="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
-											:aria-label="`Take d${getAltRoll(item.trait, traitSet)?.die || 4}${getAltRoll(item.trait, traitSet)?.ppDelta ? ` (${(getAltRoll(item.trait, traitSet)!.ppDelta > 0 ? '+' : '') + getAltRoll(item.trait, traitSet)!.ppDelta} PP)` : ''}`"
+											:aria-label="formatAltRollAriaLabel(item.trait, traitSet)"
 										>
 											<span aria-hidden="true">d{{ getAltRoll(item.trait, traitSet)?.die || 4 }}</span
 											><span

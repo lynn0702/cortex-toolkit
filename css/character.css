@@ -392,7 +392,7 @@
 	.pp-badge-label {
 		font-weight: 800;
 		font-size: 0.75rem;
-		color: var(--color-primary);
+		color: var(--text-main);
 		letter-spacing: 0.05em;
 	}
 
@@ -1348,6 +1348,7 @@
 
 	&.preview-button-export {
 		--button-color: var(--color-secondary);
+		background: var(--color-secondary);
 		color: black;
 	}
 }
@@ -1561,7 +1562,7 @@
 	.hinder-pp-tag {
 		font-size: 0.65rem;
 		font-weight: 800;
-		color: var(--color-interactive);
+		color: var(--text-main);
 		margin-left: 2px;
 	}
 
@@ -2652,7 +2653,7 @@ button.trait-title-btn {
 			padding: 0.25rem 0.55rem;
 			border-radius: 0.35rem;
 			background: var(--bg-surface-muted);
-			color: var(--color-primary);
+			color: var(--text-main);
 			border: 1px solid var(--border-subtle);
 		}
 
@@ -2689,8 +2690,8 @@ button.trait-title-btn {
 			&.jump-pill-add-card {
 				border-style: dashed;
 				border-color: var(--color-interactive);
-				color: var(--color-interactive);
-				background: color-mix(in oklab, var(--color-interactive) 10%, transparent);
+				color: var(--text-main);
+				background: color-mix(in oklab, var(--color-interactive) 10%, var(--bg-surface-card));
 			}
 		}
 
@@ -2857,8 +2858,8 @@ button.trait-title-btn {
 			padding: 0.65rem 1rem;
 			border: 1.5px dashed var(--color-interactive);
 			border-radius: 10px;
-			background: color-mix(in oklab, var(--color-interactive) 7%, transparent);
-			color: var(--color-interactive);
+			background: color-mix(in oklab, var(--color-interactive) 8%, var(--bg-surface-card));
+			color: var(--text-main);
 			font-weight: 700;
 			font-size: 0.8rem;
 			cursor: pointer;
@@ -3784,7 +3785,7 @@ button.trait-title-btn {
 	padding: 0.25rem 0.55rem;
 	border-radius: 0.35rem;
 	background: var(--bg-surface-muted);
-	color: var(--color-primary);
+	color: var(--text-main);
 	border: 1px solid var(--border-subtle);
 }
 
@@ -3819,8 +3820,8 @@ button.trait-title-btn {
 	&.jump-pill-add-card {
 		border-style: dashed;
 		border-color: var(--color-interactive);
-		color: var(--color-interactive);
-		background: color-mix(in oklab, var(--color-interactive) 10%, transparent);
+		color: var(--text-main);
+		background: color-mix(in oklab, var(--color-interactive) 10%, var(--bg-surface-card));
 	}
 
 	&.jump-pill-add-pillar {
@@ -3914,13 +3915,13 @@ button.trait-title-btn {
 	gap: 0.25rem;
 	border-style: dashed;
 	border-color: var(--color-interactive);
-	color: var(--color-interactive);
-	background: color-mix(in oklab, var(--color-interactive) 10%, transparent);
+	color: var(--text-main);
+	background: color-mix(in oklab, var(--color-interactive) 10%, var(--bg-surface-card));
 
 	&:hover,
 	&:focus-visible {
-		background: color-mix(in oklab, var(--color-interactive) 18%, transparent);
-		color: var(--color-interactive);
+		background: color-mix(in oklab, var(--color-interactive) 18%, var(--bg-surface-card));
+		color: var(--text-main);
 	}
 }
 
@@ -3933,8 +3934,8 @@ button.trait-title-btn {
 	padding: 0.65rem 1rem;
 	border: 1.5px dashed var(--color-interactive);
 	border-radius: 0.625rem;
-	background: color-mix(in oklab, var(--color-interactive) 7%, transparent);
-	color: var(--color-interactive);
+	background: color-mix(in oklab, var(--color-interactive) 8%, var(--bg-surface-card));
+	color: var(--text-main);
 	font-weight: 700;
 	font-size: 0.8rem;
 	cursor: pointer;
@@ -3942,7 +3943,7 @@ button.trait-title-btn {
 
 	&:hover,
 	&:focus-visible {
-		background: color-mix(in oklab, var(--color-interactive) 14%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 16%, var(--bg-surface-card));
 	}
 }
 

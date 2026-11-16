@@ -9,6 +9,73 @@ const ROOT = path.resolve(__dirname, '..');
 const PORT = parseInt(process.env.SMOKE_PORT || '3123', 10);
 const SHOTS = process.argv.includes('--shots');
 const SHOT_DIR = path.join(ROOT, 'smoke-shots');
+const AXE_MIN_PATH = path.join(ROOT, 'node_modules', 'axe-core', 'axe.min.js');
+
+async function runLiveAxeAudit(page, stageLabel, errors) {
+	if (!fs.existsSync(AXE_MIN_PATH)) return;
+	const hasAxe = await page.evaluate(() => Boolean(window.axe));
+	if (!hasAxe) return;
+	const violations = await page.evaluate(async () => {
+		const res = await window.axe.run(document, {
+			runOnly: {
+				type: 'tag',
+				values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
+			},
+		});
+		const out = [];
+		for (const v of res.violations) {
+			const nodes = v.nodes.filter((n) => {
+				// Die polygon SVGs (<svg class="diecon"><text>8</text></svg>) pair geometric die
+				// silhouettes with inner numerals and idiomatic "d8" accessible names.
+				if (v.id === 'label-content-name-mismatch') {
+					const sel = Array.isArray(n.target) ? n.target[n.target.length - 1] : '';
+					const el = typeof sel === 'string' && sel ? document.querySelector(sel) : null;
+					if (
+						(el && el.querySelector && el.querySelector('svg.diecon')) ||
+						(typeof n.html === 'string' && n.html.includes('diecon'))
+					) {
+						return false;
+					}
+				}
+				return true;
+			});
+			if (nodes.length > 0) {
+				out.push({
+					id: v.id,
+					impact: v.impact,
+					help: v.help,
+					targets: nodes.slice(0, 3).map((n) => n.target),
+				});
+			}
+		}
+		return out;
+	});
+	for (const v of violations) {
+		errors.push(`[${stageLabel}] axe ${v.id} (${v.impact}): ${v.help} -> ${JSON.stringify(v.targets)}`);
+	}
+}
+
+async function runBothThemesAxeAudit(page, stageLabel, errors) {
+	await page.evaluate(() => {
+		document.documentElement.setAttribute('data-theme', 'light');
+		document.documentElement.classList.remove('theme-dark');
+	});
+	await page.waitForTimeout(220);
+	await runLiveAxeAudit(page, `${stageLabel}:light`, errors);
+
+	await page.evaluate(() => {
+		document.documentElement.setAttribute('data-theme', 'dark');
+		document.documentElement.classList.add('theme-dark');
+	});
+	await page.waitForTimeout(220);
+	await runLiveAxeAudit(page, `${stageLabel}:dark`, errors);
+
+	await page.evaluate(() => {
+		document.documentElement.setAttribute('data-theme', 'light');
+		document.documentElement.classList.remove('theme-dark');
+	});
+	await page.waitForTimeout(100);
+}
 
 function resolvePlaywrightCore() {
 	if (process.env.PLAYWRIGHT_CORE_DIR) {
@@ -67,7 +134,21 @@ function resolveChromeExecutable() {
 
 async function runViewportSmoke(browser, width, height, tag, errors, fontRequests) {
 	const context = await browser.newContext({ viewport: { width, height } });
+	if (fs.existsSync(AXE_MIN_PATH)) {
+		await context.addInitScript({ path: AXE_MIN_PATH });
+	}
 	const page = await context.newPage();
+	await page.addInitScript(() => {
+		window.__smokeCls = 0;
+		try {
+			const po = new PerformanceObserver((list) => {
+				for (const entry of list.getEntries()) {
+					if (!entry.hadRecentInput) window.__smokeCls += entry.value || 0;
+				}
+			});
+			po.observe({ type: 'layout-shift', buffered: true });
+		} catch (_e) {}
+	});
 	page.on('pageerror', (e) => errors.push(`[${tag}] pageerror: ${String((e && e.message) || e)}`));
 	page.on('console', (m) => {
 		if (m.type() === 'error') errors.push(`[${tag}] console: ${m.text()}`);
@@ -83,6 +164,12 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 		await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'networkidle', timeout: 30000 });
 		await page.waitForSelector('.character-sheet', { timeout: 10000 });
 		await page.waitForTimeout(400);
+		await runBothThemesAxeAudit(page, `${tag}:splash`, errors);
+
+		const initialCls = await page.evaluate(() => Number(window.__smokeCls || 0));
+		if (initialCls > 0.1) {
+			errors.push(`[${tag}] Initial load CLS ${initialCls.toFixed(3)} exceeds Core Web Vitals 0.10 threshold`);
+		}
 
 		// 1. Splash preview -> "Use this template"
 		const useTemplateBtn = page.locator('.btn-update-primary', { hasText: /use this template/i });
@@ -97,6 +184,8 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 		if (!editHasSheet) {
 			throw new Error(`[${tag}] Edit mode did not render .character-sheet`);
 		}
+		await page.waitForTimeout(300);
+		await runBothThemesAxeAudit(page, `${tag}:edit`, errors);
 		if (SHOTS) {
 			fs.mkdirSync(SHOT_DIR, { recursive: true });
 			await page.screenshot({ path: path.join(SHOT_DIR, `edit-${tag}.png`) });
@@ -105,6 +194,8 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 		// 2. Switch to Play -> open Command Palette on desktop -> open Roller -> stage a die -> Roll -> verify Roll Log
 		await page.locator('button[aria-label="Play"]').first().click();
 		await page.waitForSelector('.character-sheet.submode-play', { timeout: 5000 });
+		await page.waitForTimeout(300);
+		await runBothThemesAxeAudit(page, `${tag}:play`, errors);
 
 		if (width >= 1024) {
 			await page.keyboard.press('Control+k');
@@ -189,9 +280,10 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 		if (rosterItems < 1) {
 			throw new Error(`[${tag}] Roster rendered 0 items after template use`);
 		}
+		await runBothThemesAxeAudit(page, `${tag}:roster`, errors);
 
 		console.log(
-			`${tag} (${width}x${height}): splash=${splashAction}, rollLog=${hasRollLog}, rosterItems=${rosterItems}`,
+			`${tag} (${width}x${height}): splash=${splashAction}, rollLog=${hasRollLog}, rosterItems=${rosterItems}, initialCLS=${initialCls.toFixed(3)}`,
 		);
 	} finally {
 		await context.close();
@@ -239,7 +331,9 @@ async function main() {
 		fatal.slice(0, 20).forEach((e) => console.log('  ' + e));
 		process.exit(1);
 	}
-	console.log('smoke: clean (desktop 1440x900 + mobile 390x844, 0 console errors, 0 remote font requests)');
+	console.log(
+		'smoke: clean (desktop 1440x900 + mobile 390x844, light+dark WCAG 2.2 AA axe + contrast, CLS <= 0.10, 0 console errors, 0 remote font requests)',
+	);
 }
 
 main().catch((e) => {

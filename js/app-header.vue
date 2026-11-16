@@ -204,7 +204,7 @@ onUnmounted(() => {
 					type="button"
 					class="mobile-sheet-trigger"
 					:popovertarget="supportsNativePopover ? 'mobile-sheet-menu' : undefined"
-					aria-label="Sheet actions"
+					:aria-label="(activeCharacterName || 'Unnamed') + ' sheet actions'"
 					@click="onSheetTriggerClick"
 				>
 					<span class="mobile-sheet-trigger-name">{{ activeCharacterName || 'Unnamed' }}</span>

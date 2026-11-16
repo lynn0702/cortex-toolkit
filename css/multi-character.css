@@ -71,10 +71,10 @@
 		}
 
 		&.active {
-			background: #0284c7;
-			color: #ffffff;
-			border-color: #38bdf8;
-			box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+			background: color-mix(in oklch, var(--color-interactive) 70%, black);
+			color: var(--die-active-text);
+			border-color: var(--color-interactive);
+			box-shadow: 0 2px 8px color-mix(in oklch, var(--color-interactive) 40%, transparent);
 		}
 
 		.session-tab-trigger {
@@ -185,10 +185,10 @@
 		}
 
 		&.active {
-			background: #0284c7;
-			color: #ffffff;
-			border-color: #38bdf8;
-			box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+			background: color-mix(in oklch, var(--color-interactive) 70%, black);
+			color: var(--die-active-text);
+			border-color: var(--color-interactive);
+			box-shadow: 0 2px 8px color-mix(in oklch, var(--color-interactive) 40%, transparent);
 		}
 
 		.sheet-bar-dice-count {
