@@ -10,12 +10,18 @@ import VisibilityEye from './visibility-eye.vue';
 import TagEditor from './tag-editor.vue';
 import { useCuriosityGraph } from './curiosity-graph.ts';
 
-const props = defineProps<{
-	character: any;
-	traitSetID: number;
-	open?: boolean;
-	viewY?: number | null;
-}>();
+const props = withDefaults(
+	defineProps<{
+		character: any;
+		traitSetID: number;
+		open?: boolean;
+		viewY?: number | null;
+		standalone?: boolean;
+	}>(),
+	{
+		standalone: false,
+	},
+);
 
 const emit = defineEmits<{
 	(e: 'selectElement', selector: any[]): void;
@@ -123,7 +129,7 @@ const selectedPillar = computed<string>({
 
 <template>
 	<aside :class="cssClass" @click.stop="" ref="rootEl">
-		<div class="editor-controls">
+		<div v-if="!props.standalone" class="editor-controls">
 			<button type="button" @click.stop="saveSetAsPreset" title="Save Set Preset" aria-label="Save Set Preset">
 				<i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'" aria-hidden="true"></i>
 				<span class="editor-control-label">{{ presetSaved ? 'Saved' : 'Save Preset' }}</span>
@@ -828,6 +834,6 @@ const selectedPillar = computed<string>({
 			</div>
 		</div>
 
-		<TraitSetEditorConfirm />
+		<TraitSetEditorConfirm v-if="!props.standalone" />
 	</aside>
 </template>

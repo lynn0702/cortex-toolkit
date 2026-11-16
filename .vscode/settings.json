@@ -5,31 +5,21 @@
 		"*.scss": "scss"
 	},
 	"scss.validate": true,
-	"[css]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[scss]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[vue]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[javascript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[json]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
+	"editor.insertSpaces": false,
+	"editor.formatOnSave": false,
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
 	"json.schemas": [
 		{
-			"fileMatch": ["*.curio.json"],
+			"fileMatch": [
+				"*.curio.json"
+			],
 			"url": "./schema/0.2/curiosity.schema.json"
 		},
 		{
-			"fileMatch": ["*.template.layered.json"],
+			"fileMatch": [
+				"*.template.layered.json"
+			],
 			"url": "./schema/0.2/sheet-template.schema.json"
 		}
 	]

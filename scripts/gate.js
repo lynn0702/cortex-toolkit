@@ -121,6 +121,23 @@ if (inlineScriptMatch) {
 }
 console.log('[PASS] Security Audit: all v-html instances use vetted renderers & CSP hash verified');
 
+const vscodeSettingsPath = path.join(root, '.vscode', 'settings.json');
+if (fs.existsSync(vscodeSettingsPath)) {
+	const vscodeSettings = JSON.parse(fs.readFileSync(vscodeSettingsPath, 'utf8'));
+	if (JSON.stringify(vscodeSettings).includes('editor.defaultFormatter')) {
+		console.error(
+			'[FAIL] .vscode/settings.json must not pin editor.defaultFormatter; use .editorconfig + npm run gate instead',
+		);
+		process.exit(1);
+	}
+	for (const entry of Array.isArray(vscodeSettings['json.schemas']) ? vscodeSettings['json.schemas'] : []) {
+		if (typeof entry?.url === 'string' && !fs.existsSync(path.resolve(root, entry.url))) {
+			console.error(`[FAIL] .vscode/settings.json references missing schema: ${entry.url}`);
+			process.exit(1);
+		}
+	}
+}
+
 // 7. Icon Subset Coverage
 console.log('\n[GATE] === 7. Icon Subset Coverage ===');
 const faCss = fs.readFileSync(path.join(root, 'css', 'fontawesome.css'), 'utf8');

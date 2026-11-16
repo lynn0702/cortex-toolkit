@@ -213,18 +213,46 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			Array.isArray((view as any).ratingLadder) && (view as any).ratingLadder.length
 				? (view as any).ratingLadder
 				: [4, 6, 8, 10, 12];
-		const trackOn = partsHaveTrack();
-		const tScale = characterCurioFunctions.getTrackScale(traitSet.value);
-		const rating = currentPartRatingPlacement();
-		const statement = Boolean((traitSet.value as any)?.statement);
 		const traits = Array.isArray(traitSet.value?.traits)
 			? traitSet.value.traits
 			: traitSet.value?.traits
 				? Object.values(traitSet.value.traits)
 				: [];
+		const configuredTrack = typeof view.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
+		const hasImplicitTrackSub = Boolean(
+			!view.parts &&
+			configuredTrack &&
+			traits.some(
+				(t: any) =>
+					Array.isArray(t?.traits) &&
+					t.traits.some(
+						(st: any) =>
+							st &&
+							typeof st === 'object' &&
+							String(st.noun || st.name || '')
+								.trim()
+								.toLowerCase() === configuredTrack &&
+							resolveRating(st, [t, traitSet.value])?.type === 'Die',
+					),
+			),
+		);
+		const trackOn = partsHaveTrack() || hasImplicitTrackSub;
+		const tScale = characterCurioFunctions.getTrackScale(traitSet.value);
+		const rating = currentPartRatingPlacement();
+		const statement = Boolean((traitSet.value as any)?.statement);
 		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
 		const hasSfx = traits.some((t: any) => characterCurioFunctions.blockChildren(t, traitSet.value).length > 0);
-		const hasSub = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, traitSet.value).length > 0);
+		const hasSub = traits.some((t: any) =>
+			characterCurioFunctions.ratedSubtraits(t, traitSet.value).some((st: any) => {
+				const key = String(st?.noun || st?.name || '')
+					.trim()
+					.toLowerCase();
+				if (trackOn && configuredTrack && key === configuredTrack) return false;
+				const r = resolveRating(st, [t, traitSet.value]);
+				if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return false;
+				return true;
+			}),
+		);
 		return {
 			rating,
 			ratingDice: scale.length,

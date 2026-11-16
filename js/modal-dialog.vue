@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
 	open: boolean;
@@ -27,6 +27,12 @@ watch(
 	},
 	{ immediate: true },
 );
+
+onMounted(() => {
+	if (props.open && dialogEl.value && !dialogEl.value.open) {
+		dialogEl.value.showModal();
+	}
+});
 
 onBeforeUnmount(() => {
 	if (dialogEl.value?.open) dialogEl.value.close();

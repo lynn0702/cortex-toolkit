@@ -4,17 +4,16 @@ set -e
 echo ""
 echo "=== [PRE-COMMIT] Full Definition of Done gates ==="
 
-# Format and run the full Definition of Done gate (types, build, style check, tests, validate, audit)
-npm run format
+# Format only staged files that actually differ from Prettier (0 disk writes when clean)
+node scripts/format-changed.mjs --staged
 npm run gate
 
-# Stage all modified and deleted tracked files (including prettier-formatted files and source changes)
-git add -u
+# Re-stage generated model types only if schema changes updated them during gate
+if ! git diff --quiet -- js/model.generated.ts; then
+	git add -- js/model.generated.ts
+fi
 
-# Ensure generated model types stay tracked and staged
-git add -- js/model.generated.ts 2>/dev/null || true
-
-echo "=== [PRE-COMMIT] Passed! Staged all verified changes and build artifacts. ==="
+echo "=== [PRE-COMMIT] Passed! Verified staged changes without touching clean buffers. ==="
 echo ""
 
 

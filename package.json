@@ -21,7 +21,7 @@
 		"prepare": "node -e \"try { require('child_process').execSync('git config core.hooksPath .githooks'); } catch (_) {}\"",
 		"stage": "npm run format && npm run gate && git add -A",
 		"gate": "node scripts/gate.js",
-		"format": "prettier --write --cache .",
+		"format": "node scripts/format-changed.mjs",
 		"build": "node scripts/fetch-fonts.mjs --ensure && npm run types && vite build && node scripts/combine-templates.js && node scripts/version-assets.js",
 		"dev": "vite",
 		"watch": "vite build --watch",

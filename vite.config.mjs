@@ -90,7 +90,7 @@ export default defineConfig(({ mode, command }) => ({
 						/\/js\/(?:functions|model|model\.generated|layered-materialize|character-curio-trait-helpers|clone-deep|dice-pool|curiosity-graph|sheet-grid|color-palette|frame-geometry|font-url|self-hosted-fonts|showcase-templates|storage|use-toast|use-history|use-trait-set)\.(?:ts|js)$/.test(
 							norm,
 						) ||
-						/\/js\/(?:modal-dialog|visibility-eye|inline-rating-bar|preset-gallery-card|portrait-ring|trait-set-frame|trait-set-block|trait-set-name|trait-set-pips|trait-set-list|trait-set-image|trait-set-die-rows|trait-set-dice-count|trait-set-subtrait-columns|trait-set-curiosity)\.vue(?:\?|$)/.test(
+						/\/js\/(?:modal-dialog|visibility-eye|inline-rating-bar|preset-gallery-card|portrait-ring|trait-row-title|trait-row-rating|trait-row-part|trait-set-frame|trait-set-block|trait-set-name|trait-set-pips|trait-set-list|trait-set-image|trait-set-die-rows|trait-set-dice-count|trait-set-subtrait-columns|trait-set-curiosity)\.vue(?:\?|$)/.test(
 							norm,
 						)
 					) {

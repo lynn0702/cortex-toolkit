@@ -566,51 +566,49 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		expect(getContrastRatio(lightTextSecondary, lightElevatedBg)).toBeGreaterThanOrEqual(4.5);
 	});
 
-	it('TraitSetMini (Phase 3a): standalone authoring, noun inventory consistency, companion stress track, keyboard nudge, and preset round-trip', async () => {
+	it('TraitSetMini (Phase 3a): standalone authoring, companion track range, keyboard nudge, and preset round-trip', async () => {
 		window.localStorage.removeItem('characterCurioCustomSetPresets');
 
-		const wrapper = mount(TraitSetMini);
+		const wrapper = mount(TraitSetMini, { attachTo: document.body });
 		await runAxeAudit(wrapper.element as HTMLElement);
 
-		// 1. Standalone inventory & keyboard nudge/resize on grid part boxes
+		// 1. Standalone parts miniature: keyboard resize & column swap via TraitSetEditorRowMini
 		const nameBox = wrapper.find('[data-grid-part="name"]');
 		expect(nameBox.exists()).toBe(true);
+		const initialTitle = nameBox.attributes('title') || '';
+		expect(nameBox.find('.row-mini-dims').text()).toBe('70%');
 		await nameBox.trigger('click');
-		await nameBox.trigger('keydown', { key: 'ArrowRight' });
-		const leftInput = wrapper.find('input[aria-label="Part Left Percent"]');
-		expect((leftInput.element as HTMLInputElement).value).toBe('5');
-
 		await nameBox.trigger('keydown', { key: 'ArrowLeft', shiftKey: true });
-		const widthInput = wrapper.find('input[aria-label="Part Width Percent"]');
-		expect((widthInput.element as HTMLInputElement).value).toBe('60');
+		expect(wrapper.find('[data-grid-part="name"]').find('.row-mini-dims').text()).toBe('65%');
+		await wrapper.find('[data-grid-part="name"]').trigger('keydown', { key: 'ArrowRight' });
+		expect(wrapper.find('[data-grid-part="name"]').attributes('title')).not.toBe(initialTitle);
 
-		// 2. Noun consistency check: misspelled trait noun ("Roel") and companion noun ("Stres") surface as extra noun groups in inventory
-		const traitNounInput = wrapper.find('input[aria-label="Trait 1 Noun"]');
-		await traitNounInput.setValue('Roel');
-		expect(wrapper.find('[data-noun-group="Roel"]').exists()).toBe(true);
+		// 2. Create companion track via TraitSetEditor -> drills into TraitEditor, set range to [6, 8, 10], return via breadcrumb
+		const createSubBtn = wrapper.findAll('button.editor-button').find((b) => b.text().includes('Create subtrait'));
+		expect(createSubBtn).toBeDefined();
+		await createSubBtn!.trigger('click');
 
-		const addTrackBtn = wrapper.find('button[title="Add Companion / Stress Track"]');
-		await addTrackBtn.trigger('click');
-		const companionNounInput = wrapper.find('input[aria-label="Companion Track Noun 1"]');
-		await companionNounInput.setValue('Stres');
-		expect(wrapper.find('[data-noun-group="Stres"]').exists()).toBe(true);
-
-		// 3. Acceptance case (Section 5.3): stress-bearing set with companion range [6, 8, 10] + block entry
-		// Toggle d4 and d12 off in companion track range so range becomes [6, 8, 10]
-		const toggleD4 = wrapper.find('button[aria-label="Toggle d4 in track range"]');
-		const toggleD12 = wrapper.find('button[aria-label="Toggle d12 in track range"]');
+		const toggleD4 = wrapper.find('button[title="Exclude d4"]');
+		const toggleD12 = wrapper.find('button[title="Exclude d12"]');
+		expect(toggleD4.exists()).toBe(true);
+		expect(toggleD12.exists()).toBe(true);
 		await toggleD4.trigger('click');
 		await toggleD12.trigger('click');
 
-		const addBlockBtn = wrapper.find('button[title="Add Block / SFX Entry"]');
-		await addBlockBtn.trigger('click');
+		const backCrumb = wrapper.find('.mini-breadcrumb .crumb-link');
+		expect(backCrumb.exists()).toBe(true);
+		await backCrumb.trigger('click');
 
-		// Verify live preview renders track, trackLabel, and block with [6, 8, 10] scale
+		const sfxChip = wrapper.findAll('.row-mini-part-chip').find((b) => b.text().trim() === 'SFX');
+		expect(sfxChip).toBeDefined();
+		await sfxChip!.trigger('click');
+
+		// Verify parts miniature renders trackLabel, track, and block with [6, 8, 10] scale
 		expect(wrapper.find('[data-grid-part="trackLabel"]').exists()).toBe(true);
 		expect(wrapper.find('[data-grid-part="track"]').exists()).toBe(true);
 		expect(wrapper.find('[data-grid-part="block"]').exists()).toBe(true);
 
-		// 4. Save as Preset: creator-typed label, derived ID, collision check, and round-trip across Play, Edit, and Print
+		// 3. Save as Preset: creator-typed label, derived ID, collision check, and round-trip across Play, Edit, and Print
 		const labelInput = wrapper.find('input[aria-label="Preset Label"]');
 		await labelInput.setValue('Pool'); // Collides with built-in preset
 		expect(wrapper.find('.mini-collision-alert').exists()).toBe(true);
@@ -695,17 +693,19 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		expect(customSet.view.labels.stress).toBeUndefined();
 		expect(customSet.view.labels.track).toBe('Stress');
 
-		// Test TraitSetMini child marker toggle
+		// Test TraitSetMini child marker toggle via unified RowMini behavior bar
 		const mini = mount(TraitSetMini, {
 			props: { initialSet: customSet },
 		});
 
-		const markerToggles = mini.findAll('.mini-marker-toggle');
-		expect(markerToggles.length).toBeGreaterThanOrEqual(3);
-		const firstMarker = markerToggles[0];
-		const initialText = firstMarker.text();
-		await firstMarker.trigger('click');
-		expect(firstMarker.text()).toBe(initialText === 'L' ? 'T' : 'L');
+		const namePartBox = mini.find('[data-grid-part="name"]');
+		expect(namePartBox.exists()).toBe(true);
+		await namePartBox.trigger('click');
+		expect(namePartBox.find('.row-mini-marker').text()).toBe('L');
+		const textBtn = mini.findAll('.row-mini-behavior-bar .editor-group-btn').find((b) => b.text().trim() === 'Text');
+		expect(textBtn).toBeDefined();
+		await textBtn!.trigger('click');
+		expect(mini.find('[data-grid-part="name"] .row-mini-marker').text()).toBe('T');
 
 		mini.unmount();
 		block.unmount();
@@ -1940,23 +1940,22 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const modalMini = mount(TraitSetMini, {
 				props: { initialSet: { name: 'Distinctions', noun: 'Distinction', traits: [] } },
 			});
-			const modalBtns = modalMini.findAll('.mini-header-controls .mini-toggle-btn');
-			const modalBottomBtn = modalBtns.find((b) => b.text().trim() === 'Bottom');
-			const noneHeaderBtn = modalBtns.find((b) => b.text().trim() === 'None');
-			expect(modalBottomBtn?.exists()).toBe(true);
-			expect(noneHeaderBtn?.exists()).toBe(true);
-			await modalBottomBtn!.trigger('click');
+			const modalBottomBtn = modalMini.find('button[title="Bottom bar header"]');
+			const noneHeaderBtn = modalMini.find('.row-mini-header-remove');
+			expect(modalBottomBtn.exists()).toBe(true);
+			expect(noneHeaderBtn.exists()).toBe(true);
+			await modalBottomBtn.trigger('click');
 			expect(modalMini.find('.trait-set.trait-set-header-bottom').exists()).toBe(true);
-			await noneHeaderBtn!.trigger('click');
+			await noneHeaderBtn.trigger('click');
 			expect(modalMini.find('.trait-set-header').exists()).toBe(false);
 
-			let modalRemovers = modalMini.findAll('.block-mini-part-remove');
+			let modalRemovers = modalMini.findAll('.row-mini-box .row-mini-remove');
 			expect(modalRemovers.length).toBe(2);
 			await modalRemovers[1].trigger('click');
-			expect(modalMini.findAll('.block-mini-part').length).toBe(1);
-			modalRemovers = modalMini.findAll('.block-mini-part-remove');
+			expect(modalMini.findAll('.row-mini-box').length).toBe(1);
+			modalRemovers = modalMini.findAll('.row-mini-box .row-mini-remove');
 			await modalRemovers[0].trigger('click');
-			expect(modalMini.findAll('.block-mini-part').length).toBe(0);
+			expect(modalMini.findAll('.row-mini-box').length).toBe(0);
 			modalMini.unmount();
 
 			// 6. Image block shows a resizable Image box in the section mini and applies stored width/height

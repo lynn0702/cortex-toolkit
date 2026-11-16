@@ -76,16 +76,13 @@ const PART_TITLES: Record<string, string> = {
 	track: 'Track',
 };
 
-function partBoxLabel(key: string): string {
+function partOwnerNoun(key: string): string {
 	const setNoun = (traitSet.value as any)?.noun || (traitSet.value as any)?.name || 'Trait';
 	const trackNoun = characterCurioFunctions.getTrackLabel(traitSet.value);
-	if (key === 'trackLabel') return `${trackNoun} · Label`;
-	if (key === 'track') return `${trackNoun} · Rating`;
+	if (key === 'trackLabel' || key === 'track') return trackNoun;
 	if (key.startsWith('child:')) {
 		const segs = key.slice(6).split(':');
-		const cNoun = segs[0] || 'Subtrait';
-		const cKind = segs[1] === 'rating' ? 'Rating' : 'Label';
-		return `${cNoun} · ${cKind}`;
+		return segs[0] || 'Subtrait';
 	}
 	if (key === 'subtraits') {
 		let sNoun = 'Subtrait';
@@ -99,9 +96,24 @@ function partBoxLabel(key: string): string {
 			}
 			if (sNoun !== 'Subtrait') break;
 		}
-		return `${sNoun} · Subtraits`;
+		return sNoun;
 	}
-	return `${setNoun} · ${PART_TITLES[key] || key}`;
+	return setNoun;
+}
+
+function partBoxLabel(key: string): string {
+	const owner = partOwnerNoun(key);
+	if (key === 'trackLabel') return `${owner} · Label`;
+	if (key === 'track') return `${owner} · Rating`;
+	if (key.startsWith('child:')) {
+		const segs = key.slice(6).split(':');
+		const cKind = segs[1] === 'rating' ? 'Rating' : 'Label';
+		return `${owner} · ${cKind}`;
+	}
+	if (key === 'subtraits') {
+		return `${owner} · Subtraits`;
+	}
+	return `${owner} · ${PART_TITLES[key] || key}`;
 }
 
 const NON_ROW = ['pips'];
@@ -812,6 +824,8 @@ function onBranchDividerKeydown(event: KeyboardEvent, leftKey: 'left' | 'center'
 								:key="b.key"
 								class="row-mini-box"
 								:class="{ 'row-mini-implicit': b.implicit, 'row-mini-selected': selectedPartKey === b.key }"
+								:data-grid-part="b.key"
+								:data-part-owner="partOwnerNoun(b.key)"
 								:style="cellPlace(b.key)"
 								tabindex="0"
 								:aria-label="partBoxLabel(b.key) + ' — Arrow keys to reorder, Shift+Left/Right to resize'"
