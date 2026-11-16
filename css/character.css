@@ -2859,7 +2859,7 @@ button.trait-title-btn {
 		}
 
 		&[data-drawer-state='full'] {
-			--active-roller-h: 100dvh;
+			--active-roller-h: calc(100dvh - var(--header-size));
 		}
 
 		.main {

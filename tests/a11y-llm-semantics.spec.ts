@@ -2871,9 +2871,18 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					canUndo: true,
 					canRedo: false,
 					isDarkMode: false,
+					isStudioOpen: false,
 				},
 				attachTo: document.body,
 			});
+
+			const studioToggleBtn = editHeader.find('.header-btn-studio');
+			expect(studioToggleBtn.exists()).toBe(true);
+			expect(studioToggleBtn.attributes('aria-pressed')).toBe('false');
+			await studioToggleBtn.trigger('click');
+			expect(editHeader.emitted('toggleStudio')).toHaveLength(1);
+			await editHeader.setProps({ isStudioOpen: true });
+			expect(editHeader.find('.header-btn-studio').attributes('aria-pressed')).toBe('true');
 
 			const editMenu = editHeader.find('#mobile-sheet-menu');
 			const settingsBtn = editMenu.findAll('.mobile-sheet-action-btn').find((b) => b.text().includes('Sheet Settings'));
@@ -2945,6 +2954,73 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			splitPanel.unmount();
 		});
 
+		it('switches sibling Trait Sets via .crumb-set-select and toggles split/full Create drawer height in StudioPanel', async () => {
+			const char: any = reactive({
+				id: 'create-drawer-char',
+				name: 'Creator Hero',
+				plotPoints: 1,
+				traitSets: [
+					{
+						id: 'name',
+						name: 'Name',
+						noun: 'Trait',
+						view: { style: { header: 'default', body: 'name' } },
+						traits: [],
+					},
+					{
+						id: 'attributes',
+						name: 'Attributes',
+						noun: 'Attribute',
+						view: { pillar: 'prime', style: { header: 'default', body: 'list' } },
+						traits: [],
+					},
+					{
+						id: 'skills',
+						name: 'Skills',
+						noun: 'Skill',
+						view: { pillar: 'plus', style: { header: 'default', body: 'list' } },
+						traits: [],
+					},
+				],
+			});
+
+			const editPanel = mount(StudioPanel, {
+				props: {
+					character: char,
+					mode: 'character',
+					submode: 'edit',
+					isOpen: true,
+					panelTab: 'properties',
+					editing: ['traitSet', 1],
+				},
+				attachTo: document.body,
+			});
+			await flushPromises();
+
+			const aside = editPanel.find('.studio-panel');
+			expect(aside.attributes('data-edit-size')).toBe('split');
+
+			const setSelect = editPanel.find('.studio-breadcrumb .crumb-set-select');
+			expect(setSelect.exists()).toBe(true);
+			expect(setSelect.findAll('option').map((o) => o.text())).toEqual(['Attributes', 'Skills']);
+
+			await setSelect.setValue('2');
+			expect(editPanel.emitted('selectElement')?.[0]).toEqual([['traitSet', 2]]);
+
+			const expandEditBtn = editPanel.find('.studio-mobile-edit-controls button[aria-label="Expand panel"]');
+			expect(expandEditBtn.exists()).toBe(true);
+			await expandEditBtn.trigger('click');
+			expect(aside.attributes('data-edit-size')).toBe('full');
+
+			const splitEditBtn = editPanel.find('.studio-mobile-edit-controls button[aria-label="Split panel"]');
+			expect(splitEditBtn.exists()).toBe(true);
+			await splitEditBtn.trigger('click');
+			expect(aside.attributes('data-edit-size')).toBe('split');
+
+			await runAxeAudit(editPanel.element as HTMLElement);
+			editPanel.unmount();
+		});
+
 		it('consolidates single-pillar Jump Strip in Character Play mode while preserving multi-pillar substack navigation', async () => {
 			const singlePillarChar: any = reactive({
 				id: 'single-pillar-char',
@@ -3000,6 +3076,13 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				view: { pageCount: 1, sheetTheme: 'classic' },
 				traitSets: [
 					{
+						id: 'name',
+						name: 'Name',
+						noun: 'Trait',
+						view: { page: 1, style: { header: 'default', body: 'name' } },
+						traits: [],
+					},
+					{
 						id: 'p-dist',
 						name: 'Distinctions',
 						noun: 'Distinction',
@@ -3035,7 +3118,13 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			const multiStrip = multiWrapper.find('.mobile-set-jump-strip');
 			expect(multiStrip.find('.jump-pillar-tag').exists()).toBe(false);
-			expect(multiStrip.findAll('.jump-pill[data-pillar-pill]').length).toBe(2);
+			const pillarKeys = multiStrip
+				.findAll('.jump-pill[data-pillar-pill]')
+				.map((el) => el.attributes('data-pillar-pill'));
+			expect(pillarKeys).toEqual(['prime', 'abilities']);
+			expect(multiWrapper.find('.mobile-pillar-column[data-pillar-key="prime"] .sheet-header-meta-box').exists()).toBe(
+				true,
+			);
 			expect(multiWrapper.find('.mobile-substack-bar').exists()).toBe(true);
 
 			await runAxeAudit(multiWrapper.element as HTMLElement);

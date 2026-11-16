@@ -104,6 +104,7 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(Model.nextVisibility('shown') === 'play-only', 'shown cycles to play-only');
 	ok(Model.nextVisibility('play-only') === 'editor-only', 'play-only cycles to editor-only');
 
+	ok(F.resolveSetPillar({ id: 'name' }) === 'prime', 'Name set defaults to prime pillar');
 	ok(F.resolveSetPillar({ view: { pillar: 'cyberware' } }) === 'cyberware', 'explicit custom pillar wins');
 	ok(F.resolveSetPillar({ view: { visibility: 'play-only' } }) === 'play', 'play-only defaults to play pillar');
 	ok(F.resolveSetPillar({ view: { playMutable: true } }) === 'play', 'playMutable defaults to play pillar');

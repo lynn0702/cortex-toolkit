@@ -85,7 +85,7 @@ const {
 	targetValue,
 } = api;
 
-const STANDARD_PILLARS = ['prime', 'plus', 'play', 'identity'];
+const STANDARD_PILLARS = ['prime', 'plus', 'play'];
 const isCustomPillar = ref(false);
 
 const graph = useCuriosityGraph(
@@ -186,7 +186,6 @@ const selectedPillar = computed<string>({
 									aria-label="Pillar"
 								>
 									<option value="">Auto</option>
-									<option value="identity">Identity</option>
 									<option value="prime">Prime</option>
 									<option value="plus">Plus</option>
 									<option value="play">Play</option>
@@ -216,7 +215,6 @@ const selectedPillar = computed<string>({
 										aria-label="Pillar"
 									>
 										<option value="">Auto</option>
-										<option value="identity">Identity</option>
 										<option value="prime">Prime</option>
 										<option value="plus">Plus</option>
 										<option value="play">Play</option>

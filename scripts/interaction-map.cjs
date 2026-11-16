@@ -202,7 +202,7 @@ const DESKTOP_PROFILES = ['desktopPointer', 'desktopKeyboard'];
 const ALL_PROFILES = ['desktopPointer', 'desktopKeyboard', 'mobileTouch'];
 
 // Global header contexts where .header is visible and unobstructed:
-// Note: on mobileTouch, play_roller_full (100dvh) collapses .header and modal dialogs trap focus!
+// Note: modal dialogs trap focus while .header stays unobstructed above play_roller_full on mobile (calc(100dvh - var(--header-size))).
 const DESKTOP_HEADER_LOCS = [
 	'splash_preview',
 	'roster',
@@ -238,6 +238,7 @@ const MOBILE_HEADER_LOCS = [
 	'play_identity',
 	'play_traits',
 	'play_roller_split',
+	'play_roller_full',
 	'play_trait_inspector',
 	'print_preview',
 	'about',
@@ -353,7 +354,13 @@ function buildEdges() {
 	add('roster_card_builder', 'roster', 1, ALL_PROFILES, 'Close TraitSetMini dialog');
 
 	// --- Create Mode: Canvas <-> StudioPanel Inspectors ---
-	add('create_canvas', 'create_sheet_tab', 1, ['mobileTouch'], 'Tap .sheet-header-meta-box (when at top of sheet)');
+	add(
+		'create_canvas',
+		'create_sheet_tab',
+		1,
+		['mobileTouch'],
+		'Tap .header-btn-studio ("Toggle Studio panel") or .sheet-header-meta-box',
+	);
 	add('create_canvas', 'create_set_inspector', 1, ALL_PROFILES, 'Click/tap .set-header-settings-btn');
 	add('create_canvas', 'create_trait_inspector', 1, ALL_PROFILES, 'Click/tap .trait-title-btn');
 	add('create_canvas', 'create_inline_presets', 1, ALL_PROFILES, 'Click/tap .btn-presets-toggle ("Presets")');
@@ -409,9 +416,9 @@ function buildEdges() {
 	}
 
 	// --- Play Mode: Pillars, Staged Pill Bar, Split/Full Drawer, Outcome ---
-	// Mobile 2D Pillar Deck horizontal pillar jump:
-	add('play_identity', 'play_traits', 1, ['mobileTouch'], 'Tap .jump-pill[data-pillar-pill="prime"] (or swipe pillar)');
-	add('play_traits', 'play_identity', 1, ['mobileTouch'], 'Tap .jump-pill[data-pillar-pill="identity"] (or swipe)');
+	// Name defaults to 'prime' alongside Prime rated sets (zero pillar jump needed on arrival):
+	add('play_identity', 'play_traits', 0, ['mobileTouch'], 'Name and Prime rated sets share arrival Prime pillar');
+	add('play_traits', 'play_identity', 0, ['mobileTouch'], 'Name and Prime rated sets share arrival Prime pillar');
 
 	// Play Preset Set Gallery (direct + Set in SessionNav on Desktop and sticky Pillar/Jump bar on Mobile):
 	add('play_identity', 'play_preset_gallery', 1, ['mobileTouch'], 'Tap .jump-pill-add-card ("+ Set")');
@@ -613,9 +620,9 @@ const TASK_JOURNEYS = [
 		id: 'T04',
 		task: 'Inspect Set A, then switch to Set B on sheet (starting at Set A Inspector)',
 		from: 'create_set_inspector',
-		to: 'create_canvas',
+		to: 'create_set_inspector',
 		actionCost: { desktopPointer: 1, desktopKeyboard: 1, mobileTouch: 1 },
-		actionDesc: 'Click/tap Set B header on sheet (+1)',
+		actionDesc: 'Select Set B in .crumb-set-select or click/tap Set B on sheet (+1)',
 	},
 	{
 		id: 'T05',
@@ -887,6 +894,13 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 				steps += 1;
 				trace.push(desc || (typeof loc === 'string' ? `click ${loc}` : 'click'));
 			},
+			async selectOption(loc, value, desc) {
+				const target = typeof loc === 'string' ? page.locator(loc).first() : loc.first();
+				await target.waitFor({ state: 'visible', timeout: 6000 });
+				await target.selectOption(String(value));
+				steps += 1;
+				trace.push(desc || `select ${value}`);
+			},
 			async press(key, desc) {
 				await page.keyboard.press(key);
 				steps += 1;
@@ -925,14 +939,10 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			await page.waitForSelector('.character-sheet.submode-edit', { timeout: 8000 });
 		});
 
-		// J02: create_canvas -> create_theme_tab (universal header path on mobile; direct docked tab on desktop)
-		await measureJourney('J02', 'Create Canvas -> Sheet Theme & Dice Tab', isMobile ? 3 : 1, async (act) => {
+		// J02: create_canvas -> create_theme_tab (1-tap Studio header toggle + Theme tab on mobile; direct docked tab on desktop)
+		await measureJourney('J02', 'Create Canvas -> Sheet Theme & Dice Tab', isMobile ? 2 : 1, async (act) => {
 			if (isMobile) {
-				await act.click('.mobile-sheet-trigger', 'Open #mobile-sheet-menu');
-				await act.click(
-					page.locator('#mobile-sheet-menu .mobile-sheet-action-btn', { hasText: 'Sheet Settings' }),
-					'Tap Sheet Settings',
-				);
+				await act.click('.header-btn-studio', 'Open Studio panel from header');
 			}
 			await act.click('#studio-tab-theme', 'Select Theme & Dice tab');
 			await page.waitForSelector('#studio-tab-theme[aria-selected="true"]', { timeout: 5000 });
@@ -944,15 +954,23 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			await page.waitForTimeout(150);
 		}
 
-		// J03: Inspect Set A -> Switch to Set B on sheet canvas
-		await measureJourney('J03', 'Create Canvas -> Inspect Set A -> Inspect Set B', isMobile ? 3 : 2, async (act) => {
+		// J03: Inspect Set A -> Switch directly to Set B via .crumb-set-select on mobile (or Set B on desktop)
+		await measureJourney('J03', 'Create Canvas -> Inspect Set A -> Inspect Set B', 2, async (act) => {
 			const settingsBtns = page.locator('.set-header-settings-btn');
 			await act.click(settingsBtns.nth(0), 'Inspect Trait Set 1');
 			await page.waitForSelector('.studio-panel input[name="traitSetName"]', { timeout: 5000 });
 			if (isMobile) {
-				await act.click('button[aria-label="Collapse panel"]', 'Collapse mobile StudioPanel overlay');
+				const selectLoc = page.locator('.studio-breadcrumb .crumb-set-select').first();
+				await selectLoc.waitFor({ state: 'visible', timeout: 5000 });
+				const secondVal = await selectLoc.evaluate((el) => {
+					const opts = Array.from(el.options);
+					const other = opts.find((o) => o.value !== el.value) || opts[1];
+					return other ? other.value : '';
+				});
+				await act.selectOption(selectLoc, secondVal, 'Switch directly to Set 2 via .crumb-set-select');
+			} else {
+				await act.click(settingsBtns.nth(1), 'Inspect Trait Set 2');
 			}
-			await act.click(settingsBtns.nth(1), 'Inspect Trait Set 2');
 			await page.waitForSelector('.studio-panel input[name="traitSetName"]', { timeout: 5000 });
 		});
 
@@ -1023,18 +1041,20 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			}
 		});
 
-		// Dismiss mobile #rollDialog so we start J07 cleanly at play_roller_split (38.2dvh drawer on mobile; docked on desktop)
+		// Dismiss mobile #rollDialog and expand split roller to full so J07 starts at play_roller_full on mobile
 		if (isMobile) {
 			await page.evaluate(() => {
 				const dlg = document.querySelector('#rollDialog');
 				if (dlg && typeof dlg.close === 'function' && dlg.hasAttribute('open')) dlg.close();
 			});
+			await page.locator('button[aria-label="Expand roller"]').first().click();
+			await page.locator('.studio-panel.is-play[data-state="full"]').waitFor({ state: 'visible', timeout: 5000 });
 		}
 
-		// J07: Active Split/Docked Roller -> Print Preview (.header stays visible in split!)
-		await measureJourney('J07', 'Active Split/Docked Roller -> Print Preview', isMobile ? 2 : 1, async (act) => {
+		// J07: Active Full/Docked Roller -> Print Preview (.header stays visible in full!)
+		await measureJourney('J07', 'Active Full/Docked Roller -> Print Preview', isMobile ? 2 : 1, async (act) => {
 			if (isMobile) {
-				await act.click('.mobile-sheet-trigger', 'Open #mobile-sheet-menu directly over split roller');
+				await act.click('.mobile-sheet-trigger', 'Open #mobile-sheet-menu directly above full roller');
 				await act.click('#mobile-sheet-menu button[aria-label="Print"]', 'Select Print');
 			} else {
 				await act.click('.header button[aria-label="Print"]', 'Click Print in .header');
@@ -1082,7 +1102,7 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			await page.waitForSelector('.template-preview-banner', { timeout: 5000 });
 		});
 
-		// Prepare J09–J11: Close preview -> create standard New Curiosity (Identity Name set + PP + rated Prime Attribute) -> switch to Play
+		// Prepare J09–J11: Close preview -> create standard New Curiosity (Name defaults to prime + rated Attributes in prime + Skills in plus) -> switch to Play
 		await page.locator('.template-preview-banner .btn-update-secondary').first().click();
 		const newSheetBtn = page.locator('.roster .roster-button', { hasText: /New Curiosity|New Sheet/i }).first();
 		await newSheetBtn.waitFor({ state: 'visible', timeout: 5000 });
@@ -1114,6 +1134,25 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 				};
 				ch.traitSets.push(attrSet);
 			}
+			if (!ch.traitSets.some((s) => s && s.name === 'Skills')) {
+				ch.traitSets.push({
+					id: 'skills',
+					name: 'Skills',
+					noun: 'Skill',
+					plural: 'Skills',
+					traits: [
+						{
+							name: 'Know',
+							description: '',
+							traits: [],
+							tags: [],
+							rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
+						},
+					],
+					tags: [],
+					view: { pillar: 'plus', style: { header: 'default', body: 'default' } },
+				});
+			}
 			await window.app.updateCharacter(ch);
 		});
 		await page.locator('.header button[aria-label="Play"]').first().click();
@@ -1143,16 +1182,9 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			await page.waitForSelector('.character-sheet.submode-play', { timeout: 5000 });
 		});
 
-		// J11: Multi-Pillar Play (Identity col 0 -> Rated Trait col 1) -> Stage Trait Die -> Roll
-		await measureJourney('J11', 'Multi-Pillar Play (Identity) -> Stage Die -> Roll', isMobile ? 3 : 2, async (act) => {
+		// J11: Multi-Pillar Play (Prime col 0 houses Name + Attributes; Plus col 1 houses Skills) -> Stage Trait Die -> Roll
+		await measureJourney('J11', 'Multi-Pillar Play (Prime Arrival) -> Stage Die -> Roll', 2, async (act) => {
 			const firstStageable = page.locator('.character-sheet.submode-play [aria-label^="Stage d"]').first();
-			if (isMobile && !(await isInViewport(firstStageable, width, height))) {
-				await act.click(
-					'.mobile-set-jump-strip .jump-pill[data-pillar-pill]:not([data-pillar-pill="identity"])',
-					'Jump from Identity col 0 to rated Trait pillar',
-				);
-				await page.waitForTimeout(250);
-			}
 			await act.click(firstStageable, 'Stage rated trait die');
 			if (isMobile) {
 				await act.click('.btn-pill-roll', 'Roll directly from .mobile-roller-pill-bar');

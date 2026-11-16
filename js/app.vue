@@ -891,6 +891,15 @@ function openSheetPropertiesFromHeader() {
 	studioPanelTab.value = 'properties';
 }
 
+function toggleMobileEditStudio() {
+	if (isStudioPanelOpen.value) {
+		setPanelOpen(false);
+	} else {
+		if (studioPanelTab.value === 'roller') studioPanelTab.value = 'properties';
+		setPanelOpen(true);
+	}
+}
+
 // Below the wide push-aside layout the panel is an overlay drawer.
 function isNarrowViewport() {
 	return Boolean(window.matchMedia && window.matchMedia('(max-width: 1399px)').matches);
@@ -2396,7 +2405,7 @@ function handleGlobalPointerDown(event: Event) {
 		event.target &&
 		(event.target as any).closest &&
 		(event.target as any).closest(
-			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
+			'.header, .editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
 		),
 	);
 }
@@ -2421,7 +2430,7 @@ function handleMainClick(event: Event) {
 		event.target &&
 		(event.target as any).closest &&
 		(event.target as any).closest(
-			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
+			'.header, .editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
 		)
 	) {
 		return;
@@ -2801,10 +2810,12 @@ defineExpose({
 		:activeCharacterName="character?.name || 'Unnamed'"
 		:sessionDirty="submode === 'play' && hasUncommittedSessionChanges()"
 		:drawerState="mobileDrawerState"
+		:isStudioOpen="isStudioPanelOpen"
 		@navigate="setMode"
 		@undo="undo"
 		@redo="redo"
 		@toggleTheme="toggleDarkMode"
+		@toggleStudio="toggleMobileEditStudio"
 		@openPalette="isPaletteOpen = true"
 		@focusCharacter="focusCharacter"
 		@closeCharacter="closeOpenCharacter"

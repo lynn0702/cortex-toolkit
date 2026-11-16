@@ -424,10 +424,10 @@ function setNameSetPillar(val: string) {
 
 const newPillarDraft = ref('');
 
-const STANDARD_PILLAR_KEYS = new Set(['identity', 'prime', 'plus', 'play']);
+const STANDARD_PILLAR_KEYS = new Set(['prime', 'plus', 'play']);
 
 const pillarSelectOptions = computed<ReadonlyArray<{ key: string; label: string }>>(() => {
-	const keys = ['identity', 'prime', 'plus', 'play'];
+	const keys = ['prime', 'plus', 'play'];
 	for (const k of activePillarKeys.value) {
 		if (!keys.includes(k)) keys.push(k);
 	}
@@ -435,13 +435,13 @@ const pillarSelectOptions = computed<ReadonlyArray<{ key: string; label: string 
 });
 
 const activePillarKeys = computed<string[]>(() => {
-	const seen: string[] = ['identity'];
+	const seen: string[] = [];
 	const defaults = ['prime', 'plus', 'play'];
 	const sets = props.character?.traitSets || [];
 	const explicit = Array.isArray(getView(props.character)?.pillars)
 		? getView(props.character)!.pillars!.filter((k): k is string => typeof k === 'string' && k.trim().length > 0)
 		: [];
-	const used = new Set<string>(['identity', ...explicit]);
+	const used = new Set<string>(explicit);
 	for (const ts of sets) {
 		if (!ts) continue;
 		used.add(resolveSetPillar(ts));
@@ -457,6 +457,7 @@ const activePillarKeys = computed<string[]>(() => {
 		const p = resolveSetPillar(ts);
 		if (!seen.includes(p)) seen.push(p);
 	}
+	if (seen.length === 0) seen.push('prime');
 	return seen;
 });
 
@@ -484,7 +485,10 @@ function addPillarFromEditor() {
 		newKey = `${baseSlug}-${suffix++}`;
 	}
 	if (!existing.length && props.character.traitSets) {
-		existing.push('identity');
+		for (const k of activePillarKeys.value) {
+			if (!existing.includes(k)) existing.push(k);
+		}
+		if (!existing.length) existing.push('prime');
 	}
 	existing.push(newKey);
 	v.pillars = existing;

@@ -71,24 +71,37 @@ const emit = defineEmits<{
 	(e: 'update:drawerState', state: 'staged' | 'split' | 'full'): void;
 }>();
 
+const editDrawerSize = ref<'split' | 'full'>('split');
+
 let headerTouchStartY = 0;
 
 function onHeaderTouchStart(event: TouchEvent): void {
-	if (props.submode !== 'play') return;
-	if ((event.target as HTMLElement | null)?.closest('button')) return;
+	if ((event.target as HTMLElement | null)?.closest('button, select')) return;
 	headerTouchStartY = event.touches[0]?.clientY ?? 0;
 }
 
 function onHeaderTouchEnd(event: TouchEvent): void {
-	if (props.submode !== 'play' || !headerTouchStartY) return;
+	if (!headerTouchStartY) return;
 	const endY = event.changedTouches[0]?.clientY ?? headerTouchStartY;
 	const deltaY = endY - headerTouchStartY;
 	headerTouchStartY = 0;
-	const current = props.drawerState ?? 'staged';
-	if (deltaY < -32 && current === 'split') {
-		emit('update:drawerState', 'full');
+	if (props.submode === 'play') {
+		const current = props.drawerState ?? 'staged';
+		if (deltaY < -32 && current === 'split') {
+			emit('update:drawerState', 'full');
+		} else if (deltaY > 32) {
+			emit('update:drawerState', current === 'full' ? 'split' : 'staged');
+		}
+		return;
+	}
+	if (deltaY < -32) {
+		editDrawerSize.value = 'full';
 	} else if (deltaY > 32) {
-		emit('update:drawerState', current === 'full' ? 'split' : 'staged');
+		if (editDrawerSize.value === 'full') {
+			editDrawerSize.value = 'split';
+		} else {
+			emit('update:isOpen', false);
+		}
 	}
 }
 
@@ -372,6 +385,26 @@ const crumbs = computed<Crumb[]>(() => {
 	return list;
 });
 
+const switchableTraitSets = computed<{ index: number; label: string }[]>(() => {
+	const sets = props.character?.traitSets;
+	if (!Array.isArray(sets)) return [];
+	const out: { index: number; label: string }[] = [];
+	sets.forEach((ts: any, idx: number) => {
+		if (!ts || isNameSet(ts)) return;
+		const label = String(ts.name || ts.noun || `Set ${out.length + 1}`).trim() || `Set ${out.length + 1}`;
+		out.push({ index: idx, label });
+	});
+	return out;
+});
+
+function onSwitchTraitSet(event: Event) {
+	const raw = (event.target as HTMLSelectElement | null)?.value;
+	const nextIdx = Number(raw);
+	if (Number.isFinite(nextIdx) && nextIdx >= 0) {
+		goCrumb(['traitSet', nextIdx]);
+	}
+}
+
 const diceCount = computed(() => {
 	if (Array.isArray(props.namedPools) && props.namedPools.length > 0) {
 		return props.namedPools.reduce((sum, p) => sum + (p.pool?.items?.length || 0), 0);
@@ -395,6 +428,7 @@ defineExpose({
 		class="studio-panel"
 		:class="['position-' + position, { 'panel-collapsed': !isOpen, 'is-play': submode === 'play' }]"
 		:data-state="submode === 'play' ? (drawerState ?? 'staged') : undefined"
+		:data-edit-size="submode !== 'play' ? editDrawerSize : undefined"
 	>
 		<!-- TOOLBAR: SHEET TABS OR CRUMBS ON THE LEFT, ACTIONS ON THE RIGHT -->
 		<div class="studio-panel-header" @touchstart.passive="onHeaderTouchStart" @touchend.passive="onHeaderTouchEnd">
@@ -431,6 +465,17 @@ defineExpose({
 						<button v-if="c.selector && canNavigate" type="button" class="crumb-link" @click="goCrumb(c.selector)">
 							{{ c.label }}
 						</button>
+						<select
+							v-else-if="canNavigate && editingType === 'traitSet' && switchableTraitSets.length > 1"
+							class="crumb-set-select"
+							aria-label="Inspect trait set"
+							:value="traitSetID"
+							@change="onSwitchTraitSet"
+						>
+							<option v-for="opt in switchableTraitSets" :key="'crumb-set-' + opt.index" :value="opt.index">
+								{{ opt.label }}
+							</option>
+						</select>
 						<span v-else class="crumb-current">{{ c.label }}</span>
 					</template>
 				</div>
@@ -515,6 +560,28 @@ defineExpose({
 							:class="(drawerState ?? 'staged') === 'full' ? 'fa-xmark' : 'fa-chevron-down'"
 							aria-hidden="true"
 						></i>
+					</button>
+				</span>
+				<span v-else class="studio-mobile-edit-controls">
+					<button
+						v-if="editDrawerSize === 'split'"
+						type="button"
+						class="studio-action-btn"
+						@click="editDrawerSize = 'full'"
+						title="Expand panel"
+						aria-label="Expand panel"
+					>
+						<i class="fas fa-chevron-up" aria-hidden="true"></i>
+					</button>
+					<button
+						v-else
+						type="button"
+						class="studio-action-btn"
+						@click="editDrawerSize = 'split'"
+						title="Split panel"
+						aria-label="Split panel"
+					>
+						<i class="fas fa-chevron-down" aria-hidden="true"></i>
 					</button>
 				</span>
 				<button

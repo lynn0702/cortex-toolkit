@@ -14,6 +14,7 @@ defineProps<{
 	activeCharacterName?: string;
 	sessionDirty?: boolean;
 	drawerState?: 'staged' | 'split' | 'full';
+	isStudioOpen?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -21,6 +22,7 @@ const emit = defineEmits<{
 	(e: 'undo'): void;
 	(e: 'redo'): void;
 	(e: 'toggleTheme'): void;
+	(e: 'toggleStudio'): void;
 	(e: 'openPalette'): void;
 	(e: 'focusCharacter', id: string): void;
 	(e: 'closeCharacter', id: string): void;
@@ -331,6 +333,18 @@ onUnmounted(() => {
 			</div>
 
 			<div class="header-actions">
+				<button
+					v-if="mode === 'character' && submode === 'edit'"
+					type="button"
+					class="header-btn-studio"
+					:class="{ active: isStudioOpen }"
+					:aria-pressed="Boolean(isStudioOpen)"
+					aria-label="Toggle Studio panel"
+					title="Toggle Studio panel"
+					@click.stop="emit('toggleStudio')"
+				>
+					<i class="fas fa-sliders" aria-hidden="true"></i>
+				</button>
 				<button
 					type="button"
 					class="header-btn-search"

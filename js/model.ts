@@ -593,7 +593,7 @@ export function resolveSetPillar(traitSet: unknown): string {
 		return v.pillar.trim();
 	}
 	if (isNameSet(traitSet)) {
-		return 'identity';
+		return 'prime';
 	}
 	if (v?.visibility === 'play-only' || v?.playMutable === true) {
 		return 'play';

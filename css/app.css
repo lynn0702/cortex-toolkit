@@ -346,6 +346,7 @@ textarea:focus-visible {
 
 	.header-btn-theme,
 	.header-btn-search,
+	.header-btn-studio,
 	.studio-action-btn,
 	.modal-close,
 	.btn-remove-header-portrait {
@@ -432,7 +433,8 @@ textarea:focus-visible {
 
 	.session-tab.active,
 	.studio-tab-btn.active,
-	.studio-action-btn.active {
+	.studio-action-btn.active,
+	.header-btn-studio.active {
 		border-color: Highlight;
 		outline: 2px solid Highlight;
 		outline-offset: -2px;

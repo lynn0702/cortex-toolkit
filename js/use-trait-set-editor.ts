@@ -1235,7 +1235,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const characterCustomPillars = computed<string[]>(() => {
 		const list: string[] = [];
-		const std = ['prime', 'plus', 'play', 'identity'];
+		const std = ['prime', 'plus', 'play'];
 		for (const ts of props.character?.traitSets || []) {
 			const p = getView(ts)?.pillar;
 			if (typeof p === 'string' && p.trim()) {

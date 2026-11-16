@@ -141,7 +141,7 @@
 	.studio-panel:not(.is-play) {
 		top: auto;
 		bottom: 0;
-		max-height: min(74dvh, calc(100dvh - var(--header-size) - 0.75rem));
+		max-height: 48dvh;
 		border-radius: var(--drawer-radius) var(--drawer-radius) 0 0;
 		border-top: 1px solid var(--studio-border);
 		border-left: none;
@@ -149,7 +149,17 @@
 		box-shadow: 0 -0.5rem 1.75rem color-mix(in oklch, var(--text-main) 35%, transparent);
 		padding-bottom: env(safe-area-inset-bottom, 0px);
 		transform: translateY(0);
-		transition: transform var(--transition-sheet);
+		transition:
+			height var(--transition-sheet),
+			max-height var(--transition-sheet),
+			transform var(--transition-sheet);
+
+		&[data-edit-size='full'] {
+			height: calc(100dvh - var(--header-size));
+			max-height: calc(100dvh - var(--header-size));
+			border-radius: 0;
+			box-shadow: none;
+		}
 
 		&.position-right.panel-collapsed,
 		&.position-left.panel-collapsed {
@@ -164,10 +174,22 @@
 		&.position-left .studio-action-collapse-desktop i {
 			transform: rotate(-90deg);
 		}
+
+		.studio-mobile-edit-controls {
+			display: inline-flex;
+		}
+
+		.studio-mobile-edit-controls .studio-action-btn {
+			min-inline-size: 2.25rem;
+			min-block-size: 2.25rem;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 
 	.play-shell.panel-open:not(:has(.studio-panel.is-play)) .sheet-column {
-		padding-bottom: min(76dvh, 30rem);
+		padding-bottom: 50dvh;
 	}
 
 	.studio-panel-body,
@@ -235,11 +257,13 @@
 		}
 
 		&[data-state='full'] {
-			height: 100dvh;
+			height: calc(100dvh - var(--header-size));
 
-			max-height: 100dvh;
+			max-height: calc(100dvh - var(--header-size));
 
 			border-radius: 0;
+
+			box-shadow: none;
 
 			transform: translateY(0);
 
@@ -404,7 +428,8 @@
 	color: var(--roller-scale-text-light, var(--studio-text));
 }
 
-.studio-mobile-drawer-controls {
+.studio-mobile-drawer-controls,
+.studio-mobile-edit-controls {
 	display: none;
 	align-items: center;
 	gap: 0.1rem;
@@ -518,6 +543,26 @@
 
 	.crumb-current {
 		color: var(--studio-text);
+	}
+
+	.crumb-set-select {
+		flex: 0 1 auto;
+		min-inline-size: 0;
+		max-inline-size: 12rem;
+		min-block-size: 1.9rem;
+		padding: 0.15rem 0.45rem;
+		border-radius: 0.35rem;
+		border: 1px solid var(--studio-border);
+		background-color: var(--studio-bg);
+		color: var(--studio-text);
+		font: inherit;
+		font-weight: 700;
+		cursor: pointer;
+
+		option {
+			background-color: var(--studio-bg);
+			color: var(--studio-text);
+		}
 	}
 }
 

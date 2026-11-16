@@ -639,7 +639,7 @@ function confirmAddPillar() {
 			const p = resolveSetPillar(ts);
 			if (p && !collected.includes(p)) collected.push(p);
 		}
-		existingKeys = collected.length ? collected : ['identity'];
+		existingKeys = collected.length ? collected : ['prime'];
 	}
 	const rawLabel = newPillarName.value.trim() || `Pillar ${existingKeys.length + 1}`;
 	const baseSlug =
@@ -822,7 +822,7 @@ interface MobilePillarColumn {
 	stagedCount: number;
 }
 
-const activeMobilePillarKey = ref<string>('identity');
+const activeMobilePillarKey = ref<string>('prime');
 const jumpStripRef = ref<HTMLElement | HTMLElement[] | null>(null);
 let carouselObserver: IntersectionObserver | null = null;
 let mediaQuery: MediaQueryList | null = null;
@@ -910,7 +910,7 @@ const sheetUsesPillars = computed<boolean>(() => {
 });
 
 const pillarOptions = computed<ReadonlyArray<{ key: string; label: string }>>(() => {
-	const baseKeys = ['identity', 'prime', 'plus', 'play'];
+	const baseKeys = ['prime', 'plus', 'play'];
 	const explicit = Array.isArray(getView(props.character)?.pillars)
 		? getView(props.character)!.pillars!.filter((k): k is string => typeof k === 'string' && k.trim().length > 0)
 		: [];
@@ -976,7 +976,7 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 	const ensureBucket = (key: string) => {
 		if (!byPillar.has(key)) {
 			byPillar.set(key, []);
-			if (key !== 'identity' && !standardOrder.includes(key) && !explicitSet.has(key)) {
+			if (!standardOrder.includes(key) && !explicitSet.has(key)) {
 				seenCustomKeys.push(key);
 			}
 		}
@@ -985,9 +985,6 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 
 	for (const expKey of explicitPillars) {
 		ensureBucket(expKey);
-	}
-	if (!explicitPillars.length) {
-		ensureBucket('identity');
 	}
 
 	allSets.forEach((ts, idx) => {
@@ -1006,7 +1003,6 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 		if (byPillar.has(k) && !orderedKeys.includes(k)) orderedKeys.push(k);
 	};
 	for (const expKey of explicitPillars) pushUnique(expKey);
-	pushUnique('identity');
 	for (const stdKey of standardOrder) pushUnique(stdKey);
 	for (const customKey of seenCustomKeys) pushUnique(customKey);
 
