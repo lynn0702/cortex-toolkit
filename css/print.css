@@ -123,6 +123,12 @@
 	.preview-button-container,
 	.sheet-add-set-bar,
 	.sheet-add-portrait-link,
+	.sheet-name-organic-actions,
+	.trait-active-part-bar,
+	.set-header-pillar-chip,
+	.trait-set-top-controls,
+	.trait-set-header-actions,
+	.sheet-header-settings-btn,
 	.btn-sheet-add,
 	.btn-remove-header-portrait,
 	.ring-portrait-dropzone {
@@ -274,6 +280,23 @@
 					padding: 0;
 					background: transparent;
 				}
+			}
+
+			&.is-border-none {
+				border-color: transparent;
+				background: transparent;
+			}
+
+			&.is-border-line {
+				border-top-color: transparent;
+				border-inline-color: transparent;
+				border-radius: 0;
+				background: transparent;
+			}
+
+			& > .sheet-header-custom-traits {
+				grid-column: 1 / -1;
+				width: 100%;
 			}
 		}
 	}
@@ -740,6 +763,10 @@
 			gap: 0.45rem;
 			align-items: center;
 			justify-content: center;
+
+			&.sheet-organic-builder {
+				flex-wrap: nowrap;
+			}
 		}
 
 		&.columns-2 {
@@ -838,8 +865,8 @@
 
 			.add-set-slot.sheet-organic-builder {
 				display: grid;
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-				gap: 0.45rem;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 0.4rem;
 			}
 		}
 
@@ -2301,6 +2328,7 @@
 	padding: 0.35rem 0.5rem;
 	display: flex;
 	align-items: center;
+	gap: 0.4rem;
 	box-sizing: border-box;
 }
 
@@ -2332,7 +2360,9 @@
 	transform: translateY(1px);
 	display: inline-flex;
 	align-items: center;
-	width: 100%;
+	flex: 1 1 auto;
+	min-width: 0;
+	width: auto;
 	line-height: 1;
 	letter-spacing: 0.08em;
 	font-size: var(--text-header);
@@ -3975,9 +4005,22 @@ body:has(.character-sheet.submode-print) .main {
 	:is([data-theme='dark'], .theme-dark) .character-sheet:not(.submode-print) {
 		/* Name & Header Block */
 		.page-header-inner.sheet-header-card {
+			display: grid;
 			background: var(--bg-surface-card);
 			border-color: var(--border-strong);
 			color: var(--text-main);
+
+			&.is-border-none {
+				border-color: transparent;
+				background: transparent;
+			}
+
+			&.is-border-line {
+				border-top-color: transparent;
+				border-inline-color: transparent;
+				border-radius: 0;
+				background: transparent;
+			}
 		}
 
 		.sheet-header-meta-box,

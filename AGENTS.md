@@ -25,13 +25,16 @@ prompt, the prompt wins for that session — then update this file.
   get preserved.
 - **When unsure, ask one question** instead of building the wrong thing.
   Never present a guess as a decision.
+- **No concept/name sniffing.** Never branch layout, image sizing, editing behavior, or interactions on hardcoded trait-set or trait names (e.g. `isNameSet`, `isFixedSkillNames`, or string-matching `'hinder'` / `'scale'`); drive rendering from explicit orthogonal `view`/schema properties instead.
+- **Consistent card control placement.** Recurring set/card configuration actions (settings `sliders`, pillar selector, empty-set delete) belong in a consistent top-right header action slot matching `Name` rather than migrating to vertical sidebars or set-bottom action bars.
 
 ## Skills (load before acting)
 
-This repo ships seven skills in `.agents/skills/`. When a
+This repo ships eight skills in `.agents/skills/`. When a
 task matches a skill's trigger, load that skill's SKILL.md
 first and follow it; do not paraphrase it from memory.
 
+- modern-web-guidance — mandatory first check for HTML/CSS/client JS patterns, accessibility, popovers/dialogs, and responsive layout.
 - measure-before-you-build — starting from a brief/spec,
   or using any asserted constant, key, or formula.
 - provenance-labels — writing or reviewing a spec, brief,
@@ -116,10 +119,11 @@ SKILL.md file directly from `.agents/skills/<name>/`.
 ## Definition of Done (applies to every change)
 
 1. `npm run gate` passes (runs `npm run build`, `prettier --check`, `npm run check`, `npm test`, `npm run validate`, `v-html` security scan, and icon subset coverage with zero errors).
-2. Git hooks: `.githooks/` configured (`npm run prepare`, core.hooksPath set to `.githooks`) enforces fast checks on `pre-commit` and full `npm run gate` on `pre-push`.
-3. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
-4. Smoke-tested the touched feature from the checklist below, in a real browser.
-5. Push to `main` only when 1–4 are green.
+2. Keep edited files Prettier-clean via direct file edits: `npm run build` and `npm run gate` verify formatting read-only without rewriting source files on disk (`prettier --write`). Never run `prettier --write` from the terminal on files with unaccepted IDE edits so **Accept All** never hits save conflicts.
+3. Git hooks: `.githooks/` configured (`npm run prepare`, core.hooksPath set to `.githooks`) enforces fast checks on `pre-commit` and full `npm run gate` on `pre-push`.
+4. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
+5. Smoke-tested the touched feature from the checklist below, in a real browser.
+6. Push to `main` only when 1–5 are green.
 
 ## Smoke checklist
 

@@ -4,7 +4,8 @@ set -e
 echo ""
 echo "=== [PRE-COMMIT] Full Definition of Done gates ==="
 
-# Run the full Definition of Done gate (format, types, build, tests, validate, audit)
+# Format and run the full Definition of Done gate (types, build, style check, tests, validate, audit)
+npm run format
 npm run gate
 
 # Stage all modified and deleted tracked files (including prettier-formatted files and source changes)

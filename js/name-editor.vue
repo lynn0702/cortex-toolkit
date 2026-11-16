@@ -2,6 +2,7 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import {
+	DIE_LADDER,
 	getView,
 	ensureView,
 	isNameSet,
@@ -9,6 +10,7 @@ import {
 	ratingDice,
 	resolveRange,
 	setRatingDie,
+	setRatingDice,
 	resolveVisibility,
 	nextVisibility,
 	resolveSetPillar,
@@ -233,13 +235,6 @@ function toggleNameSetVisibility() {
 	updateCharacter(props.character);
 }
 
-function openNameSetEditor() {
-	const { index } = ensureNameSet();
-	if (index === -1) return;
-	updateCharacter(props.character);
-	selectElement(['traitSet', index]);
-}
-
 const sheetRatingSet = computed(() => (props.character?.traitSets || []).find((s: any) => isNameSet(s)));
 const sheetRating = computed(() => getRating(sheetRatingSet.value));
 const sheetRatingDice = computed(() => ratingDice(sheetRating.value));
@@ -264,25 +259,261 @@ function setSheetRatingDie(size: number | null) {
 	updateCharacter(props.character);
 }
 
+type NameRatingMode = 'Die' | 'Dice' | 'Pip' | 'Counter' | 'None';
+
+const sheetRatingMode = computed<NameRatingMode>(() => {
+	const t = sheetRating.value?.type;
+	if (t === 'Die' || t === 'Dice' || t === 'Pip' || t === 'Counter') return t;
+	return 'None';
+});
+
+function setSheetRatingMode(mode: NameRatingMode) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	if (mode === 'None') {
+		delete set.rating;
+	} else if (mode === 'Die') {
+		const prevRange = Array.isArray(sheetRating.value?.range) ? [...(sheetRating.value!.range as number[])] : undefined;
+		const existingSize = sheetRatingDice.value[0] || 8;
+		setRatingDie(set as Record<string, any>, existingSize, prevRange);
+	} else if (mode === 'Dice') {
+		const curDice = sheetRatingDice.value;
+		setRatingDice(set as Record<string, any>, curDice.length > 1 ? curDice : [8, 8]);
+		if (set.rating) set.rating.type = 'Dice';
+	} else if (mode === 'Pip') {
+		const prev =
+			Array.isArray(sheetRating.value?.value) && sheetRating.value?.type === 'Pip'
+				? [...sheetRating.value.value]
+				: [false, false, false];
+		set.rating = { type: 'Pip', value: prev };
+	} else if (mode === 'Counter') {
+		const curVal =
+			sheetRating.value?.type === 'Counter' && typeof sheetRating.value?.value?.[0] === 'number'
+				? sheetRating.value.value[0]
+				: 0;
+		set.rating = { type: 'Counter', value: [curVal], min: 0, max: 10 } as any;
+	}
+	updateCharacter(props.character);
+}
+
+const sheetPoolDiceList = computed<number[]>(() => {
+	return sheetRatingMode.value === 'Dice' ? sheetRatingDice.value : [];
+});
+
+function addNamePoolDie(size: number) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const next = [...sheetRatingDice.value, size];
+	setRatingDice(set as Record<string, any>, next);
+	if (set.rating) set.rating.type = 'Dice';
+	updateCharacter(props.character);
+}
+
+function removeNamePoolDie(idx: number) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const cur = [...sheetRatingDice.value];
+	if (cur.length <= 1) return;
+	cur.splice(idx, 1);
+	setRatingDice(set as Record<string, any>, cur);
+	if (set.rating) set.rating.type = 'Dice';
+	updateCharacter(props.character);
+}
+
+function toggleNameSetPoolFlag() {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	if (set.pool === true) delete set.pool;
+	else set.pool = true;
+	updateCharacter(props.character);
+}
+
+function toggleNameSetSpendableFlag() {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const v = ensureView(set) as Record<string, unknown>;
+	if (v.spendable === true) delete v.spendable;
+	else v.spendable = true;
+	updateCharacter(props.character);
+}
+
+const sheetPipValues = computed<boolean[]>(() => {
+	const r = sheetRating.value;
+	if (r?.type !== 'Pip' || !Array.isArray(r.value) || !r.value.length) return [false, false, false];
+	return r.value.map((x: unknown) => Boolean(x));
+});
+
+function toggleNameSetPip(idx: number) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const vals = [...sheetPipValues.value];
+	vals[idx] = !vals[idx];
+	set.rating = { type: 'Pip', value: vals };
+	updateCharacter(props.character);
+}
+
+function stepNameSetPipCount(delta: number) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const cur = [...sheetPipValues.value];
+	const nextCount = Math.max(1, Math.min(12, cur.length + delta));
+	while (cur.length < nextCount) cur.push(false);
+	if (cur.length > nextCount) cur.length = nextCount;
+	set.rating = { type: 'Pip', value: cur };
+	updateCharacter(props.character);
+}
+
+function getNameCounterField(field: 'value' | 'min' | 'max'): number {
+	const r = sheetRating.value as any;
+	if (r?.type !== 'Counter') return field === 'max' ? 10 : 0;
+	if (field === 'value') return typeof r.value?.[0] === 'number' ? r.value[0] : 0;
+	if (field === 'min') return typeof r.min === 'number' ? r.min : 0;
+	return typeof r.max === 'number' ? r.max : 10;
+}
+
+function setNameCounterField(field: 'value' | 'min' | 'max', rawVal: string) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const num = parseInt(rawVal, 10);
+	const clean = Number.isFinite(num) ? num : 0;
+	const cur = getRating(set) as any;
+	const val = cur?.type === 'Counter' && typeof cur.value?.[0] === 'number' ? cur.value[0] : 0;
+	const min = typeof cur?.min === 'number' ? cur.min : 0;
+	const max = typeof cur?.max === 'number' ? cur.max : 10;
+	const nextMin = field === 'min' ? clean : min;
+	const nextMax = field === 'max' ? Math.max(nextMin, clean) : Math.max(nextMin, max);
+	const nextVal =
+		field === 'value' ? Math.max(nextMin, Math.min(nextMax, clean)) : Math.max(nextMin, Math.min(nextMax, val));
+	set.rating = { type: 'Counter', value: [nextVal], min: nextMin, max: nextMax } as any;
+	updateCharacter(props.character);
+}
+
+const nameBorderShape = computed<'none' | 'block' | 'line'>(() => {
+	const raw = getView(sheetRatingSet.value)?.border;
+	const shape = typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as any).shape : undefined;
+	return shape === 'none' || shape === 'line' ? shape : 'block';
+});
+
+function setNameBorderShape(shape: 'none' | 'block' | 'line') {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const v = ensureView(set) as Record<string, unknown>;
+	delete v.borderless;
+	if (shape === 'block') {
+		delete v.border;
+	} else {
+		v.border = shape;
+	}
+	updateCharacter(props.character);
+}
+
+const nameSetPillar = computed<string>(() => {
+	const raw = getView(sheetRatingSet.value)?.pillar;
+	return typeof raw === 'string' ? raw.trim() : '';
+});
+
+function setNameSetPillar(val: string) {
+	const { set } = ensureNameSet();
+	if (!set) return;
+	const v = ensureView(set) as Record<string, unknown>;
+	const trimmed = String(val || '').trim();
+	if (trimmed) v.pillar = trimmed;
+	else delete v.pillar;
+	updateCharacter(props.character);
+}
+
+const newPillarDraft = ref('');
+
+const STANDARD_PILLAR_KEYS = new Set(['identity', 'prime', 'plus', 'play']);
+
+const pillarSelectOptions = computed<ReadonlyArray<{ key: string; label: string }>>(() => {
+	const keys = ['identity', 'prime', 'plus', 'play'];
+	for (const k of activePillarKeys.value) {
+		if (!keys.includes(k)) keys.push(k);
+	}
+	return keys.map((k) => ({ key: k, label: getPillarLabel(props.character, k) }));
+});
+
 const activePillarKeys = computed<string[]>(() => {
 	const seen: string[] = ['identity'];
 	const defaults = ['prime', 'plus', 'play'];
 	const sets = props.character?.traitSets || [];
-	const used = new Set<string>(['identity']);
+	const explicit = Array.isArray(getView(props.character)?.pillars)
+		? getView(props.character)!.pillars!.filter((k): k is string => typeof k === 'string' && k.trim().length > 0)
+		: [];
+	const used = new Set<string>(['identity', ...explicit]);
 	for (const ts of sets) {
-		if (!ts || isNameSet(ts)) continue;
+		if (!ts) continue;
 		used.add(resolveSetPillar(ts));
 	}
 	for (const d of defaults) {
 		if (used.has(d) && !seen.includes(d)) seen.push(d);
 	}
+	for (const k of explicit) {
+		if (!seen.includes(k)) seen.push(k);
+	}
 	for (const ts of sets) {
-		if (!ts || isNameSet(ts)) continue;
+		if (!ts) continue;
 		const p = resolveSetPillar(ts);
 		if (!seen.includes(p)) seen.push(p);
 	}
 	return seen;
 });
+
+function isPillarRemovable(key: string): boolean {
+	if (!key || STANDARD_PILLAR_KEYS.has(key) || key === 'sheet') return false;
+	const sets = props.character?.traitSets || [];
+	return !sets.some((ts: any) => ts && resolveSetPillar(ts) === key);
+}
+
+function addPillarFromEditor() {
+	if (!props.character) return;
+	const rawLabel = newPillarDraft.value.trim();
+	if (!rawLabel) return;
+	const baseSlug =
+		rawLabel
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '') || 'pillar';
+	const v = ensureView(props.character);
+	const existing = Array.isArray(v.pillars) ? [...v.pillars] : [];
+	const taken = new Set([...activePillarKeys.value, ...existing]);
+	let newKey = baseSlug;
+	let suffix = 2;
+	while (taken.has(newKey)) {
+		newKey = `${baseSlug}-${suffix++}`;
+	}
+	if (!existing.length && props.character.traitSets) {
+		existing.push('identity');
+	}
+	existing.push(newKey);
+	v.pillars = existing;
+	if (!v.labels || typeof v.labels !== 'object') v.labels = {};
+	if (!v.labels.pillars || typeof v.labels.pillars !== 'object' || Array.isArray(v.labels.pillars)) {
+		v.labels.pillars = {};
+	}
+	v.labels.pillars[newKey] = rawLabel;
+	newPillarDraft.value = '';
+	updateCharacter(props.character);
+}
+
+function removeCustomPillar(key: string) {
+	if (!props.character || !isPillarRemovable(key)) return;
+	const v = ensureView(props.character);
+	if (Array.isArray(v.pillars)) {
+		v.pillars = v.pillars.filter((k) => k !== key);
+		if (!v.pillars.length) delete v.pillars;
+	}
+	if (v.labels && typeof v.labels === 'object') {
+		const pillarsMap = v.labels.pillars as Record<string, unknown> | undefined;
+		if (pillarsMap && typeof pillarsMap === 'object') {
+			delete pillarsMap[key];
+			if (!Object.keys(pillarsMap).length) delete v.labels.pillars;
+		}
+		delete (v.labels as Record<string, unknown>)['pillar_' + key];
+	}
+	updateCharacter(props.character);
+}
 
 function pillarLabelValue(key: string): string {
 	const labels = getView(props.character)?.labels as Record<string, any> | undefined;
@@ -1031,13 +1262,6 @@ function updateCharacter(character: any) {
 								<span class="editor-label m-0">Name Block Set</span>
 								<visibility-eye :state="nameSetVisibility()" @toggle="toggleNameSetVisibility()" />
 							</div>
-							<div class="editor-button-container">
-								<div class="editor-button-container-inner">
-									<button type="button" class="editor-button" @click.stop="openNameSetEditor()">
-										<span><i class="fas fa-sliders" aria-hidden="true"></i> Configure Name Set</span>
-									</button>
-								</div>
-							</div>
 						</div>
 						<div class="editor-field">
 							<div class="name-heading-row">
@@ -1065,7 +1289,25 @@ function updateCharacter(character: any) {
 
 						<div class="editor-field">
 							<label class="editor-field-label">Sheet Rating</label>
-							<div class="editor-die-chip-row" role="group" aria-label="Sheet rating">
+							<div class="editor-button-group mb-sm" role="group" aria-label="Sheet rating mode">
+								<button
+									v-for="mode in ['Die', 'Dice', 'Pip', 'Counter', 'None'] as const"
+									:key="'sheet-mode-' + mode"
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: sheetRatingMode === mode }"
+									:aria-pressed="sheetRatingMode === mode"
+									@click="setSheetRatingMode(mode)"
+								>
+									{{ mode }}
+								</button>
+							</div>
+							<div
+								v-if="sheetRatingMode === 'Die' || sheetRatingMode === 'None'"
+								class="editor-die-chip-row"
+								role="group"
+								aria-label="Sheet rating"
+							>
 								<button
 									type="button"
 									class="editor-die-chip editor-die-chip-none"
@@ -1087,6 +1329,158 @@ function updateCharacter(character: any) {
 								>
 									<span class="diecon-wrapper" v-html="renderDicePreview(size, isSheetRatingDie(size))"></span>
 								</button>
+							</div>
+							<div v-else-if="sheetRatingMode === 'Dice'" class="editor-dice-pool-panel">
+								<div class="editor-die-chip-row" role="group" aria-label="Sheet pool dice">
+									<button
+										v-for="(dSize, dIdx) in sheetPoolDiceList"
+										:key="'sheet-pool-' + dIdx + '-' + dSize"
+										type="button"
+										class="editor-die-chip active"
+										:aria-label="'Remove d' + dSize"
+										@click="removeNamePoolDie(dIdx)"
+									>
+										<span class="diecon-wrapper" v-html="renderDicePreview(dSize, true)"></span>
+									</button>
+								</div>
+								<div class="editor-die-chip-row mt-sm" role="group" aria-label="Add die to sheet pool">
+									<button
+										v-for="size in DIE_LADDER"
+										:key="'sheet-add-' + size"
+										type="button"
+										class="editor-die-chip"
+										:aria-label="'Add d' + size"
+										@click="addNamePoolDie(size)"
+									>
+										<span>+</span>
+										<span class="diecon-wrapper" v-html="renderDicePreview(size, false)"></span>
+									</button>
+								</div>
+								<div class="editor-button-group mt-sm">
+									<button
+										type="button"
+										class="editor-group-btn"
+										:class="{ active: sheetRatingSet?.pool === true }"
+										:aria-pressed="sheetRatingSet?.pool === true"
+										@click="toggleNameSetPoolFlag"
+									>
+										Pool
+									</button>
+									<button
+										type="button"
+										class="editor-group-btn"
+										:class="{ active: getView(sheetRatingSet)?.spendable === true }"
+										:aria-pressed="getView(sheetRatingSet)?.spendable === true"
+										@click="toggleNameSetSpendableFlag"
+									>
+										Spendable
+									</button>
+								</div>
+							</div>
+							<div v-else-if="sheetRatingMode === 'Pip'" class="pip-editor-row">
+								<div class="pip-editor-bubbles" role="group" aria-label="Sheet pip rating">
+									<button
+										v-for="(filled, pIdx) in sheetPipValues"
+										:key="'sheet-pip-' + pIdx"
+										type="button"
+										class="pip-bubble-wrap"
+										role="checkbox"
+										:aria-checked="filled ? 'true' : 'false'"
+										:aria-label="'Sheet pip ' + (pIdx + 1)"
+										@click="toggleNameSetPip(pIdx)"
+									>
+										<span class="pip-bubble" :class="{ filled }"></span>
+									</button>
+								</div>
+								<div class="editor-button-group" role="group" aria-label="Pip count">
+									<button
+										type="button"
+										class="editor-group-btn"
+										aria-label="Decrease sheet pip count"
+										:disabled="sheetPipValues.length <= 1"
+										@click="stepNameSetPipCount(-1)"
+									>
+										-
+									</button>
+									<span class="pip-editor-count">{{ sheetPipValues.length }}</span>
+									<button
+										type="button"
+										class="editor-group-btn"
+										aria-label="Increase sheet pip count"
+										:disabled="sheetPipValues.length >= 12"
+										@click="stepNameSetPipCount(1)"
+									>
+										+
+									</button>
+								</div>
+							</div>
+							<div v-else-if="sheetRatingMode === 'Counter'" class="editor-grid-2">
+								<div>
+									<label for="char-name-counter-val" class="editor-sub-label">Value</label>
+									<input
+										id="char-name-counter-val"
+										type="number"
+										:value="getNameCounterField('value')"
+										@change="setNameCounterField('value', targetValue($event))"
+									/>
+								</div>
+								<div>
+									<label for="char-name-counter-min" class="editor-sub-label">Min</label>
+									<input
+										id="char-name-counter-min"
+										type="number"
+										:value="getNameCounterField('min')"
+										@change="setNameCounterField('min', targetValue($event))"
+									/>
+								</div>
+								<div>
+									<label for="char-name-counter-max" class="editor-sub-label">Max</label>
+									<input
+										id="char-name-counter-max"
+										type="number"
+										:value="getNameCounterField('max')"
+										@change="setNameCounterField('max', targetValue($event))"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-grid-2">
+								<div>
+									<div class="editor-label">Border</div>
+									<div class="editor-button-group" role="group" aria-label="Name block border">
+										<button
+											v-for="opt in [
+												{ id: 'none', label: 'None' },
+												{ id: 'block', label: 'Block' },
+												{ id: 'line', label: 'Line' },
+											]"
+											:key="'name-border-' + opt.id"
+											type="button"
+											class="editor-group-btn"
+											:class="{ active: nameBorderShape === opt.id }"
+											:aria-pressed="nameBorderShape === opt.id"
+											@click="setNameBorderShape(opt.id as 'none' | 'block' | 'line')"
+										>
+											{{ opt.label }}
+										</button>
+									</div>
+								</div>
+								<div>
+									<label for="char-name-pillar" class="editor-sub-label">Pillar</label>
+									<select
+										id="char-name-pillar"
+										name="namePillar"
+										:value="nameSetPillar"
+										@change="setNameSetPillar(targetValue($event))"
+									>
+										<option value="">Auto ({{ resolveSetPillar(sheetRatingSet) }})</option>
+										<option v-for="opt in pillarSelectOptions" :key="'name-opt-' + opt.key" :value="opt.key">
+											{{ opt.label }}
+										</option>
+									</select>
+								</div>
 							</div>
 						</div>
 
@@ -1423,10 +1817,34 @@ function updateCharacter(character: any) {
 						</div>
 
 						<div class="editor-field">
-							<div class="editor-label">Pillar Labels</div>
+							<div class="editor-label">Pillars</div>
+							<form class="tag-editor-input-row mt-sm" @submit.prevent="addPillarFromEditor">
+								<input
+									v-model="newPillarDraft"
+									type="text"
+									name="newPillar"
+									placeholder="New pillar name"
+									aria-label="New pillar name"
+								/>
+								<button type="submit" class="editor-button tag-add-btn">
+									<span><i class="fas fa-plus" aria-hidden="true"></i> Pillar</span>
+								</button>
+							</form>
 							<div class="editor-grid-2 mt-sm">
 								<div v-for="pKey in activePillarKeys" :key="'pillar-lbl-' + pKey">
-									<label :for="'char-pillar-label-' + pKey" class="editor-sub-label">{{ pKey }}</label>
+									<div class="editor-row-between">
+										<label :for="'char-pillar-label-' + pKey" class="editor-sub-label">{{ pKey }}</label>
+										<button
+											v-if="isPillarRemovable(pKey)"
+											type="button"
+											class="editor-btn-danger-mini"
+											:aria-label="'Remove pillar ' + (pillarLabelValue(pKey) || pKey)"
+											title="Remove pillar"
+											@click.stop="removeCustomPillar(pKey)"
+										>
+											<i class="fas fa-times" aria-hidden="true"></i>
+										</button>
+									</div>
 									<input
 										type="text"
 										:id="'char-pillar-label-' + pKey"

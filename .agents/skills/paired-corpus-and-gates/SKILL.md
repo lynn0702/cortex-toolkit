@@ -1,7 +1,7 @@
 ---
 name: paired-corpus-and-gates
 description: >-
-  Keep paired templates, generated model types, font/icon subsets, Vite module imports, and built outputs synchronized, and enforce the 7-step Definition of Done before handoff. Use when editing paired files, schemas, templates, icons, or finishing any change.
+  Keep paired templates, generated model types, font/icon subsets, Vite module imports, and built outputs synchronized, and enforce the 8-step Definition of Done before handoff. Use when editing paired files, schemas, templates, icons, or finishing any change.
 ---
 
 # Paired Corpus and Gates
@@ -16,7 +16,7 @@ Whenever you modify one half of a paired corpus, schema, asset manifest, or comp
    - Mirror hand-authored template content across `js/templates.js` and its `.template.layered.json` file; `scripts/realign_templates.js` normalizes formatting/columns in `js/templates.js` only.
 
 2. **Schemas and TypeScript model (`npm run types`)**
-   - Source: `schema/0.1/*.schema.json` → Generated: `js/model.generated.ts` (never hand-edit generated types).
+   - Source: `schema/0.2/*.schema.json` → Generated: `js/model.generated.ts` (`scripts/gen-types.mjs` writes only when content changes; never hand-edit generated types).
    - App-only `view` types and runtime helpers live in `js/model.ts`.
 
 3. **Icons, fonts, and cache-busted HTML**
@@ -33,17 +33,18 @@ Whenever you modify one half of a paired corpus, schema, asset manifest, or comp
 
 ## Definition of Done (`npm run gate`)
 
-Run `npm run gate` (`node scripts/gate.js`) after your very last edit. It enforces all **7** gates in sequence:
+Check formatting read-only (`npx prettier --check --cache .`) and fix any mismatches via `edit_file` (never `prettier --write` on pending edits), then run `npm run gate` (`node scripts/gate.js`) after your very last edit. It enforces all **8** gates in sequence:
 
-1. Production Build (`vite` + `combine-templates` + `gen-types` + `version-assets`)
-2. Code Style (`prettier`)
+1. Production Build (`fetch-fonts` + `gen-types` + `vite` + `combine-templates` + `version-assets`)
+2. Code Style (`prettier --check --cache .`)
 3. Type Check (`vue-tsc`)
 4. Test Suites (`vitest` + Node suites)
 5. Schema & Corpus Validation (`scripts/validate.js`)
 6. Security Audit (`v-html` scan)
 7. Icon Subset Coverage (`fa-*` check)
+8. CSS Validation, Style Controls & Payload Budgets (Lightning CSS, `!important`/static-style limits, font/gzip budgets)
 
-Confirm all **seven** `[PASS]` lines and `ALL GATES PASSED` in tool output before handing work over.
+Confirm all **eight** `[PASS]` lines and `ALL GATES PASSED` in tool output before handing work over.
 
 ## Browser smoke for UI & rendering changes
 

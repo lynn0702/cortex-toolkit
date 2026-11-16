@@ -1954,11 +1954,19 @@
 		row-gap: var(--space-xs);
 	}
 
+	.mobile-roller-pill-staged-group {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
 	.mobile-roller-pill-left {
 		display: flex;
 		align-items: center;
 		gap: 0.4rem;
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		min-width: 0;
 		overflow-x: auto;
 		cursor: pointer;
@@ -2022,7 +2030,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.45rem;
-		margin-left: 0.5rem;
+		margin-inline-start: auto;
 		flex-shrink: 0;
 	}
 
@@ -2034,6 +2042,8 @@
 		font-size: 0.84rem;
 		font-weight: 700;
 		padding: 0.4rem 0.9rem;
+		min-inline-size: 2rem;
+		min-block-size: 2.25rem;
 		cursor: pointer;
 		touch-action: manipulation;
 		display: inline-flex;
@@ -2050,9 +2060,12 @@
 		color: var(--roller-text-dark);
 		border: none;
 		border-radius: 999rem;
+		min-inline-size: 2rem;
+		min-block-size: 2rem;
 		width: 2rem;
 		height: 2rem;
 		font-size: 0.88rem;
+		flex-shrink: 0;
 		cursor: pointer;
 		touch-action: manipulation;
 		display: inline-flex;
@@ -2068,6 +2081,8 @@
 		font-size: 0.82rem;
 		font-weight: 700;
 		padding: 0.38rem 0.75rem;
+		min-inline-size: 2rem;
+		min-block-size: 2.25rem;
 		cursor: pointer;
 		touch-action: manipulation;
 		display: inline-flex;

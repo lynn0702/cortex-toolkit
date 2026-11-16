@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, watch } from 'vue';
 import {
 	ensureCuriosityPortrait,
 	ensureView,
@@ -7,15 +7,19 @@ import {
 	getIdentityText,
 	getRating,
 	getView,
+	hasPlotPoints,
 	isNameSet,
 	ratingDice,
+	resolveSetPillar,
 	resolveVisibility,
 	setIdentityText,
+	setRatingDie,
 } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { normalizeZoom } from './frame-geometry.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import InlineRatingBar from './inline-rating-bar.vue';
+import TraitSetList from './trait-set-list.vue';
 
 const {
 	traitSet,
@@ -23,15 +27,139 @@ const {
 	character,
 	submode,
 	printBlank,
+	editing,
 	isSelected,
 	selectElement,
 	updateCharacter,
+	addTrait,
+	getRenderedTraits,
+	isCanvasPartDrawerOpen,
+	toggleCanvasPartDrawer,
+	requestCanvasFocus,
 	renderText,
 	renderNotesText,
 	renderDieValue,
 	renderDieValueForPrint,
 	stageSetDie,
 } = injectTraitSet();
+
+const pillarCtx = inject<{
+	sheetUsesPillars: { value: boolean };
+	pillarOptions: { value: ReadonlyArray<{ key: string; label: string }> };
+	setSetPillar: (ts: any, val: string) => void;
+} | null>('curioPillarContext', null);
+
+type NameQuickPartKey =
+	'rating' | 'pp' | 'notes' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player';
+
+const NAME_QUICK_PARTS: ReadonlyArray<{ key: NameQuickPartKey; label: string }> = [
+	{ key: 'rating', label: 'Rating' },
+	{ key: 'pp', label: 'PP' },
+	{ key: 'notes', label: 'Notes' },
+	{ key: 'description', label: 'Description' },
+	{ key: 'portrait', label: 'Portrait' },
+	{ key: 'pronouns', label: 'Pronouns' },
+	{ key: 'nickname', label: 'Nickname' },
+	{ key: 'game', label: 'Game' },
+	{ key: 'player', label: 'Player' },
+];
+
+const nameActionsRef = ref<HTMLElement | null>(null);
+const nameRatingBarAnchorRef = ref<HTMLElement | null>(null);
+
+const hasCustomNameTraits = computed(() =>
+	Boolean(traitSet.value && getRenderedTraits(traitSet.value, s.value).length > 0),
+);
+
+const rawNameSetPillar = computed(() => {
+	const raw = getView(traitSet.value)?.pillar;
+	return typeof raw === 'string' ? raw.trim() : '';
+});
+
+function onNamePillarChange(event: Event) {
+	if (!traitSet.value || !pillarCtx) return;
+	pillarCtx.setSetPillar(traitSet.value, (event.target as HTMLSelectElement).value);
+}
+
+function isNameIdentityPartActive(key: NameQuickPartKey): boolean {
+	const ch = character.value;
+	if (!ch) return false;
+	if (key === 'rating') return Boolean(getRating(traitSet.value));
+	if (key === 'pp') return hasPlotPoints(ch);
+	const t = characterCurioFunctions.getNameTrait(ch, key);
+	const shown = !t || resolveVisibility(t) !== 'hidden';
+	if (key === 'nickname') {
+		return shown && Boolean(getIdentityText(ch, 'nickname', traitSet.value) || getView(ch)?.hasNickname || Boolean(t));
+	}
+	if (key === 'portrait') {
+		const p = getCuriosityPortrait(ch, traitSet.value);
+		if (p?.url && shown) return true;
+		return Boolean(t) && resolveVisibility(t) !== 'hidden' && !isNameIdentityPartActive('description');
+	}
+	if (key === 'player') {
+		return (
+			shown &&
+			(Boolean(getIdentityText(ch, 'player', traitSet.value)) ||
+				(Boolean(t) && !isNameIdentityPartActive('description')))
+		);
+	}
+	return shown && (Boolean(getIdentityText(ch, key as any, traitSet.value)) || Boolean(t));
+}
+
+function toggleNameIdentityPart(key: NameQuickPartKey) {
+	const ch = character.value as any;
+	if (!ch) return;
+	if (key === 'rating') {
+		let ns: any = traitSet.value || (ch.traitSets || []).find((st: any) => isNameSet(st));
+		if (!ns) {
+			ns = { id: 'name', name: 'Name', traits: [] };
+			if (!Array.isArray(ch.traitSets)) ch.traitSets = [];
+			ch.traitSets.unshift(ns);
+		}
+		if (getRating(ns)) {
+			delete ns.rating;
+			showNameRatingBar.value = false;
+		} else {
+			setRatingDie(ns, 8);
+		}
+		updateCharacter(ch);
+		return;
+	}
+	if (key === 'pp') {
+		if (hasPlotPoints(ch)) {
+			if (ch.sheet?.template) ch.plotPoints = null;
+			else delete ch.plotPoints;
+		} else {
+			ch.plotPoints = 1;
+		}
+		updateCharacter(ch);
+		return;
+	}
+	if (isNameIdentityPartActive(key)) {
+		hideIdentityPart(key);
+		return;
+	}
+	const t = characterCurioFunctions.ensureNameTrait(ch, key);
+	if (!t) return;
+	delete (ensureView(t) as Record<string, unknown>).visibility;
+	if (key === 'nickname') {
+		ensureView(ch).hasNickname = true;
+	}
+	if (key === 'portrait' && isNameIdentityPartActive('description') && !getCuriosityPortrait(ch, traitSet.value)?.url) {
+		selectElement(['name']);
+	}
+	updateCharacter(ch);
+}
+
+function onToggleNameParts() {
+	const opening = !isCanvasPartDrawerOpen(s.value);
+	toggleCanvasPartDrawer(s.value);
+	if (opening) {
+		nextTick(() => {
+			requestCanvasFocus(nameActionsRef.value);
+		});
+	}
+}
 
 const portraitInputRef = ref<HTMLInputElement | null>(null);
 
@@ -217,10 +345,29 @@ const nameSetDice = computed(() => ratingDice(nameSetRating.value));
 const hasRatedNameSet = computed(() => Boolean(nameSetRating.value));
 const showNameRatingBar = ref(false);
 
+function toggleNameRatingBar() {
+	const opening = !showNameRatingBar.value;
+	showNameRatingBar.value = opening;
+	if (opening) {
+		nextTick(() => {
+			requestCanvasFocus(nameRatingBarAnchorRef.value);
+		});
+	}
+}
+
 watch(
 	() => submode.value,
 	(mode) => {
 		if (mode !== 'edit') {
+			showNameRatingBar.value = false;
+		}
+	},
+);
+
+watch(
+	() => editing.value,
+	(sel) => {
+		if (Array.isArray(sel) && sel.length > 0) {
 			showNameRatingBar.value = false;
 		}
 	},
@@ -335,6 +482,12 @@ const descriptionText = computed({
 		updateCharacter(character.value);
 	},
 });
+
+const nameBorderShape = computed<'none' | 'block' | 'line'>(() => {
+	const raw = getView(traitSet.value)?.border;
+	const shape = typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as any).shape : undefined;
+	return shape === 'none' || shape === 'line' ? shape : 'block';
+});
 </script>
 
 <template>
@@ -345,6 +498,8 @@ const descriptionText = computed({
 				'has-portrait': hasPortraitColumn,
 				'no-desc-box': !hasDescBox,
 				'is-compact-header': isCompactHeader,
+				'is-border-none': nameBorderShape === 'none',
+				'is-border-line': nameBorderShape === 'line',
 				selected: isSelected(['name']) || isSelected(['traitSet', s]),
 			}"
 		>
@@ -357,13 +512,27 @@ const descriptionText = computed({
 							!isCompactHeader ||
 							submode !== 'edit' ||
 							hasCustomNameLabel ||
-							(player && !printBlank && nameShown('player'))
+							(player && !printBlank && nameShown('player')) ||
+							(submode === 'edit' && pillarCtx?.sheetUsesPillars.value)
 						"
 					>
 						<span class="sheet-cell-label" v-if="nameShown('name')">{{ nameHeadingLabel }}</span>
 						<span class="sheet-cell-sublabel" v-if="submode !== 'edit' && player && !printBlank && nameShown('player')"
 							>{{ playerLabel }} {{ player }}</span
 						>
+						<select
+							v-if="submode === 'edit' && pillarCtx?.sheetUsesPillars.value"
+							class="set-header-pillar-chip"
+							:aria-label="'Pillar for ' + (traitSet?.name || 'Name')"
+							:value="rawNameSetPillar"
+							@click.stop
+							@keydown.stop
+							@change.stop="onNamePillarChange"
+						>
+							<option v-for="opt in pillarCtx.pillarOptions.value" :key="'name-pil-' + opt.key" :value="opt.key">
+								{{ opt.key ? opt.label : `Auto (${resolveSetPillar(traitSet)})` }}
+							</option>
+						</select>
 						<button
 							v-if="submode === 'edit'"
 							type="button"
@@ -416,18 +585,16 @@ const descriptionText = computed({
 								@keydown.enter="onInlineEnter"
 							/>
 							<button
-								v-if="hasRatedNameSet"
+								v-if="hasRatedNameSet && (nameSetRating?.type === 'Die' || nameSetRating?.type === 'Dice')"
 								type="button"
 								class="sheet-name-rating-trigger"
 								:class="{ active: showNameRatingBar }"
 								:aria-expanded="showNameRatingBar"
 								aria-label="Edit sheet rating"
 								title="Edit rating"
-								@click.stop="showNameRatingBar = !showNameRatingBar"
+								@click.stop="toggleNameRatingBar"
 							>
-								<template
-									v-if="(nameSetRating?.type === 'Die' || nameSetRating?.type === 'Dice') && nameSetDice.length > 0"
-								>
+								<template v-if="nameSetDice.length > 0">
 									<span
 										v-for="(dieSize, dIdx) in nameSetDice"
 										:key="'edit-nd-' + dIdx"
@@ -435,20 +602,68 @@ const descriptionText = computed({
 										v-html="renderDieValue(dieSize, true)"
 									></span>
 								</template>
-								<span v-else-if="nameSetRating?.type === 'Pip'" class="sheet-name-pip-group">
-									<span
-										v-for="(filled, pIdx) in nameSetPips"
-										:key="'edit-np-' + pIdx"
-										class="pip-bubble"
-										:class="{ filled }"
-									></span>
-								</span>
-								<span v-else-if="nameSetRating?.type === 'Counter'" class="counter-display">
-									{{ nameSetCounter }}
-								</span>
 							</button>
+							<div
+								v-else-if="nameSetRating?.type === 'Pip'"
+								class="trait-value pip-value sheet-name-pip-group"
+								@click.stop
+							>
+								<button
+									v-for="(filled, pIdx) in nameSetPips"
+									:key="'edit-np-' + pIdx"
+									type="button"
+									class="inline-pip-btn"
+									role="checkbox"
+									:aria-checked="filled ? 'true' : 'false'"
+									:aria-label="`Sheet pip ${pIdx + 1}`"
+									@click.stop="toggleNamePip(pIdx)"
+								>
+									<span class="pip-bubble" :class="{ filled }"></span>
+								</button>
+								<button
+									type="button"
+									class="btn-canvas-edit-rating sheet-name-rating-trigger"
+									:class="{ active: showNameRatingBar }"
+									:aria-expanded="showNameRatingBar"
+									aria-label="Edit sheet rating"
+									title="Edit rating"
+									@click.stop="toggleNameRatingBar"
+								>
+									<i class="fas fa-sliders" aria-hidden="true"></i>
+								</button>
+							</div>
+							<div v-else-if="nameSetRating?.type === 'Counter'" class="trait-value counter-value" @click.stop>
+								<button
+									type="button"
+									class="btn-canvas-counter-step"
+									aria-label="Decrease sheet counter"
+									@click.stop="stepNameCounter(-1)"
+								>
+									-
+								</button>
+								<span class="counter-display">{{ nameSetCounter }}</span>
+								<button
+									type="button"
+									class="btn-canvas-counter-step"
+									aria-label="Increase sheet counter"
+									@click.stop="stepNameCounter(1)"
+								>
+									+
+								</button>
+								<button
+									type="button"
+									class="btn-canvas-edit-rating sheet-name-rating-trigger"
+									:class="{ active: showNameRatingBar }"
+									:aria-expanded="showNameRatingBar"
+									aria-label="Edit sheet rating"
+									title="Edit rating"
+									@click.stop="toggleNameRatingBar"
+								>
+									<i class="fas fa-sliders" aria-hidden="true"></i>
+								</button>
+							</div>
 							<button
-								v-if="isCompactHeader && !hasCustomNameLabel"
+								v-if="isCompactHeader && !hasCustomNameLabel && !pillarCtx?.sheetUsesPillars.value"
 								type="button"
 								class="sheet-header-settings-btn"
 								title="Sheet & theme settings"
@@ -482,7 +697,11 @@ const descriptionText = computed({
 									"
 								></span>
 							</div>
-							<div v-else-if="nameSetRating?.type === 'Pip'" class="trait-value pip-value" @click.stop>
+							<div
+								v-else-if="nameSetRating?.type === 'Pip'"
+								class="trait-value pip-value sheet-name-pip-group"
+								@click.stop
+							>
 								<span
 									v-for="(filled, pIdx) in nameSetPips"
 									:key="'play-np-' + pIdx"
@@ -522,14 +741,15 @@ const descriptionText = computed({
 						</template>
 					</div>
 
-					<InlineRatingBar
-						v-if="submode === 'edit' && showNameRatingBar && traitSet"
-						:node="traitSet"
-						:dice-config="getView(character)?.diceConfig"
-						:subject-label="name || 'Sheet'"
-						@change="updateCharacter(character)"
-						@close="showNameRatingBar = false"
-					/>
+					<div ref="nameRatingBarAnchorRef" v-if="submode === 'edit' && showNameRatingBar && traitSet">
+						<InlineRatingBar
+							:node="traitSet"
+							:dice-config="getView(character)?.diceConfig"
+							:subject-label="name || 'Sheet'"
+							@change="updateCharacter(character)"
+							@close="showNameRatingBar = false"
+						/>
+					</div>
 
 					<div class="sheet-inline-part-row" v-if="showPlayerFieldInEdit" @click.stop>
 						<span class="sheet-cell-label">{{ playerLabel }}</span>
@@ -762,6 +982,62 @@ const descriptionText = computed({
 				</div>
 				<div class="sheet-portrait-caption" v-if="isCaptionShown">
 					{{ portraitCaption }}
+				</div>
+			</div>
+
+			<!-- CUSTOM TRAITS ADDED TO NAME -->
+			<div v-if="hasCustomNameTraits" class="sheet-header-custom-traits" @click.stop>
+				<TraitSetList :hide-set-actions="true" />
+			</div>
+
+			<!-- IN-CARD NAME ACTIONS (+ TRAIT, + PART -> NAME PARTS) -->
+			<div
+				v-if="submode === 'edit'"
+				ref="nameActionsRef"
+				class="sheet-name-organic-actions preview-button-container"
+				@click.stop
+			>
+				<div class="preview-button-container-inner set-organic-actions">
+					<button type="button" class="preview-button" @click.stop="addTrait(s)">
+						<span><i class="fas fa-plus" aria-hidden="true"></i> Trait</span>
+					</button>
+					<button
+						type="button"
+						class="preview-button preview-button-secondary"
+						:class="{ active: isCanvasPartDrawerOpen(s) }"
+						:aria-expanded="isCanvasPartDrawerOpen(s)"
+						@click.stop="onToggleNameParts"
+					>
+						<span><i class="fas fa-plus" aria-hidden="true"></i> Part</span>
+					</button>
+				</div>
+				<div v-if="isCanvasPartDrawerOpen(s)" class="set-inline-part-drawer name-inline-part-drawer" @click.stop>
+					<div class="inline-add-header">
+						<span class="inline-add-title"><i class="fas fa-sliders" aria-hidden="true"></i> Name Parts</span>
+						<button
+							type="button"
+							class="btn-inline-close"
+							title="Close"
+							aria-label="Close name parts"
+							@click.stop="toggleCanvasPartDrawer(s)"
+						>
+							<i class="fas fa-times" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div class="organic-part-chips" role="group" aria-label="Name parts">
+						<button
+							v-for="part in NAME_QUICK_PARTS"
+							:key="'name-part-' + part.key"
+							type="button"
+							class="organic-part-chip"
+							:class="{ active: isNameIdentityPartActive(part.key) }"
+							:aria-pressed="isNameIdentityPartActive(part.key)"
+							@click.stop="toggleNameIdentityPart(part.key)"
+						>
+							<i :class="isNameIdentityPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'" aria-hidden="true"></i>
+							{{ part.label }}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>

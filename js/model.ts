@@ -890,6 +890,31 @@ export function isNameSet(set: unknown): boolean {
 	return Boolean(v && typeof v === 'object' && v.style?.body === 'name');
 }
 
+export const RESERVED_NAME_IDENTITY_KEYS = new Set([
+	'name',
+	'game',
+	'player',
+	'nickname',
+	'pronouns',
+	'description',
+	'notes',
+	'portrait',
+	'caption',
+	'plotpoints',
+]);
+
+/**
+ * True when a trait inside the Name set represents a reserved identity field
+ * override (unrated metadata record) rather than a custom user trait.
+ */
+export function isNameIdentitySlotTrait(trait: unknown): boolean {
+	if (!trait || typeof trait !== 'object' || Array.isArray(trait)) return false;
+	const rec = trait as Record<string, unknown>;
+	const key = typeof rec.name === 'string' ? rec.name.trim().toLowerCase() : '';
+	if (!RESERVED_NAME_IDENTITY_KEYS.has(key)) return false;
+	return getRating(trait) === undefined;
+}
+
 /**
  * Accessor for the presentation view bag on any character, set, trait, or portrait.
  * Routes through VIEW_KEY.

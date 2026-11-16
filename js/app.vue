@@ -107,7 +107,7 @@ const historyIndex = ref(-1);
 const isNavigatingHistory = ref(false);
 const isHandlingHash = ref(false);
 
-const { toastMessage, showToast } = useToast();
+const { toastMessage, toastActionLabel, showToast, triggerToastAction, pauseToast, resumeToast } = useToast();
 
 const main = ref<HTMLElement | null>(null);
 
@@ -1130,11 +1130,72 @@ function triggerRollFromPill() {
 }
 
 function triggerClearFromPill() {
+	const poolSnapshots = namedPools.value.map((entry) => ({
+		id: entry.id,
+		items: structuredClone(toRaw(entry.pool.items)),
+		wordBank: structuredClone(toRaw(entry.pool.wordBank || [])),
+	}));
+	const fallbackSnapshot = {
+		items: structuredClone(toRaw(fallbackDicePool.value.items)),
+		wordBank: structuredClone(toRaw(fallbackDicePool.value.wordBank || [])),
+	};
+	const oppSnapshot = {
+		items: structuredClone(toRaw(oppositionPool.value.items)),
+		wordBank: structuredClone(toRaw(oppositionPool.value.wordBank || [])),
+	};
+	const clearedCount =
+		poolSnapshots.reduce((sum, s) => sum + s.items.length, 0) +
+		fallbackSnapshot.items.length +
+		(poolSnapshots.some((s) => s.id === 'opposition') ? 0 : oppSnapshot.items.length);
+
 	if (studioPanelRef.value && typeof studioPanelRef.value.clearPool === 'function') {
 		studioPanelRef.value.clearPool();
 	} else {
 		clearDicePool();
 		clearOppositionPool();
+	}
+
+	if (clearedCount > 0) {
+		showToast('Pool cleared', {
+			actionLabel: 'Undo',
+			durationMs: 4500,
+			onAction: () => {
+				for (const snap of poolSnapshots) {
+					const target = namedPools.value.find((p) => p.id === snap.id);
+					if (target) {
+						target.pool.items.splice(0, target.pool.items.length, ...structuredClone(snap.items));
+						target.pool.wordBank = structuredClone(snap.wordBank);
+						target.pool._syncDiceFromItems();
+					}
+				}
+				fallbackDicePool.value.items.splice(
+					0,
+					fallbackDicePool.value.items.length,
+					...structuredClone(fallbackSnapshot.items),
+				);
+				fallbackDicePool.value.wordBank = structuredClone(fallbackSnapshot.wordBank);
+				fallbackDicePool.value._syncDiceFromItems();
+				if (!poolSnapshots.some((s) => s.id === 'opposition')) {
+					oppositionPool.value.items.splice(
+						0,
+						oppositionPool.value.items.length,
+						...structuredClone(oppSnapshot.items),
+					);
+					oppositionPool.value.wordBank = structuredClone(oppSnapshot.wordBank);
+					oppositionPool.value._syncDiceFromItems();
+				}
+			},
+		});
+	}
+}
+
+function closeStudioDrawer() {
+	editing.value = [];
+	if (submode.value === 'play' && isMobilePlayViewport()) {
+		setMobileDrawerState('staged');
+	} else {
+		isStudioPanelOpen.value = false;
+		isRollerOpen.value = false;
 	}
 }
 
@@ -2963,6 +3024,7 @@ defineExpose({
 							@saveSheetTemplate="saveSheetTemplate"
 							@exportSheetTemplate="exportSheetTemplate"
 							@addDieToRoller="addDieToRoller"
+							@closeDrawer="closeStudioDrawer"
 						></Character>
 					</div>
 				</div>
@@ -2982,6 +3044,7 @@ defineExpose({
 					@saveSheetTemplate="saveSheetTemplate"
 					@exportSheetTemplate="exportSheetTemplate"
 					@addDieToRoller="addDieToRoller"
+					@closeDrawer="closeStudioDrawer"
 				></Character>
 
 				<article class="about" v-else-if="mode === 'about'">
@@ -3050,74 +3113,81 @@ defineExpose({
 						+
 					</button>
 				</div>
-				<div
-					class="mobile-roller-pill-left"
-					@click="
-						studioPanelRef?.diceRoller?.isRolled ? studioPanelRef.openOutcomeDialog() : toggleMobileRollerDrawer()
-					"
-				>
-					<template
-						v-if="
-							studioPanelRef?.diceRoller?.isRolled &&
-							studioPanelRef?.diceRoller?.isContestRoll &&
-							studioPanelRef?.diceRoller?.contestSummary
+				<div class="mobile-roller-pill-staged-group">
+					<div
+						class="mobile-roller-pill-left"
+						@click="
+							studioPanelRef?.diceRoller?.isRolled ? studioPanelRef.openOutcomeDialog() : toggleMobileRollerDrawer()
 						"
 					>
-						<span class="pill-result-total"
-							>{{ studioPanelRef.diceRoller.contestSummary.playerLabel || 'Player' }}
-							<strong>{{ studioPanelRef.diceRoller.contestSummary.playerTotal }}</strong></span
+						<template
+							v-if="
+								studioPanelRef?.diceRoller?.isRolled &&
+								studioPanelRef?.diceRoller?.isContestRoll &&
+								studioPanelRef?.diceRoller?.contestSummary
+							"
 						>
-						<span class="pill-bullet">vs</span>
-						<span class="pill-result-effect"
-							>{{ studioPanelRef.diceRoller.contestSummary.oppLabel || 'Opp' }}
-							<strong>{{ studioPanelRef.diceRoller.contestSummary.oppTotal }}</strong></span
-						>
-					</template>
-					<template v-else-if="studioPanelRef?.diceRoller?.isRolled && studioPanelRef?.diceRoller?.bestTotalInfo">
-						<span class="pill-result-total"
-							>Total: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.total }}</strong></span
-						>
-						<span class="pill-bullet">•</span>
-						<span class="pill-result-effect"
-							>Effect: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.effect }}</strong></span
-						>
-					</template>
-					<template v-else-if="totalStagedDiceCount > 0">
-						<template v-for="(npEntry, npIdx) in nonEmptyNamedPools" :key="'pill-np-' + npEntry.id">
-							<span v-if="npIdx > 0" class="pill-vs-tag">vs</span>
-							<span
-								v-for="(item, dIdx) in npEntry.pool.items"
-								:key="'pd-' + npEntry.id + '-' + dIdx"
-								class="pill-die"
-								:class="{ 'pill-die-opp': npEntry.id === 'opposition' || (!npEntry.ownerId && npIdx > 0) }"
+							<span class="pill-result-total"
+								>{{ studioPanelRef.diceRoller.contestSummary.playerLabel || 'Player' }}
+								<strong>{{ studioPanelRef.diceRoller.contestSummary.playerTotal }}</strong></span
 							>
-								<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
-								<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
-							</span>
+							<span class="pill-bullet">vs</span>
+							<span class="pill-result-effect"
+								>{{ studioPanelRef.diceRoller.contestSummary.oppLabel || 'Opp' }}
+								<strong>{{ studioPanelRef.diceRoller.contestSummary.oppTotal }}</strong></span
+							>
 						</template>
-					</template>
-					<template v-else>
-						<span class="pill-empty-label"><i class="fas fa-dice" aria-hidden="true"></i> Tap traits</span>
-					</template>
+						<template v-else-if="studioPanelRef?.diceRoller?.isRolled && studioPanelRef?.diceRoller?.bestTotalInfo">
+							<span class="pill-result-total"
+								>Total: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.total }}</strong></span
+							>
+							<span class="pill-bullet">•</span>
+							<span class="pill-result-effect"
+								>Effect: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.effect }}</strong></span
+							>
+						</template>
+						<template v-else-if="totalStagedDiceCount > 0">
+							<template v-for="(npEntry, npIdx) in nonEmptyNamedPools" :key="'pill-np-' + npEntry.id">
+								<span v-if="npIdx > 0" class="pill-vs-tag">vs</span>
+								<span
+									v-for="(item, dIdx) in npEntry.pool.items"
+									:key="'pd-' + npEntry.id + '-' + dIdx"
+									class="pill-die"
+									:class="{ 'pill-die-opp': npEntry.id === 'opposition' || (!npEntry.ownerId && npIdx > 0) }"
+								>
+									<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
+									<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
+								</span>
+							</template>
+						</template>
+						<template v-else>
+							<span class="pill-empty-label"><i class="fas fa-dice" aria-hidden="true"></i> Tap traits</span>
+						</template>
+					</div>
+					<button
+						v-if="totalStagedDiceCount > 0"
+						type="button"
+						class="btn-pill-clear"
+						@click.stop="triggerClearFromPill"
+						title="Clear pool"
+						aria-label="Clear pool"
+					>
+						<i class="fas fa-times" aria-hidden="true"></i>
+					</button>
 				</div>
 				<div class="mobile-roller-pill-right">
-					<template v-if="totalStagedDiceCount > 0">
-						<button type="button" class="btn-pill-roll" @click.stop="triggerRollFromPill" title="Roll dice">
-							<i class="fas fa-dice" aria-hidden="true"></i> Roll
-						</button>
-						<button
-							type="button"
-							class="btn-pill-clear"
-							@click.stop="triggerClearFromPill"
-							title="Clear pool"
-							aria-label="Clear pool"
-						>
-							<i class="fas fa-times" aria-hidden="true"></i>
-						</button>
-					</template>
 					<button type="button" class="btn-pill-expand" @click.stop="toggleMobileRollerDrawer" title="Open dice roller">
 						<i class="fas fa-dice" aria-hidden="true"></i>
 						{{ totalStagedDiceCount > 0 ? 'Pool' : 'Roller' }}
+					</button>
+					<button
+						v-if="totalStagedDiceCount > 0"
+						type="button"
+						class="btn-pill-roll"
+						@click.stop="triggerRollFromPill"
+						title="Roll dice"
+					>
+						<i class="fas fa-dice" aria-hidden="true"></i> Roll
 					</button>
 				</div>
 			</div>
@@ -3198,10 +3268,24 @@ defineExpose({
 	</ModalDialog>
 
 	<!-- TOAST NOTIFICATION -->
-	<div class="sr-only" role="status" aria-live="polite">{{ toastMessage }}</div>
+	<div class="sr-only" role="status" aria-live="polite">
+		{{ toastMessage ? (toastActionLabel ? `${toastMessage} — Actions available` : toastMessage) : '' }}
+	</div>
 	<transition name="toast">
-		<div class="toast-notification" v-if="toastMessage" aria-hidden="true">
-			<i class="fas fa-check-circle"></i> <span>{{ toastMessage }}</span>
+		<div
+			v-if="toastMessage"
+			class="toast-notification"
+			:class="{ 'has-action': Boolean(toastActionLabel) }"
+			:aria-hidden="toastActionLabel ? undefined : 'true'"
+			@mouseenter="pauseToast"
+			@mouseleave="resumeToast()"
+			@focusin="pauseToast"
+			@focusout="resumeToast($event)"
+		>
+			<i class="fas fa-check-circle" aria-hidden="true"></i> <span>{{ toastMessage }}</span>
+			<button v-if="toastActionLabel" type="button" class="toast-action-btn" @click.stop="triggerToastAction">
+				{{ toastActionLabel }}
+			</button>
 		</div>
 	</transition>
 

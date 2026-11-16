@@ -2225,7 +2225,7 @@
 		background: transparent;
 		border: none;
 		border-radius: 0.25rem;
-		color: var(--text-muted);
+		color: color-mix(in oklch, currentColor 82%, transparent);
 		padding: 0.3rem 0.45rem;
 		font-family: var(--font-primary);
 		font-size: 0.75rem;

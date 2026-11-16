@@ -7,6 +7,10 @@ import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
 import InlineRatingBar from './inline-rating-bar.vue';
 
+const props = withDefaults(defineProps<{ hideSetActions?: boolean }>(), {
+	hideSetActions: false,
+});
+
 const {
 	traitSet,
 	s,
@@ -78,8 +82,6 @@ const {
 	getAltRoll,
 	handleAltRollClick,
 	stageTrackDie,
-	isSetPartActive,
-	toggleSetPart,
 	stepTraitCounter,
 	isCanvasTraitActive,
 	toggleCanvasTrait,
@@ -94,8 +96,11 @@ const {
 	getPoolAddRange,
 	addDieToPoolTrait,
 	removeDieFromPoolTrait,
-	isCanvasPartDrawerOpen,
-	toggleCanvasPartDrawer,
+	isTraitPartMenuOpen,
+	toggleTraitPartMenu,
+	isTraitDescInlineOpen,
+	hasTraitPartActive,
+	toggleTraitPart,
 	resolvedBorder,
 	traitArrayMode,
 	showPortraitHub,
@@ -134,8 +139,12 @@ function startInlineTrackLabel(tIdx: number | null | undefined, ev: Event) {
 	});
 }
 
-const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 'badge'; label: string }> = [
+const TRAIT_QUICK_PARTS: ReadonlyArray<{
+	key: 'description' | 'subtraits' | 'block' | 'track' | 'badge';
+	label: string;
+}> = [
 	{ key: 'description', label: 'Description' },
+	{ key: 'subtraits', label: 'Subtrait' },
 	{ key: 'block', label: 'SFX' },
 	{ key: 'track', label: 'Track' },
 	{ key: 'badge', label: 'Badge' },
@@ -144,6 +153,24 @@ const SET_QUICK_PARTS: ReadonlyArray<{ key: 'description' | 'block' | 'track' | 
 function onTraitNameInlineInput(trait: any, event: Event) {
 	if (!trait) return;
 	trait.name = (event.target as HTMLInputElement).value;
+	updateCharacter(character.value);
+}
+
+function onTraitDescInlineInput(trait: any, event: Event) {
+	if (!trait) return;
+	trait.description = (event.target as HTMLInputElement).value;
+	updateCharacter(character.value);
+}
+
+function onSubtraitNameInlineInput(subtrait: any, event: Event) {
+	if (!subtrait) return;
+	subtrait.name = (event.target as HTMLInputElement).value;
+	updateCharacter(character.value);
+}
+
+function onSfxFieldInlineInput(sfx: any, field: 'name' | 'description', event: Event) {
+	if (!sfx) return;
+	sfx[field] = (event.target as HTMLInputElement).value;
 	updateCharacter(character.value);
 }
 
@@ -970,8 +997,25 @@ function hasTraitSetDescription(ts: any) {
 									<span v-if="getView(traitSet)?.pipSeparator && item.trait.description" class="trait-pip-separator">{{
 										getView(traitSet)?.pipSeparator
 									}}</span>
+									<input
+										v-if="
+											submode === 'edit' &&
+											!printBlank &&
+											!item.isPlaceholder &&
+											(isTraitDescInlineOpen(item.trait, item.originalIndex) ||
+												isCanvasTraitActive(s, item.originalIndex))
+										"
+										type="text"
+										class="trait-desc-inline-input"
+										:value="item.trait.description || ''"
+										placeholder="Description..."
+										aria-label="Trait description"
+										@click.stop
+										@input="onTraitDescInlineInput(item.trait, $event)"
+										@keydown.enter="onTraitNameInlineEnter"
+									/>
 									<span
-										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
+										v-else-if="!printBlank && !item.isPlaceholder && item.trait.description"
 										v-html="
 											getView(traitSet)?.notesMarkdown
 												? renderNotesText(item.trait.description)
@@ -1023,15 +1067,46 @@ function hasTraitSetDescription(ts: any) {
 										<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
 											>{{ (getView(item.trait) as any).prefix.text }}
 										</span>
-										<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
-										><span v-if="sfx.name && sfx.description">: </span>
-										<span
-											class="trait-sfx-description"
-											v-if="sfx.description"
-											v-html="renderText(sfx.description)"
-										></span>
-										<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
-										<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">Detail...</span>
+										<template
+											v-if="
+												submode === 'edit' &&
+												!printBlank &&
+												!item.isPlaceholder &&
+												isCanvasTraitActive(s, item.originalIndex)
+											"
+										>
+											<input
+												type="text"
+												class="sfx-name-inline-input"
+												:value="sfx.name || ''"
+												placeholder="SFX"
+												aria-label="SFX name"
+												@click.stop
+												@input="onSfxFieldInlineInput(sfx, 'name', $event)"
+												@keydown.enter="onTraitNameInlineEnter"
+											/>
+											<input
+												type="text"
+												class="sfx-desc-inline-input"
+												:value="sfx.description || ''"
+												placeholder="Effect..."
+												aria-label="SFX detail"
+												@click.stop
+												@input="onSfxFieldInlineInput(sfx, 'description', $event)"
+												@keydown.enter="onTraitNameInlineEnter"
+											/>
+										</template>
+										<template v-else>
+											<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
+											><span v-if="sfx.name && sfx.description">: </span>
+											<span
+												class="trait-sfx-description"
+												v-if="sfx.description"
+												v-html="renderText(sfx.description)"
+											></span>
+											<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
+											<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">Detail...</span>
+										</template>
 									</li>
 								</ul>
 							</div>
@@ -1056,7 +1131,23 @@ function hasTraitSetDescription(ts: any) {
 												: null
 										"
 									>
-										<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
+										<input
+											v-if="
+												submode === 'edit' &&
+												!printBlank &&
+												!item.isPlaceholder &&
+												isCanvasTraitActive(s, item.originalIndex)
+											"
+											type="text"
+											class="subtrait-name-inline-input"
+											:value="subtrait.name || ''"
+											:placeholder="(resolveSubtraitNoun(subtrait, traitSet) || 'Subtrait') + ' name'"
+											:aria-label="(resolveSubtraitNoun(subtrait, traitSet) || 'Subtrait') + ' name'"
+											@click.stop
+											@input="onSubtraitNameInlineInput(subtrait, $event)"
+											@keydown.enter="onTraitNameInlineEnter"
+										/>
+										<span class="subtrait-name" v-else-if="subtrait.name">{{ subtrait.name }}</span>
 										<span class="subtrait-name" v-else>
 											<span class="trait-blank-line subtrait-blank-line"></span>
 										</span>
@@ -2012,10 +2103,32 @@ function hasTraitSetDescription(ts: any) {
 
 								<div
 									class="trait-description"
-									v-if="!getPipChild(item.trait) && (item.trait.description || hasTraitSetDescription(traitSet))"
+									v-if="
+										!getPipChild(item.trait) &&
+										(item.trait.description ||
+											hasTraitSetDescription(traitSet) ||
+											(submode === 'edit' && isTraitDescInlineOpen(item.trait, item.originalIndex)))
+									"
 								>
+									<input
+										v-if="
+											submode === 'edit' &&
+											!printBlank &&
+											!item.isPlaceholder &&
+											(isTraitDescInlineOpen(item.trait, item.originalIndex) ||
+												(isCanvasTraitActive(s, item.originalIndex) && Boolean(item.trait.description)))
+										"
+										type="text"
+										class="trait-desc-inline-input"
+										:value="item.trait.description || ''"
+										placeholder="Description..."
+										aria-label="Trait description"
+										@click.stop
+										@input="onTraitDescInlineInput(item.trait, $event)"
+										@keydown.enter="onTraitNameInlineEnter"
+									/>
 									<div
-										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
+										v-else-if="!printBlank && !item.isPlaceholder && item.trait.description"
 										v-html="
 											getView(traitSet)?.notesMarkdown
 												? renderNotesText(item.trait.description)
@@ -2045,7 +2158,23 @@ function hasTraitSetDescription(ts: any) {
 											: null
 									"
 								>
-									<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
+									<input
+										v-if="
+											submode === 'edit' &&
+											!printBlank &&
+											!item.isPlaceholder &&
+											isCanvasTraitActive(s, item.originalIndex)
+										"
+										type="text"
+										class="subtrait-name-inline-input"
+										:value="subtrait.name || ''"
+										:placeholder="(resolveSubtraitNoun(subtrait, traitSet) || 'Subtrait') + ' name'"
+										:aria-label="(resolveSubtraitNoun(subtrait, traitSet) || 'Subtrait') + ' name'"
+										@click.stop
+										@input="onSubtraitNameInlineInput(subtrait, $event)"
+										@keydown.enter="onTraitNameInlineEnter"
+									/>
+									<span class="subtrait-name" v-else-if="subtrait.name">{{ subtrait.name }}</span>
 									<span class="subtrait-name" v-else>
 										<span class="trait-blank-line subtrait-blank-line"></span>
 									</span>
@@ -2175,10 +2304,7 @@ function hasTraitSetDescription(ts: any) {
 									<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
 								</span>
 							</span>
-							<ul
-								class="trait-sfx"
-								v-if="!hasTrackPart(traitSet) && characterCurioFunctions.blockChildren(item.trait, traitSet).length"
-							>
+							<ul class="trait-sfx" v-if="characterCurioFunctions.blockChildren(item.trait, traitSet).length">
 								<li
 									v-for="(sfx, sfIdx) in characterCurioFunctions.blockChildren(item.trait, traitSet)"
 									:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
@@ -2186,15 +2312,46 @@ function hasTraitSetDescription(ts: any) {
 									<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
 										>{{ (getView(item.trait) as any).prefix.text }}
 									</span>
-									<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
-									><span v-if="sfx.name && sfx.description">: </span>
-									<span
-										class="trait-sfx-description"
-										v-if="sfx.description"
-										v-html="renderText(sfx.description)"
-									></span>
-									<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
-									<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">Detail...</span>
+									<template
+										v-if="
+											submode === 'edit' &&
+											!printBlank &&
+											!item.isPlaceholder &&
+											isCanvasTraitActive(s, item.originalIndex)
+										"
+									>
+										<input
+											type="text"
+											class="sfx-name-inline-input"
+											:value="sfx.name || ''"
+											placeholder="SFX"
+											aria-label="SFX name"
+											@click.stop
+											@input="onSfxFieldInlineInput(sfx, 'name', $event)"
+											@keydown.enter="onTraitNameInlineEnter"
+										/>
+										<input
+											type="text"
+											class="sfx-desc-inline-input"
+											:value="sfx.description || ''"
+											placeholder="Effect..."
+											aria-label="SFX detail"
+											@click.stop
+											@input="onSfxFieldInlineInput(sfx, 'description', $event)"
+											@keydown.enter="onTraitNameInlineEnter"
+										/>
+									</template>
+									<template v-else>
+										<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span
+										><span v-if="sfx.name && sfx.description">: </span>
+										<span
+											class="trait-sfx-description"
+											v-if="sfx.description"
+											v-html="renderText(sfx.description)"
+										></span>
+										<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
+										<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">Detail...</span>
+									</template>
 								</li>
 							</ul>
 						</div>
@@ -2220,17 +2377,67 @@ function hasTraitSetDescription(ts: any) {
 							removeTrait(s, item.originalIndex);
 						"
 					/>
+					<div
+						v-if="
+							submode === 'edit' && !printBlank && !item.isPlaceholder && isCanvasTraitActive(s, item.originalIndex)
+						"
+						class="trait-active-part-bar"
+						@click.stop
+					>
+						<button
+							type="button"
+							class="btn-trait-part-toggle"
+							:class="{ active: isTraitPartMenuOpen(s, item.originalIndex) }"
+							:aria-expanded="isTraitPartMenuOpen(s, item.originalIndex)"
+							@click.stop="toggleTraitPartMenu(s, item.originalIndex, $event.currentTarget as HTMLElement)"
+						>
+							<i class="fas fa-plus" aria-hidden="true"></i> Part
+						</button>
+						<div
+							v-if="isTraitPartMenuOpen(s, item.originalIndex)"
+							class="organic-part-chips trait-inline-part-chips"
+							role="group"
+							aria-label="Trait parts"
+						>
+							<button
+								v-for="part in TRAIT_QUICK_PARTS"
+								:key="part.key"
+								type="button"
+								class="organic-part-chip"
+								:class="{ active: hasTraitPartActive(item.trait, part.key, item.originalIndex) }"
+								:aria-pressed="hasTraitPartActive(item.trait, part.key, item.originalIndex)"
+								@click.stop="toggleTraitPart(item.trait, part.key, item.originalIndex)"
+							>
+								<i
+									:class="hasTraitPartActive(item.trait, part.key, item.originalIndex) ? 'fas fa-check' : 'fas fa-plus'"
+									aria-hidden="true"
+								></i>
+								{{ part.label }}
+							</button>
+							<button
+								type="button"
+								class="organic-part-chip organic-part-chip-more"
+								@click.stop="
+									closeCanvasTrait();
+									selectElement(['trait', s, item.originalIndex]);
+								"
+							>
+								<i class="fas fa-sliders" aria-hidden="true"></i> More
+							</button>
+						</div>
+					</div>
 				</div>
 			</template>
 		</template>
 	</div>
 
-	<!-- BUTTON: ADD TRAIT & PART -->
+	<!-- BUTTON: ADD TRAIT -->
 	<transition appear>
 		<div
 			class="preview-button-container"
 			:class="{ 'ring-add-button': traitArrayMode !== 'none' }"
 			v-if="
+				!props.hideSetActions &&
 				(resolvedBorder.shape !== 'line' || showPortraitHub || Boolean(traitSet?.traits?.length)) &&
 				(submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet)))
 			"
@@ -2242,64 +2449,6 @@ function hasTraitSetDescription(ts: any) {
 						{{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait' }}</span
 					>
 				</button>
-				<button
-					v-if="submode === 'edit'"
-					type="button"
-					class="preview-button preview-button-secondary"
-					:class="{ active: isCanvasPartDrawerOpen(s) }"
-					:aria-expanded="isCanvasPartDrawerOpen(s)"
-					@click.stop="toggleCanvasPartDrawer(s)"
-				>
-					<span><i class="fas fa-plus" aria-hidden="true"></i> Part</span>
-				</button>
-				<button
-					v-if="submode === 'edit' && (getView(traitSet)?.header === 'none' || !traitSet?.name)"
-					type="button"
-					class="preview-button preview-button-icon"
-					title="Set options"
-					aria-label="Configure trait set"
-					@click.stop="selectElement(['traitSet', s])"
-				>
-					<span><i class="fas fa-sliders" aria-hidden="true"></i></span>
-				</button>
-			</div>
-			<div v-if="submode === 'edit' && isCanvasPartDrawerOpen(s)" class="set-inline-part-drawer" @click.stop>
-				<div class="inline-add-header">
-					<span class="inline-add-title"><i class="fas fa-sliders" aria-hidden="true"></i> Trait Parts</span>
-					<button
-						type="button"
-						class="btn-inline-close"
-						title="Close"
-						aria-label="Close trait parts"
-						@click.stop="toggleCanvasPartDrawer(s)"
-					>
-						<i class="fas fa-times" aria-hidden="true"></i>
-					</button>
-				</div>
-				<div class="organic-part-chips" role="group" aria-label="Trait parts">
-					<button
-						v-for="part in SET_QUICK_PARTS"
-						:key="part.key"
-						type="button"
-						class="organic-part-chip"
-						:class="{ active: isSetPartActive(part.key) }"
-						:aria-pressed="isSetPartActive(part.key)"
-						@click.stop="toggleSetPart(part.key)"
-					>
-						<i :class="isSetPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'" aria-hidden="true"></i>
-						{{ part.label }}
-					</button>
-					<button
-						type="button"
-						class="organic-part-chip organic-part-chip-more"
-						@click.stop="
-							toggleCanvasPartDrawer(s);
-							selectElement(['traitSet', s]);
-						"
-					>
-						<i class="fas fa-sliders" aria-hidden="true"></i> Layout
-					</button>
-				</div>
 			</div>
 		</div>
 	</transition>

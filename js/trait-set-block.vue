@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ensureView, getView, isNameSet, isRingBadgeTrait } from './model.ts';
+import { ensureView, getView, isNameSet, isRingBadgeTrait, resolveSetPillar } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
-import { computed, nextTick, ref, onMounted, watch } from 'vue';
+import { computed, inject, nextTick, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetPips from './trait-set-pips.vue';
@@ -71,6 +71,22 @@ const {
 } = ts;
 
 const isName = computed(() => isNameSet(traitSet.value));
+const pillarCtx = inject<{
+	sheetUsesPillars: { value: boolean };
+	pillarOptions: { value: ReadonlyArray<{ key: string; label: string }> };
+	setSetPillar: (ts: any, val: string) => void;
+} | null>('curioPillarContext', null);
+
+const rawSetPillar = computed(() => {
+	const raw = getView(traitSet.value)?.pillar;
+	return typeof raw === 'string' ? raw.trim() : '';
+});
+
+function onSetPillarChange(event: Event) {
+	if (!traitSet.value || !pillarCtx) return;
+	pillarCtx.setSetPillar(traitSet.value, (event.target as HTMLSelectElement).value);
+}
+
 const isHeaderInteractive = computed(
 	() =>
 		submode.value === 'edit' ||
@@ -79,6 +95,13 @@ const isHeaderInteractive = computed(
 
 function onHeaderActivate() {
 	if (submode.value === 'edit') {
+		if (headerMode.value === 'top') {
+			openCanvasSet(s.value);
+			nextTick(() => {
+				rootEl.value?.querySelector<HTMLInputElement>('input.trait-set-name-inline-input')?.focus();
+			});
+			return;
+		}
 		selectElement(['traitSet', s.value]);
 		return;
 	}
@@ -98,6 +121,14 @@ function onSetNameInlineInput(event: Event) {
 
 function onSetNameInlineEnter(event: KeyboardEvent) {
 	if (event.isComposing || event.keyCode === 229) return;
+	if (traitSet.value && !String(traitSet.value.name || '').trim()) {
+		traitSet.value.name = 'New Set';
+		updateCharacter(props.character);
+	}
+	closeCanvasSet();
+}
+
+function onSetNameInlineBlur() {
 	if (traitSet.value && !String(traitSet.value.name || '').trim()) {
 		traitSet.value.name = 'New Set';
 		updateCharacter(props.character);
@@ -248,7 +279,7 @@ watch(rootEl, (el) => {
 	>
 		<!-- Block border SVG enclosing entire trait set (header + body) -->
 		<TraitSetFrame
-			v-if="resolvedBorder.shape === 'block' && resolvedBorder.explicit"
+			v-if="!isName && resolvedBorder.shape === 'block' && resolvedBorder.explicit"
 			mode="border"
 			:trait-set="traitSet"
 			:header-mode="headerMode"
@@ -267,7 +298,7 @@ watch(rootEl, (el) => {
 		</button>
 
 		<div class="trait-set-header" v-if="hasHeader && headerMode !== 'bottom'">
-			<div v-if="isCanvasSetActive(s)" class="trait-set-header-inline-edit" @click.stop>
+			<div v-if="isCanvasSetActive(s) && headerMode === 'top'" class="trait-set-header-inline-edit" @click.stop>
 				<input
 					type="text"
 					class="trait-set-name-inline-input"
@@ -277,42 +308,8 @@ watch(rootEl, (el) => {
 					@input="onSetNameInlineInput"
 					@keydown.enter="onSetNameInlineEnter"
 					@keydown.escape.stop.prevent="closeCanvasSet()"
+					@blur="onSetNameInlineBlur"
 				/>
-				<button
-					v-if="submode === 'edit'"
-					type="button"
-					class="btn-inline-rating-icon"
-					title="Set options"
-					aria-label="Set options"
-					@click.stop="
-						closeCanvasSet();
-						selectElement(['traitSet', s]);
-					"
-				>
-					<i class="fas fa-sliders" aria-hidden="true"></i>
-				</button>
-				<button
-					v-if="!(traitSet.traits && traitSet.traits.length)"
-					type="button"
-					class="btn-inline-rating-icon is-danger"
-					title="Delete set"
-					aria-label="Delete set"
-					@click.stop="
-						closeCanvasSet();
-						removeTraitSet(s);
-					"
-				>
-					<i class="fas fa-trash" aria-hidden="true"></i>
-				</button>
-				<button
-					type="button"
-					class="btn-inline-rating-icon"
-					title="Done"
-					aria-label="Done"
-					@click.stop="closeCanvasSet()"
-				>
-					<i class="fas fa-check" aria-hidden="true"></i>
-				</button>
 			</div>
 			<transition v-else appear>
 				<div
@@ -384,6 +381,53 @@ watch(rootEl, (el) => {
 					</div>
 				</div>
 			</transition>
+			<div
+				v-if="headerMode === 'top' && (submode === 'edit' || isCanvasSetActive(s))"
+				class="trait-set-header-actions"
+				@click.stop
+			>
+				<select
+					v-if="submode === 'edit' && pillarCtx?.sheetUsesPillars.value"
+					class="set-header-pillar-chip"
+					:aria-label="'Pillar for ' + (traitSet.name || 'trait set')"
+					:value="rawSetPillar"
+					@click.stop
+					@keydown.stop
+					@change.stop="onSetPillarChange"
+				>
+					<option v-for="opt in pillarCtx.pillarOptions.value" :key="'set-pil-' + opt.key" :value="opt.key">
+						{{ opt.key ? opt.label : `Auto (${resolveSetPillar(traitSet)})` }}
+					</option>
+				</select>
+				<button
+					v-if="!(traitSet.traits && traitSet.traits.length) && (submode === 'edit' || isCanvasSetActive(s))"
+					type="button"
+					class="sheet-header-settings-btn set-header-action-btn is-danger"
+					title="Delete set"
+					aria-label="Delete set"
+					@mousedown.prevent
+					@click.stop="
+						closeCanvasSet();
+						removeTraitSet(s);
+					"
+				>
+					<i class="fas fa-trash" aria-hidden="true"></i>
+				</button>
+				<button
+					v-if="submode === 'edit'"
+					type="button"
+					class="sheet-header-settings-btn set-header-action-btn set-header-settings-btn"
+					title="Set options"
+					:aria-label="'Configure ' + (traitSet.name || 'trait set')"
+					@mousedown.prevent
+					@click.stop="
+						closeCanvasSet();
+						selectElement(['traitSet', s]);
+					"
+				>
+					<i class="fas fa-sliders" aria-hidden="true"></i>
+				</button>
+			</div>
 		</div>
 
 		<div
@@ -391,7 +435,69 @@ watch(rootEl, (el) => {
 			:class="{ 'trait-set-body-framed': resolvedBorder.explicit || hasTraitArray || portraitFrameShape !== 'none' }"
 		>
 			<!-- Section line border divider -->
-			<TraitSetFrame v-if="resolvedBorder.shape === 'line'" mode="border" :trait-set="traitSet" />
+			<TraitSetFrame v-if="!isName && resolvedBorder.shape === 'line'" mode="border" :trait-set="traitSet" />
+
+			<div
+				v-if="!isName && !(hasHeader && headerMode === 'top') && (submode === 'edit' || isCanvasSetActive(s))"
+				class="trait-set-top-controls"
+				@click.stop
+			>
+				<input
+					v-if="isCanvasSetActive(s)"
+					type="text"
+					class="trait-set-name-inline-input"
+					:value="traitSet.name"
+					placeholder="Set name"
+					aria-label="Set name"
+					@input="onSetNameInlineInput"
+					@keydown.enter="onSetNameInlineEnter"
+					@keydown.escape.stop.prevent="closeCanvasSet()"
+					@blur="onSetNameInlineBlur"
+				/>
+				<div class="trait-set-header-actions" @click.stop>
+					<select
+						v-if="submode === 'edit' && pillarCtx?.sheetUsesPillars.value"
+						class="set-header-pillar-chip"
+						:aria-label="'Pillar for ' + (traitSet.name || 'trait set')"
+						:value="rawSetPillar"
+						@click.stop
+						@keydown.stop
+						@change.stop="onSetPillarChange"
+					>
+						<option v-for="opt in pillarCtx.pillarOptions.value" :key="'set-pil-' + opt.key" :value="opt.key">
+							{{ opt.key ? opt.label : `Auto (${resolveSetPillar(traitSet)})` }}
+						</option>
+					</select>
+					<button
+						v-if="!(traitSet.traits && traitSet.traits.length) && (submode === 'edit' || isCanvasSetActive(s))"
+						type="button"
+						class="sheet-header-settings-btn set-header-action-btn is-danger"
+						title="Delete set"
+						aria-label="Delete set"
+						@mousedown.prevent
+						@click.stop="
+							closeCanvasSet();
+							removeTraitSet(s);
+						"
+					>
+						<i class="fas fa-trash" aria-hidden="true"></i>
+					</button>
+					<button
+						v-if="submode === 'edit'"
+						type="button"
+						class="sheet-header-settings-btn set-header-action-btn set-header-settings-btn"
+						title="Set options"
+						:aria-label="'Configure ' + (traitSet.name || 'trait set')"
+						@mousedown.prevent
+						@click.stop="
+							closeCanvasSet();
+							selectElement(['traitSet', s]);
+						"
+					>
+						<i class="fas fa-sliders" aria-hidden="true"></i>
+					</button>
+				</div>
+			</div>
 
 			<!-- Set-level Dice fallback when header is none and Trait Array is None -->
 			<div

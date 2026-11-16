@@ -4,6 +4,7 @@ import { characterCurioFunctions } from './functions.ts';
 import {
 	ensureView,
 	getView,
+	isNameSet,
 	isRingBadgeTrait,
 	keepsExtraDice,
 	ratingDice,
@@ -97,7 +98,11 @@ const editingType = computed(() => {
 	const type = sel[0];
 	if (type === 'subtrait' && sel[1] !== undefined && sel[2] !== undefined) return 'subtrait';
 	if (type === 'trait' && sel[1] !== undefined && sel[2] !== undefined) return 'trait';
-	if (type === 'traitSet' && sel[1] !== undefined) return 'traitSet';
+	if (type === 'traitSet' && sel[1] !== undefined) {
+		const target = props.character?.traitSets?.[Number(sel[1])];
+		if (target && isNameSet(target)) return 'sheet';
+		return 'traitSet';
+	}
 	if (type === 'scaleDie') return 'scaleDie';
 	return 'sheet';
 });
@@ -285,6 +290,11 @@ function enterSheetTab(sel: any) {
 	const primary = Array.isArray(sel) ? sel[0] : undefined;
 	if (primary === 'page') {
 		sheetTab.value = 'page';
+	} else if (
+		primary === 'name' ||
+		(primary === 'traitSet' && isNameSet(props.character?.traitSets?.[Number(sel?.[1])]))
+	) {
+		sheetTab.value = 'sheet';
 	} else if (primary === 'theme' || primary === 'dice') {
 		sheetTab.value = 'theme';
 		nextTick(() => {

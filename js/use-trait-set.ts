@@ -30,6 +30,7 @@ import {
 	rangeTop,
 	isOutDie,
 	isNameSet,
+	isNameIdentitySlotTrait,
 	resolveAltRoll,
 	resolvePpDelta,
 	resolveSubtraitNoun,
@@ -62,6 +63,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	const fallbackActiveTrait = ref<[number, number] | null>(null);
 	const fallbackActiveSet = ref<number | null>(null);
 	const fallbackActivePartSet = ref<number | null>(null);
+	const fallbackTraitPartMenu = ref<[number, number] | null>(null);
 	const canvasInline = inject<{
 		activeTrait: { value: [number, number] | null };
 		activeSet: { value: number | null };
@@ -69,6 +71,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		setActiveTrait: (target: [number, number] | null) => void;
 		setActiveSet: (setIdx: number | null) => void;
 		setActivePartSet: (setIdx: number | null) => void;
+		requestCanvasFocus?: (targetEl?: HTMLElement | null) => void;
 	}>('curioCanvasInline', {
 		activeTrait: fallbackActiveTrait,
 		activeSet: fallbackActiveSet,
@@ -84,6 +87,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		setActivePartSet: (setIdx) => {
 			fallbackActivePartSet.value = setIdx;
 		},
+		requestCanvasFocus: () => {},
 	});
 
 	function canInlineEditOnCanvas(): boolean {
@@ -101,6 +105,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function toggleCanvasTrait(sArg: number, tIdx: number | null | undefined) {
 		if (!canInlineEditOnCanvas() || typeof tIdx !== 'number') return;
+		fallbackTraitPartMenu.value = null;
 		if (isCanvasTraitActive(sArg, tIdx)) {
 			canvasInline.setActiveTrait(null);
 		} else {
@@ -109,7 +114,27 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function closeCanvasTrait() {
+		fallbackTraitPartMenu.value = null;
 		canvasInline.setActiveTrait(null);
+	}
+
+	function isTraitPartMenuOpen(sArg: number, tIdx: number | null | undefined): boolean {
+		if (!isCanvasTraitActive(sArg, tIdx) || typeof tIdx !== 'number') return false;
+		const cur = fallbackTraitPartMenu.value;
+		return Boolean(cur && cur[0] === sArg && cur[1] === tIdx);
+	}
+
+	function toggleTraitPartMenu(sArg: number, tIdx: number | null | undefined, triggerEl?: HTMLElement | null) {
+		if (!isCanvasTraitActive(sArg, tIdx) || typeof tIdx !== 'number') return;
+		const opening = !isTraitPartMenuOpen(sArg, tIdx);
+		fallbackTraitPartMenu.value = opening ? [sArg, tIdx] : null;
+		if (opening) {
+			canvasInline.requestCanvasFocus?.(triggerEl?.closest?.('.trait') as HTMLElement | null);
+		}
+	}
+
+	function requestCanvasFocus(targetEl?: HTMLElement | null) {
+		canvasInline.requestCanvasFocus?.(targetEl);
 	}
 
 	function isCanvasSetActive(sArg: number): boolean {
@@ -666,22 +691,23 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			(frameCfg?.shape === 'ring' || getView(traitSetArg)?.style?.body === 'portrait-ring') &&
 			!frameCfg?.image?.url &&
 			!hasExplicitRingTraits;
+		const isName = isNameSet(traitSetArg);
 
-		const existing = existingAll.filter((t: Trait) => {
-			if (getView(t)?.ring) return false;
-			if (isPureRingWithoutImage) return false;
-			return true;
-		});
+		const visible = existingAll
+			.map((t: Trait, idx: number) => ({ trait: t, originalIndex: idx, isPlaceholder: false }))
+			.filter(({ trait }: { trait: Trait }) => {
+				if (getView(trait)?.ring) return false;
+				if (isPureRingWithoutImage) return false;
+				if (isName && isNameIdentitySlotTrait(trait)) return false;
+				return isTraitShown(trait);
+			});
 
 		if (props.printBlank) {
 			const targetCount = getTraitSetSlotCount(traitSetArg);
 			const list: any[] = [];
-			const visible = existing
-				.map((t: Trait, idx: number) => ({ trait: t, originalIndex: idx }))
-				.filter(({ trait }: { trait: Trait }) => isTraitShown(trait));
 			for (let i = 0; i < targetCount; i++) {
 				if (i < visible.length) {
-					list.push({ trait: visible[i].trait, originalIndex: visible[i].originalIndex, isPlaceholder: false });
+					list.push(visible[i]);
 				} else {
 					list.push({ trait: createBlankSlotTrait(traitSetArg), originalIndex: null, isPlaceholder: true });
 				}
@@ -694,8 +720,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		// objects — clicking one fills it (openTraitAt); nothing blank is stored.
 		// Visibility filters first (hidden traits leave no row), so counts
 		// stay stable. Original indices survive the filter for editor routing.
-		const mapped = existing.map((t: Trait, idx: number) => ({ trait: t, originalIndex: idx, isPlaceholder: false }));
-		const visible = mapped.filter(({ trait }: { trait: Trait }) => isTraitShown(trait));
 		const targetCount = Math.max(getTraitSetSlotCount(traitSetArg), visible.length);
 		const list: any[] = [...visible];
 		for (let i = visible.length; i < targetCount; i++) {
@@ -1037,6 +1061,118 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			marker: partKey === 'badge' ? 'L' : 'T',
 		};
 		updateCharacter(props.character);
+	}
+
+	const openInlineDescTraits = ref<Record<string, boolean>>({});
+
+	function traitPartKeyId(trait: Trait, tIdx: number): string {
+		const lid = (trait as any)?._lid;
+		return lid ? String(lid) : `${s.value}:${tIdx}`;
+	}
+
+	function isTraitDescInlineOpen(trait: Trait, tIdx: number): boolean {
+		return Boolean(openInlineDescTraits.value[traitPartKeyId(trait, tIdx)]);
+	}
+
+	function ensureExplicitPartCell(ts: TraitSet, partKey: 'description' | 'block' | 'subtraits' | 'badge') {
+		const view = getView(ts);
+		if (!view?.parts || typeof view.parts !== 'object' || Array.isArray(view.parts)) return;
+		const cells = view.parts as Record<string, any>;
+		if (cells[partKey]) return;
+		const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+		cells[partKey] = {
+			left: '0%',
+			top: maxTop + 1,
+			width: '100%',
+			height: 1,
+			marker: partKey === 'badge' ? 'L' : partKey === 'subtraits' ? 'S' : 'T',
+		};
+	}
+
+	function hasTraitPartActive(
+		trait: Trait,
+		partKey: 'description' | 'subtraits' | 'block' | 'track' | 'badge',
+		tIdx: number,
+	): boolean {
+		const ts = traitSet.value;
+		if (!trait || !ts) return false;
+		if (partKey === 'description') {
+			return (
+				isTraitDescInlineOpen(trait, tIdx) ||
+				(typeof trait.description === 'string' && trait.description.trim().length > 0)
+			);
+		}
+		if (partKey === 'subtraits') return visibleSubtraits(ts, trait).length > 0;
+		if (partKey === 'block') return characterCurioFunctions.blockChildren(trait, ts).length > 0;
+		if (partKey === 'track') return hasTrackPart(ts);
+		if (partKey === 'badge') return Boolean((getView(trait) as any)?.badge);
+		return false;
+	}
+
+	function toggleTraitPart(
+		trait: Trait,
+		partKey: 'description' | 'subtraits' | 'block' | 'track' | 'badge',
+		tIdx: number,
+	) {
+		const ts = traitSet.value;
+		if (!trait || !ts) return;
+		if (partKey === 'track') {
+			toggleSetPart('track', ts);
+			return;
+		}
+		const rec = trait as unknown as Record<string, any>;
+		if (partKey === 'description') {
+			const k = traitPartKeyId(trait, tIdx);
+			if (hasTraitPartActive(trait, 'description', tIdx)) {
+				delete openInlineDescTraits.value[k];
+				rec.description = '';
+			} else {
+				openInlineDescTraits.value[k] = true;
+				ensureExplicitPartCell(ts, 'description');
+			}
+			updateCharacter(props.character);
+			return;
+		}
+		if (partKey === 'subtraits') {
+			if (!Array.isArray(rec.traits)) rec.traits = [];
+			rec.traits.push({
+				name: characterCurioFunctions.nextUniqueName(
+					rec.traits.map((ct: any) => ct?.name),
+					'New Subtrait',
+				),
+				description: '',
+				tags: [],
+				traits: [],
+				rating: { type: 'Die', value: [6] },
+			});
+			ensureExplicitPartCell(ts, 'subtraits');
+			updateCharacter(props.character);
+			return;
+		}
+		if (partKey === 'block') {
+			if (!Array.isArray(rec.traits)) rec.traits = [];
+			rec.traits.push({
+				name: 'SFX',
+				description: '',
+				noun: 'SFX',
+				tags: [],
+				traits: [],
+				view: { part: 'block' },
+			});
+			ensureExplicitPartCell(ts, 'block');
+			updateCharacter(props.character);
+			return;
+		}
+		if (partKey === 'badge') {
+			const tv = ensureView(rec) as Record<string, any>;
+			if (tv.badge) {
+				delete tv.badge;
+			} else {
+				tv.badge = { text: 'Badge', shape: 'vertical-bar', color: 'primary' };
+				ensureExplicitPartCell(ts, 'badge');
+			}
+			updateCharacter(props.character);
+		}
 	}
 
 	function handleSingleDieClick(
@@ -1963,9 +2099,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const hasExplicitRingTraits = traitsAll.some((t: Trait) => Boolean(getView(t)?.ring));
 		const isPureRingWithoutImage =
 			(frameCfg?.shape === 'ring' || bodyStyle === 'portrait-ring') && !frameCfg?.image?.url && !hasExplicitRingTraits;
+		const isName = isNameSet(traitSetArg);
 		const listTraitsCount = traitsAll.filter((t: Trait) => {
 			if (getView(t)?.ring) return false;
 			if (isPureRingWithoutImage) return false;
+			if (isName && isNameIdentitySlotTrait(t)) return false;
 			return true;
 		}).length;
 
@@ -2115,6 +2253,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		isCanvasTraitActive,
 		toggleCanvasTrait,
 		closeCanvasTrait,
+		isTraitPartMenuOpen,
+		toggleTraitPartMenu,
+		requestCanvasFocus,
+		isTraitDescInlineOpen,
+		hasTraitPartActive,
+		toggleTraitPart,
 		isCanvasSetActive,
 		openCanvasSet,
 		closeCanvasSet,

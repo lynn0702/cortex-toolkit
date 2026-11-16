@@ -18,17 +18,13 @@ import {
 	isNameSet,
 	getRating,
 	ratingDice,
-	setRatingDie,
 	resolveVisibility,
 	isHiddenIn,
 	resolveSetPillar,
 	getPillarLabel,
 	resolveAltRoll,
-	hasPlotPoints,
 	resolvePlotPoints,
 	getCuriosityGame,
-	getCuriosityPortrait,
-	getIdentityText,
 	type Character,
 	type TraitSet,
 	type Trait,
@@ -64,6 +60,7 @@ const emit = defineEmits<{
 	(e: 'saveSheetTemplate'): void;
 	(e: 'exportSheetTemplate'): void;
 	(e: 'addDieToRoller', die: unknown): void;
+	(e: 'closeDrawer'): void;
 }>();
 
 const instance = getCurrentInstance();
@@ -76,8 +73,6 @@ const printBlank = ref(false);
 const printBW = ref(false);
 const showInlineAddSet = ref(false);
 const inlineAddPage = ref(1);
-const showInlineAddPart = ref(false);
-const inlineAddPartPage = ref(1);
 const inlineBuiltInPresets = Object.values(characterCurioSetPresets);
 const inlineCustomPresets = ref<SetPresetEntry[]>([]);
 
@@ -85,10 +80,38 @@ const canvasInlineTrait = ref<[number, number] | null>(null);
 const canvasInlineSet = ref<number | null>(null);
 const canvasInlinePartSet = ref<number | null>(null);
 
+function requestCanvasFocus(targetEl?: HTMLElement | null) {
+	if (Array.isArray(props.editing) && props.editing.length > 0) {
+		clearSelected();
+	}
+	emit('closeDrawer');
+	if (!targetEl) return;
+	nextTick(() => {
+		const scrollRun = () => {
+			if (typeof targetEl.scrollIntoView === 'function') {
+				targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			}
+		};
+		if (typeof requestAnimationFrame === 'function') requestAnimationFrame(scrollRun);
+		else scrollRun();
+	});
+}
+
 function setCanvasInlineTrait(target: [number, number] | null) {
 	canvasInlineTrait.value = target;
 	if (target) {
 		canvasInlineSet.value = null;
+		showInlineAddSet.value = false;
+		isAddingPillar.value = false;
+		if (props.submode === 'edit') {
+			nextTick(() => {
+				const el =
+					rootEl.value?.querySelector<HTMLElement>(`[data-set-index="${target[0]}"] .inline-rating-bar`) ||
+					rootEl.value?.querySelector<HTMLElement>(`[data-set-index="${target[0]}"] input.trait-name-inline-input`) ||
+					null;
+				requestCanvasFocus(el);
+			});
+		}
 	}
 }
 
@@ -96,14 +119,25 @@ function setCanvasInlineSet(setIdx: number | null) {
 	canvasInlineSet.value = setIdx;
 	if (setIdx !== null) {
 		canvasInlineTrait.value = null;
+		showInlineAddSet.value = false;
+		isAddingPillar.value = false;
+		if (props.submode === 'edit') {
+			nextTick(() => {
+				const el = rootEl.value?.querySelector<HTMLElement>(`[data-set-index="${setIdx}"]`) || null;
+				requestCanvasFocus(el);
+			});
+		}
 	}
 }
 
 function setCanvasInlinePartSet(setIdx: number | null) {
 	canvasInlinePartSet.value = setIdx;
 	if (setIdx !== null) {
-		showInlineAddPart.value = false;
 		showInlineAddSet.value = false;
+		isAddingPillar.value = false;
+		if (props.submode === 'edit') {
+			requestCanvasFocus();
+		}
 	}
 }
 
@@ -114,7 +148,21 @@ provide('curioCanvasInline', {
 	setActiveTrait: setCanvasInlineTrait,
 	setActiveSet: setCanvasInlineSet,
 	setActivePartSet: setCanvasInlinePartSet,
+	requestCanvasFocus,
 });
+
+watch(
+	() => props.editing,
+	(sel) => {
+		if (Array.isArray(sel) && sel.length > 0) {
+			canvasInlineTrait.value = null;
+			canvasInlineSet.value = null;
+			canvasInlinePartSet.value = null;
+			showInlineAddSet.value = false;
+			isAddingPillar.value = false;
+		}
+	},
+);
 
 watch(
 	() => props.submode,
@@ -126,157 +174,19 @@ watch(
 	},
 );
 
-type SheetQuickPartKey =
-	'rating' | 'pp' | 'notes' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player';
-
-const SHEET_QUICK_PARTS: ReadonlyArray<{
-	key: SheetQuickPartKey;
-	label: string;
-}> = [
-	{ key: 'rating', label: 'Rating' },
-	{ key: 'pp', label: 'PP' },
-	{ key: 'notes', label: 'Notes' },
-	{ key: 'description', label: 'Description' },
-	{ key: 'portrait', label: 'Portrait' },
-	{ key: 'pronouns', label: 'Pronouns' },
-	{ key: 'nickname', label: 'Nickname' },
-	{ key: 'game', label: 'Game' },
-	{ key: 'player', label: 'Player' },
-];
-
-function toggleInlineAdd(page = 1) {
+function toggleInlineAdd(page = 1, triggerEl?: HTMLElement | null) {
 	const wasOpenHere = showInlineAddSet.value && inlineAddPage.value === page;
 	inlineAddPage.value = page;
 	inlineCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
-	showInlineAddPart.value = false;
 	canvasInlinePartSet.value = null;
+	isAddingPillar.value = false;
 	showInlineAddSet.value = !wasOpenHere;
-}
-
-function toggleInlinePart(page = 1) {
-	const wasOpenHere = showInlineAddPart.value && inlineAddPartPage.value === page;
-	inlineAddPartPage.value = page;
-	showInlineAddSet.value = false;
-	canvasInlinePartSet.value = null;
-	showInlineAddPart.value = !wasOpenHere;
-}
-
-function lastNonNameSetIndex(page = 1): number {
-	const sets = props.character?.traitSets || [];
-	for (let i = sets.length - 1; i >= 0; i--) {
-		const ts = sets[i];
-		if (!ts || isNameSet(ts)) continue;
-		if ((getView(ts)?.page ?? 1) === page) return i;
+	if (!wasOpenHere && props.submode === 'edit') {
+		nextTick(() => {
+			const area = rootEl.value?.querySelector<HTMLElement>('.inline-add-set-area') || triggerEl || null;
+			requestCanvasFocus(area);
+		});
 	}
-	return -1;
-}
-
-function isSheetIdentityPartActive(key: SheetQuickPartKey): boolean {
-	const ch = props.character;
-	if (!ch) return false;
-	if (key === 'rating') {
-		const ns = (ch.traitSets || []).find((s) => isNameSet(s));
-		return Boolean(getRating(ns));
-	}
-	if (key === 'pp') {
-		return hasPlotPoints(ch);
-	}
-	const t = characterCurioFunctions.getNameTrait(ch, key);
-	const shown = !t || resolveVisibility(t) !== 'hidden';
-	if (key === 'nickname') {
-		return shown && Boolean(getIdentityText(ch, 'nickname') || getView(ch)?.hasNickname || Boolean(t));
-	}
-	if (key === 'portrait') {
-		const p = getCuriosityPortrait(ch);
-		if (p?.url && shown) return true;
-		return Boolean(t) && resolveVisibility(t) !== 'hidden' && !isSheetIdentityPartActive('description');
-	}
-	if (key === 'player') {
-		return (
-			shown && (Boolean(getIdentityText(ch, 'player')) || (Boolean(t) && !isSheetIdentityPartActive('description')))
-		);
-	}
-	if (key === 'description') {
-		return shown && (Boolean(getIdentityText(ch, 'description')) || Boolean(t));
-	}
-	if (key === 'pronouns') {
-		return shown && (Boolean(getIdentityText(ch, 'pronouns')) || Boolean(t));
-	}
-	if (key === 'game') {
-		return shown && (Boolean(getIdentityText(ch, 'game')) || Boolean(t));
-	}
-	if (key === 'notes') {
-		return shown && (Boolean(getIdentityText(ch, 'notes')) || Boolean(t));
-	}
-	return shown;
-}
-
-function toggleSheetIdentityPart(key: SheetQuickPartKey) {
-	const ch = props.character as Character;
-	if (!ch) return;
-	if (key === 'rating') {
-		let ns: any = (ch.traitSets || []).find((s) => isNameSet(s));
-		if (!ns) {
-			ns = { id: 'name', name: 'Name', traits: [] };
-			if (!Array.isArray(ch.traitSets)) ch.traitSets = [];
-			ch.traitSets.unshift(ns);
-		}
-		if (getRating(ns)) {
-			delete ns.rating;
-		} else {
-			setRatingDie(ns, 8);
-		}
-		updateCharacter(ch);
-		return;
-	}
-	if (key === 'pp') {
-		if (hasPlotPoints(ch)) {
-			if (ch.sheet?.template) {
-				ch.plotPoints = null;
-			} else {
-				delete ch.plotPoints;
-			}
-		} else {
-			ch.plotPoints = 1;
-		}
-		updateCharacter(ch);
-		return;
-	}
-	const currentlyActive = isSheetIdentityPartActive(key);
-	if (currentlyActive) {
-		if (key === 'nickname') {
-			delete ensureView(ch).hasNickname;
-		}
-		const existing = characterCurioFunctions.getNameTrait(ch, key);
-		const fieldEmpty = key === 'portrait' ? !getCuriosityPortrait(ch)?.url : !getIdentityText(ch, key);
-		const hasTemplate = Boolean((ch as any).sheet?.template);
-		if (!hasTemplate && fieldEmpty && !existing?.label) {
-			const ns = (ch.traitSets || []).find((s) => isNameSet(s));
-			if (ns && Array.isArray(ns.traits)) {
-				const idx = ns.traits.findIndex(
-					(item) => typeof item?.name === 'string' && item.name.toLowerCase() === key.toLowerCase(),
-				);
-				if (idx !== -1) ns.traits.splice(idx, 1);
-			}
-		} else {
-			const t = characterCurioFunctions.ensureNameTrait(ch, key);
-			if (t) {
-				(ensureView(t) as Record<string, unknown>).visibility = 'hidden';
-			}
-		}
-	} else {
-		const t = characterCurioFunctions.ensureNameTrait(ch, key);
-		if (!t) return;
-		const v = ensureView(t) as Record<string, unknown>;
-		delete v.visibility;
-		if (key === 'nickname') {
-			ensureView(ch).hasNickname = true;
-		}
-		if (key === 'portrait' && isSheetIdentityPartActive('description') && !getCuriosityPortrait(ch)?.url) {
-			selectElement(['name']);
-		}
-	}
-	updateCharacter(ch);
 }
 
 function removeInlineCustomPreset(id: string) {
@@ -519,37 +429,6 @@ function clearSelected() {
 // EDITING
 // New sets carry no place: they stack full-width in document order, which
 // lands them on their own row at the end of the target page (sparse).
-function addOrganicTrait(page = 1) {
-	const character = props.character as Character;
-	if (!character) return;
-	showInlineAddSet.value = false;
-	showInlineAddPart.value = false;
-
-	const existingSetIdx = lastNonNameSetIndex(page ?? 1);
-	if (existingSetIdx !== -1) {
-		addTrait(existingSetIdx);
-		return;
-	}
-
-	const traitSet: any = structuredClone(characterCurioFunctions.defaultTraitSet);
-	traitSet.name = characterCurioFunctions.nextUniqueName(
-		(character.traitSets || []).map((ts) => ts?.name),
-		'Traits',
-	);
-	traitSet.traits = [];
-	const tsView = ensureView(traitSet);
-	tsView.header = 'none';
-	if ((page ?? 1) > 1) {
-		tsView.page = page;
-	}
-
-	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
-	if (!Array.isArray(character.traitSets)) character.traitSets = [];
-	character.traitSets.push(traitSet);
-
-	addTrait(character.traitSets.length - 1);
-}
-
 function addTraitSet(page = 1) {
 	const character = props.character as Character;
 	if (!character) return;
@@ -561,6 +440,7 @@ function addTraitSet(page = 1) {
 		'New Set',
 	);
 	traitSet.traits = [];
+	ensureView(traitSet).header = 'top';
 	if ((page ?? 1) > 1) {
 		ensureView(traitSet).page = page;
 	}
@@ -569,7 +449,7 @@ function addTraitSet(page = 1) {
 	character.traitSets.push(traitSet);
 	updateCharacter(character);
 	showInlineAddSet.value = false;
-	showInlineAddPart.value = false;
+	isAddingPillar.value = false;
 
 	const newTraitSetID = character.traitSets.length - 1;
 	setCanvasInlineSet(newTraitSetID);
@@ -670,9 +550,17 @@ function openPlayPresetPicker(pillarKey?: string) {
 	showPlayPresetPicker.value = true;
 }
 
-function startAddPillar() {
+function startAddPillar(triggerEl?: HTMLElement | null) {
+	showInlineAddSet.value = false;
+	canvasInlinePartSet.value = null;
 	isAddingPillar.value = true;
 	newPillarName.value = '';
+	if (props.submode === 'edit') {
+		nextTick(() => {
+			const formArea = rootEl.value?.querySelector<HTMLElement>('.inline-add-pillar-area') || triggerEl || null;
+			requestCanvasFocus(formArea);
+		});
+	}
 	nextTick(() => {
 		const el = Array.isArray(pillarInputRef.value) ? pillarInputRef.value[0] : pillarInputRef.value;
 		el?.focus();
@@ -698,20 +586,30 @@ function onPillarInputKeydown(event: KeyboardEvent) {
 function confirmAddPillar() {
 	const character = props.character as Character;
 	if (!character) return;
-	const existingCols = mobilePillarColumns.value;
-	const rawLabel = newPillarName.value.trim() || `Pillar ${existingCols.length + 1}`;
+	const wasUnified = !sheetUsesPillars.value;
+	const charView = ensureView(character);
+	let existingKeys: string[];
+	if (wasUnified) {
+		existingKeys = ['sheet'];
+	} else if (Array.isArray(charView.pillars) && charView.pillars.length > 0) {
+		existingKeys = [...charView.pillars];
+	} else if (mobilePillarColumns.value.length > 0) {
+		existingKeys = mobilePillarColumns.value.map((c) => c.key);
+	} else {
+		const collected: string[] = [];
+		for (const ts of character.traitSets || []) {
+			if (!ts) continue;
+			const p = resolveSetPillar(ts);
+			if (p && !collected.includes(p)) collected.push(p);
+		}
+		existingKeys = collected.length ? collected : ['identity'];
+	}
+	const rawLabel = newPillarName.value.trim() || `Pillar ${existingKeys.length + 1}`;
 	const baseSlug =
 		rawLabel
 			.toLowerCase()
 			.replace(/[^a-z0-9]+/g, '-')
 			.replace(/^-+|-+$/g, '') || 'pillar';
-	const wasUnified = !sheetUsesPillars.value;
-	const charView = ensureView(character);
-	const existingKeys = wasUnified
-		? ['sheet']
-		: Array.isArray(charView.pillars) && charView.pillars.length > 0
-			? [...charView.pillars]
-			: existingCols.map((c) => c.key);
 	const taken = new Set(existingKeys);
 	let newKey = baseSlug;
 	let suffix = 2;
@@ -735,7 +633,9 @@ function confirmAddPillar() {
 	isAddingPillar.value = false;
 	newPillarName.value = '';
 	updateCharacter(character);
-	nextTick(() => scrollToPillar(newKey));
+	if (isPillarPlay.value) {
+		nextTick(() => scrollToPillar(newKey));
+	}
 }
 
 function removePlayCustomPreset(id: string) {
@@ -756,7 +656,7 @@ function addTrait(traitSetID: number) {
 		(Array.isArray(traitSet.traits) ? traitSet.traits : []).map((tr) => tr?.name),
 		'New ' + noun,
 	);
-	const setR = getRating(traitSet);
+	const setR = isNameSet(traitSet) ? undefined : getRating(traitSet);
 	if (setR?.type === 'Pip') {
 		trait.rating = { value: [false] };
 	} else if (setR?.type === 'Counter') {
@@ -767,7 +667,7 @@ function addTrait(traitSetID: number) {
 			value: setDice.length ? [...setDice] : [8, 8],
 		};
 		if ((traitSet as any).pool === true) trait.pool = true;
-	} else if ((traitSet as any).rating === null) {
+	} else if (!isNameSet(traitSet) && (traitSet as any).rating === null) {
 		delete trait.rating;
 	} else {
 		const allowed = characterCurioFunctions.getTraitSetRatings(traitSet);
@@ -970,6 +870,38 @@ const sheetUsesPillars = computed<boolean>(() => {
 		}
 	}
 	return false;
+});
+
+const pillarOptions = computed<ReadonlyArray<{ key: string; label: string }>>(() => {
+	const baseKeys = ['identity', 'prime', 'plus', 'play'];
+	const explicit = Array.isArray(getView(props.character)?.pillars)
+		? getView(props.character)!.pillars!.filter((k): k is string => typeof k === 'string' && k.trim().length > 0)
+		: [];
+	const keys: string[] = [...baseKeys];
+	for (const k of explicit) {
+		if (!keys.includes(k)) keys.push(k);
+	}
+	for (const ts of props.character?.traitSets || []) {
+		if (!ts) continue;
+		const p = resolveSetPillar(ts);
+		if (p && !keys.includes(p)) keys.push(p);
+	}
+	return [{ key: '', label: 'Auto' }, ...keys.map((k) => ({ key: k, label: getPillarLabel(props.character, k) }))];
+});
+
+function setSetPillar(ts: any, val: string) {
+	if (!ts || !props.character) return;
+	const v = ensureView(ts) as Record<string, unknown>;
+	const trimmed = String(val || '').trim();
+	if (trimmed) v.pillar = trimmed;
+	else delete v.pillar;
+	updateCharacter(props.character);
+}
+
+provide('curioPillarContext', {
+	sheetUsesPillars,
+	pillarOptions,
+	setSetPillar,
 });
 
 const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
@@ -1309,7 +1241,7 @@ defineExpose({
 							type="button"
 							class="jump-pill jump-pill-add-pillar"
 							title="Add Pillar"
-							@click.stop="startAddPillar"
+							@click.stop="startAddPillar()"
 						>
 							<i class="fas fa-plus" aria-hidden="true"></i> <span class="jump-pill-label">Pillar</span>
 						</button>
@@ -1426,20 +1358,8 @@ defineExpose({
 									<button
 										type="button"
 										class="btn-sheet-add btn-sheet-add-primary"
-										@click.stop="addOrganicTrait(pageIndex)"
+										@click.stop="addTraitSet(pageIndex)"
 									>
-										<i class="fas fa-plus" aria-hidden="true"></i> Trait
-									</button>
-									<button
-										type="button"
-										class="btn-sheet-add"
-										:class="{ active: showInlineAddPart && inlineAddPartPage === pageIndex }"
-										:aria-expanded="showInlineAddPart && inlineAddPartPage === pageIndex"
-										@click.stop="toggleInlinePart(pageIndex)"
-									>
-										<i class="fas fa-plus" aria-hidden="true"></i> Part
-									</button>
-									<button type="button" class="btn-sheet-add" @click.stop="addTraitSet(pageIndex)">
 										<i class="fas fa-plus" aria-hidden="true"></i> Set
 									</button>
 									<button
@@ -1447,55 +1367,69 @@ defineExpose({
 										class="btn-sheet-add btn-presets-toggle"
 										:class="{ active: showInlineAddSet && inlineAddPage === pageIndex }"
 										:aria-expanded="showInlineAddSet && inlineAddPage === pageIndex"
-										@click.stop="toggleInlineAdd(pageIndex)"
+										@click.stop="toggleInlineAdd(pageIndex, $event.currentTarget as HTMLElement)"
 									>
 										<i class="fas fa-layer-group" aria-hidden="true"></i> Presets
 									</button>
+									<button
+										type="button"
+										class="btn-sheet-add btn-pillar-toggle"
+										:class="{ active: isAddingPillar }"
+										:aria-expanded="isAddingPillar"
+										@click.stop="
+											isAddingPillar ? cancelAddPillar() : startAddPillar($event.currentTarget as HTMLElement)
+										"
+									>
+										<i class="fas fa-building-columns" aria-hidden="true"></i> Pillar
+									</button>
 								</div>
 
-								<!-- INLINE PART PICKER -->
-								<div class="inline-add-part-area" v-if="showInlineAddPart && inlineAddPartPage === pageIndex">
+								<!-- INLINE PILLAR CREATION (EDIT MODE) -->
+								<div class="inline-add-pillar-area" v-if="isAddingPillar">
 									<div class="inline-add-header">
-										<span class="inline-add-title"><i class="fas fa-sliders" aria-hidden="true"></i> Sheet Parts</span>
+										<span class="inline-add-title"
+											><i class="fas fa-building-columns" aria-hidden="true"></i> Add Pillar</span
+										>
 										<button
 											type="button"
 											class="btn-inline-close"
 											title="Close"
 											aria-label="Close"
-											@click.stop="showInlineAddPart = false"
+											@click.stop="cancelAddPillar"
 										>
 											<i class="fas fa-times" aria-hidden="true"></i>
 										</button>
 									</div>
-									<div class="organic-part-chips" role="group" aria-label="Sheet parts">
-										<button
-											v-for="part in SHEET_QUICK_PARTS"
-											:key="'sheet-part-' + part.key"
-											type="button"
-											class="organic-part-chip"
-											:class="{ active: isSheetIdentityPartActive(part.key) }"
-											:aria-pressed="isSheetIdentityPartActive(part.key)"
-											@click.stop="toggleSheetIdentityPart(part.key)"
-										>
-											<i
-												:class="isSheetIdentityPartActive(part.key) ? 'fas fa-check' : 'fas fa-plus'"
-												aria-hidden="true"
-											></i>
-											{{ part.label }}
+									<form class="pillar-inline-form" @submit.prevent="confirmAddPillar" @click.stop>
+										<input
+											ref="pillarInputRef"
+											v-model="newPillarName"
+											type="text"
+											class="pillar-inline-input"
+											placeholder="Pillar name..."
+											aria-label="New pillar name"
+											@keydown="onPillarInputKeydown"
+										/>
+										<button type="submit" class="btn-pillar-inline" title="Create pillar" aria-label="Create pillar">
+											<i class="fas fa-check" aria-hidden="true"></i>
 										</button>
-									</div>
+										<button
+											type="button"
+											class="btn-pillar-inline btn-pillar-inline-cancel"
+											title="Cancel"
+											aria-label="Cancel"
+											@click.stop="cancelAddPillar"
+										>
+											<i class="fas fa-times" aria-hidden="true"></i>
+										</button>
+									</form>
 								</div>
 
 								<!-- INLINE NON-MODAL ADD AREA -->
 								<div class="inline-add-set-area" v-if="showInlineAddSet && inlineAddPage === pageIndex">
 									<div class="inline-add-header">
-										<span class="inline-add-title"
-											><i class="fas fa-layer-group" aria-hidden="true"></i> Add Trait Set</span
-										>
+										<span class="inline-add-title"><i class="fas fa-layer-group" aria-hidden="true"></i> Presets</span>
 										<div class="inline-add-quick-actions">
-											<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex)">
-												<i class="fas fa-plus" aria-hidden="true"></i> Blank Set
-											</button>
 											<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
 												<i class="fas fa-th-large" aria-hidden="true"></i> Set Builder
 											</button>
@@ -1515,16 +1449,16 @@ defineExpose({
 											v-for="preset in inlineBuiltInPresets"
 											:key="'builtin-' + preset.id"
 											:preset="preset"
-											action-label="Add Preset"
+											:dice-config="getView(character)?.diceConfig"
 											@add="addPresetSet(preset, pageIndex)"
 										/>
 										<PresetGalleryCard
 											v-for="preset in inlineCustomPresets"
 											:key="'custom-' + preset.id"
 											:preset="preset"
-											action-label="Add Preset"
+											:dice-config="getView(character)?.diceConfig"
 											deletable
-											delete-label="Delete custom preset"
+											delete-label="Delete saved preset"
 											@add="addPresetSet(preset, pageIndex)"
 											@delete="removeInlineCustomPreset(preset.id)"
 										/>
@@ -1568,14 +1502,14 @@ defineExpose({
 							v-for="preset in playBuiltInPresets"
 							:key="'play-builtin-' + preset.id"
 							:preset="preset"
-							action-label="Add Set"
+							:dice-config="getView(character)?.diceConfig"
 							@add="addPresetSet(preset)"
 						/>
 						<PresetGalleryCard
 							v-for="preset in playCustomPresets"
 							:key="'play-custom-' + preset.id"
 							:preset="preset"
-							action-label="Add Set"
+							:dice-config="getView(character)?.diceConfig"
 							deletable
 							delete-label="Delete saved preset"
 							@add="addPresetSet(preset)"

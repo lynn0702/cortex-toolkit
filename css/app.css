@@ -110,6 +110,10 @@
 	.toast-notification,
 	.print-toolbar,
 	.studio-panel,
+	.sheet-name-organic-actions,
+	.trait-active-part-bar,
+	.set-header-pillar-chip,
+	.trait-set-headerless-pillar-row,
 	.ring-portrait-dropzone,
 	.submode-edit .page-header-inner::before,
 	.submode-edit .trait-set-header-inner::before,
@@ -466,6 +470,11 @@ textarea:focus-visible {
 	z-index: var(--z-modal-close);
 	pointer-events: none;
 
+	&.has-action {
+		pointer-events: auto;
+		padding-inline-end: 0.65rem;
+	}
+
 	i {
 		color: var(--color-secondary);
 	}
@@ -482,4 +491,25 @@ textarea:focus-visible {
 		opacity: 0;
 		transform: translate(-50%, 0.6rem);
 	}
+}
+
+.toast-action-btn {
+	border: 1px solid var(--color-interactive);
+	background: color-mix(in oklch, var(--color-interactive) 22%, transparent);
+	color: var(--studio-text);
+	border-radius: 999rem;
+	padding: 0.22rem 0.65rem;
+	min-block-size: 1.75rem;
+	font-family: var(--font-heading);
+	font-size: 0.78rem;
+	font-weight: 700;
+	cursor: pointer;
+
+	&:hover {
+		background: color-mix(in oklch, var(--color-interactive) 36%, transparent);
+	}
+}
+
+.play-shell:has(.mobile-roller-pill-bar) ~ .toast-notification {
+	bottom: calc(var(--roller-footer-h) + 0.85rem);
 }

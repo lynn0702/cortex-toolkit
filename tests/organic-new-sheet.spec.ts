@@ -1,13 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { reactive } from 'vue';
-import { mount } from '@vue/test-utils';
+import { nextTick, reactive } from 'vue';
+import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import CharacterView from '../js/character.vue';
 import NameEditor from '../js/name-editor.vue';
 import TraitSetEditor from '../js/trait-set-editor.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import JsonEditor from '../js/json-editor.vue';
-import { characterCurioFunctions } from '../js/functions.ts';
+import PresetGalleryCard from '../js/preset-gallery-card.vue';
+import StudioPanel from '../js/studio-panel.vue';
+import App from '../js/app.vue';
+import { characterCurioFunctions, characterCurioSetPresets } from '../js/functions.ts';
 import {
 	getRating,
 	getView,
@@ -151,11 +154,12 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		nameEditor.unmount();
 	});
 
-	it('grows organically via + Trait, + Part, and + Set, round-trips losslessly, and deletes empty sets in 1 click', async () => {
+	it('grows organically via Name + Trait / Name Parts, per-trait + Part, + Set, and + Pillar, and deletes empty sets in 1 click', async () => {
 		const ch = freshBlankCharacter();
 		ch.name = 'Jimmy the Snitch';
 
 		const wrapper = mount(CharacterView, {
+			attachTo: document.body,
 			props: {
 				character: ch,
 				submode: 'edit',
@@ -164,66 +168,48 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		});
 
 		const builderButtons = wrapper.findAll('.sheet-organic-builder .btn-sheet-add');
-		expect(builderButtons.map((b) => b.text().trim())).toEqual(['Trait', 'Part', 'Set', 'Presets']);
+		expect(builderButtons.map((b) => b.text().trim())).toEqual(['Set', 'Presets', 'Pillar']);
 
-		// 1. + Trait creates a clean headerless TraitSet with compact default rating display and stays calmly on canvas
-		await builderButtons[0].trigger('click');
-		expect(ch.traitSets).toHaveLength(2);
-		expect(getView(ch.traitSets[1])?.header).toBe('none');
-		expect(getView(ch.traitSets[1])?.ratingDisplay).toBeUndefined();
-		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait']);
+		// 1. + Trait inside Name adds directly inside Name without creating a separate Traits set
+		const nameTraitBtn = wrapper.find('.sheet-name-organic-actions .preview-button');
+		await nameTraitBtn.trigger('click');
+		expect(ch.traitSets).toHaveLength(1);
+		expect(ch.traitSets[0].traits.map((t) => t.name)).toEqual(['New Trait']);
+		expect(getRating(ch.traitSets[0].traits[0])?.type).toBe('Die');
+		expect(getRating(ch.traitSets[0].traits[0])?.value).toEqual([6]);
+		expect(wrapper.find('.sheet-header-custom-traits').exists()).toBe(true);
+		expect(wrapper.find('.sheet-header-custom-traits input.trait-name-inline-input').exists()).toBe(true);
 		expect(wrapper.emitted('selectElement')).toBeUndefined();
-		expect(wrapper.find('input.trait-name-inline-input').exists()).toBe(true);
-		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(true);
-		// Single active die rendered per trait on canvas, NOT a 5-die full array
-		expect(wrapper.find('.trait').findAll('.single-die-value [role="button"]')).toHaveLength(1);
+		expect(wrapper.emitted('closeDrawer')?.length).toBeGreaterThanOrEqual(1);
 
-		await builderButtons[0].trigger('click');
-		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait', 'New Trait 2']);
-		expect(wrapper.emitted('selectElement')).toBeUndefined();
+		// Per-trait + Part appears directly under the active trait with 5 quick parts + More
+		const perTraitPartBtn = wrapper.find('.trait-active-part-bar .btn-trait-part-toggle');
+		expect(perTraitPartBtn.exists()).toBe(true);
+		await perTraitPartBtn.trigger('click');
+		const traitPartChips = wrapper.findAll('[aria-label="Trait parts"] .organic-part-chip');
+		expect(traitPartChips.map((c) => c.text().trim())).toEqual([
+			'Description',
+			'Subtrait',
+			'SFX',
+			'Track',
+			'Badge',
+			'More',
+		]);
+		await traitPartChips.find((c) => c.text().includes('Description'))!.trigger('click');
+		const descInput = wrapper.find('input.trait-desc-inline-input');
+		expect(descInput.exists()).toBe(true);
+		await descInput.setValue('Trusted informant');
+		expect(ch.traitSets[0].traits[0].description).toBe('Trusted informant');
+		await traitPartChips.find((c) => c.text().includes('Subtrait'))!.trigger('click');
+		expect(ch.traitSets[0].traits[0].traits).toHaveLength(1);
+		expect(wrapper.find('input.subtrait-name-inline-input').exists()).toBe(true);
 
-		// Switch New Trait 2 to multi-die ('Dice': [10, 10]) via InlineRatingBar, close, then tap multi-die directly on canvas
-		await wrapper
-			.findAll('.trait .inline-rating-bar .inline-rating-mode-btn')
-			.find((b) => b.text() === 'Dice')!
-			.trigger('click');
-		// Clear the default 2x d6 and add 2x d10
-		await wrapper.find('.inline-pool-die-chip').trigger('click');
-		await wrapper.find('.inline-pool-die-chip').trigger('click');
-		await wrapper.find('.inline-dice-palette button[aria-label="Add d10"]').trigger('click');
-		await wrapper.find('.inline-dice-palette button[aria-label="Add d10"]').trigger('click');
-		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10, 10]);
-		await wrapper.find('.trait .inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
-		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(false);
-
-		const secondTrait = wrapper.findAll('.trait')[1];
-		const multiDieBadges = secondTrait.findAll('.multidie-badge-wrap > span[role="button"]');
-		expect(multiDieBadges).toHaveLength(2);
-		await multiDieBadges[0].trigger('click');
-		expect(wrapper.emitted('selectElement')).toBeUndefined();
-		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(true);
-
-		// Remove one d10 and add a d8 right from the main canvas
-		await wrapper.find('.inline-pool-die-chip[aria-label="Remove d10"]').trigger('click');
-		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10]);
-		await wrapper.find('.inline-dice-palette button[aria-label="Add d8"]').trigger('click');
-		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10, 8]);
-
-		// Switch that trait to Counter and step directly from the canvas
-		await wrapper
-			.findAll('.trait .inline-rating-bar .inline-rating-mode-btn')
-			.find((b) => b.text() === 'Counter')!
-			.trigger('click');
-		await wrapper.find('.trait .inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
-		await wrapper.find('.counter-value button[aria-label*="Increase"]').trigger('click');
-		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([1]);
-
-		// 2. + Part toggles Sheet Parts (Notes ordered second; no duplicate Trait Parts inside Sheet Parts)
-		await builderButtons[1].trigger('click');
-		expect(wrapper.find('.inline-add-part-area').exists()).toBe(true);
-		expect(wrapper.find('.inline-add-part-area [aria-label="Trait parts"]').exists()).toBe(false);
-		const sheetPartChips = wrapper.findAll('[aria-label="Sheet parts"] .organic-part-chip');
-		expect(sheetPartChips.map((c) => c.text().trim())).toEqual([
+		// 2. + Part inside Name card opens Name Parts (PP, Notes, Description, Portrait, Pronouns...)
+		const namePartBtn = wrapper.find('.sheet-name-organic-actions .preview-button-secondary');
+		await namePartBtn.trigger('click');
+		expect(wrapper.find('.name-inline-part-drawer').exists()).toBe(true);
+		const namePartChips = wrapper.findAll('[aria-label="Name parts"] .organic-part-chip');
+		expect(namePartChips.map((c) => c.text().trim())).toEqual([
 			'Rating',
 			'PP',
 			'Notes',
@@ -234,7 +220,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			'Game',
 			'Player',
 		]);
-		const ppChip = sheetPartChips.find((c) => c.text().trim() === 'PP')!;
+		const ppChip = namePartChips.find((c) => c.text().trim() === 'PP')!;
 		expect(ppChip.classes()).not.toContain('active');
 		await ppChip.trigger('click');
 		expect(hasPlotPoints(ch)).toBe(true);
@@ -242,31 +228,77 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		await ppChip.trigger('click');
 		expect(hasPlotPoints(ch)).toBe(false);
 		expect(ch.plotPoints).toBeUndefined();
-		const pronounsChip = sheetPartChips.find((c) => c.text().includes('Pronouns'))!;
+		const pronounsChip = namePartChips.find((c) => c.text().includes('Pronouns'))!;
 		expect(pronounsChip.classes()).not.toContain('active');
 		await pronounsChip.trigger('click');
 		const pronounsTrait = characterCurioFunctions.getNameTrait(ch, 'pronouns');
 		expect(getView(pronounsTrait)?.visibility).toBeUndefined();
 		expect(wrapper.find('.sheet-meta-pronoun-cell input.sheet-part-inline-input').exists()).toBe(true);
 
-		// Set-level + Part opens its own distinct Trait Parts drawer
-		const setPartBtn = wrapper.findAll('.set-organic-actions button').find((b) => b.text().trim() === 'Part')!;
-		await setPartBtn.trigger('click');
-		expect(wrapper.find('.set-inline-part-drawer').exists()).toBe(true);
-		const traitPartChips = wrapper.findAll('.set-inline-part-drawer [aria-label="Trait parts"] .organic-part-chip');
-		const sfxChip = traitPartChips.find((c) => c.text().includes('SFX'))!;
-		await sfxChip.trigger('click');
-		expect(Boolean((getView(ch.traitSets[1])?.parts as any)?.block)).toBe(true);
-
-		// 3. + Set creates unique empty sets calmly inline on canvas; empty set deletes in 1 click without confirm modal
-		await builderButtons[2].trigger('click');
-		expect(ch.traitSets).toHaveLength(3);
-		expect(ch.traitSets[2].name).toBe('New Set');
-		expect(ch.traitSets[2].traits).toHaveLength(0);
-		expect(getView(ch.traitSets[2])?.ratingDisplay).toBeUndefined();
+		// 3. + Set creates a unique empty set calmly inline on canvas; empty set deletes in 1 click without confirm modal
+		await builderButtons[0].trigger('click');
+		expect(ch.traitSets).toHaveLength(2);
+		expect(ch.traitSets[1].name).toBe('New Set');
+		expect(ch.traitSets[1].traits).toHaveLength(0);
+		expect(getView(ch.traitSets[1])?.header).toBe('top');
+		expect(getView(ch.traitSets[1])?.ratingDisplay).toBeUndefined();
 		expect(wrapper.emitted('selectElement')).toBeUndefined();
 		expect(wrapper.find('input.trait-set-name-inline-input').exists()).toBe(true);
+		expect(wrapper.find('[data-set-index="1"] .trait-set-header .set-header-settings-btn').exists()).toBe(true);
+		expect(wrapper.find('[data-set-index="1"] .trait-set-header button[aria-label="Delete set"]').exists()).toBe(true);
 
+		// Add two traits into the standalone set and verify Dice pool & Counter interactions
+		const setAddTraitBtn = wrapper.find('[data-set-index="1"] .set-organic-actions .preview-button');
+		await setAddTraitBtn.trigger('click');
+		await setAddTraitBtn.trigger('click');
+		expect(ch.traitSets[1].traits.map((t) => t.name)).toEqual(['New Trait', 'New Trait 2']);
+		expect(wrapper.find('[data-set-index="1"] .trait-set-header button[aria-label="Delete set"]').exists()).toBe(false);
+		expect(wrapper.find('[data-set-index="1"] .preview-button-icon').exists()).toBe(false);
+		// Single active die rendered per trait on canvas, NOT a 5-die full array
+		expect(wrapper.find('[data-set-index="1"] .trait').findAll('.single-die-value [role="button"]')).toHaveLength(1);
+
+		await wrapper
+			.findAll('[data-set-index="1"] .trait .inline-rating-bar .inline-rating-mode-btn')
+			.find((b) => b.text() === 'Dice')!
+			.trigger('click');
+		await wrapper.find('.inline-pool-die-chip').trigger('click');
+		await wrapper.find('.inline-pool-die-chip').trigger('click');
+		await wrapper.find('.inline-dice-palette button[aria-label="Add d10"]').trigger('click');
+		await wrapper.find('.inline-dice-palette button[aria-label="Add d10"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10, 10]);
+		await wrapper.find('.trait .inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
+		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(false);
+
+		const secondSetTraits = wrapper.findAll('[data-set-index="1"] .trait');
+		const multiDieBadges = secondSetTraits[1].findAll('.multidie-badge-wrap > span[role="button"]');
+		expect(multiDieBadges).toHaveLength(2);
+		await multiDieBadges[0].trigger('click');
+		expect(wrapper.find('.trait .inline-rating-bar').exists()).toBe(true);
+		await wrapper.find('.inline-pool-die-chip[aria-label="Remove d10"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10]);
+		await wrapper.find('.inline-dice-palette button[aria-label="Add d8"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([10, 8]);
+
+		await wrapper
+			.findAll('.trait .inline-rating-bar .inline-rating-mode-btn')
+			.find((b) => b.text() === 'Counter')!
+			.trigger('click');
+		await wrapper.find('.trait .inline-rating-bar button[aria-label="Close rating picker"]').trigger('click');
+		await wrapper.find('[data-set-index="1"] .counter-value button[aria-label*="Increase"]').trigger('click');
+		expect(getRating(ch.traitSets[1].traits[1])?.value).toEqual([1]);
+
+		// Add SFX on the active trait via per-trait + Part
+		await wrapper.find('[data-set-index="1"] .trait .single-die-value [role="button"]').trigger('click');
+		await wrapper.find('[data-set-index="1"] .trait-active-part-bar .btn-trait-part-toggle').trigger('click');
+		const sfxChip = wrapper
+			.findAll('[data-set-index="1"] [aria-label="Trait parts"] .organic-part-chip')
+			.find((c) => c.text().includes('SFX'))!;
+		await sfxChip.trigger('click');
+		expect(ch.traitSets[1].traits[0].traits?.length).toBeGreaterThan(0);
+
+		// Empty set (create a 3rd set) deletes in 1 click without confirm modal
+		await builderButtons[0].trigger('click');
+		expect(ch.traitSets).toHaveLength(3);
 		const emptySetEditor = mount(TraitSetEditor, {
 			props: {
 				character: ch,
@@ -290,7 +322,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(populatedSetEditor.emitted('removeTraitSet')).toBeUndefined();
 		populatedSetEditor.unmount();
 
-		// 4. Lossless layered round-trip
+		// 4. Lossless layered round-trip (custom trait inside Name survives cleanly!)
 		const layered = characterCurioFunctions.toLayeredEntity(ch);
 		const rematerialized = characterCurioFunctions.materializeCharacter(layered, null);
 		expect(rematerialized.name).toBe('Jimmy the Snitch');
@@ -300,8 +332,8 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			value: [8],
 			range: [],
 		});
-		expect(resolveRange(rematNameSet)).toEqual([4, 6, 8, 10, 12]);
-		const rematTraitsSet = (rematerialized.traitSets ?? []).find((s: any) => s.name === 'Traits');
+		expect((rematNameSet?.traits ?? []).some((t: any) => t.name === 'New Trait')).toBe(true);
+		const rematTraitsSet = (rematerialized.traitSets ?? []).find((s: any) => s.name === 'New Set');
 		expect((rematTraitsSet?.traits ?? []).map((t: any) => t.name)).toEqual(['New Trait', 'New Trait 2']);
 
 		wrapper.unmount();
@@ -621,7 +653,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			$schema: '../schema/0.2/curiosity.schema.json',
 		});
 
-		// Toggling Pronouns on and back off when empty leaves zero hidden-trait clutter
+		// Toggling Pronouns on and back off via Name Parts leaves zero hidden-trait clutter
 		const viewWrapper = mount(CharacterView, {
 			props: {
 				character: ch,
@@ -629,12 +661,10 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 				editing: [],
 			},
 		});
-		const partBtn = viewWrapper
-			.findAll('.sheet-organic-builder .btn-sheet-add')
-			.find((b) => b.text().trim() === 'Part')!;
+		const partBtn = viewWrapper.find('.sheet-name-organic-actions .preview-button-secondary');
 		await partBtn.trigger('click');
 		const pronounsChip = () =>
-			viewWrapper.findAll('[aria-label="Sheet parts"] .organic-part-chip').find((c) => c.text().includes('Pronouns'))!;
+			viewWrapper.findAll('[aria-label="Name parts"] .organic-part-chip').find((c) => c.text().includes('Pronouns'))!;
 		await pronounsChip().trigger('click');
 		expect(viewWrapper.find('.sheet-meta-pronoun-cell').exists()).toBe(true);
 		await pronounsChip().trigger('click');
@@ -704,5 +734,168 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(getRating(matSkills?.traits[0])?.value).toEqual([8]);
 
 		jsonWrapper.unmount();
+	});
+
+	it('renders Name Pip bubbles interactively in Edit and Play and unifies Name controls in NameEditor / StudioPanel', async () => {
+		const ch = freshBlankCharacter('name-pip-1');
+		ch.name = 'Pip Hero';
+		(ch.traitSets[0] as any).rating = { type: 'Pip', value: [true, false, false] };
+
+		const editWrap = mount(CharacterView, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				submode: 'edit',
+				editing: [],
+			},
+		});
+		const pipGroup = editWrap.find('.pip-value.sheet-name-pip-group');
+		expect(pipGroup.exists()).toBe(true);
+		const pipButtons = pipGroup.findAll('.inline-pip-btn');
+		expect(pipButtons).toHaveLength(3);
+		expect(pipButtons[0].find('.pip-bubble.filled').exists()).toBe(true);
+		await pipButtons[2].trigger('click');
+		expect((ch.traitSets[0] as any).rating.value).toEqual([true, false, true]);
+		expect(editWrap.find('button.sheet-name-rating-trigger').exists()).toBe(true);
+		editWrap.unmount();
+
+		const playWrap = mount(CharacterView, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				submode: 'play',
+				editing: [],
+			},
+		});
+		expect(playWrap.findAll('.sheet-name-pip-group .pip-bubble.filled')).toHaveLength(2);
+		playWrap.unmount();
+
+		const nameEd = mount(NameEditor, {
+			props: {
+				character: ch,
+				open: true,
+				tab: 'sheet',
+			},
+		});
+		expect(nameEd.text()).not.toContain('Configure Name Set');
+		expect(nameEd.find('.pip-editor-row').exists()).toBe(true);
+		await nameEd.find('button[aria-label="Increase sheet pip count"]').trigger('click');
+		expect((ch.traitSets[0] as any).rating.value).toHaveLength(4);
+		const lineBtn = nameEd.findAll('.editor-group-btn').find((b) => b.text().trim() === 'Line')!;
+		await lineBtn.trigger('click');
+		expect(getView(ch.traitSets[0])?.border).toBe('line');
+		nameEd.unmount();
+
+		const studio = mount(StudioPanel, {
+			props: {
+				open: true,
+				tab: 'properties',
+				submode: 'edit',
+				character: ch,
+				editing: ['traitSet', 0],
+				dicePool: { dice: [null, null, null, null, null], items: [], wordBank: [] },
+			},
+		});
+		await flushPromises();
+		await nextTick();
+		expect(studio.findComponent(NameEditor).exists()).toBe(true);
+		studio.unmount();
+	});
+
+	it('supports Edit-mode + Pillar creation, set-header pillar chips, and accessible visual PresetGalleryCards', async () => {
+		const ch = freshBlankCharacter('edit-pillar-1');
+		ch.traitSets.push({ name: 'Roles', noun: 'Role', traits: [] } as any);
+
+		const wrapper = mount(CharacterView, {
+			attachTo: document.body,
+			props: {
+				character: ch,
+				submode: 'edit',
+				editing: [],
+			},
+		});
+		expect(wrapper.find('.set-header-pillar-chip').exists()).toBe(false);
+
+		await wrapper.find('.sheet-organic-builder .btn-pillar-toggle').trigger('click');
+		expect(wrapper.emitted('closeDrawer')?.length).toBeGreaterThanOrEqual(1);
+		const pInput = wrapper.find('.inline-add-pillar-area input.pillar-inline-input');
+		await pInput.setValue('Scene');
+		await wrapper.find('.inline-add-pillar-area form').trigger('submit');
+		await nextTick();
+
+		expect(getView(ch)?.pillars).toEqual(['sheet', 'scene']);
+		const chips = wrapper.findAll('.set-header-pillar-chip');
+		expect(chips.length).toBeGreaterThanOrEqual(2);
+		expect(wrapper.findAll('.trait-set')).toHaveLength(2);
+		wrapper.unmount();
+
+		const cardHost = document.createElement('div');
+		document.body.appendChild(cardHost);
+		const cardWrap = mount(PresetGalleryCard, {
+			attachTo: cardHost,
+			props: {
+				preset: characterCurioSetPresets['trait-track'],
+				deletable: true,
+			},
+		});
+		expect(cardWrap.find('.preset-card-preview[data-preview-kind="track"]').exists()).toBe(true);
+		expect(cardWrap.find('.btn-preset-add .preset-gallery-name').text().trim()).toBe('Trait + Track');
+		expect(cardWrap.findAll('button button')).toHaveLength(0);
+		const cardAxe = await axe.run(cardWrap.element);
+		expect(cardAxe.violations).toHaveLength(0);
+		cardWrap.unmount();
+		cardHost.remove();
+	});
+
+	it('places mobile Play pill clear next to dice, Roll on right, and offers Undo recovery on clear', async () => {
+		const ch = freshBlankCharacter('mobile-pill-undo-1');
+		ch.name = 'Jimmy';
+		ch.traitSets.push({
+			name: 'Skills',
+			noun: 'Skill',
+			traits: [{ name: 'Sneak', rating: { type: 'Die', value: [8] } }],
+		} as any);
+		localStorage.setItem(
+			'characterCurioData',
+			JSON.stringify({ '0.1': { characters: [ch], prefs: { version: 1, global: {}, characters: {} } } }),
+		);
+
+		const app = mount(App, { attachTo: document.body });
+		await flushPromises();
+		const vm = app.vm as any;
+		if (!vm.characters.some((c: any) => c?.id === ch.id)) {
+			vm.characters.push(ch);
+		}
+		vm.loadCharacter(ch.id, 'play');
+		await flushPromises();
+		await nextTick();
+
+		const sheetComp = app.findComponent(CharacterView);
+		expect(sheetComp.exists()).toBe(true);
+		sheetComp.vm.$emit('addDieToRoller', { size: 8, qty: 1, source: 'Sneak' });
+		await nextTick();
+
+		const stagedGroup = app.find('.mobile-roller-pill-staged-group');
+		expect(stagedGroup.exists()).toBe(true);
+		expect(stagedGroup.find('.mobile-roller-pill-left').exists()).toBe(true);
+		expect(stagedGroup.find('.btn-pill-clear').exists()).toBe(true);
+
+		const rightGroupButtons = app.findAll('.mobile-roller-pill-right button');
+		expect(rightGroupButtons.map((b) => b.classes()[0])).toEqual(['btn-pill-expand', 'btn-pill-roll']);
+
+		await app.find('.btn-pill-clear').trigger('click');
+		await nextTick();
+		expect(app.find('.pill-die').exists()).toBe(false);
+		const undoBtn = app.find('.toast-action-btn');
+		expect(undoBtn.exists()).toBe(true);
+		expect(undoBtn.text()).toBe('Undo');
+		expect(app.find('.toast-notification').attributes('aria-hidden')).toBeUndefined();
+
+		await undoBtn.trigger('click');
+		await nextTick();
+		expect(app.find('.pill-die').exists()).toBe(true);
+		expect(app.find('.toast-notification').exists()).toBe(false);
+		void vm;
+		app.unmount();
 	});
 });

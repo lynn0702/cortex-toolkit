@@ -8,7 +8,7 @@
  * Run via `npm run types` (also chained into `npm run build`).
  */
 import { compile } from 'json-schema-to-typescript';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -35,8 +35,13 @@ const banner =
 	'/* eslint-disable */\n' +
 	'/* AUTO-GENERATED from schema/0.2/*.schema.json by scripts/gen-types.mjs. Do not edit — run `npm run types`. */\n\n';
 
-writeFileSync(
-	path.join(root, 'js/model.generated.ts'),
-	banner + curiosity + '\nexport type Character = Curiosity;\n\n' + sheetTemplate + '\n',
-);
-console.log('gen-types: wrote js/model.generated.ts');
+const outPath = path.join(root, 'js/model.generated.ts');
+const nextContent = banner + curiosity + '\nexport type Character = Curiosity;\n\n' + sheetTemplate + '\n';
+const prevContent = existsSync(outPath) ? readFileSync(outPath, 'utf8') : null;
+
+if (prevContent !== nextContent) {
+	writeFileSync(outPath, nextContent);
+	console.log('gen-types: wrote js/model.generated.ts');
+} else {
+	console.log('gen-types: js/model.generated.ts up to date');
+}

@@ -20,7 +20,7 @@ function run(label, command) {
 	}
 }
 
-// 1. Production Build (formats with prettier, compiles types, bundles assets)
+// 1. Production Build (compiles types, bundles assets; formatting is verified read-only in Step 2)
 run('1. Production Build (vite + asset versioning)', 'npm run build');
 
 // 2. Code Style
