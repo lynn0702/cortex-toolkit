@@ -2,6 +2,7 @@
 import { nextTick } from 'vue';
 import { getView, resolveSubtraitNoun } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
+import { useCuriosityGraph } from './curiosity-graph.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
 import InlineRatingBar from './inline-rating-bar.vue';
@@ -99,6 +100,15 @@ const {
 	traitArrayMode,
 	showPortraitHub,
 } = injectTraitSet();
+
+const graph = useCuriosityGraph(
+	() => character.value,
+	(ch) => updateCharacter(ch),
+);
+
+function resolveTraitRefTitle(tr: any): string {
+	return graph.resolveCuriosity(tr?.ref)?.name || tr?.name || 'Curiosity';
+}
 
 function startInlineTrackLabel(tIdx: number | null | undefined, ev: Event) {
 	openInlineTrackLabel(tIdx);
@@ -379,6 +389,16 @@ function hasTraitSetDescription(ts: any) {
 												</template>
 											</span>
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+										</button>
+										<button
+											v-if="!printBlank && !item.isPlaceholder && item.trait.ref && submode !== 'print'"
+											type="button"
+											class="trait-explore-btn"
+											:title="'Explore ' + resolveTraitRefTitle(item.trait)"
+											:aria-label="'Explore ' + resolveTraitRefTitle(item.trait)"
+											@click.stop="graph.exploreCuriosity(item.trait.ref)"
+										>
+											<i class="fas fa-lightbulb" aria-hidden="true"></i>
 										</button>
 									</template>
 								</div>
@@ -1505,6 +1525,16 @@ function hasTraitSetDescription(ts: any) {
 												</template>
 											</span>
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+										</button>
+										<button
+											v-if="!printBlank && !item.isPlaceholder && item.trait.ref && submode !== 'print'"
+											type="button"
+											class="trait-explore-btn"
+											:title="'Explore ' + resolveTraitRefTitle(item.trait)"
+											:aria-label="'Explore ' + resolveTraitRefTitle(item.trait)"
+											@click.stop="graph.exploreCuriosity(item.trait.ref)"
+										>
+											<i class="fas fa-lightbulb" aria-hidden="true"></i>
 										</button>
 									</template>
 

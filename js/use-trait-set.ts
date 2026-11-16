@@ -1977,6 +1977,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return listTraitsCount;
 	}
 
+	function stageRawDie(payload: unknown) {
+		emit('addDieToRoller', payload);
+	}
+
 	const api = {
 		traitSet,
 		s,
@@ -2104,6 +2108,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		handleAltRollClick,
 		stageTrackDie,
 		stageSetDie,
+		stageRawDie,
 		isSetPartActive,
 		toggleSetPart,
 		stepTraitCounter,

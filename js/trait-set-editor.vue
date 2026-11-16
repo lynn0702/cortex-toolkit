@@ -8,6 +8,7 @@ import TraitSetEditorImage from './trait-set-editor-image.vue';
 import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 import VisibilityEye from './visibility-eye.vue';
 import TagEditor from './tag-editor.vue';
+import { useCuriosityGraph } from './curiosity-graph.ts';
 
 const props = defineProps<{
 	character: any;
@@ -77,6 +78,21 @@ const {
 
 const STANDARD_PILLARS = ['prime', 'plus', 'play', 'identity'];
 const isCustomPillar = ref(false);
+
+const graph = useCuriosityGraph(
+	() => props.character,
+	(ch) => emit('updateCharacter', ch),
+);
+
+const currentSetRef = computed<string>({
+	get: () => String(props.character?.traitSets?.[props.traitSetID]?.ref || ''),
+	set: (val: string) => {
+		const ts = props.character?.traitSets?.[props.traitSetID];
+		if (!ts) return;
+		ts.ref = val ? val : null;
+		emit('updateCharacter', props.character);
+	},
+});
 
 const selectedPillar = computed<string>({
 	get: () => {
@@ -226,6 +242,32 @@ const selectedPillar = computed<string>({
 						</div>
 
 						<!-- STYLE-CONDITIONAL SECTIONS (each exists only for the styles that summon it) -->
+						<div class="editor-field" v-if="styleBody === 'curiosity' || currentSetRef">
+							<label :for="'trait-set-' + traitSetID + '-curiosity-ref'">Linked Curiosity</label>
+							<div class="editor-row-inline">
+								<select
+									:id="'trait-set-' + traitSetID + '-curiosity-ref'"
+									v-model="currentSetRef"
+									class="editor-select flex-1"
+								>
+									<option value="">None</option>
+									<option v-for="cur in graph.linkableCuriosities.value" :key="cur.id" :value="cur.id">
+										{{ cur.name || 'Unnamed' }}
+									</option>
+								</select>
+								<button
+									v-if="currentSetRef"
+									type="button"
+									class="btn-step"
+									title="Explore linked curiosity"
+									aria-label="Explore linked curiosity"
+									@click.stop="graph.exploreCuriosity(currentSetRef)"
+								>
+									<i class="fas fa-lightbulb" aria-hidden="true"></i>
+								</button>
+							</div>
+						</div>
+
 						<TraitSetEditorDice />
 
 						<TraitSetEditorImage />

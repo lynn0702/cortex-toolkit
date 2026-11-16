@@ -6,6 +6,7 @@ export interface HistoryDeps {
 	character: ComputedRef<any>;
 	characters: Ref<any[]>;
 	characterIndex: ComputedRef<number>;
+	restoreCharacter?: (restored: any) => void;
 	editing: Ref<any>;
 	isNavigatingHistory: Ref<boolean>;
 	history: Ref<string[]>;
@@ -20,6 +21,7 @@ export function useHistory(deps: HistoryDeps) {
 		character,
 		characters,
 		characterIndex,
+		restoreCharacter,
 		editing,
 		isNavigatingHistory,
 		history,
@@ -119,7 +121,11 @@ export function useHistory(deps: HistoryDeps) {
 		isNavigatingHistory.value = true;
 		historyIndex.value--;
 		const restored = JSON.parse(history.value[historyIndex.value]);
-		characters.value[characterIndex.value] = restored;
+		if (restoreCharacter) {
+			restoreCharacter(restored);
+		} else if (characterIndex.value !== -1) {
+			characters.value[characterIndex.value] = restored;
+		}
 		validateEditing(restored);
 		saveLocalData();
 		showToast('Undo');
@@ -135,7 +141,11 @@ export function useHistory(deps: HistoryDeps) {
 		isNavigatingHistory.value = true;
 		historyIndex.value++;
 		const restored = JSON.parse(history.value[historyIndex.value]);
-		characters.value[characterIndex.value] = restored;
+		if (restoreCharacter) {
+			restoreCharacter(restored);
+		} else if (characterIndex.value !== -1) {
+			characters.value[characterIndex.value] = restored;
+		}
 		validateEditing(restored);
 		saveLocalData();
 		showToast('Redo');

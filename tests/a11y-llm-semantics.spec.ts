@@ -13,6 +13,8 @@ import StudioPanel from '../js/studio-panel.vue';
 import Character from '../js/character.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
 import PageLayoutMini from '../js/page-layout-mini.vue';
+import CuriosityWebBar from '../js/curiosity-web-bar.vue';
+import { CURIOSITY_GRAPH_KEY } from '../js/curiosity-graph.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
 import { characterCurioFunctions, characterCurioSetPresets } from '../js/functions.ts';
 import { dicePool } from '../js/dice-pool.ts';
@@ -3409,6 +3411,213 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			await runAxeAudit(roller.element as HTMLElement);
 			roller.unmount();
+		});
+	});
+
+	describe('Slice 3: Non-Linear Curiosity Graph, Trait/Set ref Edges & CuriosityWebBar', () => {
+		it('renders TraitSetCuriosity setup, spawns embedded Curiosity with IME-safe Enter, stages dice in Play, and passes axe', async () => {
+			const char: any = reactive({
+				id: 'root-adv',
+				name: 'Starfall Sector',
+				version: '0.2',
+				traitSets: [
+					{ id: 'name', name: 'Starfall Sector', view: { style: { body: 'name' } }, traits: [] },
+					characterCurioFunctions.instantiateSetPreset(characterCurioSetPresets.curiosity, null),
+				],
+				curiosities: {
+					'existing-npc': {
+						id: 'existing-npc',
+						name: 'Captain Vane',
+						version: '0.2',
+						traitSets: [
+							{
+								id: 'name',
+								name: 'Captain Vane',
+								rating: { type: 'Die', value: [8] },
+								view: { style: { body: 'name' } },
+								traits: [{ name: 'Description', description: 'Smuggler of [[Rust Port]]' }],
+							},
+							{
+								id: 'roles',
+								name: 'Roles',
+								traits: [{ name: 'Pilot', rating: { type: 'Die', value: [10] } }],
+							},
+						],
+					},
+				},
+			});
+
+			const stagedPayloads: any[] = [];
+			const wrapper = mount(TraitSetBlock, {
+				props: {
+					character: char,
+					traitSetID: 1,
+					submode: 'play',
+					onAddDieToRoller: (p: any) => stagedPayloads.push(p),
+					onUpdateCharacter: (next: any) => Object.assign(char, next),
+				} as any,
+			});
+
+			// 1. Unlinked setup state passes WCAG 2.2 AA & LLM DOM semantics
+			expect(wrapper.find('.curiosity-empty-setup').exists()).toBe(true);
+			expect(wrapper.find('.curiosity-existing-chip').text()).toContain('Captain Vane');
+			await runAxeAudit(wrapper.element as HTMLElement);
+			assertLlmDomSemantics(wrapper.element as HTMLElement);
+
+			// 2. IME composition Enter (keyCode 229) must NOT prematurely create
+			const nameInput = wrapper.find('.curiosity-set-input');
+			await nameInput.setValue('Rust Port');
+			await nameInput.trigger('keydown', { key: 'Enter', isComposing: true, keyCode: 229 });
+			expect(char.traitSets[1].ref ?? null).toBeNull();
+
+			// 3. Clean Enter spawns embedded Curiosity and links traitSet.ref
+			await nameInput.trigger('keydown', { key: 'Enter' });
+			await nextTick();
+			const spawnedId = char.traitSets[1].ref;
+			expect(typeof spawnedId).toBe('string');
+			expect(char.curiosities[spawnedId]?.name).toBe('Rust Port');
+			expect(wrapper.find('.curiosity-card-name').text()).toBe('Rust Port');
+
+			// 4. Unlink and link existing Captain Vane -> stage Name d8 and Pilot d10 directly into Active Pool
+			await wrapper.find('.btn-curiosity-unlink').trigger('click');
+			await nextTick();
+			await wrapper.find('.curiosity-existing-chip').trigger('click');
+			await nextTick();
+			expect(wrapper.find('.curiosity-card-name').text()).toBe('Captain Vane');
+			expect(wrapper.find('.curiosity-card-subtitle .curio-wikilink').attributes('data-curio-ref')).toBe('Rust Port');
+
+			await wrapper.find('.curiosity-card-die[role="button"]').trigger('click');
+			await wrapper.find('.curiosity-trait-pill').trigger('click');
+			expect(stagedPayloads.length).toBe(2);
+			expect(stagedPayloads[0]).toMatchObject({ size: 8, source: 'Captain Vane' });
+			expect(stagedPayloads[1]).toMatchObject({ size: 10, source: 'Pilot' });
+
+			await runAxeAudit(wrapper.element as HTMLElement);
+			wrapper.unmount();
+		});
+
+		it('renders sibling trait-explore-btn (fa-lightbulb) for trait.ref without nested-interactive axe violations', async () => {
+			const exploredIds: string[] = [];
+			const char: any = reactive({
+				id: 'root-1',
+				name: 'Expedition',
+				version: '0.2',
+				traitSets: [
+					{
+						id: 'prime-contacts',
+						name: 'Contacts',
+						rating: { type: 'Die', range: [4, 6, 8, 10, 12] },
+						traits: [{ name: 'Archivist Sera', ref: 'npc-sera', rating: { type: 'Die', value: [8] } }],
+					},
+				],
+				curiosities: {
+					'npc-sera': {
+						id: 'npc-sera',
+						name: 'Archivist Sera',
+						version: '0.2',
+						traitSets: [{ id: 'name', name: 'Archivist Sera', view: { style: { body: 'name' } }, traits: [] }],
+					},
+				},
+			});
+
+			const wrapper = mount(TraitSetBlock, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					submode: 'play',
+				},
+				global: {
+					provide: {
+						[CURIOSITY_GRAPH_KEY as symbol]: {
+							activeNode: { value: char } as any,
+							activeHostRoot: { value: null } as any,
+							resolveCuriosity: (id: string) => char.curiosities[id] || null,
+							linkableCuriosities: { value: [char.curiosities['npc-sera']] } as any,
+							exploreCuriosity: (id: string) => {
+								exploredIds.push(id);
+								return true;
+							},
+							spawnCuriosity: () => null,
+							popOutCuriosity: () => false,
+							pullInCuriosity: () => false,
+						},
+					},
+				},
+			});
+
+			const exploreBtn = wrapper.find('button.trait-explore-btn');
+			expect(exploreBtn.exists()).toBe(true);
+			// Must be a sibling of button.trait-title-btn, never nested inside it
+			expect(wrapper.find('button.trait-title-btn button').exists()).toBe(false);
+
+			await exploreBtn.trigger('click');
+			expect(exploredIds).toEqual(['npc-sera']);
+
+			await runAxeAudit(wrapper.element as HTMLElement);
+			wrapper.unmount();
+		});
+
+		it('renders CuriosityWebBar breadcrumbs (aria-current="page", middle collapse), backlinks, and Pop Out with zero axe violations', async () => {
+			const navigated: string[] = [];
+			const popped: string[] = [];
+			const spawned: any[] = [];
+
+			const webBar = mount(CuriosityWebBar, {
+				props: {
+					activeNode: { id: 'n5', name: 'Inner Sanctum' },
+					hostRoot: { id: 'n1', name: 'Sunken Citadel' },
+					trail: [
+						{ id: 'n1', name: 'Sunken Citadel' },
+						{ id: 'n2', name: 'Outer Gate' },
+						{ id: 'n3', name: 'Flooded Hall' },
+						{ id: 'n4', name: 'Vault Door' },
+						{ id: 'n5', name: 'Inner Sanctum' },
+					],
+					incomingBacklinks: [{ id: 'n4', name: 'Vault Door', via: 'trait' }],
+					outgoingLinks: [{ id: 'n6', name: 'Oracle Core', via: 'wiki' }],
+					pullableCuriosities: [{ id: 'ext-1', name: 'Wandering Knight' }],
+					submode: 'play',
+				},
+				attrs: {
+					onNavigate: (id: string) => navigated.push(id),
+					onPopOut: (id: string) => popped.push(id),
+					onSpawnPeer: (payload: any) => spawned.push(payload),
+				},
+			});
+
+			// 1. Trail > 4 collapses middle crumbs to ellipsis button keeping first + last 2
+			const navEl = webBar.find('nav[aria-label="Curiosity trail"]');
+			expect(navEl.exists()).toBe(true);
+			expect(webBar.findAll('.curiosity-crumb-link').length).toBe(3);
+			expect(webBar.find('.curiosity-crumb-link[aria-current="page"]').text()).toBe('Inner Sanctum');
+
+			await runAxeAudit(webBar.element as HTMLElement);
+
+			// 2. Expand middle crumbs via ellipsis button -> all 5 crumbs visible
+			await webBar.find('.curiosity-crumb-more').trigger('click');
+			expect(webBar.findAll('.curiosity-crumb-link').length).toBe(5);
+
+			// 3. Backlinks, outgoing links, Pop Out, and + Curiosity drawer work cleanly
+			await webBar.find('.curiosity-edge-chip.is-backlink').trigger('click');
+			await webBar.find('.curiosity-edge-chip.is-outgoing').trigger('click');
+			expect(navigated).toEqual(['n4', 'n6']);
+
+			const actionBtns = webBar.findAll('.curiosity-web-btn');
+			await actionBtns[0].trigger('click'); // Pop Out
+			expect(popped).toEqual(['n5']);
+
+			await actionBtns[1].trigger('click'); // + Curiosity drawer
+			expect(webBar.find('.curiosity-web-drawer').exists()).toBe(true);
+			await runAxeAudit(webBar.element as HTMLElement);
+
+			const peerInput = webBar.find('.curiosity-web-drawer .curiosity-set-input');
+			await peerInput.setValue('Altar Guardian');
+			await peerInput.trigger('keydown', { key: 'Enter', isComposing: true, keyCode: 229 });
+			expect(spawned.length).toBe(0);
+			await peerInput.trigger('keydown', { key: 'Enter' });
+			expect(spawned).toEqual([{ name: 'Altar Guardian', navigate: true }]);
+
+			webBar.unmount();
 		});
 	});
 });

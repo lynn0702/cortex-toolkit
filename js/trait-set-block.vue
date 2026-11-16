@@ -11,6 +11,7 @@ import TraitSetDiceCount from './trait-set-dice-count.vue';
 import TraitSetList from './trait-set-list.vue';
 import TraitSetFrame from './trait-set-frame.vue';
 import TraitSetName from './trait-set-name.vue';
+import TraitSetCuriosity from './trait-set-curiosity.vue';
 import PortraitRing from './portrait-ring.vue';
 
 const props = defineProps<{
@@ -134,6 +135,7 @@ const setSfxEntries = computed(() => characterCurioFunctions.blockChildren(trait
 
 const BODY_COMPONENTS: Record<string, any> = {
 	name: TraitSetName,
+	curiosity: TraitSetCuriosity,
 	image: TraitSetImage,
 	pips: TraitSetPips,
 	'subtrait-columns': TraitSetSubtraitColumns,
@@ -144,6 +146,7 @@ const BODY_COMPONENTS: Record<string, any> = {
 const bodyComponent = computed(() => {
 	if (isName.value) return TraitSetName;
 	const style = getView(traitSet.value)?.style?.body;
+	if (style === 'curiosity' || (!style && traitSet.value?.ref)) return TraitSetCuriosity;
 	return (style && BODY_COMPONENTS[style]) || TraitSetList;
 });
 
@@ -153,7 +156,7 @@ const shouldRenderBodyComponent = computed(() => {
 	if (isName.value) return true;
 	const view = getView(traitSet.value);
 	const bodyStyle = view?.style?.body;
-	if (bodyStyle === 'image' || bodyStyle === 'pips') {
+	if (bodyStyle === 'image' || bodyStyle === 'pips' || bodyStyle === 'curiosity' || Boolean(traitSet.value?.ref)) {
 		return true;
 	}
 	if (

@@ -1,6 +1,18 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
+import {
+	computed,
+	getCurrentInstance,
+	nextTick,
+	onMounted,
+	onUnmounted,
+	onUpdated,
+	ref,
+	toRaw,
+	useId,
+	watch,
+} from 'vue';
 import { characterCurioFunctions } from './functions.ts';
+import { useCuriosityGraph } from './curiosity-graph.ts';
 import {
 	getView,
 	ensureView,
@@ -113,6 +125,47 @@ const ancestorFallbacks = computed(() => [...traitChain.value.slice(0, -1).rever
 
 const isPlay = computed(() => props.submode === 'play');
 const canDeleteInPlay = computed(() => characterCurioFunctions.isPlayMutableSet(traitSet.value));
+
+const traitCuriositySelectId = useId();
+const graph = useCuriosityGraph(
+	() => props.character,
+	(ch) => emit('updateCharacter', ch),
+);
+
+const traitRef = computed(() => (typeof trait.value?.ref === 'string' ? trait.value.ref.trim() : ''));
+const linkedCuriosity = computed(() => (traitRef.value ? graph.resolveCuriosity(traitRef.value) : null));
+
+function setTraitRef(val: string) {
+	if (!trait.value) return;
+	const clean = String(val || '').trim();
+	if (clean) {
+		trait.value.ref = clean;
+	} else {
+		delete trait.value.ref;
+	}
+	updateCharacter(props.character);
+}
+
+function exploreTraitAsCuriosity() {
+	if (!trait.value) return;
+	if (traitRef.value && linkedCuriosity.value) {
+		graph.exploreCuriosity(linkedCuriosity.value.id);
+		return;
+	}
+	const seedDice = ratingDice(resolveRating(trait.value, ancestorFallbacks.value));
+	const seedName = String(trait.value.name || '').trim() || 'New Curiosity';
+	graph.spawnCuriosity({
+		name: seedName,
+		dice: seedDice,
+		navigate: true,
+		onCreated: (newId) => {
+			if (trait.value) {
+				trait.value.ref = newId;
+				updateCharacter(props.character);
+			}
+		},
+	});
+}
 
 const templateEntry = computed(() => characterCurioFunctions.resolveTemplateFor(props.character, rootTemplates()));
 
@@ -2349,6 +2402,52 @@ const hasAdvancedTraitSettings = computed(() =>
 									<span><i class="fas fa-plus"></i> Create subtrait</span>
 								</button>
 							</div>
+						</div>
+					</div>
+
+					<!-- CURIOSITY GRAPH EDGE (EXPLORE / LINK) -->
+					<div class="editor-field trait-curiosity-edge-field" v-if="!isPlay || canDeleteInPlay || Boolean(traitRef)">
+						<label v-if="!isPlay || canDeleteInPlay" class="editor-label" :for="traitCuriositySelectId"
+							>Curiosity</label
+						>
+						<div v-else class="editor-label">Curiosity</div>
+						<div class="trait-curiosity-edge-row">
+							<button
+								type="button"
+								class="btn-curiosity-explore"
+								:aria-label="
+									linkedCuriosity ? 'Explore ' + (linkedCuriosity.name || 'Unnamed') : 'Explore as Curiosity'
+								"
+								@click.stop="exploreTraitAsCuriosity"
+							>
+								<i class="fas fa-lightbulb" aria-hidden="true"></i>
+								<span>{{ linkedCuriosity ? 'Explore ' + (linkedCuriosity.name || 'Unnamed') : 'Explore' }}</span>
+							</button>
+
+							<button
+								v-if="traitRef && (!isPlay || canDeleteInPlay)"
+								type="button"
+								class="btn-curiosity-unlink"
+								title="Unlink curiosity"
+								aria-label="Unlink curiosity"
+								@click.stop="setTraitRef('')"
+							>
+								<i class="fas fa-xmark" aria-hidden="true"></i>
+								<span>Unlink</span>
+							</button>
+
+							<select
+								v-if="!isPlay || canDeleteInPlay"
+								:id="traitCuriositySelectId"
+								class="editor-select trait-curiosity-select"
+								:value="traitRef"
+								@change="setTraitRef(($event.target as HTMLSelectElement).value)"
+							>
+								<option value="">{{ traitRef ? 'Unlink' : 'Link existing' }}</option>
+								<option v-for="c in graph.linkableCuriosities.value" :key="'tr-cur-' + c.id" :value="c.id">
+									{{ c.name || 'Unnamed' }}
+								</option>
+							</select>
 						</div>
 					</div>
 

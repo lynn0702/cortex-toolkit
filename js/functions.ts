@@ -923,7 +923,7 @@ export const characterCurioFunctions = {
 	// Structural mutators over loose character-like objects (defaults, drafts,
 	// templates): params stay `any` on purpose — the shape is not yet a Character.
 	assignLids: function (character: any) {
-		if (!character || !Array.isArray(character.traitSets)) return character;
+		if (!character || typeof character !== 'object') return character;
 		const lid = () =>
 			typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
 				? crypto.randomUUID()
@@ -936,9 +936,16 @@ export const characterCurioFunctions = {
 				walk(tr.traits);
 			});
 		};
-		character.traitSets.forEach((ts: any) => {
-			if (ts) walk(ts.traits);
-		});
+		if (Array.isArray(character.traitSets)) {
+			character.traitSets.forEach((ts: any) => {
+				if (ts) walk(ts.traits);
+			});
+		}
+		if (character.curiosities && typeof character.curiosities === 'object' && !Array.isArray(character.curiosities)) {
+			Object.values(character.curiosities).forEach((sub: any) => {
+				if (sub && typeof sub === 'object') this.assignLids(sub);
+			});
+		}
 		return character;
 	},
 
@@ -948,7 +955,7 @@ export const characterCurioFunctions = {
 	// merge joins sets by id, and the layered materializer heals renames by
 	// id (name is the address, id the identity — rename the name freely,
 	// never the id).
-	stripInternalIds: function (node: { traitSets?: TraitSet[]; traits?: Trait[] }) {
+	stripInternalIds: function (node: { traitSets?: TraitSet[]; traits?: Trait[]; curiosities?: Record<string, any> }) {
 		const walkTraits = (traits: Trait[] | undefined) => {
 			if (!Array.isArray(traits)) return;
 			traits.forEach((tr) => {
@@ -965,23 +972,35 @@ export const characterCurioFunctions = {
 			});
 		}
 		if (Array.isArray(node.traits)) walkTraits(node.traits);
+		if (node.curiosities && typeof node.curiosities === 'object' && !Array.isArray(node.curiosities)) {
+			Object.values(node.curiosities).forEach((sub: any) => {
+				if (sub && typeof sub === 'object') this.stripInternalIds(sub);
+			});
+		}
 	},
 
 	// Stable per-set ids are the join key between a character and its sheet
 	// template. Slugs stay readable in raw JSON; uniqueness is per character.
 	ensureTraitSetIds: function (character: any) {
-		if (!character || !Array.isArray(character.traitSets)) return character;
-		// 'name' is reserved for the name block (identity fallback when a
-		// stored set's view bag prunes away); never assign it elsewhere.
-		const taken = new Set<string>(['name']);
-		character.traitSets.forEach((ts: any) => {
-			if (ts && typeof ts.id === 'string' && ts.id.length) taken.add(ts.id);
-		});
-		character.traitSets.forEach((ts: any) => {
-			if (ts && (typeof ts.id !== 'string' || !ts.id.length)) {
-				ts.id = this.isNameSet(ts) ? 'name' : this.slugifySetId(ts.name, taken);
-			}
-		});
+		if (!character || typeof character !== 'object') return character;
+		if (Array.isArray(character.traitSets)) {
+			// 'name' is reserved for the name block (identity fallback when a
+			// stored set's view bag prunes away); never assign it elsewhere.
+			const taken = new Set<string>(['name']);
+			character.traitSets.forEach((ts: any) => {
+				if (ts && typeof ts.id === 'string' && ts.id.length) taken.add(ts.id);
+			});
+			character.traitSets.forEach((ts: any) => {
+				if (ts && (typeof ts.id !== 'string' || !ts.id.length)) {
+					ts.id = this.isNameSet(ts) ? 'name' : this.slugifySetId(ts.name, taken);
+				}
+			});
+		}
+		if (character.curiosities && typeof character.curiosities === 'object' && !Array.isArray(character.curiosities)) {
+			Object.values(character.curiosities).forEach((sub: any) => {
+				if (sub && typeof sub === 'object') this.ensureTraitSetIds(sub);
+			});
+		}
 		return character;
 	},
 
@@ -1750,6 +1769,13 @@ export const characterCurioFunctions = {
 		str = str.replace(/_([^_]+)_/g, '<em>$1</em>');
 		// Inline code: `code`
 		str = str.replace(/`([^`]+)`/g, '<code>$1</code>');
+		// Curiosity wiki-links: [[Curiosity Name]] or [[Curiosity ID|Display Label]]
+		str = str.replace(/\[\[([^[\]|]+?)(?:\|([^[\]]+?))?\]\]/g, (_m: string, rawTarget: string, rawLabel?: string) => {
+			const cleanTarget = String(rawTarget || '').trim();
+			const cleanLabel = String(rawLabel || rawTarget || '').trim();
+			if (!cleanTarget) return _m;
+			return `<a href="#curio" class="curio-wikilink" data-curio-ref="${cleanTarget}"><i class="fas fa-lightbulb" aria-hidden="true"></i> ${cleanLabel}</a>`;
+		});
 		// Links: [label](url) — safe schemes only, otherwise plain label text.
 		// Balanced-paren scanner so URLs containing (...) survive intact.
 		str = this.renderMarkdownLinks(str);
@@ -2073,6 +2099,26 @@ export const characterCurioFunctions = {
 					header: 'top',
 					notesMarkdown: true,
 					style: { header: 'default', body: 'default' },
+				},
+			},
+		},
+		curiosity: {
+			id: 'curiosity',
+			label: 'Curiosity',
+			blurb: 'Linked GMC, location, item, or branch.',
+			preset: {
+				name: 'Curiosity',
+				noun: 'Curiosity',
+				plural: 'Curiosities',
+				description: '',
+				ref: null,
+				traits: [],
+				tags: [],
+				view: {
+					visibility: 'play-only',
+					playMutable: true,
+					header: 'top',
+					style: { header: 'default', body: 'curiosity' },
 				},
 			},
 		},

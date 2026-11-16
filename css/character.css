@@ -4105,3 +4105,522 @@ button.trait-title-btn {
 		min-block-size: 2.25rem;
 	}
 }
+
+/* ==========================================================================
+   SLICE 3: CURIOSITY GRAPH, WEB BREADCRUMBS, SET CARDS & TRAIT EDGES
+   ========================================================================== */
+
+.curiosity-web-bar {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.45rem 1rem;
+	background: var(--bg-surface-card);
+	border-bottom: 1px solid var(--border-subtle);
+	color: var(--text-main);
+}
+
+.curiosity-web-main {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.75rem;
+	max-width: 112.5rem;
+	margin-inline: auto;
+}
+
+.curiosity-breadcrumb > ol {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.curiosity-breadcrumb > ol > li {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.curiosity-breadcrumb > ol > li + li::before {
+	content: '›' / '';
+	color: var(--text-muted);
+	font-weight: 600;
+	padding-inline: 0.1rem;
+}
+
+.curiosity-crumb-link {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: 1.75rem;
+	padding: 0.15rem 0.4rem;
+	border-radius: 0.35rem;
+	font-size: 0.85rem;
+	color: var(--text-secondary);
+	text-decoration: underline;
+	text-underline-offset: 0.16rem;
+	white-space: nowrap;
+
+	&:hover {
+		background: var(--bg-surface-elevated);
+		color: var(--text-main);
+	}
+
+	&:focus-visible {
+		position: relative;
+		z-index: var(--z-chip-drag);
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+
+	&[aria-current='page'] {
+		font-weight: 700;
+		color: var(--text-main);
+		background: var(--bg-surface-elevated);
+		border: 1px solid var(--border-subtle);
+		text-decoration: none;
+	}
+}
+
+.curiosity-crumb-more {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-inline-size: 1.75rem;
+	min-block-size: 1.75rem;
+	padding: 0.1rem 0.4rem;
+	border-radius: 0.35rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-elevated);
+	color: var(--text-main);
+	font-size: 0.85rem;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--color-interactive);
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+@media (forced-colors: active) {
+	.curiosity-crumb-link[aria-current='page'] {
+		border: 1px solid CanvasText;
+		text-decoration: underline;
+	}
+}
+
+.curiosity-connections {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.curiosity-edge-chip,
+.curiosity-web-btn,
+.curiosity-existing-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-block-size: 1.75rem;
+	padding: 0.2rem 0.55rem;
+	border-radius: 999rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-elevated);
+	color: var(--text-main);
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+
+	&:hover {
+		border-color: var(--color-interactive);
+		background: color-mix(in oklab, var(--color-interactive) 12%, var(--bg-surface-card));
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+.curiosity-edge-chip.is-backlink {
+	border-style: dashed;
+}
+
+.curiosity-web-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem;
+	margin-inline-start: auto;
+}
+
+.curiosity-web-btn.is-active {
+	border-color: var(--color-interactive);
+	background: color-mix(in oklab, var(--color-interactive) 16%, var(--bg-surface-card));
+}
+
+.curiosity-web-drawer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.75rem;
+	max-width: 112.5rem;
+	margin-inline: auto;
+	margin-top: 0.45rem;
+	padding-top: 0.45rem;
+	border-top: 1px solid var(--border-subtle);
+}
+
+.curiosity-web-add-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem;
+	flex: 1 1 14rem;
+}
+
+/* Trait-level Explore lightbulb button */
+.trait-explore-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-inline-size: 1.65rem;
+	min-block-size: 1.65rem;
+	margin-inline-start: 0.25rem;
+	padding: 0.15rem 0.35rem;
+	border-radius: 999rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-elevated);
+	color: var(--text-main);
+	font-size: 0.78rem;
+	cursor: pointer;
+	vertical-align: middle;
+	flex-shrink: 0;
+
+	&:hover {
+		border-color: var(--color-interactive);
+		background: color-mix(in oklab, var(--color-interactive) 14%, var(--bg-surface-card));
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+/* TraitEditor Curiosity Edge row */
+.trait-curiosity-edge-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.trait-curiosity-select {
+	flex: 1 1 10rem;
+	min-width: 0;
+}
+
+/* Inline Curiosity Set Card (TraitSetCuriosity) */
+.trait-curiosity-body {
+	padding: 0.35rem 0;
+}
+
+.curiosity-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+	padding: 0.65rem 0.75rem;
+	border-radius: 0.5rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-elevated);
+}
+
+.curiosity-card-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+.curiosity-card-identity {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	min-width: 0;
+	flex: 1 1 10rem;
+}
+
+.curiosity-card-avatar {
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid var(--border-subtle);
+	flex-shrink: 0;
+}
+
+.curiosity-card-emblem {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 50%;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-card);
+	color: var(--text-main);
+	font-size: 0.95rem;
+	flex-shrink: 0;
+}
+
+.curiosity-card-titles {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.curiosity-card-name {
+	font-family: var(--font-heading);
+	font-size: var(--text-card-title);
+	font-weight: 700;
+	color: var(--text-main);
+	overflow-wrap: anywhere;
+}
+
+.curiosity-card-subtitle {
+	font-size: var(--text-meta);
+	color: var(--text-secondary);
+	overflow-wrap: anywhere;
+}
+
+.curiosity-card-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.curiosity-card-die[role='button'] {
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-inline-size: 2rem;
+	min-block-size: 2rem;
+	border-radius: 0.35rem;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+.btn-curiosity-explore {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-block-size: 1.9rem;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.4rem;
+	border: 1px solid var(--color-interactive);
+	background: color-mix(in oklab, var(--color-interactive) 14%, var(--bg-surface-card));
+	color: var(--text-main);
+	font-size: 0.82rem;
+	font-weight: 700;
+	cursor: pointer;
+	white-space: nowrap;
+
+	&:hover {
+		background: color-mix(in oklab, var(--color-interactive) 24%, var(--bg-surface-card));
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+.btn-curiosity-unlink {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem;
+	min-inline-size: 1.9rem;
+	min-block-size: 1.9rem;
+	padding: 0.2rem 0.45rem;
+	border-radius: 0.4rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-card);
+	color: var(--text-secondary);
+	font-size: 0.8rem;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--status-danger);
+		color: var(--status-danger);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+.curiosity-card-traits {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+	padding-top: 0.35rem;
+	border-top: 1px solid var(--border-subtle);
+}
+
+.curiosity-trait-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	min-block-size: 1.85rem;
+	padding: 0.15rem 0.5rem;
+	border-radius: 999rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-card);
+	color: var(--text-main);
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+
+	&:not(:disabled):hover {
+		border-color: var(--color-interactive);
+		background: color-mix(in oklab, var(--color-interactive) 12%, var(--bg-surface-card));
+	}
+
+	&:disabled {
+		cursor: default;
+		opacity: 0.92;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+.curiosity-empty-setup {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0.6rem;
+	border-radius: 0.5rem;
+	border: 1px dashed var(--border-strong);
+	background: var(--bg-surface-muted);
+}
+
+.curiosity-create-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.curiosity-set-input {
+	flex: 1 1 9rem;
+	min-width: 0;
+	min-block-size: 1.95rem;
+	padding: 0.25rem 0.55rem;
+	border-radius: 0.35rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-card);
+	color: var(--text-main);
+	font-size: 0.85rem;
+	box-sizing: border-box;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 1px;
+	}
+}
+
+.curiosity-die-cycle-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-inline-size: 2.25rem;
+	min-block-size: 1.95rem;
+	padding: 0.15rem 0.4rem;
+	border-radius: 0.35rem;
+	border: 1px solid var(--border-subtle);
+	background: var(--bg-surface-card);
+	color: var(--text-main);
+	font-size: 0.78rem;
+	font-weight: 600;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--color-interactive);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+.curiosity-link-existing {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.curiosity-link-hint {
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: var(--text-secondary);
+}
+
+/* Markdown [[Wiki Links]] */
+a.curio-wikilink {
+	display: inline;
+	padding: 0.05rem 0.3rem;
+	border-radius: 0.25rem;
+	border-bottom: 1px dashed var(--color-interactive);
+	background: color-mix(in oklab, var(--color-interactive) 10%, transparent);
+	color: var(--text-main);
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 0.15rem;
+	cursor: pointer;
+
+	&:hover {
+		background: color-mix(in oklab, var(--color-interactive) 20%, transparent);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+	}
+}
+
+@media (pointer: coarse) {
+	.curiosity-web-btn,
+	.curiosity-edge-chip,
+	.curiosity-crumb-link,
+	.curiosity-crumb-more,
+	.btn-curiosity-explore,
+	.btn-curiosity-unlink,
+	.curiosity-die-cycle-btn,
+	.curiosity-existing-chip,
+	.curiosity-trait-pill,
+	.trait-explore-btn {
+		min-inline-size: 2.5rem;
+		min-block-size: 2.5rem;
+	}
+}

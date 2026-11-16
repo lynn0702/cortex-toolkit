@@ -104,6 +104,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		{ id: 'list', label: 'List' },
 		{ id: 'image', label: 'Image' },
 		{ id: 'pips', label: 'Pips' },
+		{ id: 'curiosity', label: 'Curiosity' },
 	];
 
 	const traitSet = computed(() => props.character?.traitSets?.[props.traitSetID] || null);

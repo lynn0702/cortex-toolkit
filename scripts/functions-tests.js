@@ -323,6 +323,99 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 		H.checkSetPick({ name: 'Distinctions', select: 'one', requiresSelect: true }, []).length === 1,
 		'checkSetPick catches requiresSelect violations',
 	);
+
+	// ---- Slice 3: Curiosity Graph, Wiki-Links, Presets & Pop Out / Pull In ----
+	const CG = require('../js/curiosity-graph.ts');
+	const { characterCurioSetPresets } = require('../js/functions.ts');
+	ok(
+		Boolean(characterCurioSetPresets.curiosity) &&
+			characterCurioSetPresets.curiosity.preset?.view?.style?.body === 'curiosity',
+		'characterCurioSetPresets exposes built-in curiosity set preset',
+	);
+	const curPresetInstance = F.instantiateSetPreset(characterCurioSetPresets.curiosity, null);
+	ok(
+		curPresetInstance &&
+			curPresetInstance.view?.style?.body === 'curiosity' &&
+			curPresetInstance.view?.playMutable === true,
+		'instantiateSetPreset("curiosity") builds play-mutable curiosity set',
+	);
+
+	const wikiHtml = F.renderText(
+		'Visit [[The Sunken Vault]] or [[cur-99|Old Lighthouse]] & [[<img src=x onerror=alert(1)>]]',
+	);
+	ok(
+		wikiHtml.includes('class="curio-wikilink"') &&
+			wikiHtml.includes('data-curio-ref="The Sunken Vault"') &&
+			wikiHtml.includes('data-curio-ref="cur-99"') &&
+			wikiHtml.includes('Old Lighthouse</a>') &&
+			!wikiHtml.includes('<img'),
+		'renderText renders [[Target]] and [[ID|Label]] wiki-links while escaping HTML injection',
+	);
+
+	const embeddedChild = CG.createBlankEmbeddedCuriosity({ id: 'sub-vault', name: 'Sunken Vault', die: 8 });
+	embeddedChild.traitSets.push({
+		id: 'hazards',
+		name: 'Hazards',
+		traits: [{ name: 'Crushing Tide', rating: { type: 'Die', value: [10] } }],
+	});
+	const rootBundle = {
+		id: 'root-adv',
+		name: 'Harbor Mystery',
+		version: '0.2',
+		traitSets: [
+			{ id: 'name', name: 'Harbor Mystery', view: { style: { body: 'name' } }, traits: [] },
+			{
+				id: 'locations',
+				name: 'Locations',
+				traits: [{ name: 'Sunken Vault', ref: 'sub-vault', rating: { type: 'Die', value: [8] } }],
+			},
+			{
+				id: 'featured-loc',
+				name: 'Featured',
+				ref: 'sub-vault',
+				view: { style: { body: 'curiosity' } },
+				traits: [],
+			},
+		],
+		curiosities: {
+			'sub-vault': embeddedChild,
+		},
+	};
+	ok(
+		F.isValidCurrentCharacter(rootBundle),
+		'isValidCurrentCharacter accepts 0.2 curiosity bundle with trait/set ref edges',
+	);
+
+	F.ensureTraitSetIds(rootBundle);
+	F.assignLids(rootBundle);
+	ok(
+		typeof rootBundle.curiosities['sub-vault'].traitSets[1].traits[0]._lid === 'string',
+		'assignLids recurses into embedded curiosities map',
+	);
+	const layeredBundle = F.toLayeredEntity(rootBundle);
+	const rematerializedBundle = F.materializeCharacter(layeredBundle, null);
+	ok(
+		rematerializedBundle.curiosities &&
+			rematerializedBundle.curiosities['sub-vault']?.name === 'Sunken Vault' &&
+			rematerializedBundle.traitSets[1]?.traits[0]?.ref === 'sub-vault' &&
+			rematerializedBundle.traitSets[2]?.ref === 'sub-vault',
+		'toLayeredEntity and materializeCharacter round-trip curiosities map + trait.ref + traitSet.ref',
+	);
+
+	const rosterList = [rootBundle];
+	const popped = CG.popOutFromRoot(rootBundle, 'sub-vault', rosterList);
+	ok(
+		popped && popped.id === 'sub-vault' && rosterList.length === 2 && rootBundle.curiosities === undefined,
+		'popOutFromRoot promotes embedded curiosity to top-level roster preserving UUID',
+	);
+	const pulled = CG.pullInToRoot(rootBundle, 'sub-vault', rosterList);
+	ok(
+		pulled &&
+			pulled.id === 'sub-vault' &&
+			rosterList.length === 1 &&
+			rootBundle.curiosities['sub-vault']?.name === 'Sunken Vault',
+		'pullInToRoot moves top-level curiosity back into host root bundle preserving UUID',
+	);
 }
 
 console.log(`functions-tests: ${pass} passed, ${fail} failed`);

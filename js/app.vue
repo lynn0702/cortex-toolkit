@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, provide, reactive, ref, toRaw, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { characterCurioStorage } from './storage.ts';
 import { cloneDeep } from './clone-deep.ts';
 import { dicePool as dicePoolModel, type NamedPool } from './dice-pool.ts';
+import {
+	CURIOSITY_GRAPH_KEY,
+	collectAllGraphNodes,
+	collectIncomingBacklinks,
+	collectOutgoingLinks,
+	createBlankEmbeddedCuriosity,
+	findCuriosityEverywhere,
+	popOutFromRoot,
+	pullInToRoot,
+	type SpawnCuriosityOptions,
+} from './curiosity-graph.ts';
 import Roster from './roster.vue';
 import Character from './character.vue';
 import StudioPanel from './studio-panel.vue';
 import AppHeader from './app-header.vue';
 import AppFooter from './app-footer.vue';
 import SessionNav from './session-nav.vue';
+import CuriosityWebBar from './curiosity-web-bar.vue';
 import AddCharacterModal from './add-character-modal.vue';
 import ModalDialog from './modal-dialog.vue';
 import CommandPalette from './command-palette.vue';
@@ -158,13 +170,18 @@ watch(
 // ---- computed ----
 const baseURL = computed(() => window.location.href.replace('/index.html', '/'));
 const year = computed(() => new Date().getFullYear());
+const webTrailIds = ref<string[]>([]);
+const activeFound = computed(() =>
+	findCuriosityEverywhere(characterID.value, characters.value, previewCharacter.value, false),
+);
 const characterIndex = computed(() =>
 	characters.value.findIndex((character: any) => character.id === characterID.value),
 );
 const character = computed(() => {
-	if (previewCharacter.value) return previewCharacter.value;
-	return characters.value[characterIndex.value];
+	if (previewCharacter.value) return activeFound.value?.node ?? previewCharacter.value;
+	return activeFound.value?.node ?? characters.value[characterIndex.value];
 });
+const activeHostRoot = computed(() => activeFound.value?.hostRoot ?? null);
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
 
 function resolveOwnerCuriosity(ownerId: string | null | undefined): any | null {
@@ -247,6 +264,19 @@ const showPlayPlotPoints = computed(() => {
 	return Boolean(character.value && hasPlotPoints(character.value));
 });
 
+function restoreCharacterForHistory(restored: any) {
+	if (!restored || !restored.id) return;
+	if (characterIndex.value !== -1) {
+		characters.value[characterIndex.value] = restored;
+		return;
+	}
+	const host = activeHostRoot.value;
+	if (host?.curiosities && host.curiosities[restored.id]) {
+		host.curiosities[restored.id] = restored;
+		host.dateModified = new Date().toISOString();
+	}
+}
+
 const {
 	canUndo,
 	canRedo,
@@ -262,6 +292,7 @@ const {
 	character,
 	characters,
 	characterIndex,
+	restoreCharacter: restoreCharacterForHistory,
 	editing,
 	isNavigatingHistory,
 	history,
@@ -271,16 +302,84 @@ const {
 });
 
 const openCharacters = computed(() => {
-	if (previewCharacter.value) return [previewCharacter.value];
+	if (previewCharacter.value) return [character.value || previewCharacter.value];
 	const list: any[] = [];
 	for (const id of openCharacterIDs.value) {
-		const found = characters.value.find((c: any) => c.id === id);
-		if (found) list.push(found);
+		const found = findCuriosityEverywhere(id, characters.value, null, false);
+		if (found?.node) list.push(found.node);
+	}
+	if (character.value && !list.some((c: any) => String(c.id) === String(character.value.id))) {
+		const host = activeHostRoot.value;
+		const hostIdx = host ? list.findIndex((c: any) => String(c.id) === String(host.id)) : -1;
+		if (hostIdx !== -1) {
+			list[hostIdx] = character.value;
+		} else {
+			list.push(character.value);
+		}
 	}
 	if (!list.length && character.value) {
 		return [character.value];
 	}
 	return list;
+});
+
+function resolveCuriosity(refOrName: string | null | undefined): any | null {
+	if (!refOrName) return null;
+	const bundleRoot = activeHostRoot.value || character.value;
+	const searchRoots = bundleRoot ? [bundleRoot, ...characters.value] : characters.value;
+	return findCuriosityEverywhere(refOrName, searchRoots, previewCharacter.value, true)?.node || null;
+}
+
+const allGraphNodes = computed(() => collectAllGraphNodes(character.value, activeHostRoot.value, characters.value));
+
+const linkableCuriosities = computed(() => {
+	const selfId = String(character.value?.id || '');
+	return allGraphNodes.value.filter((n) => n && String(n.id) !== selfId);
+});
+
+const outgoingLinks = computed(() => collectOutgoingLinks(character.value, resolveCuriosity));
+
+const incomingBacklinks = computed(() =>
+	collectIncomingBacklinks(character.value, allGraphNodes.value, resolveCuriosity),
+);
+
+const pullableCuriosities = computed(() => {
+	const bundleRoot = activeHostRoot.value || character.value;
+	if (!bundleRoot || isPreview.value) return [];
+	const rootId = String(bundleRoot.id || '');
+	return characters.value.filter(
+		(c: any) =>
+			c && !c.isTemplate && String(c.id) !== rootId && !(bundleRoot.curiosities && bundleRoot.curiosities[c.id]),
+	);
+});
+
+const webTrailCrumbs = computed(() => {
+	const crumbs: Array<{ id: string; name: string }> = [];
+	for (const id of webTrailIds.value) {
+		const found = findCuriosityEverywhere(id, characters.value, previewCharacter.value, false);
+		if (found?.node) {
+			crumbs.push({
+				id: String(found.node.id),
+				name: String(found.node.name || 'Unnamed').trim() || 'Unnamed',
+			});
+		}
+	}
+	return crumbs;
+});
+
+const showCuriosityWebBar = computed(() => {
+	if (mode.value !== 'character' || submode.value === 'print' || !character.value) return false;
+	const hasEmbedded =
+		character.value.curiosities &&
+		typeof character.value.curiosities === 'object' &&
+		Object.keys(character.value.curiosities).length > 0;
+	return Boolean(
+		activeHostRoot.value ||
+		webTrailCrumbs.value.length > 1 ||
+		outgoingLinks.value.length > 0 ||
+		incomingBacklinks.value.length > 0 ||
+		hasEmbedded,
+	);
 });
 
 const rollerCuriosities = computed(() => {
@@ -647,9 +746,16 @@ function parseRouteHash() {
 		const id = parts[1];
 		let sub = parts[2] || 'edit';
 		if (sub !== 'edit' && sub !== 'play' && sub !== 'print') sub = 'edit';
-		const found = characters.value.find((c: any) => c.id === id);
-		if (found) {
-			characterID.value = id;
+		const found = findCuriosityEverywhere(id, characters.value, null, false);
+		if (found?.node) {
+			const targetId = String(found.node.id);
+			characterID.value = targetId;
+			const trailIdx = webTrailIds.value.indexOf(targetId);
+			if (trailIdx !== -1) {
+				webTrailIds.value = webTrailIds.value.slice(0, trailIdx + 1);
+			} else {
+				webTrailIds.value = found.hostRoot ? [String(found.hostRoot.id), targetId] : [targetId];
+			}
 			setMode('character', sub, false);
 			initHistory();
 		} else {
@@ -1242,6 +1348,18 @@ function resolveStoredCharacter(c: any) {
 		} else if (c.sets) {
 			c = characterCurioFunctions.materializeCharacter(c, null);
 		}
+	} else if (c.sets && !Array.isArray(c.traitSets)) {
+		c = characterCurioFunctions.materializeCharacter(c, null);
+	}
+	if (c.curiosities && typeof c.curiosities === 'object' && !Array.isArray(c.curiosities)) {
+		for (const [cid, sub] of Object.entries(c.curiosities) as Array<[string, any]>) {
+			if (sub && typeof sub === 'object') {
+				if (sub.sets && !Array.isArray(sub.traitSets)) {
+					c.curiosities[cid] = characterCurioFunctions.materializeCharacter(sub, null);
+				}
+				if (!c.curiosities[cid].id) c.curiosities[cid].id = cid;
+			}
+		}
 	}
 	characterCurioFunctions.ensureTraitSetIds(c);
 	characterCurioFunctions.assignLids(c);
@@ -1273,8 +1391,15 @@ function setPlayViewMode(m: string) {
 }
 
 function focusCharacter(id: string) {
-	if (!openCharacterIDs.value.includes(id)) {
+	const found = findCuriosityEverywhere(id, characters.value, previewCharacter.value, false);
+	if (!found?.hostRoot && !openCharacterIDs.value.includes(id)) {
 		openCharacterIDs.value.push(id);
+	}
+	const trailIdx = webTrailIds.value.indexOf(id);
+	if (trailIdx !== -1) {
+		webTrailIds.value = webTrailIds.value.slice(0, trailIdx + 1);
+	} else {
+		webTrailIds.value = found?.hostRoot ? [String(found.hostRoot.id), id] : [id];
 	}
 	characterID.value = id;
 	initHistory();
@@ -1284,18 +1409,139 @@ function focusCharacter(id: string) {
 }
 
 function closeOpenCharacter(id: string) {
-	openCharacterIDs.value = openCharacterIDs.value.filter((x: string) => x !== id);
+	const found = findCuriosityEverywhere(id, characters.value, null, false);
+	const hostId = found?.hostRoot?.id ? String(found.hostRoot.id) : null;
+	openCharacterIDs.value = openCharacterIDs.value.filter((x: string) => x !== id && x !== hostId);
+	webTrailIds.value = webTrailIds.value.filter((x: string) => x !== id && x !== hostId);
 	if (characterID.value === id) {
 		characterID.value = openCharacterIDs.value[0] || null;
 		if (!characterID.value) {
 			setMode('roster', null, true);
 		} else {
+			webTrailIds.value = [characterID.value];
 			initHistory();
 			updateRouteHash();
 		}
 	}
 	saveOpenCharacterIDs();
 }
+
+function exploreCuriosity(targetIdOrName: string): boolean {
+	const bundleRoot = activeHostRoot.value || character.value;
+	const searchRoots = bundleRoot ? [bundleRoot, ...characters.value] : characters.value;
+	const found = findCuriosityEverywhere(targetIdOrName, searchRoots, previewCharacter.value, true);
+	if (!found?.node?.id) return false;
+	const targetId = String(found.node.id);
+	const currentId = character.value?.id ? String(character.value.id) : null;
+
+	commitHistorySnapshot();
+	flushDeferredSave();
+	editing.value = [];
+
+	const nextTrail = [...webTrailIds.value];
+	if (currentId && !nextTrail.includes(currentId)) {
+		if (activeHostRoot.value?.id && !nextTrail.includes(String(activeHostRoot.value.id))) {
+			nextTrail.push(String(activeHostRoot.value.id));
+		}
+		nextTrail.push(currentId);
+	}
+	const existingIdx = nextTrail.indexOf(targetId);
+	if (existingIdx !== -1) {
+		webTrailIds.value = nextTrail.slice(0, existingIdx + 1);
+	} else {
+		nextTrail.push(targetId);
+		webTrailIds.value = nextTrail;
+	}
+
+	characterID.value = targetId;
+	if (!found.hostRoot && !isPreview.value && !openCharacterIDs.value.includes(targetId)) {
+		openCharacterIDs.value.push(targetId);
+		saveOpenCharacterIDs();
+	}
+	initHistory();
+	setPageTitle();
+	if (mode.value !== 'character') {
+		setMode('character', submode.value || 'edit', true);
+	} else {
+		updateRouteHash();
+	}
+	if (main.value) {
+		main.value.scrollTop = 0;
+	}
+	return true;
+}
+
+function spawnCuriosity(opts: SpawnCuriosityOptions): string | null {
+	const bundleRoot = activeHostRoot.value || character.value;
+	if (!bundleRoot) return null;
+	const created = createBlankEmbeddedCuriosity({
+		name: opts.name,
+		die: opts.die,
+		dice: opts.dice,
+	});
+	characterCurioFunctions.ensureTraitSetIds(created);
+	characterCurioFunctions.assignLids(created);
+	if (!bundleRoot.curiosities || typeof bundleRoot.curiosities !== 'object' || Array.isArray(bundleRoot.curiosities)) {
+		bundleRoot.curiosities = {};
+	}
+	bundleRoot.curiosities[created.id] = characterCurioFunctions.orderCharacterKeys(created);
+	opts.onCreated?.(created.id, bundleRoot.curiosities[created.id]);
+	updateCharacter(bundleRoot);
+	if (opts.navigate) {
+		exploreCuriosity(created.id);
+	} else {
+		showToast(`Created curiosity "${created.name || 'Unnamed'}"`);
+	}
+	return created.id;
+}
+
+function popOutCuriosity(curiosityId: string): boolean {
+	const found = findCuriosityEverywhere(curiosityId, characters.value, null, false);
+	if (!found?.hostRoot) return false;
+	const promoted = popOutFromRoot(found.hostRoot, curiosityId, characters.value);
+	if (!promoted) return false;
+	characterCurioFunctions.ensureTraitSetIds(promoted);
+	characterCurioFunctions.assignLids(promoted);
+	if (!openCharacterIDs.value.includes(promoted.id)) {
+		openCharacterIDs.value.push(promoted.id);
+	}
+	saveOpenCharacterIDs();
+	if (submode.value !== 'play') {
+		saveLocalData();
+	}
+	showToast(`Popped out "${promoted.name || 'Unnamed'}" to Roster`);
+	return true;
+}
+
+function pullInCuriosity(curiosityId: string): boolean {
+	const bundleRoot = activeHostRoot.value || character.value;
+	if (!bundleRoot || isPreview.value) return false;
+	const pulled = pullInToRoot(bundleRoot, curiosityId, characters.value);
+	if (!pulled) return false;
+	openCharacterIDs.value = openCharacterIDs.value.filter((x: string) => x !== curiosityId);
+	if (!openCharacterIDs.value.includes(bundleRoot.id)) {
+		openCharacterIDs.value.push(bundleRoot.id);
+	}
+	characterCurioFunctions.ensureTraitSetIds(bundleRoot);
+	characterCurioFunctions.assignLids(bundleRoot);
+	saveOpenCharacterIDs();
+	if (submode.value !== 'play') {
+		saveLocalData();
+	}
+	showToast(`Pulled "${pulled.name || 'Unnamed'}" into ${bundleRoot.name || 'bundle'}`);
+	return true;
+}
+
+provide(CURIOSITY_GRAPH_KEY, {
+	activeNode: character,
+	activeHostRoot,
+	resolveCuriosity,
+	linkableCuriosities,
+	exploreCuriosity,
+	spawnCuriosity,
+	popOutCuriosity,
+	pullInCuriosity,
+});
 
 function openAlongside(id: string) {
 	if (!openCharacterIDs.value.includes(id)) {
@@ -1385,6 +1631,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 			recordCharOrder(characterData);
 
 			characters.value.push(characterData);
+			webTrailIds.value = [characterData.id];
 			characterID.value = characterData.id;
 			if (!openCharacterIDs.value.includes(characterData.id)) {
 				openCharacterIDs.value.push(characterData.id);
@@ -1422,6 +1669,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 	characterCurioFunctions.assignLids(characterData);
 
 	characters.value.push(characterData);
+	webTrailIds.value = [characterData.id];
 	characterID.value = characterData.id;
 	if (!openCharacterIDs.value.includes(characterData.id)) {
 		openCharacterIDs.value.push(characterData.id);
@@ -1470,6 +1718,7 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 	recordCharOrder(characterData);
 
 	characters.value.push(characterData);
+	webTrailIds.value = [characterData.id];
 	characterID.value = characterData.id;
 	if (!openCharacterIDs.value.includes(characterData.id)) {
 		openCharacterIDs.value.push(characterData.id);
@@ -1569,6 +1818,7 @@ function loadCharacter(id: string, targetSubmode?: string | null) {
 	if (!openCharacterIDs.value.includes(id)) {
 		openCharacterIDs.value.push(id);
 	}
+	webTrailIds.value = [id];
 	characterID.value = id;
 	touchCharacter(id);
 	saveOpenCharacterIDs();
@@ -1692,8 +1942,20 @@ function importCharacter(characterData: any) {
 
 	// Save new character (preserve existing dateCreated when updating in-place via JSON editor).
 	const c = characters.value.findIndex((existingCharacter: any) => existingCharacter.id === incoming.id);
+	const embeddedHostIdx =
+		c === -1
+			? characters.value.findIndex(
+					(root: any) =>
+						root?.curiosities && typeof root.curiosities === 'object' && Boolean(root.curiosities[incoming.id]),
+				)
+			: -1;
 	const now = new Date().toISOString();
-	const prev = c !== -1 ? characters.value[c] : null;
+	const prev =
+		c !== -1
+			? characters.value[c]
+			: embeddedHostIdx !== -1
+				? characters.value[embeddedHostIdx].curiosities[incoming.id]
+				: null;
 	if (!incoming.dateCreated) {
 		incoming.dateCreated = prev?.dateCreated || now;
 	}
@@ -1707,6 +1969,9 @@ function importCharacter(characterData: any) {
 
 	if (c !== -1) {
 		characters.value[c] = incoming;
+	} else if (embeddedHostIdx !== -1) {
+		characters.value[embeddedHostIdx].curiosities[incoming.id] = incoming;
+		characters.value[embeddedHostIdx].dateModified = now;
 	} else {
 		characters.value.push(incoming);
 	}
@@ -1859,24 +2124,43 @@ async function exportAllCharacters() {
 }
 
 function updateCharacter(characterData: any) {
-	if (previewCharacter.value && previewCharacter.value.id === characterData.id) {
-		previewCharacter.value = characterData;
+	if (previewCharacter.value) {
+		if (previewCharacter.value.id === characterData.id) {
+			previewCharacter.value = characterData;
+		} else if (previewCharacter.value.curiosities?.[characterData.id]) {
+			previewCharacter.value.curiosities[characterData.id] = characterData;
+		}
 		return Promise.resolve();
 	}
 
 	const c = characters.value.findIndex((savedCharacter: any) => savedCharacter.id === characterData.id);
+	let hostIdx = -1;
+	if (c === -1) {
+		hostIdx = characters.value.findIndex(
+			(root: any) =>
+				root?.curiosities && typeof root.curiosities === 'object' && Boolean(root.curiosities[characterData.id]),
+		);
+		if (hostIdx === -1) return Promise.resolve();
+	}
 
-	if (c === -1) return Promise.resolve();
-
-	characterData.dateModified = new Date().toISOString();
-	characterData.dateTouched = new Date().toISOString();
+	const now = new Date().toISOString();
+	characterData.dateModified = now;
+	characterData.dateTouched = now;
+	characterCurioFunctions.ensureTraitSetIds(characterData);
 	characterCurioFunctions.assignLids(characterData);
 
-	characters.value[c] = characterData;
+	if (c !== -1) {
+		characters.value[c] = characterData;
+		recordCharOrder(characterData);
+		touchCharacter(characterData.id);
+	} else {
+		const hostRoot = characters.value[hostIdx];
+		hostRoot.curiosities[characterData.id] = characterCurioFunctions.orderCharacterKeys(characterData);
+		hostRoot.dateModified = now;
+		hostRoot.dateTouched = now;
+		recordCharOrder(characterData);
+	}
 	setPageTitle();
-
-	recordCharOrder(characterData);
-	touchCharacter(characterData.id);
 	if (submode.value === 'play') {
 		return Promise.resolve();
 	}
@@ -2033,12 +2317,23 @@ function handleGlobalPointerDown(event: Event) {
 		event.target &&
 		(event.target as any).closest &&
 		(event.target as any).closest(
-			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
+			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
 		),
 	);
 }
 
 function handleMainClick(event: Event) {
+	const wikiEl = (event?.target as HTMLElement | null)?.closest?.('a.curio-wikilink') as HTMLElement | null;
+	if (wikiEl) {
+		event.preventDefault();
+		const refTarget = wikiEl.getAttribute('data-curio-ref') || '';
+		if (refTarget) {
+			if (!exploreCuriosity(refTarget) && !isPreview.value && character.value) {
+				spawnCuriosity({ name: refTarget, navigate: true });
+			}
+		}
+		return;
+	}
 	if (mouseDownInsideEditor.value) {
 		return;
 	}
@@ -2047,7 +2342,7 @@ function handleMainClick(event: Event) {
 		event.target &&
 		(event.target as any).closest &&
 		(event.target as any).closest(
-			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
+			'.editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
 		)
 	) {
 		return;
@@ -2351,6 +2646,11 @@ defineExpose({
 	setPlayViewMode,
 	focusCharacter,
 	closeOpenCharacter,
+	exploreCuriosity,
+	spawnCuriosity,
+	popOutCuriosity,
+	pullInCuriosity,
+	webTrailIds,
 	openAlongside,
 	resumeSession,
 	setModeForChar,
@@ -2514,6 +2814,22 @@ defineExpose({
 			/>
 
 			<main class="main" ref="main" @scroll="setViewY" @click.stop="handleMainClick">
+				<!-- CURIOSITY GRAPH WEB BAR (BREADCRUMBS, BACKLINKS, OUTGOING EDGES, POP OUT / PULL IN) -->
+				<CuriosityWebBar
+					v-if="showCuriosityWebBar"
+					:activeNode="character"
+					:hostRoot="activeHostRoot"
+					:trail="webTrailCrumbs"
+					:incomingBacklinks="incomingBacklinks"
+					:outgoingLinks="outgoingLinks"
+					:pullableCuriosities="pullableCuriosities"
+					:submode="submode"
+					@navigate="exploreCuriosity"
+					@popOut="popOutCuriosity"
+					@pullIn="pullInCuriosity"
+					@spawnPeer="spawnCuriosity"
+				/>
+
 				<!-- TEMPLATE PREVIEW BANNER -->
 				<div class="template-update-banner template-preview-banner" v-if="isPreview">
 					<button type="button" class="btn-update-primary" @click.stop="usePreviewTemplate">Use this template</button>
