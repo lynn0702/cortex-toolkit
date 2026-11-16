@@ -1082,14 +1082,15 @@ async function runViewportJourneys(browser, width, height, tag, errors, fontRequ
 			await page.waitForSelector('.template-preview-banner', { timeout: 5000 });
 		});
 
-		// Prepare J09–J11: Close preview -> create standard New Sheet (Identity Name set + rated Prime Attribute) -> switch to Play
+		// Prepare J09–J11: Close preview -> create standard New Curiosity (Identity Name set + PP + rated Prime Attribute) -> switch to Play
 		await page.locator('.template-preview-banner .btn-update-secondary').first().click();
-		const newSheetBtn = page.locator('.roster .roster-button', { hasText: 'New Sheet' }).first();
+		const newSheetBtn = page.locator('.roster .roster-button', { hasText: /New Curiosity|New Sheet/i }).first();
 		await newSheetBtn.waitFor({ state: 'visible', timeout: 5000 });
 		await newSheetBtn.click();
 		await page.waitForSelector('.character-sheet.submode-edit', { timeout: 5000 });
 		await page.evaluate(async () => {
 			const ch = window.app.character;
+			ch.plotPoints = 1;
 			const nameSet = ch.traitSets.find((s) => s && s.id === 'name');
 			if (nameSet) delete nameSet.rating;
 			let attrSet = ch.traitSets.find((s) => s && s.name === 'Attributes');

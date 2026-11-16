@@ -214,14 +214,16 @@ export const characterCurioStorage: CharacterCurioStorage = {
 						.trim();
 				}
 				// D5: load must not materialize defaults.
-				if (c.portrait?.url) {
-					const pUrl = c.portrait.url;
+				const ns =
+					c.sets?.Name || (Array.isArray(c.traitSets) ? c.traitSets.find((s: any) => s && s.id === 'name') : undefined);
+				if (ns?.portrait?.url) {
+					const pUrl = String(ns.portrait.url);
 					if (
 						pUrl.includes('camp_bewilderwood_logo') ||
 						pUrl.includes('cosa_nostra_logo') ||
 						pUrl.includes('brighter_stars_logo')
 					) {
-						c.portrait.url = '';
+						ns.portrait.url = '';
 					}
 				}
 
@@ -381,7 +383,7 @@ export const characterCurioStorage: CharacterCurioStorage = {
 			migrated: false,
 		});
 		const fromRecord = (record: any): StorageState | null => {
-			if (!record || !Array.isArray(record.characters)) return null;
+			if (!record || record.v !== 2 || !Array.isArray(record.characters)) return null;
 			return {
 				characters: this.normalizeCharacters(record.characters),
 				openCharacterIDs: Array.isArray(record.openCharacterIDs) ? record.openCharacterIDs : [],
@@ -404,7 +406,7 @@ export const characterCurioStorage: CharacterCurioStorage = {
 
 	async save(state) {
 		const record = {
-			v: 1,
+			v: 2,
 			savedAt: new Date().toISOString(),
 			characters: state.characters || [],
 			openCharacterIDs: state.openCharacterIDs || [],
@@ -442,7 +444,7 @@ export const characterCurioStorage: CharacterCurioStorage = {
 			);
 			const base = current && Array.isArray(current.characters) ? current.characters : [];
 			const record = {
-				v: 1,
+				v: 2,
 				savedAt: new Date().toISOString(),
 				characters: this.applyChanges(base, upsert, remove),
 				openCharacterIDs: Array.isArray(session.openCharacterIDs) ? session.openCharacterIDs : [],

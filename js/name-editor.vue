@@ -14,7 +14,12 @@ import {
 	resolveSetPillar,
 	getPillarLabel,
 	hasTemplateListing,
+	hasPlotPoints,
 	resolvePlotPoints,
+	getCuriosityPortrait,
+	ensureCuriosityPortrait,
+	getIdentityText,
+	setIdentityText,
 	type Character,
 	type TemplateListing,
 	type Visibility,
@@ -91,47 +96,52 @@ const name = computed({
 
 const game = computed({
 	get() {
-		return props.character?.game ?? '';
+		return getIdentityText(props.character, 'game');
 	},
 	set(val: string) {
-		setCharacterProperty('game', val);
+		setIdentityText(props.character, 'game', val);
+		updateCharacter(props.character);
 	},
 });
 
 const player = computed({
 	get() {
-		return props.character?.player ?? '';
+		return getIdentityText(props.character, 'player');
 	},
 	set(val: string) {
-		setCharacterProperty('player', val);
+		setIdentityText(props.character, 'player', val);
+		updateCharacter(props.character);
 	},
 });
 
 const nickname = computed({
 	get() {
-		return props.character?.nickname ?? getView(props.character)?.nickname ?? '';
+		return getIdentityText(props.character, 'nickname') || (getView(props.character)?.nickname as string) || '';
 	},
 	set(val: string) {
-		setCharacterProperty('nickname', val);
-		ensureView(props.character).nickname = val;
+		setIdentityText(props.character, 'nickname', val);
+		delete ensureView(props.character).nickname;
+		updateCharacter(props.character);
 	},
 });
 
 const description = computed({
 	get() {
-		return props.character?.description ?? '';
+		return getIdentityText(props.character, 'description');
 	},
 	set(val: string) {
-		setCharacterProperty('description', val);
+		setIdentityText(props.character, 'description', val);
+		updateCharacter(props.character);
 	},
 });
 
 const pronouns = computed({
 	get() {
-		return props.character?.pronouns ?? '';
+		return getIdentityText(props.character, 'pronouns');
 	},
 	set(val: string) {
-		setCharacterProperty('pronouns', val);
+		setIdentityText(props.character, 'pronouns', val);
+		updateCharacter(props.character);
 	},
 });
 
@@ -159,10 +169,15 @@ function setNameTraitLabel(key: string, val: string) {
 }
 
 function nameTraitVisibility(key: string) {
+	if (key === 'plotPoints') {
+		return hasPlotPoints(props.character) ? 'shown' : 'hidden';
+	}
 	const t = characterCurioFunctions.getNameTrait(props.character, key);
 	if (!t && ['pronouns', 'description', 'game', 'player', 'notes', 'portrait'].includes(key)) {
 		const hasValue =
-			key === 'portrait' ? Boolean(props.character?.portrait?.url) : Boolean((props.character as any)?.[key]);
+			key === 'portrait'
+				? Boolean(getCuriosityPortrait(props.character)?.url)
+				: Boolean(getIdentityText(props.character, key as any));
 		if (!hasValue) return 'hidden';
 	}
 	const v = getView(t) as Record<string, unknown> | undefined;
@@ -297,36 +312,56 @@ function setPillarLabel(key: string, val: string) {
 
 const notes = computed({
 	get() {
-		return props.character?.notes ?? '';
+		return getIdentityText(props.character, 'notes');
 	},
 	set(val: string) {
-		setCharacterProperty('notes', val);
+		setIdentityText(props.character, 'notes', val);
+		updateCharacter(props.character);
 	},
 });
 
-// Plot Points is a Counter on the name-set trait (spendable,
-// [0, 20]); the stepper is the Counter's spend control. The character
-// field stays the interchange value and mirrors the trait.
+const ppEnabled = computed(() => hasPlotPoints(props.character));
+
+function togglePlotPointsEnabled() {
+	if (!props.character) return;
+	if (hasPlotPoints(props.character)) {
+		if (props.character.sheet?.template) {
+			props.character.plotPoints = null;
+		} else {
+			delete props.character.plotPoints;
+		}
+	} else {
+		props.character.plotPoints = 1;
+	}
+	updateCharacter(props.character);
+}
+
+const ppHeadingLabel = computed({
+	get() {
+		const custom = (getView(props.character)?.labels as Record<string, unknown> | undefined)?.pp;
+		if (typeof custom === 'string' && custom.trim().length) return custom.trim();
+		return nameTraitLabel('plotPoints');
+	},
+	set(val: string) {
+		if (!props.character) return;
+		const v = ensureView(props.character);
+		v.labels = { ...(v.labels || {}) };
+		if (val && val.trim().length) {
+			(v.labels as Record<string, string>).pp = val.trim();
+		} else {
+			delete (v.labels as Record<string, unknown>).pp;
+		}
+		updateCharacter(props.character);
+	},
+});
+
 const plotPoints = computed({
 	get() {
-		const t = characterCurioFunctions.getNameTrait(props.character, 'plotPoints');
-		const rating = getRating(t);
-		if (rating && rating.type === 'Counter' && Array.isArray(rating.value) && typeof rating.value[0] === 'number') {
-			return rating.value[0];
-		}
 		return resolvePlotPoints(props.character);
 	},
 	set(val: any) {
 		const n = Math.max(0, parseInt(val, 10) || 0);
 		setCharacterProperty('plotPoints', n);
-		const t = characterCurioFunctions.getNameTrait(props.character, 'plotPoints');
-		if (t) {
-			(t as unknown as Record<string, any>).rating = { type: 'Counter', value: [n], range: [0, 20] };
-			if ((t as unknown as Record<string, unknown>).spendable === undefined) {
-				(t as unknown as Record<string, any>).spendable = true;
-			}
-			updateCharacter(props.character);
-		}
 	},
 });
 
@@ -634,14 +669,16 @@ function removeListingImage() {
 function ensureCharacterPortrait() {
 	const c = props.character;
 	if (!c) return null;
-	c.portrait ??= { url: '', alt: '', tags: [] };
-	c.portrait.alt ??= '';
-	c.portrait.tags ??= [];
-	return c.portrait;
+	if (!(c.traitSets || []).some((s) => isNameSet(s))) {
+		c.traitSets = [{ id: 'name', name: 'Name', traits: [] } as any, ...(c.traitSets || [])];
+	}
+	return ensureCuriosityPortrait(c) ?? null;
 }
 
+const activePortrait = computed(() => getCuriosityPortrait(props.character));
+
 const portraitURL = computed({
-	get: () => props.character?.portrait?.url ?? '',
+	get: () => activePortrait.value?.url ?? '',
 	set: (val: string) => {
 		const p = ensureCharacterPortrait();
 		if (!p) return;
@@ -653,8 +690,7 @@ const portraitURL = computed({
 const portraitSafeUrl = computed(() => characterCurioFunctions.safeImageUrl(portraitURL.value));
 
 const portraitAlignment = computed({
-	get: () =>
-		getView(props.character?.portrait)?.alignment || (props.character?.portrait as any)?.alignment || 'top-center',
+	get: () => getView(activePortrait.value)?.alignment || (activePortrait.value as any)?.alignment || 'top-center',
 	set: (val: string) => {
 		const p = ensureCharacterPortrait();
 		if (!p) return;
@@ -664,7 +700,7 @@ const portraitAlignment = computed({
 });
 
 const portraitZoom = computed({
-	get: () => normalizeZoom(getView(props.character?.portrait)?.zoom) ?? 1,
+	get: () => normalizeZoom(getView(activePortrait.value)?.zoom) ?? 1,
 	set: (val: number) => {
 		const p = ensureCharacterPortrait();
 		if (!p) return;
@@ -674,7 +710,7 @@ const portraitZoom = computed({
 });
 
 const portraitAlt = computed({
-	get: () => props.character?.portrait?.alt ?? '',
+	get: () => activePortrait.value?.alt ?? '',
 	set: (val: string) => {
 		const p = ensureCharacterPortrait();
 		if (!p) return;
@@ -689,7 +725,7 @@ const portraitCaption = computed({
 });
 
 const portraitTags = computed<string[]>({
-	get: () => (Array.isArray(props.character?.portrait?.tags) ? props.character.portrait.tags : []),
+	get: () => (Array.isArray(activePortrait.value?.tags) ? activePortrait.value!.tags! : []),
 	set: (val: string[]) => {
 		const p = ensureCharacterPortrait();
 		if (!p) return;
@@ -1151,18 +1187,23 @@ function updateCharacter(character: any) {
 								<input
 									type="text"
 									class="name-heading-input"
-									:value="nameTraitLabel('plotPoints')"
-									@change="setNameTraitLabel('plotPoints', targetValue($event))"
+									:value="ppHeadingLabel"
+									@change="ppHeadingLabel = targetValue($event)"
 									placeholder="Plot Points"
-									title="Plot points heading (stored on the plotPoints trait)"
+									title="Plot points heading"
 									aria-label="Plot points heading"
 								/>
-								<visibility-eye
-									:state="nameTraitVisibility('plotPoints')"
-									@toggle="toggleNameVisibility('plotPoints')"
-								/>
+								<button
+									type="button"
+									class="organic-part-chip"
+									:class="{ active: ppEnabled }"
+									:aria-pressed="ppEnabled"
+									@click.stop="togglePlotPointsEnabled"
+								>
+									<i :class="ppEnabled ? 'fas fa-check' : 'fas fa-plus'" aria-hidden="true"></i> PP
+								</button>
 							</div>
-							<div class="num-stepper">
+							<div class="num-stepper" v-if="ppEnabled">
 								<button
 									type="button"
 									class="btn-step"

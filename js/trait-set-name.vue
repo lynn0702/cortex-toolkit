@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { ensureView, getRating, getView, isNameSet, ratingDice, resolveVisibility } from './model.ts';
+import {
+	ensureCuriosityPortrait,
+	ensureView,
+	getCuriosityPortrait,
+	getIdentityText,
+	getRating,
+	getView,
+	isNameSet,
+	ratingDice,
+	resolveVisibility,
+	setIdentityText,
+} from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { normalizeZoom } from './frame-geometry.ts';
 import { injectTraitSet } from './use-trait-set.ts';
@@ -25,14 +36,21 @@ const {
 const portraitInputRef = ref<HTMLInputElement | null>(null);
 
 const name = computed(() => character.value?.name ?? '');
-const description = computed(() => character.value?.description ?? '');
-const player = computed(() => character.value?.player ?? '');
-const pronouns = computed(() => character.value?.pronouns ?? '');
-const nickname = computed(() => character.value?.nickname ?? getView(character.value)?.nickname ?? '');
-const hasNickname = computed(() => Boolean(nickname.value || getView(character.value)?.hasNickname));
-const notes = computed(() => character.value?.notes ?? '');
-const game = computed(() => character.value?.game ?? '');
-const portrait = computed(() => character.value?.portrait ?? null);
+const description = computed(() => getIdentityText(character.value, 'description', traitSet.value));
+const player = computed(() => getIdentityText(character.value, 'player', traitSet.value));
+const pronouns = computed(() => getIdentityText(character.value, 'pronouns', traitSet.value));
+const nickname = computed(
+	() =>
+		getIdentityText(character.value, 'nickname', traitSet.value) ||
+		(getView(character.value)?.nickname as string) ||
+		'',
+);
+const hasNickname = computed(() =>
+	Boolean(nickname.value || getView(character.value)?.hasNickname || hasExplicitNameTraitShown('nickname')),
+);
+const notes = computed(() => getIdentityText(character.value, 'notes', traitSet.value));
+const game = computed(() => getIdentityText(character.value, 'game', traitSet.value));
+const portrait = computed(() => getCuriosityPortrait(character.value, traitSet.value) ?? null);
 const effectivePortraitUrl = computed(() => portrait.value?.url || '');
 
 const nameText = computed({
@@ -45,47 +63,47 @@ const nameText = computed({
 });
 
 const pronounsText = computed({
-	get: () => character.value?.pronouns ?? '',
+	get: () => pronouns.value,
 	set: (val: string) => {
 		if (!character.value) return;
-		character.value.pronouns = val;
+		setIdentityText(character.value, 'pronouns', val, traitSet.value);
 		updateCharacter(character.value);
 	},
 });
 
 const nicknameText = computed({
-	get: () => character.value?.nickname ?? (getView(character.value)?.nickname as string) ?? '',
+	get: () => nickname.value,
 	set: (val: string) => {
 		if (!character.value) return;
-		character.value.nickname = val;
-		ensureView(character.value).nickname = val;
+		setIdentityText(character.value, 'nickname', val, traitSet.value);
+		delete ensureView(character.value).nickname;
 		updateCharacter(character.value);
 	},
 });
 
 const gameText = computed({
-	get: () => character.value?.game ?? '',
+	get: () => game.value,
 	set: (val: string) => {
 		if (!character.value) return;
-		character.value.game = val;
+		setIdentityText(character.value, 'game', val, traitSet.value);
 		updateCharacter(character.value);
 	},
 });
 
 const playerText = computed({
-	get: () => character.value?.player ?? '',
+	get: () => player.value,
 	set: (val: string) => {
 		if (!character.value) return;
-		character.value.player = val;
+		setIdentityText(character.value, 'player', val, traitSet.value);
 		updateCharacter(character.value);
 	},
 });
 
 const notesText = computed({
-	get: () => character.value?.notes ?? '',
+	get: () => notes.value,
 	set: (val: string) => {
 		if (!character.value) return;
-		character.value.notes = val;
+		setIdentityText(character.value, 'notes', val, traitSet.value);
 		updateCharacter(character.value);
 	},
 });
@@ -135,8 +153,8 @@ function hideIdentityPart(key: string) {
 	const hasTemplate = Boolean(character.value.sheet?.template);
 	const hasVal =
 		key === 'portrait'
-			? Boolean(character.value.portrait?.url)
-			: Boolean((character.value as Record<string, unknown>)[key]);
+			? Boolean(getCuriosityPortrait(character.value, traitSet.value)?.url)
+			: Boolean(getIdentityText(character.value, key as any, traitSet.value));
 	const existing = characterCurioFunctions.getNameTrait(character.value, key);
 	if (!hasTemplate && !hasVal && !existing?.label) {
 		const ns = (character.value.traitSets || []).find((st: any) => isNameSet(st));
@@ -289,8 +307,8 @@ function onPortraitFileChange(event: Event) {
 	if (!file || !character.value) return;
 	characterCurioFunctions.processImageFile(file, 1280, 0.85).then(
 		(dataURL: string) => {
-			if (!character.value.portrait) character.value.portrait = {};
-			character.value.portrait.url = dataURL;
+			const p = ensureCuriosityPortrait(character.value, traitSet.value);
+			if (p) p.url = dataURL;
 			const pt = characterCurioFunctions.ensureNameTrait(character.value, 'portrait');
 			if (pt) delete ensureView(pt).visibility;
 			updateCharacter(character.value);
@@ -302,18 +320,18 @@ function onPortraitFileChange(event: Event) {
 
 function clearPortrait() {
 	if (!character.value) return;
-	if (!character.value.portrait) character.value.portrait = {};
-	character.value.portrait.url = '';
+	const p = ensureCuriosityPortrait(character.value, traitSet.value);
+	if (p) p.url = '';
 	updateCharacter(character.value);
 }
 
 const descriptionText = computed({
 	get() {
-		return character.value?.description ?? '';
+		return description.value;
 	},
 	set(val: string) {
 		if (!character.value) return;
-		character.value.description = val;
+		setIdentityText(character.value, 'description', val, traitSet.value);
 		updateCharacter(character.value);
 	},
 });

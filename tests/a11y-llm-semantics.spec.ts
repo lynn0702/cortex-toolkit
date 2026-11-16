@@ -7,6 +7,7 @@ import DiceRoller from '../js/dice-roller.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import TraitSetEditor from '../js/trait-set-editor.vue';
 import AppHeader from '../js/app-header.vue';
+import AppFooter from '../js/app-footer.vue';
 import SessionNav from '../js/session-nav.vue';
 import StudioPanel from '../js/studio-panel.vue';
 import Character from '../js/character.vue';
@@ -3228,6 +3229,186 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			await runAxeAudit(block.element as HTMLElement);
 			block.unmount();
+		});
+	});
+
+	describe('Multi-Pool Named-Owner Roller & Per-Owner PP (Slice 2)', () => {
+		it('stages traits from any Curiosity into the active owner pool, shows every pool-owning entity PP in Roller, and syncs active owner PP to Footer', async () => {
+			const kira = reactive({
+				id: 'cur-kira',
+				name: 'Kira',
+				plotPoints: 2,
+				traitSets: [
+					{
+						id: 'skills',
+						name: 'Skills',
+						noun: 'Skill',
+						traits: [{ id: 'sneak', name: 'Sneak', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
+					},
+				],
+			});
+			const rival = reactive({
+				id: 'cur-rival',
+				name: 'Vex',
+				plotPoints: 3,
+				traitSets: [
+					{
+						id: 'roles',
+						name: 'Roles',
+						noun: 'Role',
+						traits: [
+							{ id: 'enforcer', name: 'Enforcer', rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] } },
+						],
+					},
+				],
+			});
+			const location = reactive({
+				id: 'cur-vault',
+				name: 'Laser Vault',
+				// No plotPoints — optional PP!
+				traitSets: [
+					{
+						id: 'hazards',
+						name: 'Hazards',
+						noun: 'Hazard',
+						traits: [
+							{ id: 'turrets', name: 'Auto-Turrets', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
+						],
+					},
+				],
+			});
+
+			const pools = reactive([
+				dicePool.createNamedPool('Kira', 'cur-kira'),
+				dicePool.createNamedPool('Vex', 'cur-rival'),
+				dicePool.createNamedPool('Opposition', null, undefined, 'opposition'),
+			]);
+			const state = reactive({ activeId: pools[0].id });
+
+			const settlePoolPP = (delta: number, poolId?: string) => {
+				const target = pools.find((p) => p.id === (poolId || state.activeId));
+				if (!target) return;
+				const owner = [kira, rival, location].find((c) => c.id === target.ownerId) as any;
+				if (owner && typeof owner.plotPoints === 'number') {
+					owner.plotPoints = Math.max(0, owner.plotPoints + delta);
+				} else if (typeof target.plotPoints === 'number') {
+					target.plotPoints = Math.max(0, target.plotPoints + delta);
+				}
+			};
+
+			const roller = mount(DiceRoller, {
+				props: {
+					open: true,
+					namedPools: pools,
+					activePoolId: state.activeId,
+					curiosities: [kira, rival, location],
+					character: kira,
+					'onUpdate:activePoolId': (id: string) => {
+						state.activeId = id;
+						roller.setProps({ activePoolId: id });
+					},
+					onAddNamedPool: (payload: { ownerId: string | null; ownerName: string; withPP?: boolean }) => {
+						const created = dicePool.createNamedPool(
+							payload.ownerName,
+							payload.ownerId,
+							payload.withPP ? 1 : undefined,
+						);
+						pools.push(created);
+						state.activeId = created.id;
+						roller.setProps({ activePoolId: created.id });
+					},
+					onSettlePP: settlePoolPP,
+				} as any,
+			});
+
+			// 1. Both PP-owning entities (Kira & Vex) show their PP steppers inside the Roller; Opposition (no PP) does not
+			const ppTrackers = roller.findAll('.roller-owners-pp-bar .pp-tracker');
+			expect(ppTrackers.length).toBe(2);
+			expect(ppTrackers[0].text()).toContain('Kira PP');
+			expect(ppTrackers[0].text()).toContain('2');
+			expect(ppTrackers[1].text()).toContain('Vex PP');
+			expect(ppTrackers[1].text()).toContain('3');
+
+			// 2. Active pool is Kira -> Kira can stage Auto-Turrets from Laser Vault (cross-Curiosity staging!)
+			await roller.find('.wb-trait-btn').trigger('click');
+			const turretRow = roller.findAll('.presearch-item-btn').find((b) => b.text().includes('Auto-Turrets'));
+			expect(turretRow, '+ Trait combobox must include traits from all Curiosities in graph').toBeDefined();
+			await turretRow!.trigger('click');
+			expect(pools[0].pool.items.length).toBe(1);
+			expect(pools[0].pool.items[0].source).toBe('Auto-Turrets');
+
+			// 3. Switch active pool to Vex and stage Vex's Enforcer d10 + spend 1 of Vex's PP
+			const vexTab = roller.findAll('[role="tab"]').find((t) => t.text().includes('Vex'))!;
+			await vexTab.trigger('click');
+			await nextTick();
+			expect(state.activeId).toBe(pools[1].id);
+			await roller.findAll('.roller-adhoc-btn')[3].trigger('click'); // Add d10
+			await roller.findAll('.pp-spend-btn')[0].trigger('click'); // 1 PP: +1 Keep for Vex
+			expect(rival.plotPoints).toBe(2);
+			expect(kira.plotPoints).toBe(2);
+
+			// 4. Add a 4th pool via + Pool (ad-hoc "Guards" without PP; IME-safe Enter guard respected)
+			await roller.find('.btn-add-pool').trigger('click');
+			// Unpooled Curiosity quick-pick chip for Laser Vault appears
+			expect(roller.find('.add-pool-curiosity-chip').text()).toContain('Laser Vault');
+			const poolInput = roller.find('.add-pool-input');
+			await poolInput.setValue('Guards');
+			// Simulate IME composition Enter (keyCode 229) -> must NOT submit prematurely
+			await poolInput.trigger('keydown', { key: 'Enter', isComposing: true, keyCode: 229 });
+			expect(pools.length).toBe(3);
+			// Real Enter submits
+			await poolInput.trigger('keydown', { key: 'Enter' });
+			expect(pools.length).toBe(4);
+			expect(pools[3].ownerName).toBe('Guards');
+			expect(state.activeId).toBe(pools[3].id);
+
+			// Stage d8 into Guards pool so we have a 3-way contest (Kira vs Vex vs Guards)
+			await nextTick();
+			await roller.findAll('.roller-adhoc-btn')[2].trigger('click');
+			await roller.findAll('.roller-adhoc-btn')[2].trigger('click');
+
+			// Footer visibility contract: Guards has no PP -> showPlotPoints is false; Kira has PP -> showPlotPoints is true
+			const activeOwnerHasPP = () => {
+				const cur = pools.find((p) => p.id === state.activeId);
+				const ent = [kira, rival, location].find((c) => c.id === cur?.ownerId) as any;
+				return ent ? typeof ent.plotPoints === 'number' : typeof cur?.plotPoints === 'number';
+			};
+			expect(activeOwnerHasPP()).toBe(false);
+			const footerHidden = mount(AppFooter, {
+				props: { mode: 'character', year: 2026, showPlotPoints: activeOwnerHasPP(), plotPoints: 0 },
+			});
+			expect(footerHidden.find('.footer-pp-badge').exists()).toBe(false);
+			footerHidden.unmount();
+
+			// Switch back to Kira -> active owner PP shows in footer
+			await roller.findAll('[role="tab"]')[0].trigger('click');
+			await nextTick();
+			expect(activeOwnerHasPP()).toBe(true);
+			const footerVisible = mount(AppFooter, {
+				props: {
+					mode: 'character',
+					year: 2026,
+					showPlotPoints: activeOwnerHasPP(),
+					plotPoints: kira.plotPoints,
+					plotPointsLabel: 'Kira PP',
+				},
+			});
+			expect(footerVisible.find('.footer-pp-badge').text()).toContain('Kira PP');
+			expect(footerVisible.find('.pp-count').text()).toBe('2');
+			footerVisible.unmount();
+
+			// 5. Roll 3-pool contest (Kira, Vex, Guards) and audit WCAG 2.2 AA
+			expect(roller.find('.roller-roll-btn').text()).toContain('ROLL CONTEST');
+			const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.75);
+			try {
+				await roller.find('.roller-roll-btn').trigger('click');
+			} finally {
+				randomSpy.mockRestore();
+			}
+			expect(roller.findAll('.roller-inline-outcome .outcome-pool-section').length).toBe(3);
+
+			await runAxeAudit(roller.element as HTMLElement);
+			roller.unmount();
 		});
 	});
 });

@@ -19,6 +19,7 @@ fa-pencil-alt fa-plus fa-print fa-question-circle fa-redo fa-rotate-right fa-sav
 fa-shield-alt fa-shield-halved fa-sliders fa-sun fa-tag fa-tags fa-th fa-th-large fa-times
 fa-trash fa-trash-alt fa-trash-can fa-triangle-exclamation fa-undo fa-upload
 fa-user fa-users fa-wand-magic-sparkles fa-window-maximize fa-xmark
+fa-lightbulb fa-coins fa-link fa-arrow-up-right-from-square
 """.split()
 
 # Add rotate-left (FA6 canonical for undo)

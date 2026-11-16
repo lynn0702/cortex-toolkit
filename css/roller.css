@@ -236,29 +236,49 @@
 	font-size: 0.72rem;
 }
 
-/* TOP BAR: DUAL POOL TABS + PP TRACKER */
+/* TOP BAR: MULTI-POOL TABS + PER-OWNER PP TRACKERS */
 .roller-top-bar {
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.5rem;
-	flex-wrap: wrap;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.45rem;
 	padding-bottom: 0.55rem;
 	border-bottom: 1px solid var(--roller-border);
 }
 
+.pool-tabs-row {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+}
+
 .pool-tabs {
-	display: inline-flex;
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow-x: auto;
+	scrollbar-width: none;
+	scroll-snap-type: inline proximity;
 	background: var(--roller-muted);
 	border: 1px solid var(--roller-border);
 	border-radius: 0.5rem;
 	padding: 0.15rem;
 	gap: 0.15rem;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .pool-tab-btn {
+	position: relative;
+	flex: 0 1 auto;
+	min-inline-size: 3.5rem;
+	scroll-snap-align: start;
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 0.35rem;
 	border: none;
 	border-radius: 0.375rem;
@@ -273,6 +293,23 @@
 	transition:
 		background 0.15s,
 		color 0.15s;
+
+	&[aria-selected='true'] {
+		min-inline-size: max-content;
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0.35rem 0;
+			border-block-end: 2px solid currentColor;
+		}
+	}
+}
+
+.pool-tab-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .pool-tab-player[aria-selected='true'] {
@@ -289,6 +326,119 @@
 	font-variant-numeric: tabular-nums;
 	font-size: 0.72rem;
 	opacity: 0.9;
+	flex-shrink: 0;
+}
+
+.btn-add-pool {
+	flex: 0 0 auto;
+	border: 1px dashed var(--roller-border);
+	border-radius: 0.45rem;
+	background: var(--roller-elevated);
+	color: var(--roller-text);
+	font-family: var(--font-heading);
+	font-size: 0.75rem;
+	font-weight: 700;
+	padding: 0.35rem 0.55rem;
+	cursor: pointer;
+	touch-action: manipulation;
+	white-space: nowrap;
+	transition:
+		border-color 0.15s,
+		color 0.15s;
+
+	&[aria-expanded='true'],
+	&:hover {
+		border-color: var(--active-accent);
+		color: var(--active-accent);
+	}
+}
+
+.add-pool-bar {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	background: var(--roller-elevated);
+	border: 1px solid var(--roller-border);
+	border-radius: 0.5rem;
+	padding: 0.4rem;
+}
+
+.add-pool-curiosity-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.add-pool-curiosity-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	border: 1px solid var(--roller-border);
+	border-radius: 999rem;
+	background: var(--roller-surface);
+	color: var(--roller-text);
+	font-family: var(--font-heading);
+	font-size: 0.72rem;
+	font-weight: 700;
+	padding: 0.22rem 0.55rem;
+	cursor: pointer;
+	touch-action: manipulation;
+
+	&:hover {
+		border-color: var(--active-accent);
+		color: var(--active-accent);
+	}
+}
+
+.add-pool-custom-row {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+}
+
+.add-pool-input {
+	flex: 1 1 auto;
+	min-width: 0;
+	border: 1px solid var(--roller-border);
+	border-radius: 0.375rem;
+	background: var(--roller-surface);
+	color: var(--roller-text);
+	font-family: var(--font-primary);
+	font-size: 0.82rem;
+	padding: 0.25rem 0.45rem;
+}
+
+.add-pool-pp-chip,
+.roller-enable-pp-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.28rem;
+	flex-shrink: 0;
+	border: 1px dashed var(--roller-border);
+	border-radius: 999rem;
+	background: var(--roller-surface);
+	color: var(--roller-text-muted);
+	font-family: var(--font-heading);
+	font-size: 0.72rem;
+	font-weight: 700;
+	padding: 0.25rem 0.55rem;
+	cursor: pointer;
+	touch-action: manipulation;
+
+	&.active,
+	&:hover {
+		border-style: solid;
+		border-color: var(--active-accent);
+		color: var(--active-accent);
+	}
+}
+
+.roller-owners-pp-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
 }
 
 .pp-tracker {
@@ -299,6 +449,16 @@
 	border: 1px solid var(--roller-border);
 	border-radius: 0.5rem;
 	padding: 0.2rem 0.4rem;
+
+	&.is-active-owner {
+		border-color: color-mix(in oklch, var(--active-accent) 65%, var(--roller-border));
+	}
+}
+
+@media (pointer: coarse) {
+	:is(.pool-tab-btn, .btn-add-pool, .add-pool-curiosity-chip, .add-pool-pp-chip, .roller-enable-pp-chip, .pp-adj-btn) {
+		min-block-size: 2.25rem;
+	}
 }
 
 .pp-tracker-label {
@@ -766,7 +926,14 @@
 }
 
 /* DICE POOL UNLABELED TILES + 4-BUTTON ACTION BAR */
-.roller-clear-link {
+.roller-pool-header-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.roller-clear-link,
+.roller-remove-pool-link {
 	border: none;
 	background: transparent;
 	color: var(--roller-text-muted);

@@ -71,6 +71,9 @@
 .fa-arrow-right:before {
 	content: '\f061';
 }
+.fa-arrow-up-right-from-square:before {
+	content: '\f08e';
+}
 .fa-arrows-left-right:before {
 	content: '\f07e';
 }
@@ -121,6 +124,9 @@
 }
 .fa-cog:before {
 	content: '\f013';
+}
+.fa-coins:before {
+	content: '\f51e';
 }
 .fa-columns:before {
 	content: '\f0db';
@@ -199,6 +205,12 @@
 }
 .fa-layer-group:before {
 	content: '\f5fd';
+}
+.fa-lightbulb:before {
+	content: '\f0eb';
+}
+.fa-link:before {
+	content: '\f0c1';
 }
 .fa-minus:before {
 	content: '\f068';

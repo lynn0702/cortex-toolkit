@@ -9,8 +9,8 @@ let warnings = [];
 const err = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 
-// ---- 1. Schema: optional fields accept null; id+name required on characters and trait sets; no trait-level id.
-const schemaPath = path.join(root, 'schema/0.1/character.schema.json');
+// ---- 1. Schema: optional fields accept null; id+name required on curiosities and trait sets; no trait-level id.
+const schemaPath = path.join(root, 'schema/0.2/curiosity.schema.json');
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 
 function allowsNull(prop) {
@@ -123,6 +123,41 @@ function checkCharacterViewListing(where, ch) {
 	}
 }
 
+function getCuriosityGame(ch) {
+	if (!ch || typeof ch !== 'object') return '';
+	if (Array.isArray(ch.traitSets)) {
+		const ns = ch.traitSets.find(
+			(s) => s && (s.id === 'name' || (s.view && s.view.style && s.view.style.body === 'name')),
+		);
+		const gt = ns && Array.isArray(ns.traits) ? ns.traits.find((t) => t && t.name === 'game') : null;
+		if (gt && typeof gt.description === 'string' && gt.description.trim().length) return gt.description.trim();
+	}
+	if (ch.sets && typeof ch.sets === 'object' && !Array.isArray(ch.sets)) {
+		const ns =
+			ch.sets.Name ||
+			Object.values(ch.sets).find(
+				(s) =>
+					s && typeof s === 'object' && (s.id === 'name' || (s.view && s.view.style && s.view.style.body === 'name')),
+			);
+		const gt = ns && ns.traits && typeof ns.traits === 'object' ? ns.traits.game : null;
+		if (gt && typeof gt.description === 'string' && gt.description.trim().length) return gt.description.trim();
+	}
+	return '';
+}
+
+const RETIRED_ROOT_IDENTITY_KEYS = ['pronouns', 'player', 'game', 'nickname', 'notes', 'portrait'];
+function checkRetiredRootIdentity(where, ch) {
+	if (!ch || typeof ch !== 'object' || Array.isArray(ch)) return;
+	for (const k of RETIRED_ROOT_IDENTITY_KEYS) {
+		if (ch[k] !== undefined) {
+			err(`${where}: retired 0.1 root key "${k}" — identity parts live on sets.Name in 0.2`);
+		}
+	}
+	if (ch.version === '0.1' || (typeof ch.$schema === 'string' && ch.$schema.includes('/0.1/'))) {
+		err(`${where}: retired 0.1 version/$schema — migrate to 0.2`);
+	}
+}
+
 function checkListing(where, entry) {
 	for (const k of RETIRED_TEMPLATE_WRAPPER_KEYS) {
 		if (entry[k] !== undefined) {
@@ -131,8 +166,9 @@ function checkListing(where, entry) {
 	}
 	const ch = entry.character;
 	if (!ch || typeof ch !== 'object' || Array.isArray(ch)) return;
+	checkRetiredRootIdentity(`${where}.character`, ch);
 	checkCharacterViewListing(`${where}.character`, ch);
-	const sp = ch.game;
+	const sp = getCuriosityGame(ch);
 	const listing = ch.view && typeof ch.view === 'object' && !Array.isArray(ch.view) ? ch.view.listing : undefined;
 	if (!listing || typeof listing !== 'object' || Array.isArray(listing)) {
 		err(`${where}: character.view.listing block is required`);
@@ -360,6 +396,7 @@ if (fs.existsSync(dataDir)) {
 					});
 				};
 				if (isChar) {
+					checkRetiredRootIdentity(`data/templates/${f}`, data);
 					checkCharacterViewListing(`data/templates/${f}`, data);
 					checkCharRatings(data, `data/templates/${f}`);
 				}
@@ -447,6 +484,9 @@ function checkNodeOptions(node, where, inheritedType) {
 	}
 	if (node.ppDelta !== undefined && node.ppDelta !== null && !Number.isInteger(node.ppDelta)) {
 		err(`${where}: ppDelta must be an integer`);
+	}
+	if (node.ref !== undefined && node.ref !== null && typeof node.ref !== 'string') {
+		err(`${where}: ref must be a string or null`);
 	}
 	checkRatingObject(node.rating, `${where}.rating`, inheritedType);
 }

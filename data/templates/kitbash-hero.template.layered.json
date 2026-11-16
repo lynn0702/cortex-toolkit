@@ -2,17 +2,7 @@
 	"id": "kitbash-hero",
 	"character": {
 		"name": "",
-		"pronouns": "",
-		"player": "",
-		"game": "Kit Bash!",
 		"plotPoints": 1,
-		"notes": "",
-		"portrait": {
-			"url": "",
-			"view": {
-				"location": "header"
-			}
-		},
 		"view": {
 			"pageCount": 1,
 			"template": "Kit Bash!",
@@ -71,27 +61,11 @@
 						"label": "Game",
 						"view": {
 							"visibility": "hidden"
-						}
+						},
+						"description": "Kit Bash!"
 					},
 					"portrait": {},
 					"caption": {},
-					"plotPoints": {
-						"rating": {
-							"type": "Counter",
-							"value": [
-								1
-							],
-							"range": [
-								0,
-								20
-							]
-						},
-						"label": "PP",
-						"spendable": true,
-						"view": {
-							"visibility": "hidden"
-						}
-					},
 					"notes": {
 						"view": {
 							"visibility": "hidden"

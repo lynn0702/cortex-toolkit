@@ -13,25 +13,26 @@ templates = templates.map((item) => {
 	if (char.view && char.view.listing && typeof char.view.listing.title === 'string') {
 		char.view.listing.title = char.view.listing.title.replace(/\s*\([^)]*\)/g, '').trim();
 	}
-	const cleanGame = String(char.game || '')
+	const nameSet = Array.isArray(char.traitSets)
+		? char.traitSets.find((s) => s && (s.id === 'name' || (s.view && s.view.style && s.view.style.body === 'name')))
+		: null;
+	const gameTrait =
+		nameSet && Array.isArray(nameSet.traits) ? nameSet.traits.find((t) => t && t.name === 'game') : null;
+	const cleanGame = String((gameTrait && gameTrait.description) || '')
 		.replace(/\s*\([^)]*\)/g, '')
 		.trim();
-	char.game = cleanGame;
+	if (gameTrait && cleanGame) gameTrait.description = cleanGame;
 
-	// 2. Ensure blank character fields
+	// 2. Ensure blank curiosity root fields (0.2)
 	char.name = '';
-	char.description = '';
-	char.pronouns = '';
-	char.player = '';
+	delete char.description;
+	delete char.pronouns;
+	delete char.player;
+	delete char.game;
+	delete char.nickname;
+	delete char.notes;
+	delete char.portrait;
 	char.isTemplate = true;
-
-	// 3. Header portrait
-	char.portrait = {
-		url: '',
-		view: {
-			location: 'header',
-		},
-	};
 
 	// 4. View metadata
 	if (!char.view) char.view = {};

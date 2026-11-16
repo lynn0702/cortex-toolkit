@@ -457,7 +457,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 	it('authors sparse character.view.listing in NameEditor, preserves it in extractSheetTemplate, and removes empty view.listing', async () => {
 		const ch = structuredClone(characterCurioFunctions.defaultCharacter) as unknown as Character;
 		ch.id = 'author-char-1';
-		ch.game = 'Drift Runner';
+		ch.traitSets[0].traits.push({ name: 'game', description: 'Drift Runner', traits: [] });
 		const updates: any[] = [];
 		const wrapper = mount(NameEditor, {
 			props: {

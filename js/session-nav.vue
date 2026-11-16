@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { characterCurioFunctions } from './functions.ts';
+import { getCuriosityThumbnailUrl } from './model.ts';
 
 defineProps<{
 	openCharacters: any[];
@@ -50,20 +51,20 @@ function safeImageUrl(url: any) {
 						type="button"
 						class="session-tab-trigger"
 						:aria-current="c.id === characterID ? 'true' : undefined"
-						:title="'Switch to ' + (c.name || 'Character')"
+						:title="'Switch to ' + (c.name || 'Curiosity')"
 						@click.stop="emit('focus', c.id)"
 					>
 						<img
-							v-if="c.portrait && c.portrait.url"
+							v-if="getCuriosityThumbnailUrl(c)"
 							class="session-tab-avatar"
-							:src="safeImageUrl(c.portrait.url)"
+							:src="safeImageUrl(getCuriosityThumbnailUrl(c))"
 							alt=""
 							width="22"
 							height="22"
 							loading="lazy"
 							decoding="async"
 						/>
-						<span v-else class="session-tab-icon" aria-hidden="true"><i class="fas fa-shield-alt"></i></span>
+						<span v-else class="session-tab-icon" aria-hidden="true"><i class="fas fa-lightbulb"></i></span>
 						<span class="session-tab-name">{{ c.name || 'Unnamed' }}</span>
 					</button>
 					<button
@@ -82,9 +83,9 @@ function safeImageUrl(url: any) {
 					type="button"
 					class="btn-session-add"
 					@click.stop="emit('add')"
-					title="Open another character alongside"
+					title="Open another curiosity alongside"
 				>
-					<i class="fas fa-plus" aria-hidden="true"></i> <span>Open Sheet</span>
+					<i class="fas fa-plus" aria-hidden="true"></i> <span>Open Curiosity</span>
 				</button>
 			</div>
 

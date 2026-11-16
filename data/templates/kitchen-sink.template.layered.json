@@ -2,24 +2,11 @@
 	"id": "kitchen-sink",
 	"character": {
 		"name": "Kitchen Sink Showcase",
-		"pronouns": "They / Them",
-		"description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
-		"player": "Style Audit",
-		"game": "Showcase",
 		"plotPoints": 3,
-		"notes": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.",
 		"tags": [
 			"showcase",
 			"kitchen-sink"
 		],
-		"portrait": {
-			"url": "",
-			"alt": "Character Portrait",
-			"view": {
-				"alignment": "center-center",
-				"location": "header"
-			}
-		},
 		"view": {
 			"nickname": "The Everything Sheet",
 			"pageCount": 3,
@@ -78,13 +65,15 @@
 						"label": "Name"
 					},
 					"player": {
-						"label": "Player"
+						"label": "Player",
+						"description": "Style Audit"
 					},
 					"nickname": {
 						"label": "Nickname"
 					},
 					"pronouns": {
-						"label": "Pronouns"
+						"label": "Pronouns",
+						"description": "They / Them"
 					},
 					"description": {
 						"label": "Description"
@@ -93,31 +82,24 @@
 						"label": "Game",
 						"view": {
 							"visibility": "hidden"
-						}
+						},
+						"description": "Showcase"
 					},
 					"portrait": {},
 					"caption": {},
-					"plotPoints": {
-						"rating": {
-							"type": "Counter",
-							"value": [
-								3
-							],
-							"range": [
-								0,
-								20
-							]
-						},
-						"label": "PP",
-						"spendable": true,
-						"view": {
-							"visibility": "hidden"
-						}
-					},
 					"notes": {
 						"view": {
 							"visibility": "hidden"
-						}
+						},
+						"description": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens."
+					}
+				},
+				"description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
+				"portrait": {
+					"url": "",
+					"alt": "Character Portrait",
+					"view": {
+						"alignment": "center-center"
 					}
 				}
 			},

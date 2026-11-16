@@ -1,16 +1,16 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://characters.lynnjones.rocks/schema/0.1/sheet-template.schema.json",
+	"$id": "https://characters.lynnjones.rocks/schema/0.2/sheet-template.schema.json",
 	"title": "Character Curio sheet template",
-	"description": "A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.",
-	"type" : "object",
+	"description": "A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining curiosity overrides to template layout. Imports dedupe by static id.",
+	"type": "object",
 	"properties": {
 		"id": {
 			"type": "string",
 			"description": "Static template identifier. Assigned once, never regenerated; imports replace the same id instead of duplicating."
 		},
 		"character": {
-			"description": "Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.",
+			"description": "Curiosity-shaped blank carrying the layout (view at sheet and set level) plus blank traits.",
 			"type": "object"
 		},
 		"updatedAt": {
@@ -26,6 +26,6 @@
 			"type": "string"
 		}
 	},
-	"required": [ "id", "character" ],
+	"required": ["id", "character"],
 	"additionalProperties": true
 }

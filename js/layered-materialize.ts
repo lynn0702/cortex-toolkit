@@ -54,19 +54,14 @@ export interface RenderCharacter {
 
 const CHARACTER_LEADING_KEYS = [
 	'name',
-	'nickname',
-	'pronouns',
 	'description',
-	'player',
-	'game',
 	'plotPoints',
-	'notes',
 	'tags',
-	'portrait',
 	'view',
 	'custom',
 	'sets',
 	'traitSets',
+	'curiosities',
 	'removedSets',
 	'prefs',
 	'sheet',
@@ -329,6 +324,28 @@ function buildSet(pres: RenderSet | null, eset: SetObject, name: string): Render
 			(set as Record<string, unknown>).rating = mergeRating(pres?.rating, v);
 			continue;
 		}
+		if (k === 'portrait') {
+			if (v === null) {
+				(set as Record<string, unknown>).portrait = null;
+			} else if (v && typeof v === 'object' && !Array.isArray(v)) {
+				const fp = v as Record<string, unknown>;
+				const bp =
+					pres &&
+					typeof (pres as Record<string, unknown>).portrait === 'object' &&
+					(pres as Record<string, unknown>).portrait &&
+					!Array.isArray((pres as Record<string, unknown>).portrait)
+						? ((pres as Record<string, unknown>).portrait as Record<string, unknown>)
+						: {};
+				const p: Record<string, unknown> = clone(bp);
+				for (const [pk, pv] of Object.entries(fp)) {
+					if (pk === 'view') p.view = mergeCustom(bp.view, pv);
+					else if (pk === 'custom') p.custom = mergeCustom(bp.custom, pv);
+					else p[pk] = clone(pv);
+				}
+				(set as Record<string, unknown>).portrait = p;
+			}
+			continue;
+		}
 		(set as Record<string, unknown>)[k] = clone(v);
 	}
 	const setRating = set.rating && typeof set.rating === 'object' ? (set.rating as Record<string, unknown>) : null;
@@ -357,9 +374,20 @@ export function materializeCharacter(
 
 	const base: RenderCharacter = presentation && typeof presentation === 'object' ? clone(presentation) : {};
 	const out: RenderCharacter = base;
-	// entity character-level keys win over the presentation base
+	// entity curiosity-level keys win over the presentation base
 	for (const [k, v] of Object.entries(file)) {
-		if (k === 'sets' || k === 'template') continue;
+		if (
+			k === 'sets' ||
+			k === 'template' ||
+			k === 'curiosities' ||
+			k === 'pronouns' ||
+			k === 'player' ||
+			k === 'game' ||
+			k === 'nickname' ||
+			k === 'notes' ||
+			k === 'portrait'
+		)
+			continue;
 		if (k === 'custom') {
 			out.custom = mergeCustom(base.custom, v);
 			continue;
@@ -370,16 +398,18 @@ export function materializeCharacter(
 		}
 		out[k] = clone(v);
 	}
-	if (file.portrait && typeof file.portrait === 'object') {
-		const fp = file.portrait as Record<string, unknown>;
-		const bp = base.portrait && typeof base.portrait === 'object' ? (base.portrait as Record<string, unknown>) : {};
-		const p: Record<string, unknown> = clone(bp);
-		for (const [pk, pv] of Object.entries(fp)) {
-			if (pk === 'view') p.view = mergeCustom(bp.view, pv);
-			else if (pk === 'custom') p.custom = mergeCustom(bp.custom, pv);
-			else p[pk] = clone(pv);
+	if (file.curiosities && typeof file.curiosities === 'object' && !Array.isArray(file.curiosities)) {
+		const cMap: Record<string, RenderCharacter> = {};
+		for (const [cid, rawChild] of Object.entries(file.curiosities as Record<string, unknown>)) {
+			if (!rawChild || typeof rawChild !== 'object' || Array.isArray(rawChild)) continue;
+			const childRec = rawChild as Record<string, unknown>;
+			cMap[cid] = Array.isArray(childRec.traitSets)
+				? (orderCharacterKeys(clone(childRec)) as RenderCharacter)
+				: materializeCharacter(childRec, null);
 		}
-		out.portrait = p;
+		if (Object.keys(cMap).length > 0) {
+			out.curiosities = cMap;
+		}
 	}
 	// isTemplate belongs to the entity, not the presentation template it folds onto.
 	out.isTemplate = file.isTemplate === true;
@@ -518,7 +548,7 @@ function layeredTraitFrom(t: RenderTrait): TraitObject {
 	return node;
 }
 
-function layeredSetFrom(set: RenderSet): SetObject {
+function layeredSetFrom(set: RenderSet, isStandalonePlayer = false): SetObject {
 	const s: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(set)) {
 		// Set id is the stable join key (kept); trait-level ids stay out.
@@ -541,6 +571,7 @@ function layeredSetFrom(set: RenderSet): SetObject {
 			continue;
 		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
 		if (k === 'description' && v === '') continue;
+		if (isStandalonePlayer && k === 'portrait' && isDefaultEmptyPortrait(v)) continue;
 		s[k] = clone(v);
 	}
 	const traits: Record<string, TraitRaw> = {};
@@ -553,7 +584,7 @@ function layeredSetFrom(set: RenderSet): SetObject {
 }
 
 /**
- * Serialize a render character to the layered entity (content + any
+ * Serialize a render curiosity to the layered entity (content + any
  * per-entity overrides, all preserved). Set ids are kept (stable join key);
  * trait-level ids and app-local `_lid` are dropped; `sheet` (the template
  * ref) is left to the caller. This is the lossless inverse of
@@ -566,7 +597,19 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 		ch.template !== undefined;
 	const isStandalonePlayer = !hasTemplate && ch.isTemplate !== true;
 	for (const [k, v] of Object.entries(ch)) {
-		if (k === 'traitSets' || k === 'sheet' || k === 'removedSets') continue;
+		if (
+			k === 'traitSets' ||
+			k === 'sheet' ||
+			k === 'removedSets' ||
+			k === 'curiosities' ||
+			k === 'player' ||
+			k === 'game' ||
+			k === 'pronouns' ||
+			k === 'notes' ||
+			k === 'nickname' ||
+			k === 'portrait'
+		)
+			continue;
 		if (k === 'isTemplate' && v !== true) continue;
 		if (k === 'description' && v === '') continue;
 		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
@@ -587,14 +630,23 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 			entity.view = bag;
 			continue;
 		}
-		if (isStandalonePlayer) {
-			if ((k === 'player' || k === 'game' || k === 'pronouns' || k === 'notes' || k === 'nickname') && v === '') {
-				continue;
-			}
-			if (k === 'plotPoints' && v === 1) continue;
-			if (k === 'portrait' && isDefaultEmptyPortrait(v)) continue;
+		if (isStandalonePlayer && k === 'plotPoints' && v === null) {
+			continue;
 		}
 		entity[k] = clone(v);
+	}
+	if (ch.curiosities && typeof ch.curiosities === 'object' && !Array.isArray(ch.curiosities)) {
+		const outCuriosities: Record<string, unknown> = {};
+		for (const [cid, child] of Object.entries(ch.curiosities as Record<string, unknown>)) {
+			if (!child || typeof child !== 'object' || Array.isArray(child)) continue;
+			const childRec = child as Record<string, unknown>;
+			outCuriosities[cid] = Array.isArray(childRec.traitSets)
+				? toLayeredEntity(childRec)
+				: orderCharacterKeys(clone(childRec));
+		}
+		if (Object.keys(outCuriosities).length > 0) {
+			entity.curiosities = outCuriosities;
+		}
 	}
 	const sets: Record<string, SetObject> = {};
 	const seen: Record<string, number> = {};
@@ -605,7 +657,7 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 		// would collide on the same key and be lost.
 		seen[set.name] = (seen[set.name] || 0) + 1;
 		const key = seen[set.name] === 1 ? set.name : set.name + '~' + seen[set.name];
-		sets[key] = layeredSetFrom(set);
+		sets[key] = layeredSetFrom(set, isStandalonePlayer);
 	}
 	entity.sets = sets;
 	return orderCharacterKeys(entity);

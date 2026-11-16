@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ModalDialog from './modal-dialog.vue';
 import { characterCurioFunctions } from './functions.ts';
+import { getCuriosityGame, getCuriosityThumbnailUrl, getIdentityText } from './model.ts';
 
 defineProps<{
 	open: boolean;
@@ -27,7 +28,7 @@ function targetValue(e: Event) {
 <template>
 	<ModalDialog
 		:open="open"
-		label="Open character in session"
+		label="Open curiosity in session"
 		dialog-class="modal-session-add"
 		@close="emit('update:open', false)"
 	>
@@ -36,8 +37,8 @@ function targetValue(e: Event) {
 		</button>
 		<div class="modal-inner">
 			<div class="session-modal-header">
-				<h2><i class="fas fa-users" aria-hidden="true"></i> Open Character in Session</h2>
-				<p>Select another character, titan mech, vehicle, or companion to open alongside your active sheet.</p>
+				<h2><i class="fas fa-lightbulb" aria-hidden="true"></i> Open Curiosity in Session</h2>
+				<p>Select another curiosity to open alongside your active sheet.</p>
 				<search class="session-modal-search">
 					<i class="fas fa-search" aria-hidden="true"></i>
 					<input
@@ -46,8 +47,8 @@ function targetValue(e: Event) {
 						name="sessionCharacterSearch"
 						:value="search"
 						@input="emit('update:search', targetValue($event))"
-						placeholder="Filter characters..."
-						aria-label="Filter characters"
+						placeholder="Filter curiosities..."
+						aria-label="Filter curiosities"
 					/>
 				</search>
 			</div>
@@ -56,19 +57,21 @@ function targetValue(e: Event) {
 				<div v-for="c in items" :key="c.id" class="session-modal-item">
 					<div class="session-item-info">
 						<img
-							v-if="c.portrait && c.portrait.url"
+							v-if="getCuriosityThumbnailUrl(c)"
 							class="session-item-avatar"
-							:src="safeImageUrl(c.portrait.url)"
+							:src="safeImageUrl(getCuriosityThumbnailUrl(c))"
 							alt=""
 							width="36"
 							height="36"
 							loading="lazy"
 							decoding="async"
 						/>
-						<div class="session-item-icon" v-else aria-hidden="true"><i class="fas fa-shield-alt"></i></div>
+						<div class="session-item-icon" v-else aria-hidden="true"><i class="fas fa-lightbulb"></i></div>
 						<div class="session-item-text">
 							<div class="session-item-name">{{ c.name || 'Unnamed' }}</div>
-							<div class="session-item-sub">{{ c.game || c.description || 'Character' }}</div>
+							<div class="session-item-sub">
+								{{ getCuriosityGame(c) || getIdentityText(c, 'description') || 'Curiosity' }}
+							</div>
 						</div>
 					</div>
 					<button type="button" class="btn-session-open" @click.stop="emit('openAlongside', c.id)">
@@ -77,7 +80,7 @@ function targetValue(e: Event) {
 				</div>
 
 				<div class="session-modal-empty" v-if="items.length === 0">
-					<p>No additional characters available in your roster.</p>
+					<p>No additional curiosities available in your roster.</p>
 					<button type="button" class="btn-session-library" @click.stop="emit('gotoRoster')">
 						<i class="fas fa-layer-group" aria-hidden="true"></i> Go to Roster / Library
 					</button>

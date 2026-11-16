@@ -10,6 +10,7 @@ import {
 	resolveAltRoll,
 	resolveHitches,
 	resolvePpDelta,
+	getCuriosityGame,
 	type AltRollOption,
 } from './model.ts';
 import { formatDiceNotation } from './dice-pool.ts';
@@ -266,16 +267,16 @@ const allItems = computed<PaletteItem[]>(() => {
 		}
 	}
 
-	// Other roster characters
+	// Other roster curiosities
 	for (const c of props.characters || []) {
 		if (!c || !c.id || c.id === ch?.id) continue;
-		const cName = String(c.name || 'Unnamed Character').trim();
-		const cSub = String(c.game || (c.isTemplate ? 'Saved Template' : 'Character')).trim();
+		const cName = String(c.name || 'Unnamed Curiosity').trim();
+		const cSub = String(getCuriosityGame(c) || (c.isTemplate ? 'Saved Template' : 'Curiosity')).trim();
 		const cTags = normalizeTags(c.tags);
 		items.push({
 			id: `char-${c.id}`,
 			kind: 'character',
-			icon: 'fa-users',
+			icon: 'fa-lightbulb',
 			title: cName,
 			subtitle: cSub,
 			description: '',
@@ -286,7 +287,7 @@ const allItems = computed<PaletteItem[]>(() => {
 			keepsExtra: 0,
 			charId: c.id,
 			tags: cTags,
-			searchBlob: buildSearchBlob([cName, cSub, 'switch character', cTags]),
+			searchBlob: buildSearchBlob([cName, cSub, 'switch curiosity character', cTags]),
 		});
 	}
 

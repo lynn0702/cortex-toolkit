@@ -1,7 +1,7 @@
 /**
  * Generate TypeScript model types from the JSON schemas.
  *
- * The schemas in `schema/0.1/` are the source of truth for the character and
+ * The schemas in `schema/0.2/` are the source of truth for the curiosity and
  * sheet-template shapes. `js/model.generated.ts` is the raw projection of those
  * schemas; `js/model.ts` re-exports it and adds the app-only `view` layer (which the schema deliberately leaves open).
  *
@@ -18,7 +18,7 @@ const BASE_OPTIONS = {
 	bannerComment: '',
 	additionalProperties: false,
 	declareExternallyReferenced: true,
-	cwd: path.join(root, 'schema/0.1'),
+	cwd: path.join(root, 'schema/0.2'),
 };
 
 async function generate(relPath, typeName) {
@@ -28,12 +28,15 @@ async function generate(relPath, typeName) {
 	return compile(schema, typeName, BASE_OPTIONS);
 }
 
-const character = await generate('schema/0.1/character.schema.json', 'Character');
-const sheetTemplate = await generate('schema/0.1/sheet-template.schema.json', 'SheetTemplate');
+const curiosity = await generate('schema/0.2/curiosity.schema.json', 'Curiosity');
+const sheetTemplate = await generate('schema/0.2/sheet-template.schema.json', 'SheetTemplate');
 
 const banner =
 	'/* eslint-disable */\n' +
-	'/* AUTO-GENERATED from schema/0.1/*.schema.json by scripts/gen-types.mjs. Do not edit — run `npm run types`. */\n\n';
+	'/* AUTO-GENERATED from schema/0.2/*.schema.json by scripts/gen-types.mjs. Do not edit — run `npm run types`. */\n\n';
 
-writeFileSync(path.join(root, 'js/model.generated.ts'), banner + character + '\n' + sheetTemplate + '\n');
+writeFileSync(
+	path.join(root, 'js/model.generated.ts'),
+	banner + curiosity + '\nexport type Character = Curiosity;\n\n' + sheetTemplate + '\n',
+);
 console.log('gen-types: wrote js/model.generated.ts');

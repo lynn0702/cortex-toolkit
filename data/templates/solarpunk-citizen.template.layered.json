@@ -2,17 +2,7 @@
 	"id": "solarpunk-citizen",
 	"character": {
 		"name": "",
-		"pronouns": "",
-		"player": "",
-		"game": "Solarpunk",
 		"plotPoints": 1,
-		"notes": "",
-		"portrait": {
-			"url": "",
-			"view": {
-				"location": "header"
-			}
-		},
 		"view": {
 			"pageCount": 1,
 			"template": "Solarpunk",
@@ -71,27 +61,11 @@
 						"label": "Game",
 						"view": {
 							"visibility": "hidden"
-						}
+						},
+						"description": "Solarpunk"
 					},
 					"portrait": {},
 					"caption": {},
-					"plotPoints": {
-						"rating": {
-							"type": "Counter",
-							"value": [
-								1
-							],
-							"range": [
-								0,
-								20
-							]
-						},
-						"label": "PP",
-						"spendable": true,
-						"view": {
-							"visibility": "hidden"
-						}
-					},
 					"notes": {
 						"view": {
 							"visibility": "hidden"

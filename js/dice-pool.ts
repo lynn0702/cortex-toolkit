@@ -120,6 +120,7 @@ export interface SeparateGroup {
 }
 
 export interface PoolEvaluation {
+	poolId?: string;
 	side: 'player' | 'opposition';
 	label: string;
 	keep: number;
@@ -136,6 +137,14 @@ export interface PoolEvaluation {
 	totalHitches: number;
 	isBotch: boolean;
 	log: string;
+}
+
+export interface NamedPool {
+	id: string;
+	ownerId: string | null;
+	ownerName: string;
+	pool: DicePool;
+	plotPoints?: number | null;
 }
 
 export interface AddPoolOptions {
@@ -330,6 +339,55 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 	}
 
 	return results;
+}
+
+export function flattenGraphTraits(curiosities: any[]): FlattenedTraitSuggestion[] {
+	if (!Array.isArray(curiosities) || curiosities.length === 0) return [];
+	const seen = new Set<any>();
+	const unique: any[] = [];
+	for (const c of curiosities) {
+		if (!c || typeof c !== 'object') continue;
+		const key = c.id ?? c;
+		if (seen.has(key)) continue;
+		seen.add(key);
+		unique.push(c);
+	}
+	if (unique.length === 1) {
+		return flattenCharacterTraits(unique[0]);
+	}
+	const combined: FlattenedTraitSuggestion[] = [];
+	for (let i = 0; i < unique.length; i++) {
+		const c = unique[i];
+		const ownerLabel = String(c.name || '').trim();
+		const prefix = String(c.id || `c-${i}`);
+		for (const sug of flattenCharacterTraits(c)) {
+			combined.push({
+				...sug,
+				key: `${prefix}:${sug.key}`,
+				noun: ownerLabel ? (sug.noun ? `${ownerLabel} · ${sug.noun}` : ownerLabel) : sug.noun,
+			});
+		}
+	}
+	return combined;
+}
+
+export function createNamedPool(
+	ownerName: string,
+	ownerId: string | null = null,
+	plotPoints?: number | null,
+	customId?: string,
+): NamedPool {
+	const cleanName = String(ownerName || 'Unnamed').trim() || 'Unnamed';
+	const entry: NamedPool = {
+		id: customId || uuid(),
+		ownerId: ownerId ?? null,
+		ownerName: cleanName,
+		pool: new DicePool(),
+	};
+	if (typeof plotPoints === 'number' && Number.isFinite(plotPoints)) {
+		entry.plotPoints = Math.max(0, Math.floor(plotPoints));
+	}
+	return entry;
 }
 
 export class DicePool {
@@ -686,6 +744,11 @@ export interface RollLogSideSummary {
 	log: string;
 }
 
+export interface RollLogPoolSummary extends RollLogSideSummary {
+	poolId: string;
+	label: string;
+}
+
 export interface RollLogEntry {
 	id: string;
 	timestamp: number;
@@ -693,6 +756,7 @@ export interface RollLogEntry {
 	contest: boolean;
 	player?: RollLogSideSummary;
 	opposition?: RollLogSideSummary;
+	pools?: RollLogPoolSummary[];
 	summaryText: string;
 }
 
@@ -759,6 +823,8 @@ export const dicePool = {
 	DIE_SIZES: DIE_SIZES,
 	parseTraitShorthand: parseTraitShorthand,
 	flattenCharacterTraits: flattenCharacterTraits,
+	flattenGraphTraits: flattenGraphTraits,
+	createNamedPool: createNamedPool,
 	ROLL_LOG_STORAGE_KEY: ROLL_LOG_STORAGE_KEY,
 	MAX_ROLL_LOG_ENTRIES: MAX_ROLL_LOG_ENTRIES,
 	loadRollLog: loadRollLog,

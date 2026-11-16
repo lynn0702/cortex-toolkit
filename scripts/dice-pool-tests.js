@@ -9,6 +9,8 @@ const {
 	DIE_SIZES,
 	parseTraitShorthand,
 	flattenCharacterTraits,
+	flattenGraphTraits,
+	createNamedPool,
 } = require('../js/dice-pool.ts');
 
 let pass = 0,
@@ -225,6 +227,54 @@ ok(DIE_SIZES.length === 5 && DEFAULT_D4.size === 4, 'constants intact');
 		loaded.length === MAX_ROLL_LOG_ENTRIES && loaded[0].id === 'log-0' && loaded[49].id === 'log-49',
 		'saveRollLog caps persisted entries at MAX_ROLL_LOG_ENTRIES (50)',
 		loaded.length,
+	);
+}
+
+// ---- NamedPool & flattenGraphTraits across multiple Curiosities
+{
+	const pKira = createNamedPool('Kira', 'cur-kira');
+	ok(
+		pKira.ownerName === 'Kira' && pKira.ownerId === 'cur-kira' && pKira.plotPoints === undefined,
+		'createNamedPool creates Curiosity-owned pool without ad-hoc PP override',
+		pKira,
+	);
+
+	const pScene = createNamedPool('Scene', null, 2);
+	ok(
+		pScene.ownerName === 'Scene' && pScene.ownerId === null && pScene.plotPoints === 2,
+		'createNamedPool supports optional ad-hoc PP',
+		pScene,
+	);
+
+	const curA = {
+		id: 'cur-a',
+		name: 'Kira',
+		traitSets: [
+			{
+				id: 'attrs',
+				noun: 'Attribute',
+				traits: [{ id: 'agility', name: 'Agility', rating: { type: 'Die', value: [8] } }],
+			},
+		],
+	};
+	const curB = {
+		id: 'cur-b',
+		name: 'Vault Security',
+		traitSets: [
+			{
+				id: 'locks',
+				noun: 'Obstacle',
+				traits: [{ id: 'laser-grid', name: 'Laser Grid', rating: { type: 'Die', value: [10] } }],
+			},
+		],
+	};
+	const graphFlat = flattenGraphTraits([curA, curB]);
+	ok(
+		graphFlat.length === 2 &&
+			graphFlat.some((s) => s.name === 'Agility' && s.noun === 'Kira · Attribute') &&
+			graphFlat.some((s) => s.name === 'Laser Grid' && s.noun === 'Vault Security · Obstacle'),
+		'flattenGraphTraits flattens traits across all Curiosities with owner prefixes',
+		graphFlat,
 	);
 }
 

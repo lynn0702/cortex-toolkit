@@ -15,10 +15,12 @@ import TraitSetEditor from './trait-set-editor.vue';
 import NameEditor from './name-editor.vue';
 import DiceRoller from './dice-roller.vue';
 import JsonEditor from './json-editor.vue';
+import type { NamedPool } from './dice-pool.ts';
 
 const props = withDefaults(
 	defineProps<{
 		character?: any;
+		curiosities?: any[];
 		editing?: any[];
 		submode?: string | null;
 		mode?: string;
@@ -28,6 +30,8 @@ const props = withDefaults(
 		dicePool?: any;
 		oppositionPool?: any;
 		activePoolSide?: 'player' | 'opposition';
+		namedPools?: NamedPool[];
+		activePoolId?: string;
 		viewY?: number | null;
 		drawerState?: 'staged' | 'split' | 'full';
 	}>(),
@@ -56,8 +60,12 @@ const emit = defineEmits<{
 	(e: 'removeDie', index: number): void;
 	(e: 'clearPool'): void;
 	(e: 'clearOppositionPool'): void;
-	(e: 'settlePP', delta: number): void;
+	(e: 'settlePP', delta: number, poolId?: string): void;
 	(e: 'update:activePoolSide', side: 'player' | 'opposition'): void;
+	(e: 'update:activePoolId', poolId: string): void;
+	(e: 'addNamedPool', payload: { ownerId: string | null; ownerName: string; withPP?: boolean }): void;
+	(e: 'removeNamedPool', poolId: string): void;
+	(e: 'togglePoolPP', poolId: string): void;
 	(e: 'update:drawerState', state: 'staged' | 'split' | 'full'): void;
 }>();
 
@@ -353,7 +361,12 @@ const crumbs = computed<Crumb[]>(() => {
 	return list;
 });
 
-const diceCount = computed(() => (props.dicePool?.items?.length || 0) + (props.oppositionPool?.items?.length || 0));
+const diceCount = computed(() => {
+	if (Array.isArray(props.namedPools) && props.namedPools.length > 0) {
+		return props.namedPools.reduce((sum, p) => sum + (p.pool?.items?.length || 0), 0);
+	}
+	return (props.dicePool?.items?.length || 0) + (props.oppositionPool?.items?.length || 0);
+});
 
 const diceRollerRef = ref<any>(null);
 defineExpose({
@@ -622,13 +635,20 @@ defineExpose({
 					:pool="dicePool"
 					:oppositionPool="oppositionPool"
 					:activePoolSide="activePoolSide"
+					:namedPools="namedPools"
+					:activePoolId="activePoolId"
+					:curiosities="curiosities"
 					:character="character"
 					@addDie="emit('addDie', $event)"
 					@removeDie="emit('removeDie', $event)"
 					@clearPool="emit('clearPool')"
 					@clearOppositionPool="emit('clearOppositionPool')"
-					@settlePP="emit('settlePP', $event)"
+					@settlePP="(delta, poolId) => emit('settlePP', delta, poolId)"
 					@update:activePoolSide="emit('update:activePoolSide', $event)"
+					@update:activePoolId="emit('update:activePoolId', $event)"
+					@addNamedPool="emit('addNamedPool', $event)"
+					@removeNamedPool="emit('removeNamedPool', $event)"
+					@togglePoolPP="emit('togglePoolPP', $event)"
 				/>
 			</div>
 

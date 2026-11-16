@@ -7,16 +7,19 @@ const props = defineProps<{
 	isContest: boolean;
 	playerEval: PoolEvaluation | null;
 	oppositionEval: PoolEvaluation | null;
+	evaluations?: PoolEvaluation[];
 	activeSide: 'player' | 'opposition';
+	activePoolId?: string;
 	plotPoints: number;
+	poolPlotPoints?: Record<string, number | null>;
 	isModal: boolean;
 	dicePoolOutput: string;
 }>();
 
 const emit = defineEmits<{
-	(e: 'cycleRole', side: 'player' | 'opposition', dieId: string): void;
-	(e: 'applyPreset', side: 'player' | 'opposition', preset: 'total' | 'effect'): void;
-	(e: 'activateHitch', side: 'player' | 'opposition', dieId: string): void;
+	(e: 'cycleRole', targetId: string, dieId: string): void;
+	(e: 'applyPreset', targetId: string, preset: 'total' | 'effect'): void;
+	(e: 'activateHitch', targetId: string, dieId: string): void;
 	(e: 'reroll'): void;
 	(e: 'expandDialog'): void;
 	(e: 'closeDialog'): void;
@@ -25,7 +28,37 @@ const emit = defineEmits<{
 const viewTab = ref<'roller' | 'log'>('roller');
 const copiedNotice = ref(false);
 
+function evKey(ev: PoolEvaluation): string {
+	return ev.poolId || ev.side;
+}
+
+function poolHasOwnPP(ev: PoolEvaluation): boolean {
+	if (props.poolPlotPoints) {
+		const key = evKey(ev);
+		if (key in props.poolPlotPoints) {
+			return typeof props.poolPlotPoints[key] === 'number';
+		}
+	}
+	return ev.side === 'player';
+}
+
+function shortPoolLabel(label: string, fallback: string): string {
+	const cleaned = String(label || '')
+		.replace(/\s+Pool$/i, '')
+		.trim();
+	return cleaned || fallback;
+}
+
 const orderedEvals = computed<PoolEvaluation[]>(() => {
+	if (Array.isArray(props.evaluations) && props.evaluations.length > 0) {
+		const valid = props.evaluations.filter((ev) => ev && ev.results.length > 0);
+		if (props.isContest) return valid;
+		if (props.activePoolId) {
+			const match = valid.find((ev) => ev.poolId === props.activePoolId);
+			if (match) return [match];
+		}
+		return valid.slice(0, 1);
+	}
 	const list: PoolEvaluation[] = [];
 	if (props.isContest) {
 		if (props.playerEval && props.playerEval.results.length > 0) list.push(props.playerEval);
@@ -41,16 +74,26 @@ const orderedEvals = computed<PoolEvaluation[]>(() => {
 });
 
 const contestVerdict = computed(() => {
-	if (!props.isContest || !props.playerEval || !props.oppositionEval) return null;
-	const pTotal = props.playerEval.isBotch ? 0 : props.playerEval.manualTotal;
-	const oTotal = props.oppositionEval.isBotch ? 0 : props.oppositionEval.manualTotal;
+	if (!props.isContest) return null;
+	const evals = orderedEvals.value;
+	const pEval = evals[0] || props.playerEval;
+	const challengers = evals.length >= 2 ? evals.slice(1) : props.oppositionEval ? [props.oppositionEval] : [];
+	if (!pEval || challengers.length === 0) return null;
+	const oEval = challengers.reduce((best, cur) => {
+		const curScore = cur.isBotch ? 0 : cur.manualTotal;
+		const bestScore = best.isBotch ? 0 : best.manualTotal;
+		return curScore > bestScore ? cur : best;
+	}, challengers[0]);
+
+	const pTotal = pEval.isBotch ? 0 : pEval.manualTotal;
+	const oTotal = oEval.isBotch ? 0 : oEval.manualTotal;
 	const margin = pTotal - oTotal;
 	let badge = '';
 	let tone = 'loss';
-	if (props.playerEval.isBotch) {
+	if (pEval.isBotch) {
 		badge = 'Botch';
 		tone = 'botch';
-	} else if (props.oppositionEval.isBotch) {
+	} else if (oEval.isBotch && challengers.every((c) => c.isBotch)) {
 		badge = 'Heroic (+' + pTotal + ')';
 		tone = 'heroic';
 	} else if (margin >= 5) {
@@ -66,13 +109,18 @@ const contestVerdict = computed(() => {
 		badge = `Failed (${margin})`;
 		tone = 'loss';
 	}
+	const pLabel = shortPoolLabel(pEval.label, 'Player');
+	const rawOLabel = shortPoolLabel(oEval.label, 'Opposition');
+	const oLabel = challengers.length > 1 ? `Top (${rawOLabel})` : rawOLabel;
 	return {
+		pLabel,
+		oLabel,
 		pTotal,
 		oTotal,
-		pEffect: props.playerEval.manualEffectDie,
-		oEffect: props.oppositionEval.manualEffectDie,
-		pEffectSize: effectSizeFromLabel(props.playerEval.manualEffectDie),
-		oEffectSize: effectSizeFromLabel(props.oppositionEval.manualEffectDie),
+		pEffect: pEval.manualEffectDie,
+		oEffect: oEval.manualEffectDie,
+		pEffectSize: effectSizeFromLabel(pEval.manualEffectDie),
+		oEffectSize: effectSizeFromLabel(oEval.manualEffectDie),
 		badge,
 		tone,
 	};
@@ -167,9 +215,9 @@ function copyOutput() {
 		<!-- CONTEST BANNER -->
 		<div v-if="contestVerdict" class="contest-banner" :class="'tone-' + contestVerdict.tone">
 			<div class="contest-side contest-player">
-				<span class="contest-side-label">Player</span>
+				<span class="contest-side-label">{{ contestVerdict.pLabel }}</span>
 				<span class="contest-side-score">{{ contestVerdict.pTotal }}</span>
-				<span class="contest-side-effect" aria-label="Player effect">
+				<span class="contest-side-effect" :aria-label="contestVerdict.pLabel + ' effect'">
 					<span
 						class="contest-effect-glyph"
 						aria-hidden="true"
@@ -180,9 +228,9 @@ function copyOutput() {
 			</div>
 			<div class="contest-verdict-badge">{{ contestVerdict.badge }}</div>
 			<div class="contest-side contest-opposition">
-				<span class="contest-side-label">Opposition</span>
+				<span class="contest-side-label">{{ contestVerdict.oLabel }}</span>
 				<span class="contest-side-score">{{ contestVerdict.oTotal }}</span>
-				<span class="contest-side-effect" aria-label="Opposition effect">
+				<span class="contest-side-effect" :aria-label="contestVerdict.oLabel + ' effect'">
 					<span
 						class="contest-effect-glyph"
 						aria-hidden="true"
@@ -195,7 +243,12 @@ function copyOutput() {
 
 		<!-- INTERACTIVE DICE BREAKDOWN -->
 		<div v-show="viewTab === 'roller'" class="roller-interactive-view">
-			<section v-for="ev in orderedEvals" :key="ev.side" class="outcome-pool-section" :class="'side-' + ev.side">
+			<section
+				v-for="(ev, evIdx) in orderedEvals"
+				:key="evKey(ev)"
+				class="outcome-pool-section"
+				:class="evIdx === 0 ? 'side-player' : 'side-opposition'"
+			>
 				<div class="outcome-pool-bar" v-if="isContest">
 					<span class="outcome-pool-name">{{ ev.label }}</span>
 					<span class="outcome-pool-summary">
@@ -227,7 +280,7 @@ function copyOutput() {
 									'role-effect': die.manualRole === 'effect',
 								}"
 								:disabled="die.isHitch"
-								@click="emit('cycleRole', ev.side, die.id)"
+								@click="emit('cycleRole', evKey(ev), die.id)"
 								:aria-label="
 									'd' + die.size + ' rolled ' + die.value + (die.isHitch ? ', hitch' : ', role ' + die.manualRole)
 								"
@@ -262,7 +315,7 @@ function copyOutput() {
 									type="button"
 									class="roller-die-card die-resource-card"
 									:class="{ 'role-total': die.manualRole === 'total' }"
-									@click="emit('cycleRole', ev.side, die.id)"
+									@click="emit('cycleRole', evKey(ev), die.id)"
 									:aria-label="'Separate d' + die.size + ' rolled ' + die.value"
 								>
 									<div class="card-top">
@@ -292,7 +345,7 @@ function copyOutput() {
 							'role-effect': die.manualRole === 'effect',
 						}"
 						:disabled="die.isHitch"
-						@click="emit('cycleRole', ev.side, die.id)"
+						@click="emit('cycleRole', evKey(ev), die.id)"
 						:aria-label="
 							'd' + die.size + ' rolled ' + die.value + (die.isHitch ? ', hitch' : ', role ' + die.manualRole)
 						"
@@ -322,11 +375,11 @@ function copyOutput() {
 							:key="'hitch-' + hDie.id"
 							type="button"
 							class="hitch-act-btn"
-							:class="ev.side === 'player' ? 'hitch-act-player' : 'hitch-act-opp'"
-							:disabled="Boolean(hDie.hitchActivated) || (ev.side === 'opposition' && plotPoints < 1)"
-							@click="emit('activateHitch', ev.side, hDie.id)"
+							:class="poolHasOwnPP(ev) ? 'hitch-act-player' : 'hitch-act-opp'"
+							:disabled="Boolean(hDie.hitchActivated) || (!poolHasOwnPP(ev) && plotPoints < 1)"
+							@click="emit('activateHitch', evKey(ev), hDie.id)"
 						>
-							<template v-if="ev.side === 'player'">
+							<template v-if="poolHasOwnPP(ev)">
 								{{ hDie.hitchActivated ? '✓ +1 PP' : '⚡ d' + hDie.size + ': +1 PP' }}
 							</template>
 							<template v-else>
@@ -374,7 +427,7 @@ function copyOutput() {
 						type="button"
 						class="preset-card"
 						v-if="ev.bestTotalInfo && !ev.bestTotalInfo.isBotch"
-						@click="emit('applyPreset', ev.side, 'total')"
+						@click="emit('applyPreset', evKey(ev), 'total')"
 					>
 						<span class="preset-title"><i class="fas fa-award" aria-hidden="true"></i> Best Total</span>
 						<span class="preset-content">
@@ -387,7 +440,7 @@ function copyOutput() {
 						type="button"
 						class="preset-card"
 						v-if="ev.bestEffectInfo && !ev.bestEffectInfo.isBotch"
-						@click="emit('applyPreset', ev.side, 'effect')"
+						@click="emit('applyPreset', evKey(ev), 'effect')"
 					>
 						<span class="preset-title"><i class="fas fa-bolt" aria-hidden="true"></i> Best Effect</span>
 						<span class="preset-content">

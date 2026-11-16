@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import {
 	dicePool as dicePoolModel,
 	DIE_SIZES,
 	flattenCharacterTraits,
+	flattenGraphTraits,
 	loadRollLog,
 	MAX_ROLL_LOG_ENTRIES,
 	parseTraitShorthand,
 	saveRollLog,
 	type DiceItem,
 	type FlattenedTraitSuggestion,
+	type NamedPool,
 	type PoolEvaluation,
 	type RollLogEntry,
+	type RollLogPoolSummary,
 	type RollLogSideSummary,
 	type RollResult,
 	type SeparateGroup,
@@ -19,15 +22,18 @@ import {
 	type WordBankKind,
 } from './dice-pool.ts';
 import { characterCurioFunctions } from './functions.ts';
-import { resolvePlotPoints } from './model.ts';
+import { hasPlotPoints, resolvePlotPoints } from './model.ts';
 import RollerOutcome from './roller-outcome.vue';
 
 const props = withDefaults(
 	defineProps<{
 		open: boolean;
-		pool: any;
+		pool?: any;
 		oppositionPool?: any;
 		activePoolSide?: 'player' | 'opposition';
+		namedPools?: NamedPool[];
+		activePoolId?: string;
+		curiosities?: any[];
 		character?: any;
 		history?: any[];
 		position?: string;
@@ -43,71 +49,315 @@ const emit = defineEmits<{
 	(e: 'removeDie', index: number): void;
 	(e: 'clearPool'): void;
 	(e: 'clearOppositionPool'): void;
-	(e: 'settlePP', delta: number): void;
+	(e: 'settlePP', delta: number, poolId?: string): void;
 	(e: 'update:activePoolSide', side: 'player' | 'opposition'): void;
+	(e: 'update:activePoolId', poolId: string): void;
+	(e: 'addNamedPool', payload: { ownerId: string | null; ownerName: string; withPP?: boolean }): void;
+	(e: 'removeNamedPool', poolId: string): void;
+	(e: 'togglePoolPP', poolId: string): void;
 }>();
 
 const savedCombine = typeof localStorage !== 'undefined' ? localStorage.getItem('characterCurioCombineSeparate') : null;
+const newPoolInputId = useId();
 
+const localPlayerPool = ref(new dicePoolModel.DicePool());
 const localOppositionPool = ref(new dicePoolModel.DicePool());
 const localSide = ref<'player' | 'opposition'>('player');
+const localActivePoolId = ref<string>('');
 const localPlotPoints = ref(1);
 const rollLog = ref<RollLogEntry[]>(loadRollLog());
 const activeLogEntryId = ref<string | null>(null);
 const copiedEntryId = ref<string | null>(null);
-const localPlayerWords = ref<WordBankItem[]>([]);
+const localWordsByPool = ref<Record<string, WordBankItem[]>>({});
+const poolTablistRef = ref<HTMLElement | null>(null);
+
+const isMultiPoolMode = computed(() => Array.isArray(props.namedPools) && props.namedPools.length > 0);
+
+const playerPoolRef = computed(() => props.pool || localPlayerPool.value);
+const oppositionPoolRef = computed(() => props.oppositionPool || localOppositionPool.value);
+
+const effectivePools = computed<NamedPool[]>(() => {
+	if (isMultiPoolMode.value && props.namedPools) {
+		return props.namedPools;
+	}
+	return [
+		{
+			id: 'player',
+			ownerId: props.character?.id ?? null,
+			ownerName: 'Player',
+			pool: playerPoolRef.value,
+		},
+		{
+			id: 'opposition',
+			ownerId: null,
+			ownerName: 'Opposition',
+			pool: oppositionPoolRef.value,
+		},
+	];
+});
 
 const currentSide = computed<'player' | 'opposition'>(() => props.activePoolSide || localSide.value);
 
-const playerPoolRef = computed(() => props.pool);
-const oppositionPoolRef = computed(() => props.oppositionPool || localOppositionPool.value);
-const activePool = computed(() => (currentSide.value === 'opposition' ? oppositionPoolRef.value : playerPoolRef.value));
-
-const playerItems = computed<DiceItem[]>(() => (playerPoolRef.value?.items ? playerPoolRef.value.items : []));
-const oppItems = computed<DiceItem[]>(() => (oppositionPoolRef.value?.items ? oppositionPoolRef.value.items : []));
-const stagedDice = computed<DiceItem[]>(() => (activePool.value?.items ? activePool.value.items : []));
-
-function wordsForPool(poolObj: any, side: 'player' | 'opposition'): WordBankItem[] {
-	if (poolObj && Array.isArray(poolObj.wordBank)) return poolObj.wordBank;
-	return side === 'player' ? localPlayerWords.value : localOppositionPool.value.wordBank;
-}
-
-const activeWordBank = computed<WordBankItem[]>(() => wordsForPool(activePool.value, currentSide.value));
-
-const effectivePlotPoints = computed<number>(() => {
-	if (props.character) {
-		return resolvePlotPoints(props.character);
+const currentPoolId = computed<string>(() => {
+	if (isMultiPoolMode.value) {
+		if (props.activePoolId && effectivePools.value.some((p) => p.id === props.activePoolId)) {
+			return props.activePoolId;
+		}
+		if (localActivePoolId.value && effectivePools.value.some((p) => p.id === localActivePoolId.value)) {
+			return localActivePoolId.value;
+		}
+		return effectivePools.value[0]?.id || 'player';
 	}
-	return localPlotPoints.value;
+	return currentSide.value;
 });
 
-const pendingPPDelta = computed<number>(() =>
-	playerItems.value.reduce((sum, item) => sum + (!item.ppCommitted && item.ppDelta ? Number(item.ppDelta) : 0), 0),
+const activePoolEntry = computed<NamedPool>(
+	() => effectivePools.value.find((p) => p.id === currentPoolId.value) || effectivePools.value[0],
 );
 
-function adjustPP(delta: number) {
-	if (delta < 0 && effectivePlotPoints.value + delta < 0) return;
-	if (!props.character) {
-		localPlotPoints.value = Math.max(0, localPlotPoints.value + delta);
-	}
-	emit('settlePP', delta);
+const activePool = computed(() => activePoolEntry.value?.pool);
+
+const isActiveChallengerTone = computed(() => {
+	const entry = activePoolEntry.value;
+	if (!entry) return false;
+	if (entry.id === 'opposition') return true;
+	const idx = effectivePools.value.findIndex((p) => p.id === entry.id);
+	return !entry.ownerId && idx > 0;
+});
+
+function itemsForPool(poolObj: any): DiceItem[] {
+	return poolObj && Array.isArray(poolObj.items) ? poolObj.items : [];
 }
 
-// Per-side modifiers
-const combineSeparatePlayer = ref(savedCombine !== null ? savedCombine === 'true' : false);
-const combineSeparateOpp = ref(false);
-const keepOffsetPlayer = ref(0);
-const keepOffsetOpp = ref(0);
-const ppKeepBonusPlayer = ref(0);
-const ppKeepBonusOpp = ref(0);
+const stagedDice = computed<DiceItem[]>(() => itemsForPool(activePool.value));
+
+function wordsForPool(poolObj: any, poolId: string): WordBankItem[] {
+	if (poolObj && Array.isArray(poolObj.wordBank)) return poolObj.wordBank;
+	if (!localWordsByPool.value[poolId]) {
+		localWordsByPool.value[poolId] = [];
+	}
+	return localWordsByPool.value[poolId];
+}
+
+const activeWordBank = computed<WordBankItem[]>(() => wordsForPool(activePool.value, currentPoolId.value));
+
+const allKnownCuriosities = computed<any[]>(() => {
+	const seen = new Set<any>();
+	const result: any[] = [];
+	const pushEntity = (entity: any) => {
+		if (!entity || typeof entity !== 'object') return;
+		const key = entity.id ?? entity;
+		if (seen.has(key)) return;
+		seen.add(key);
+		result.push(entity);
+		if (entity.curiosities && typeof entity.curiosities === 'object') {
+			for (const child of Object.values(entity.curiosities)) {
+				pushEntity(child);
+			}
+		}
+	};
+	if (Array.isArray(props.curiosities)) {
+		for (const c of props.curiosities) pushEntity(c);
+	}
+	if (props.character) {
+		pushEntity(props.character);
+	}
+	return result;
+});
+
+function findOwnerEntity(entry: NamedPool | null | undefined): any | null {
+	if (!entry) return null;
+	if (entry.ownerId) {
+		const found = allKnownCuriosities.value.find((c) => c && String(c.id) === String(entry.ownerId));
+		if (found) return found;
+	}
+	if (!isMultiPoolMode.value && entry.id === 'player' && props.character) {
+		return props.character;
+	}
+	return null;
+}
+
+function resolveEntryName(entry: NamedPool | null | undefined): string {
+	if (!entry) return 'Pool';
+	if (!isMultiPoolMode.value) return entry.ownerName;
+	const owner = findOwnerEntity(entry);
+	if (owner) {
+		return String(owner.name || 'Unnamed').trim() || 'Unnamed';
+	}
+	return String(entry.ownerName || 'Unnamed').trim() || 'Unnamed';
+}
+
+function doesPoolTrackPP(entry: NamedPool | null | undefined): boolean {
+	if (!entry) return false;
+	if (!isMultiPoolMode.value) {
+		if (entry.id === 'opposition') return false;
+		if (props.character) return hasPlotPoints(props.character);
+		return true;
+	}
+	const owner = findOwnerEntity(entry);
+	if (owner) return hasPlotPoints(owner);
+	return typeof entry.plotPoints === 'number' && Number.isFinite(entry.plotPoints);
+}
+
+function getPoolPP(entry: NamedPool | null | undefined): number {
+	if (!entry) return 0;
+	const owner = findOwnerEntity(entry);
+	if (owner) return resolvePlotPoints(owner);
+	if (typeof entry.plotPoints === 'number' && Number.isFinite(entry.plotPoints)) {
+		return Math.max(0, Math.floor(entry.plotPoints));
+	}
+	if (!isMultiPoolMode.value && entry.id === 'player' && !props.character) {
+		return localPlotPoints.value;
+	}
+	return 0;
+}
+
+function pendingPPForPool(entry: NamedPool | null | undefined): number {
+	if (!entry) return 0;
+	return itemsForPool(entry.pool).reduce(
+		(sum, item) => sum + (!item.ppCommitted && item.ppDelta ? Number(item.ppDelta) : 0),
+		0,
+	);
+}
+
+const ppBearingPools = computed<NamedPool[]>(() => effectivePools.value.filter((p) => doesPoolTrackPP(p)));
+
+const activePoolTracksPP = computed(() => doesPoolTrackPP(activePoolEntry.value));
+
+const effectivePlotPoints = computed<number>(() => {
+	if (activePoolTracksPP.value) {
+		return getPoolPP(activePoolEntry.value);
+	}
+	if (!isMultiPoolMode.value && ppBearingPools.value.length > 0) {
+		return getPoolPP(ppBearingPools.value[0]);
+	}
+	return 0;
+});
+
+function adjustPoolPP(poolId: string, delta: number) {
+	if (delta === 0) return;
+	const target = effectivePools.value.find((p) => p.id === poolId) || activePoolEntry.value;
+	if (!target) return;
+	const current = getPoolPP(target);
+	if (delta < 0 && current + delta < 0) return;
+	if (!isMultiPoolMode.value && !props.character && target.id === 'player') {
+		localPlotPoints.value = Math.max(0, localPlotPoints.value + delta);
+	}
+	if (isMultiPoolMode.value) {
+		emit('settlePP', delta, target.id);
+	} else {
+		emit('settlePP', delta);
+	}
+}
+
+function adjustPP(delta: number) {
+	const targetId = activePoolTracksPP.value
+		? activePoolEntry.value.id
+		: ppBearingPools.value[0]?.id || activePoolEntry.value.id;
+	adjustPoolPP(targetId, delta);
+}
+
+// + Pool inline creation bar
+const isAddPoolOpen = ref(false);
+const newPoolName = ref('');
+const newPoolWithPP = ref(false);
+const newPoolInputRef = ref<HTMLInputElement | null>(null);
+
+const unpooledCuriosities = computed<any[]>(() => {
+	if (!isMultiPoolMode.value) return [];
+	const ownedIds = new Set(effectivePools.value.map((p) => (p.ownerId ? String(p.ownerId) : '')).filter(Boolean));
+	return allKnownCuriosities.value.filter((c) => c && c.id && !c.isTemplate && !ownedIds.has(String(c.id)));
+});
+
+function toggleAddPool() {
+	isAddPoolOpen.value = !isAddPoolOpen.value;
+	if (isAddPoolOpen.value) {
+		newPoolName.value = '';
+		newPoolWithPP.value = false;
+		nextTick(() => {
+			newPoolInputRef.value?.focus();
+		});
+	}
+}
+
+function quickAddCuriosityPool(curiosity: any) {
+	if (!curiosity) return;
+	emit('addNamedPool', {
+		ownerId: String(curiosity.id),
+		ownerName: String(curiosity.name || 'Unnamed').trim() || 'Unnamed',
+	});
+	isAddPoolOpen.value = false;
+	newPoolName.value = '';
+}
+
+function submitNewPool() {
+	const trimmed = newPoolName.value.trim();
+	if (!trimmed) return;
+	emit('addNamedPool', {
+		ownerId: null,
+		ownerName: trimmed,
+		withPP: newPoolWithPP.value,
+	});
+	newPoolName.value = '';
+	newPoolWithPP.value = false;
+	isAddPoolOpen.value = false;
+}
+
+function onNewPoolKeydown(e: KeyboardEvent) {
+	if (e.key === 'Escape') {
+		e.preventDefault();
+		isAddPoolOpen.value = false;
+		newPoolName.value = '';
+		return;
+	}
+	if (e.key === 'Enter') {
+		e.preventDefault();
+		if (e.isComposing || e.keyCode === 229) {
+			return;
+		}
+		submitNewPool();
+	}
+}
+
+function removeActivePool() {
+	if (!isMultiPoolMode.value || effectivePools.value.length <= 1) return;
+	const id = activePoolEntry.value.id;
+	delete evaluationsByPool.value[id];
+	rolledPoolOrder.value = rolledPoolOrder.value.filter((pid) => pid !== id);
+	emit('removeNamedPool', id);
+}
+
+// Per-pool modifiers
+const combineSeparateByPool = ref<Record<string, boolean>>({
+	player: savedCombine !== null ? savedCombine === 'true' : false,
+});
+const keepOffsetByPool = ref<Record<string, number>>({});
+const ppKeepBonusByPool = ref<Record<string, number>>({});
+
+function getPoolCombineSeparate(poolId: string, idx = 0): boolean {
+	if (poolId in combineSeparateByPool.value) return Boolean(combineSeparateByPool.value[poolId]);
+	if (idx === 0 && savedCombine !== null) return savedCombine === 'true';
+	return false;
+}
+
+function getPoolKeepOffset(poolId: string): number {
+	return keepOffsetByPool.value[poolId] || 0;
+}
+
+function getPoolPpKeepBonus(poolId: string): number {
+	return ppKeepBonusByPool.value[poolId] || 0;
+}
 
 const combineSeparate = computed({
-	get: () => (currentSide.value === 'opposition' ? combineSeparateOpp.value : combineSeparatePlayer.value),
+	get: () => {
+		const idx = effectivePools.value.findIndex((p) => p.id === currentPoolId.value);
+		return getPoolCombineSeparate(currentPoolId.value, Math.max(0, idx));
+	},
 	set: (val: boolean) => {
-		if (currentSide.value === 'opposition') {
-			combineSeparateOpp.value = val;
-		} else {
-			combineSeparatePlayer.value = val;
+		const id = currentPoolId.value;
+		combineSeparateByPool.value[id] = val;
+		const idx = effectivePools.value.findIndex((p) => p.id === id);
+		if (idx <= 0) {
 			try {
 				localStorage.setItem('characterCurioCombineSeparate', val ? 'true' : 'false');
 			} catch (_e) {}
@@ -122,7 +372,7 @@ const diceSizes = computed(() => DIE_SIZES);
 const isSeparateAddMode = ref(false);
 const selectedDieId = ref<string | null>(null);
 
-watch(currentSide, () => {
+watch(currentPoolId, () => {
 	selectedDieId.value = null;
 	closePresearch();
 });
@@ -195,8 +445,8 @@ const activeKeepStats = computed(() =>
 		stagedDice.value,
 		activeWordBank.value,
 		combineSeparate.value,
-		currentSide.value === 'opposition' ? ppKeepBonusOpp.value : ppKeepBonusPlayer.value,
-		currentSide.value === 'opposition' ? keepOffsetOpp.value : keepOffsetPlayer.value,
+		getPoolPpKeepBonus(currentPoolId.value),
+		getPoolKeepOffset(currentPoolId.value),
 	),
 );
 
@@ -220,11 +470,8 @@ function adjustKeep(delta: number) {
 	const nextKeep = Math.min(12, Math.max(1, activeKeep.value + delta));
 	const diff = nextKeep - activeKeep.value;
 	if (diff === 0) return;
-	if (currentSide.value === 'opposition') {
-		keepOffsetOpp.value += diff;
-	} else {
-		keepOffsetPlayer.value += diff;
-	}
+	const id = currentPoolId.value;
+	keepOffsetByPool.value[id] = getPoolKeepOffset(id) + diff;
 	if (isRolled.value) {
 		reEvaluateRoll();
 	}
@@ -237,22 +484,22 @@ function getUuid(): string {
 		: Math.random().toString(36).substring(2, 9);
 }
 
-function addWordToPool(targetPool: any, side: 'player' | 'opposition', label: string, kind: WordBankKind = 'trait') {
+function addWordToPool(targetPool: any, poolId: string, label: string, kind: WordBankKind = 'trait') {
 	if (targetPool && typeof targetPool.addWord === 'function') {
 		return targetPool.addWord(label, kind);
 	}
 	const trimmed = String(label || '').trim();
 	if (!trimmed) return null;
 	const item: WordBankItem = { id: getUuid(), label: trimmed, kind };
-	wordsForPool(targetPool, side).push(item);
+	wordsForPool(targetPool, poolId).push(item);
 	return item;
 }
 
-function removeWordFromPool(targetPool: any, side: 'player' | 'opposition', id: string) {
+function removeWordFromPool(targetPool: any, poolId: string, id: string) {
 	if (targetPool && typeof targetPool.removeWord === 'function') {
 		return targetPool.removeWord(id);
 	}
-	const list = wordsForPool(targetPool, side);
+	const list = wordsForPool(targetPool, poolId);
 	const idx = list.findIndex((w) => w.id === id);
 	if (idx !== -1) return list.splice(idx, 1)[0];
 	return null;
@@ -282,25 +529,68 @@ function addDiceToTargetPool(targetPool: any, dicePayloads: any | any[], skipWor
 	isRolled.value = false;
 }
 
-function selectPoolSide(side: 'player' | 'opposition') {
-	localSide.value = side;
-	emit('update:activePoolSide', side);
+function tabDomId(entry: NamedPool): string {
+	if (!isMultiPoolMode.value) {
+		return entry.id === 'opposition' ? 'tabOpposition' : 'tabPlayer';
+	}
+	if (entry.id === 'opposition') return 'tabOpposition';
+	return `tabPool-${entry.id}`;
+}
+
+function findTabButton(entry: NamedPool): HTMLElement | null {
+	const domId = tabDomId(entry);
+	const inList = Array.from(poolTablistRef.value?.querySelectorAll<HTMLElement>('[role="tab"]') || []).find(
+		(el) => el.id === domId,
+	);
+	if (inList) return inList;
+	return typeof document !== 'undefined' ? document.getElementById(domId) : null;
+}
+
+function selectPoolById(poolId: string) {
+	if (isMultiPoolMode.value) {
+		localActivePoolId.value = poolId;
+		emit('update:activePoolId', poolId);
+		const side: 'player' | 'opposition' = poolId === 'opposition' ? 'opposition' : 'player';
+		localSide.value = side;
+		emit('update:activePoolSide', side);
+	} else {
+		const side: 'player' | 'opposition' = poolId === 'opposition' ? 'opposition' : 'player';
+		localSide.value = side;
+		emit('update:activePoolSide', side);
+	}
+	nextTick(() => {
+		const target = effectivePools.value.find((p) => p.id === poolId);
+		if (!target) return;
+		const btn = findTabButton(target);
+		if (btn && typeof btn.scrollIntoView === 'function') {
+			try {
+				btn.scrollIntoView({ block: 'nearest', inline: 'nearest', container: 'nearest' } as ScrollIntoViewOptions);
+			} catch {
+				btn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+			}
+		}
+	});
 }
 
 function onPoolTabKeydown(e: KeyboardEvent) {
+	const pools = effectivePools.value;
+	if (pools.length <= 1) return;
 	if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Home' || e.key === 'End') {
 		e.preventDefault();
-		const nextSide: 'player' | 'opposition' =
-			e.key === 'Home'
-				? 'player'
-				: e.key === 'End'
-					? 'opposition'
-					: currentSide.value === 'player'
-						? 'opposition'
-						: 'player';
-		selectPoolSide(nextSide);
+		const curIdx = Math.max(
+			0,
+			pools.findIndex((p) => p.id === currentPoolId.value),
+		);
+		let nextIdx = curIdx;
+		if (e.key === 'Home') nextIdx = 0;
+		else if (e.key === 'End') nextIdx = pools.length - 1;
+		else if (e.key === 'ArrowRight') nextIdx = (curIdx + 1) % pools.length;
+		else if (e.key === 'ArrowLeft') nextIdx = (curIdx - 1 + pools.length) % pools.length;
+		const nextEntry = pools[nextIdx];
+		if (!nextEntry) return;
+		selectPoolById(nextEntry.id);
 		nextTick(() => {
-			document.getElementById(nextSide === 'player' ? 'tabPlayer' : 'tabOpposition')?.focus();
+			findTabButton(nextEntry)?.focus();
 		});
 	}
 }
@@ -314,7 +604,12 @@ const traitInputRef = ref<HTMLInputElement | null>(null);
 const traitInputBarRef = ref<HTMLElement | null>(null);
 const presearchPopoverRef = ref<HTMLElement | null>(null);
 
-const allFlattenedTraits = computed<FlattenedTraitSuggestion[]>(() => flattenCharacterTraits(props.character));
+const allFlattenedTraits = computed<FlattenedTraitSuggestion[]>(() => {
+	if (allKnownCuriosities.value.length > 0) {
+		return flattenGraphTraits(allKnownCuriosities.value);
+	}
+	return flattenCharacterTraits(props.character);
+});
 
 const filteredSuggestions = computed<FlattenedTraitSuggestion[]>(() => {
 	const q = traitQuery.value.trim().toLowerCase();
@@ -417,7 +712,7 @@ function onTraitInput() {
 }
 
 function selectSuggestion(sug: FlattenedTraitSuggestion) {
-	addWordToPool(activePool.value, currentSide.value, sug.name, 'trait');
+	addWordToPool(activePool.value, currentPoolId.value, sug.name, 'trait');
 	const payloads = sug.dice.map((size) => ({
 		size,
 		qty: 1,
@@ -437,7 +732,7 @@ function hinderSuggestion(sug: FlattenedTraitSuggestion) {
 	const ppDelta = alt ? alt.ppDelta : 1;
 	const altTag = alt?.label || 'Hinder';
 	const sourceLabel = `${sug.name} (${altTag})`;
-	addWordToPool(activePool.value, currentSide.value, sourceLabel, 'hinder');
+	addWordToPool(activePool.value, currentPoolId.value, sourceLabel, 'hinder');
 	addDiceToTargetPool(
 		activePool.value,
 		{
@@ -446,7 +741,7 @@ function hinderSuggestion(sug: FlattenedTraitSuggestion) {
 			source: sourceLabel,
 			hitches: sug.hitches,
 			keepsExtra: sug.keepsExtra,
-			ppDelta: currentSide.value === 'player' ? ppDelta : 0,
+			ppDelta: activePoolTracksPP.value ? ppDelta : 0,
 			ppCommitted: false,
 		},
 		true,
@@ -461,7 +756,7 @@ function submitTraitInput() {
 	if (!raw) return;
 	const parsed = parseTraitShorthand(raw);
 	if (parsed.label) {
-		addWordToPool(activePool.value, currentSide.value, parsed.label, 'trait');
+		addWordToPool(activePool.value, currentPoolId.value, parsed.label, 'trait');
 	}
 	if (parsed.dice) {
 		addDiceToTargetPool(
@@ -504,6 +799,9 @@ function onTraitInputKeydown(e: KeyboardEvent) {
 	}
 	if (e.key === 'Enter') {
 		e.preventDefault();
+		if (e.isComposing || e.keyCode === 229) {
+			return;
+		}
 		if (parsedShorthand.value.dice) {
 			submitTraitInput();
 			return;
@@ -530,11 +828,11 @@ function handleWindowReposition() {
 }
 
 function addScalePill() {
-	addWordToPool(activePool.value, currentSide.value, 'Scale', 'scale');
+	addWordToPool(activePool.value, currentPoolId.value, 'Scale', 'scale');
 }
 
 function removeWordPill(id: string) {
-	removeWordFromPool(activePool.value, currentSide.value, id);
+	removeWordFromPool(activePool.value, currentPoolId.value, id);
 }
 
 // Quick Add & Selected Die Action Bar (decoupled from Word Bank)
@@ -605,38 +903,37 @@ function removeSelected() {
 	isRolled.value = false;
 }
 
-function clearSide(side: 'player' | 'opposition') {
-	const target = side === 'opposition' ? oppositionPoolRef.value : playerPoolRef.value;
+function clearPoolById(poolId: string) {
+	const entry = effectivePools.value.find((p) => p.id === poolId);
+	const target = entry?.pool;
 	if (target && typeof target.clear === 'function') {
 		target.clear();
 	} else if (target) {
 		if (Array.isArray(target.items)) target.items = [];
 		if (Array.isArray(target.wordBank)) target.wordBank = [];
-		localPlayerWords.value = [];
 	}
-	if (side === 'opposition') {
-		keepOffsetOpp.value = 0;
-		ppKeepBonusOpp.value = 0;
-		oppEvaluation.value = null;
-	} else {
-		keepOffsetPlayer.value = 0;
-		ppKeepBonusPlayer.value = 0;
-		playerEvaluation.value = null;
-	}
+	localWordsByPool.value[poolId] = [];
+	keepOffsetByPool.value[poolId] = 0;
+	ppKeepBonusByPool.value[poolId] = 0;
+	delete evaluationsByPool.value[poolId];
+	rolledPoolOrder.value = rolledPoolOrder.value.filter((id) => id !== poolId);
 	selectedDieId.value = null;
 }
 
 function clearActivePool() {
-	clearSide(currentSide.value);
-	if (!playerEvaluation.value && !oppEvaluation.value) {
+	clearPoolById(currentPoolId.value);
+	if (orderedEvaluations.value.length === 0) {
 		isRolled.value = false;
 		dicePoolOutput.value = '';
 	}
 }
 
 function clearPool() {
-	clearSide('player');
-	clearSide('opposition');
+	for (const entry of effectivePools.value) {
+		clearPoolById(entry.id);
+	}
+	evaluationsByPool.value = {};
+	rolledPoolOrder.value = [];
 	isRolled.value = false;
 	isContestRoll.value = false;
 	dicePoolOutput.value = '';
@@ -647,19 +944,16 @@ function clearPool() {
 function spendPPForKeep() {
 	if (effectivePlotPoints.value < 1) return;
 	adjustPP(-1);
-	addWordToPool(activePool.value, currentSide.value, 'PP: +1 Keep', 'pp');
-	if (currentSide.value === 'opposition') {
-		ppKeepBonusOpp.value += 1;
-	} else {
-		ppKeepBonusPlayer.value += 1;
-	}
+	const id = currentPoolId.value;
+	addWordToPool(activePool.value, id, 'PP: +1 Keep', 'pp');
+	ppKeepBonusByPool.value[id] = getPoolPpKeepBonus(id) + 1;
 	if (isRolled.value) reEvaluateRoll();
 }
 
 function spendPPForD6() {
 	if (effectivePlotPoints.value < 1) return;
 	adjustPP(-1);
-	addWordToPool(activePool.value, currentSide.value, 'PP: +d6', 'pp');
+	addWordToPool(activePool.value, currentPoolId.value, 'PP: +d6', 'pp');
 	addDiceToTargetPool(
 		activePool.value,
 		{
@@ -675,17 +969,38 @@ function spendPPForD6() {
 // Roll Evaluation Engine
 const isRolled = ref(false);
 const isContestRoll = ref(false);
-const playerEvaluation = ref<PoolEvaluation | null>(null);
-const oppEvaluation = ref<PoolEvaluation | null>(null);
+const evaluationsByPool = ref<Record<string, PoolEvaluation>>({});
+const rolledPoolOrder = ref<string[]>([]);
 const dicePoolOutput = ref('');
 const rollDialogRef = ref<HTMLDialogElement | null>(null);
 const isDialogOpen = ref(false);
 
+const orderedEvaluations = computed<PoolEvaluation[]>(() =>
+	rolledPoolOrder.value.map((id) => evaluationsByPool.value[id]).filter((ev): ev is PoolEvaluation => Boolean(ev)),
+);
+
+const playerEvaluation = computed<PoolEvaluation | null>(() => {
+	if (!isMultiPoolMode.value) return evaluationsByPool.value.player || null;
+	return orderedEvaluations.value[0] || null;
+});
+
+const oppEvaluation = computed<PoolEvaluation | null>(() => {
+	if (!isMultiPoolMode.value) return evaluationsByPool.value.opposition || null;
+	return orderedEvaluations.value[1] || null;
+});
+
+const poolPlotPointsMap = computed<Record<string, number | null>>(() => {
+	const map: Record<string, number | null> = {};
+	for (const entry of effectivePools.value) {
+		map[entry.id] = doesPoolTrackPP(entry) ? getPoolPP(entry) : null;
+	}
+	return map;
+});
+
 const primaryEval = computed<PoolEvaluation | null>(() => {
-	if (isContestRoll.value) return playerEvaluation.value || oppEvaluation.value;
-	return currentSide.value === 'opposition'
-		? oppEvaluation.value || playerEvaluation.value
-		: playerEvaluation.value || oppEvaluation.value;
+	if (isContestRoll.value) return orderedEvaluations.value[0] || null;
+	const activeEv = evaluationsByPool.value[currentPoolId.value];
+	return activeEv || orderedEvaluations.value[0] || null;
 });
 
 const lastRollResults = computed<RollResult[]>(() => primaryEval.value?.results || []);
@@ -697,12 +1012,21 @@ const totalHitches = computed(() => primaryEval.value?.totalHitches || 0);
 const isBotch = computed(() => Boolean(primaryEval.value?.isBotch));
 
 const contestSummary = computed(() => {
-	if (!isContestRoll.value || !playerEvaluation.value || !oppEvaluation.value) return null;
+	if (!isContestRoll.value || orderedEvaluations.value.length < 2) return null;
+	const pEval = orderedEvaluations.value[0];
+	const challengers = orderedEvaluations.value.slice(1);
+	const oEval = challengers.reduce((best, cur) => {
+		const curScore = cur.isBotch ? 0 : cur.manualTotal;
+		const bestScore = best.isBotch ? 0 : best.manualTotal;
+		return curScore > bestScore ? cur : best;
+	}, challengers[0]);
 	return {
-		playerTotal: playerEvaluation.value.isBotch ? 0 : playerEvaluation.value.manualTotal,
-		playerEffect: playerEvaluation.value.manualEffectDie,
-		oppTotal: oppEvaluation.value.isBotch ? 0 : oppEvaluation.value.manualTotal,
-		oppEffect: oppEvaluation.value.manualEffectDie,
+		playerLabel: pEval.label.replace(/\s+Pool$/i, '') || 'Player',
+		oppLabel: oEval.label.replace(/\s+Pool$/i, '') || 'Opp',
+		playerTotal: pEval.isBotch ? 0 : pEval.manualTotal,
+		playerEffect: pEval.manualEffectDie,
+		oppTotal: oEval.isBotch ? 0 : oEval.manualTotal,
+		oppEffect: oEval.manualEffectDie,
 	};
 });
 
@@ -729,7 +1053,16 @@ function buildRawResults(items: DiceItem[]): RollResult[] {
 	});
 }
 
-function evaluateSideResults(
+function poolDisplayLabel(entry: NamedPool): string {
+	if (!isMultiPoolMode.value) {
+		return entry.id === 'opposition' ? 'Opposition Pool' : 'Player Pool';
+	}
+	const base = resolveEntryName(entry);
+	return /\bpool$/i.test(base) ? base : `${base} Pool`;
+}
+
+function evaluatePoolResults(
+	entry: NamedPool,
 	side: 'player' | 'opposition',
 	results: RollResult[],
 	items: DiceItem[],
@@ -744,7 +1077,7 @@ function evaluateSideResults(
 	const actionResults = results.filter((r) => r.hitches > 0);
 	const separateResults = results.filter((r) => r.hitches === 0);
 	const hasSeparate = separateResults.length > 0;
-	const label = side === 'opposition' ? 'Opposition Pool' : 'Player Pool';
+	const label = poolDisplayLabel(entry);
 
 	const separateGroups: SeparateGroup[] = [];
 	let bestTotal: any = null;
@@ -875,6 +1208,7 @@ function evaluateSideResults(
 	const mEffectDie = mEffects.length > 0 ? 'd' + mEffects[0].size : 'd4';
 
 	return {
+		poolId: entry.id,
 		side,
 		label,
 		keep: keepCount,
@@ -896,8 +1230,9 @@ function evaluateSideResults(
 
 function updateCombinedLog() {
 	const parts: string[] = [];
-	if (playerEvaluation.value) parts.push(playerEvaluation.value.log);
-	if (oppEvaluation.value) parts.push(oppEvaluation.value.log);
+	for (const ev of orderedEvaluations.value) {
+		parts.push(ev.log);
+	}
 	if (isContestRoll.value && contestSummary.value) {
 		const diff = contestSummary.value.playerTotal - contestSummary.value.oppTotal;
 		parts.push(`Contest Margin: ${diff >= 0 ? '+' + diff : diff}`);
@@ -905,7 +1240,7 @@ function updateCombinedLog() {
 	dicePoolOutput.value = parts.join('\n');
 }
 
-function buildSideLogSummary(ev: PoolEvaluation | null): RollLogSideSummary | undefined {
+function buildSideLogSummary(ev: PoolEvaluation | null | undefined): RollLogSideSummary | undefined {
 	if (!ev) return undefined;
 	return {
 		total: ev.isBotch ? 0 : ev.manualTotal,
@@ -917,14 +1252,37 @@ function buildSideLogSummary(ev: PoolEvaluation | null): RollLogSideSummary | un
 	};
 }
 
+function buildPoolsLogSummary(): RollLogPoolSummary[] {
+	return orderedEvaluations.value
+		.map((ev) => {
+			const base = buildSideLogSummary(ev);
+			if (!base) return null;
+			return {
+				poolId: ev.poolId || ev.side,
+				label: ev.label.replace(/\s+Pool$/i, '') || ev.label,
+				...base,
+			};
+		})
+		.filter((x): x is RollLogPoolSummary => Boolean(x));
+}
+
+function resolveLogCharacterName(): string {
+	if (isMultiPoolMode.value && orderedEvaluations.value.length > 0) {
+		const firstLabel = orderedEvaluations.value[0].label.replace(/\s+Pool$/i, '').trim();
+		if (firstLabel) return firstLabel;
+	}
+	return String(props.character?.name || 'Sheet').trim() || 'Sheet';
+}
+
 function recordRollLogEntry() {
 	const entry: RollLogEntry = {
 		id: getUuid(),
 		timestamp: Date.now(),
-		characterName: String(props.character?.name || 'Sheet').trim() || 'Sheet',
+		characterName: resolveLogCharacterName(),
 		contest: isContestRoll.value,
 		player: buildSideLogSummary(playerEvaluation.value),
 		opposition: buildSideLogSummary(oppEvaluation.value),
+		pools: buildPoolsLogSummary(),
 		summaryText: dicePoolOutput.value,
 	};
 	rollLog.value = [entry, ...rollLog.value].slice(0, MAX_ROLL_LOG_ENTRIES);
@@ -942,6 +1300,7 @@ function syncActiveRollLogEntry() {
 		contest: isContestRoll.value,
 		player: buildSideLogSummary(playerEvaluation.value),
 		opposition: buildSideLogSummary(oppEvaluation.value),
+		pools: buildPoolsLogSummary(),
 		summaryText: dicePoolOutput.value,
 	};
 	const updated = [...rollLog.value];
@@ -991,43 +1350,49 @@ function formatLogTime(ts: number): string {
 }
 
 function reEvaluateRoll(preserveManualRoles = false) {
-	if (playerEvaluation.value) {
-		playerEvaluation.value = evaluateSideResults(
-			'player',
-			playerEvaluation.value.results,
-			playerItems.value,
-			wordsForPool(playerPoolRef.value, 'player'),
-			combineSeparatePlayer.value,
-			ppKeepBonusPlayer.value,
-			keepOffsetPlayer.value,
+	const nextMap: Record<string, PoolEvaluation> = {};
+	for (let i = 0; i < rolledPoolOrder.value.length; i++) {
+		const poolId = rolledPoolOrder.value[i];
+		const prevEval = evaluationsByPool.value[poolId];
+		const entry = effectivePools.value.find((p) => p.id === poolId);
+		if (!prevEval || !entry) continue;
+		const poolIdx = effectivePools.value.findIndex((p) => p.id === poolId);
+		const side: 'player' | 'opposition' = !isMultiPoolMode.value
+			? poolId === 'opposition'
+				? 'opposition'
+				: 'player'
+			: i === 0
+				? 'player'
+				: 'opposition';
+		nextMap[poolId] = evaluatePoolResults(
+			entry,
+			side,
+			prevEval.results,
+			itemsForPool(entry.pool),
+			wordsForPool(entry.pool, poolId),
+			getPoolCombineSeparate(poolId, Math.max(0, poolIdx)),
+			getPoolPpKeepBonus(poolId),
+			getPoolKeepOffset(poolId),
 			preserveManualRoles,
 		);
 	}
-	if (oppEvaluation.value) {
-		oppEvaluation.value = evaluateSideResults(
-			'opposition',
-			oppEvaluation.value.results,
-			oppItems.value,
-			wordsForPool(oppositionPoolRef.value, 'opposition'),
-			combineSeparateOpp.value,
-			ppKeepBonusOpp.value,
-			keepOffsetOpp.value,
-			preserveManualRoles,
-		);
-	}
+	evaluationsByPool.value = nextMap;
 	updateCombinedLog();
 	syncActiveRollLogEntry();
 }
 
+const nonEmptyPools = computed<NamedPool[]>(() =>
+	effectivePools.value.filter((entry) => itemsForPool(entry.pool).length > 0),
+);
+
 const rollButtonLabel = computed(() => {
-	const hasP = playerItems.value.length > 0;
-	const hasO = oppItems.value.length > 0;
-	if (hasP && hasO) return 'ROLL CONTEST';
-	if (hasO && !hasP) return 'ROLL OPPOSITION';
+	const count = nonEmptyPools.value.length;
+	if (count >= 2) return 'ROLL CONTEST';
+	if (count === 1 && nonEmptyPools.value[0].id === 'opposition') return 'ROLL OPPOSITION';
 	return 'ROLL POOL';
 });
 
-const hasAnyDiceToRoll = computed(() => playerItems.value.length > 0 || oppItems.value.length > 0);
+const hasAnyDiceToRoll = computed(() => nonEmptyPools.value.length > 0);
 
 function isMobileViewport(): boolean {
 	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
@@ -1128,55 +1493,69 @@ function onDialogPointerUp(e: PointerEvent) {
 	dialogPressedOutside = false;
 }
 
-function roll(opts?: { forceDialog?: boolean }) {
-	const hasP = playerItems.value.length > 0;
-	const hasO = oppItems.value.length > 0;
-	if (!hasP && !hasO) return;
-
-	// Settle uncommitted Hinder / sheet PP deltas at roll time
-	let ppToSettle = 0;
-	for (const item of playerItems.value) {
-		if (!item.ppCommitted && item.ppDelta) {
-			ppToSettle += Number(item.ppDelta) || 0;
+function orderedParticipatingPools(): NamedPool[] {
+	const list = [...nonEmptyPools.value];
+	if (!isMultiPoolMode.value || list.length <= 1) return list;
+	const active = activePoolEntry.value;
+	if (active && active.id !== 'opposition') {
+		const idx = list.findIndex((p) => p.id === active.id);
+		if (idx > 0) {
+			const [picked] = list.splice(idx, 1);
+			list.unshift(picked);
 		}
-		item.ppCommitted = true;
 	}
-	if (ppToSettle !== 0) {
-		adjustPP(ppToSettle);
+	return list;
+}
+
+function roll(opts?: { forceDialog?: boolean }) {
+	const participating = orderedParticipatingPools();
+	if (participating.length === 0) return;
+
+	// Settle uncommitted Hinder / sheet PP deltas per pool owner at roll time
+	for (const entry of participating) {
+		let ppToSettle = 0;
+		for (const item of itemsForPool(entry.pool)) {
+			if (!item.ppCommitted && item.ppDelta) {
+				ppToSettle += Number(item.ppDelta) || 0;
+			}
+			item.ppCommitted = true;
+		}
+		if (ppToSettle !== 0 && doesPoolTrackPP(entry)) {
+			adjustPoolPP(entry.id, ppToSettle);
+		}
 	}
 
-	isContestRoll.value = hasP && hasO;
+	isContestRoll.value = participating.length >= 2;
+	const nextEvals: Record<string, PoolEvaluation> = {};
+	const nextOrder: string[] = [];
 
-	if (hasP) {
-		const rawP = buildRawResults(playerItems.value);
-		playerEvaluation.value = evaluateSideResults(
-			'player',
-			rawP,
-			playerItems.value,
-			wordsForPool(playerPoolRef.value, 'player'),
-			combineSeparatePlayer.value,
-			ppKeepBonusPlayer.value,
-			keepOffsetPlayer.value,
+	for (let i = 0; i < participating.length; i++) {
+		const entry = participating[i];
+		const items = itemsForPool(entry.pool);
+		const raw = buildRawResults(items);
+		const poolIdx = effectivePools.value.findIndex((p) => p.id === entry.id);
+		const side: 'player' | 'opposition' = !isMultiPoolMode.value
+			? entry.id === 'opposition'
+				? 'opposition'
+				: 'player'
+			: i === 0
+				? 'player'
+				: 'opposition';
+		nextEvals[entry.id] = evaluatePoolResults(
+			entry,
+			side,
+			raw,
+			items,
+			wordsForPool(entry.pool, entry.id),
+			getPoolCombineSeparate(entry.id, Math.max(0, poolIdx)),
+			getPoolPpKeepBonus(entry.id),
+			getPoolKeepOffset(entry.id),
 		);
-	} else {
-		playerEvaluation.value = null;
+		nextOrder.push(entry.id);
 	}
 
-	if (hasO) {
-		const rawO = buildRawResults(oppItems.value);
-		oppEvaluation.value = evaluateSideResults(
-			'opposition',
-			rawO,
-			oppItems.value,
-			wordsForPool(oppositionPoolRef.value, 'opposition'),
-			combineSeparateOpp.value,
-			ppKeepBonusOpp.value,
-			keepOffsetOpp.value,
-		);
-	} else {
-		oppEvaluation.value = null;
-	}
-
+	evaluationsByPool.value = nextEvals;
+	rolledPoolOrder.value = nextOrder;
 	isRolled.value = true;
 	updateCombinedLog();
 	recordRollLogEntry();
@@ -1186,8 +1565,20 @@ function roll(opts?: { forceDialog?: boolean }) {
 	}
 }
 
-function handleCycleRole(side: 'player' | 'opposition', dieId: string) {
-	const targetEval = side === 'opposition' ? oppEvaluation.value : playerEvaluation.value;
+function resolveEvalTarget(targetId: string): { poolId: string; ev: PoolEvaluation | null } {
+	if (evaluationsByPool.value[targetId]) {
+		return { poolId: targetId, ev: evaluationsByPool.value[targetId] };
+	}
+	if (targetId === 'opposition' && orderedEvaluations.value[1]) {
+		const ev = orderedEvaluations.value[1];
+		return { poolId: ev.poolId || 'opposition', ev };
+	}
+	const first = orderedEvaluations.value[0] || null;
+	return { poolId: first?.poolId || targetId, ev: first };
+}
+
+function handleCycleRole(targetId: string, dieId: string) {
+	const { ev: targetEval } = resolveEvalTarget(targetId);
 	if (!targetEval) return;
 	const die = targetEval.results.find((d) => d.id === dieId);
 	if (!die || die.isHitch) return;
@@ -1213,33 +1604,50 @@ function handleCycleRole(side: 'player' | 'opposition', dieId: string) {
 	reEvaluateRoll(true);
 }
 
-function handleApplyPreset(side: 'player' | 'opposition', preset: 'total' | 'effect') {
-	const targetEval = side === 'opposition' ? oppEvaluation.value : playerEvaluation.value;
+function handleApplyPreset(targetId: string, preset: 'total' | 'effect') {
+	const { poolId, ev: targetEval } = resolveEvalTarget(targetId);
 	if (!targetEval || targetEval.isBotch) return;
+	const entry = effectivePools.value.find((p) => p.id === poolId);
+	if (!entry) return;
 
 	if (preset === 'total') {
-		reEvaluateRoll(false);
+		const poolIdx = effectivePools.value.findIndex((p) => p.id === poolId);
+		const posIdx = rolledPoolOrder.value.indexOf(poolId);
+		const side: 'player' | 'opposition' = !isMultiPoolMode.value
+			? poolId === 'opposition'
+				? 'opposition'
+				: 'player'
+			: posIdx <= 0
+				? 'player'
+				: 'opposition';
+		evaluationsByPool.value[poolId] = evaluatePoolResults(
+			entry,
+			side,
+			targetEval.results,
+			itemsForPool(entry.pool),
+			wordsForPool(entry.pool, poolId),
+			getPoolCombineSeparate(poolId, Math.max(0, poolIdx)),
+			getPoolPpKeepBonus(poolId),
+			getPoolKeepOffset(poolId),
+			false,
+		);
+		updateCombinedLog();
+		syncActiveRollLogEntry();
 		return;
 	}
 
 	// Apply Best Effect
+	const ppKeep = getPoolPpKeepBonus(poolId);
+	const offset = getPoolKeepOffset(poolId);
 	if (!targetEval.combineSeparate && targetEval.separateGroups.length > 0) {
 		const stats = computePoolKeepStats(
-			side === 'opposition' ? oppItems.value : playerItems.value,
-			wordsForPool(side === 'opposition' ? oppositionPoolRef.value : playerPoolRef.value, side),
+			itemsForPool(entry.pool),
+			wordsForPool(entry.pool, poolId),
 			false,
-			side === 'opposition' ? ppKeepBonusOpp.value : ppKeepBonusPlayer.value,
-			side === 'opposition' ? keepOffsetOpp.value : keepOffsetPlayer.value,
+			ppKeep,
+			offset,
 		);
-		const actionKeep = Math.max(
-			1,
-			2 +
-				stats.actionKeepsExtra +
-				stats.scaleWords +
-				(side === 'opposition'
-					? ppKeepBonusOpp.value + keepOffsetOpp.value
-					: ppKeepBonusPlayer.value + keepOffsetPlayer.value),
-		);
+		const actionKeep = Math.max(1, 2 + stats.actionKeepsExtra + stats.scaleWords + ppKeep + offset);
 		const actionEligible = targetEval.actionResults
 			.filter((r) => !r.isHitch)
 			.sort((a, b) => (a.size !== b.size ? b.size - a.size : a.value - b.value));
@@ -1278,24 +1686,42 @@ function handleApplyPreset(side: 'player' | 'opposition', preset: 'total' | 'eff
 	reEvaluateRoll(true);
 }
 
+function findPrimaryPPSpender(): NamedPool | null {
+	if (activePoolTracksPP.value && getPoolPP(activePoolEntry.value) >= 1) {
+		return activePoolEntry.value;
+	}
+	for (const id of rolledPoolOrder.value) {
+		const p = effectivePools.value.find((entry) => entry.id === id);
+		if (p && doesPoolTrackPP(p) && getPoolPP(p) >= 1) return p;
+	}
+	return ppBearingPools.value.find((p) => getPoolPP(p) >= 1) || ppBearingPools.value[0] || null;
+}
+
 // Interactive Post-Roll Hitch Activation (§5.4)
-function handleActivateHitch(side: 'player' | 'opposition', dieId: string) {
-	const targetEval = side === 'opposition' ? oppEvaluation.value : playerEvaluation.value;
+function handleActivateHitch(targetId: string, dieId: string) {
+	const { poolId, ev: targetEval } = resolveEvalTarget(targetId);
 	if (!targetEval) return;
 	const die = targetEval.results.find((d) => d.id === dieId);
 	if (!die || !die.isHitch || die.hitchActivated) return;
+	const entry = effectivePools.value.find((p) => p.id === poolId);
 
-	if (side === 'player') {
+	if (entry && doesPoolTrackPP(entry)) {
 		die.hitchActivated = true;
-		adjustPP(1);
-		addWordToPool(playerPoolRef.value, 'player', 'Complication d6', 'hinder');
+		adjustPoolPP(entry.id, 1);
+		addWordToPool(entry.pool, entry.id, 'Complication d6', 'hinder');
 	} else {
-		if (effectivePlotPoints.value < 1) return;
+		const spender = findPrimaryPPSpender();
+		if (!spender || getPoolPP(spender) < 1) return;
 		die.hitchActivated = true;
-		adjustPP(-1);
-		addWordToPool(playerPoolRef.value, 'player', 'Opp Hitch Asset d6', 'asset');
+		adjustPoolPP(spender.id, -1);
+		addWordToPool(spender.pool, spender.id, 'Opp Hitch Asset d6', 'asset');
 	}
 }
+
+const hitchSpenderPlotPoints = computed<number>(() => {
+	const spender = findPrimaryPPSpender();
+	return spender ? getPoolPP(spender) : 0;
+});
 
 function getDieDisplayValue(value: number) {
 	return characterCurioFunctions.renderDieconSVG(value, false, '', null);
@@ -1334,62 +1760,153 @@ defineExpose({
 	bestEffectInfo,
 	isContestRoll,
 	contestSummary,
+	orderedEvaluations,
 	rollLog,
 	clearRollLog,
 });
 </script>
 
 <template>
-	<aside
-		class="dice-roller-sidebar dice-roller-sheet"
-		:class="{ open: open, 'is-opposition': currentSide === 'opposition' }"
-	>
+	<aside class="dice-roller-sidebar dice-roller-sheet" :class="{ open: open, 'is-opposition': isActiveChallengerTone }">
 		<div class="roller-body">
-			<!-- DUAL-POOL TABS + PP TRACKER -->
+			<!-- POOL TABS + PER-OWNER PP TRACKERS -->
 			<div class="roller-top-bar">
-				<div class="pool-tabs" role="tablist" aria-label="Dice pools" @keydown="onPoolTabKeydown">
-					<button
-						id="tabPlayer"
-						type="button"
-						role="tab"
-						class="pool-tab-btn pool-tab-player"
-						:aria-selected="currentSide === 'player'"
-						:tabindex="currentSide === 'player' ? 0 : -1"
-						@click="selectPoolSide('player')"
+				<div class="pool-tabs-row">
+					<div
+						ref="poolTablistRef"
+						class="pool-tabs"
+						role="tablist"
+						aria-label="Dice pools"
+						@keydown="onPoolTabKeydown"
 					>
-						<span>Player</span>
-						<span class="pool-tab-count">{{ playerItems.length }}</span>
-					</button>
+						<button
+							v-for="(entry, pIdx) in effectivePools"
+							:id="tabDomId(entry)"
+							:key="entry.id"
+							type="button"
+							role="tab"
+							class="pool-tab-btn"
+							:class="entry.id === 'opposition' || (!entry.ownerId && pIdx > 0) ? 'pool-tab-opp' : 'pool-tab-player'"
+							:aria-selected="currentPoolId === entry.id"
+							:tabindex="currentPoolId === entry.id ? 0 : -1"
+							@click="selectPoolById(entry.id)"
+						>
+							<span class="pool-tab-label">{{ resolveEntryName(entry) }}</span>
+							<span class="pool-tab-count">{{ itemsForPool(entry.pool).length }}</span>
+						</button>
+					</div>
+
 					<button
-						id="tabOpposition"
+						v-if="isMultiPoolMode"
 						type="button"
-						role="tab"
-						class="pool-tab-btn pool-tab-opp"
-						:aria-selected="currentSide === 'opposition'"
-						:tabindex="currentSide === 'opposition' ? 0 : -1"
-						@click="selectPoolSide('opposition')"
+						class="btn-add-pool"
+						:aria-expanded="isAddPoolOpen"
+						aria-label="Add dice pool"
+						@click="toggleAddPool"
 					>
-						<span>Opposition</span>
-						<span class="pool-tab-count">{{ oppItems.length }}</span>
+						+ Pool
 					</button>
 				</div>
 
-				<div class="pp-tracker" role="group" aria-label="Plot Points">
-					<span class="pp-tracker-label">PP</span>
-					<button
-						type="button"
-						class="pp-adj-btn"
-						:disabled="effectivePlotPoints <= 0"
-						aria-label="Spend Plot Point"
-						@click="adjustPP(-1)"
+				<!-- + POOL INLINE PICKER & OWNER INPUT -->
+				<div v-if="isAddPoolOpen && isMultiPoolMode" class="add-pool-bar">
+					<div v-if="unpooledCuriosities.length > 0" class="add-pool-curiosity-chips">
+						<button
+							v-for="cur in unpooledCuriosities"
+							:key="'add-cur-pool-' + cur.id"
+							type="button"
+							class="add-pool-curiosity-chip"
+							@click="quickAddCuriosityPool(cur)"
+						>
+							<i class="fas fa-lightbulb" aria-hidden="true"></i>
+							<span>+ {{ cur.name || 'Unnamed' }}</span>
+						</button>
+					</div>
+					<div class="add-pool-custom-row">
+						<label :for="newPoolInputId" class="sr-only">Pool owner name</label>
+						<input
+							:id="newPoolInputId"
+							ref="newPoolInputRef"
+							v-model="newPoolName"
+							type="text"
+							class="add-pool-input"
+							placeholder="Owner name"
+							@keydown="onNewPoolKeydown"
+						/>
+						<button
+							type="button"
+							class="add-pool-pp-chip"
+							:class="{ active: newPoolWithPP }"
+							:aria-pressed="newPoolWithPP"
+							@click="newPoolWithPP = !newPoolWithPP"
+						>
+							<i class="fas fa-coins" aria-hidden="true"></i>
+							<span>+ PP</span>
+						</button>
+						<button type="button" class="trait-submit-btn" :disabled="!newPoolName.trim()" @click="submitNewPool">
+							Add
+						</button>
+					</div>
+				</div>
+
+				<!-- VISIBLE PP FOR EACH POOL-OWNING ENTITY -->
+				<div v-if="ppBearingPools.length > 0 || (isMultiPoolMode && !activePoolTracksPP)" class="roller-owners-pp-bar">
+					<div
+						v-for="ppEntry in ppBearingPools"
+						:key="'pp-' + ppEntry.id"
+						class="pp-tracker"
+						:class="{ 'is-active-owner': ppEntry.id === currentPoolId }"
+						role="group"
+						:aria-label="
+							isMultiPoolMode || ppBearingPools.length > 1 ? resolveEntryName(ppEntry) + ' Plot Points' : 'Plot Points'
+						"
 					>
-						−
+						<span class="pp-tracker-label">
+							{{ isMultiPoolMode ? resolveEntryName(ppEntry) + ' PP' : 'PP' }}
+						</span>
+						<button
+							type="button"
+							class="pp-adj-btn"
+							:disabled="getPoolPP(ppEntry) <= 0"
+							:aria-label="
+								isMultiPoolMode && ppBearingPools.length > 1
+									? 'Spend Plot Point for ' + resolveEntryName(ppEntry)
+									: 'Spend Plot Point'
+							"
+							@click="adjustPoolPP(ppEntry.id, -1)"
+						>
+							−
+						</button>
+						<span :id="ppEntry.id === currentPoolId ? 'ppCountDisplay' : undefined" class="pp-count-val">
+							{{ getPoolPP(ppEntry)
+							}}<small v-if="pendingPPForPool(ppEntry) > 0" class="pp-pending-tag"
+								>+{{ pendingPPForPool(ppEntry) }}</small
+							>
+						</span>
+						<button
+							type="button"
+							class="pp-adj-btn"
+							:aria-label="
+								isMultiPoolMode && ppBearingPools.length > 1
+									? 'Gain Plot Point for ' + resolveEntryName(ppEntry)
+									: 'Gain Plot Point'
+							"
+							@click="adjustPoolPP(ppEntry.id, 1)"
+						>
+							+
+						</button>
+					</div>
+
+					<button
+						v-if="isMultiPoolMode && !activePoolTracksPP"
+						type="button"
+						class="roller-enable-pp-chip"
+						:aria-label="'Enable Plot Points for ' + resolveEntryName(activePoolEntry)"
+						@click="emit('togglePoolPP', activePoolEntry.id)"
+					>
+						<i class="fas fa-coins" aria-hidden="true"></i>
+						<span>+ {{ resolveEntryName(activePoolEntry) }} PP</span>
 					</button>
-					<span id="ppCountDisplay" class="pp-count-val">
-						{{ effectivePlotPoints
-						}}<small v-if="pendingPPDelta > 0" class="pp-pending-tag">+{{ pendingPPDelta }}</small>
-					</span>
-					<button type="button" class="pp-adj-btn" aria-label="Gain Plot Point" @click="adjustPP(1)">+</button>
 				</div>
 			</div>
 
@@ -1443,7 +1960,7 @@ defineExpose({
 					popover="manual"
 					class="trait-presearch-popover"
 					:class="{ 'is-fallback-open': isPresearchOpen }"
-					aria-label="Character trait suggestions"
+					aria-label="Curiosity trait suggestions"
 				>
 					<ul v-if="filteredSuggestions.length > 0" class="presearch-list">
 						<li
@@ -1532,16 +2049,28 @@ defineExpose({
 			<section class="roller-section dice-pool-section" aria-label="Dice Pool">
 				<div class="roller-section-header">
 					<span class="roller-label">
-						DICE POOL <span class="pool-count-badge">{{ stagedDice.length }}</span>
+						{{ isMultiPoolMode ? resolveEntryName(activePoolEntry) + ' POOL' : 'DICE POOL' }}
+						<span class="pool-count-badge">{{ stagedDice.length }}</span>
 					</span>
-					<button
-						v-if="stagedDice.length > 0 || activeWordBank.length > 0"
-						type="button"
-						class="roller-clear-link"
-						@click="clearActivePool"
-					>
-						Clear
-					</button>
+					<div class="roller-pool-header-actions">
+						<button
+							v-if="stagedDice.length > 0 || activeWordBank.length > 0"
+							type="button"
+							class="roller-clear-link"
+							@click="clearActivePool"
+						>
+							Clear
+						</button>
+						<button
+							v-if="isMultiPoolMode && effectivePools.length > 1"
+							type="button"
+							class="roller-remove-pool-link"
+							:aria-label="'Remove ' + resolveEntryName(activePoolEntry) + ' pool'"
+							@click="removeActivePool"
+						>
+							Remove
+						</button>
+					</div>
 				</div>
 
 				<div class="roller-pool-grid" v-if="stagedDice.length > 0">
@@ -1568,7 +2097,7 @@ defineExpose({
 				</div>
 
 				<div class="roller-empty-pool" v-else>
-					<p>Tap traits on sheet or quick add above</p>
+					<p>Tap traits on any sheet or quick add above</p>
 				</div>
 
 				<div v-if="selectedDie" class="pool-action-bar" role="group" aria-label="Selected die actions">
@@ -1601,7 +2130,7 @@ defineExpose({
 
 			<!-- SECTION 4: PP SPEND BAR, MODIFIERS & ROLL CTA -->
 			<section class="roller-controls" aria-label="Roll Controls">
-				<div class="pp-spend-bar">
+				<div v-if="!isMultiPoolMode || activePoolTracksPP" class="pp-spend-bar">
 					<button
 						type="button"
 						class="action-btn pp-spend-btn"
@@ -1662,8 +2191,9 @@ defineExpose({
 			<!-- LIVE ACCESSIBILITY REGION (ALWAYS PRESENT) -->
 			<div class="roller-results-announcement sr-only" aria-live="polite" role="status">
 				<template v-if="isRolled && isContestRoll && contestSummary">
-					Contest rolled. Player Total {{ contestSummary.playerTotal }}, Effect {{ contestSummary.playerEffect }}.
-					Opposition Total {{ contestSummary.oppTotal }}, Effect {{ contestSummary.oppEffect }}.
+					Contest rolled. {{ contestSummary.playerLabel }} Total {{ contestSummary.playerTotal }}, Effect
+					{{ contestSummary.playerEffect }}. {{ contestSummary.oppLabel }} Total {{ contestSummary.oppTotal }}, Effect
+					{{ contestSummary.oppEffect }}.
 				</template>
 				<template v-else-if="isRolled && !isBotch && lastRollResults.length > 0">
 					Rolled pool. Total: {{ manualTotal }}. Effect die: {{ manualEffectDie }}. Hitches: {{ totalHitches }}.
@@ -1685,13 +2215,16 @@ defineExpose({
 			</button>
 
 			<!-- DESKTOP INLINE RESULTS -->
-			<div v-if="isRolled && (playerEvaluation || oppEvaluation)" class="roller-results roller-inline-outcome">
+			<div v-if="isRolled && orderedEvaluations.length > 0" class="roller-results roller-inline-outcome">
 				<RollerOutcome
 					:isContest="isContestRoll"
 					:playerEval="playerEvaluation"
 					:oppositionEval="oppEvaluation"
+					:evaluations="orderedEvaluations"
 					:activeSide="currentSide"
-					:plotPoints="effectivePlotPoints"
+					:activePoolId="currentPoolId"
+					:plotPoints="hitchSpenderPlotPoints"
+					:poolPlotPoints="poolPlotPointsMap"
 					:isModal="false"
 					:dicePoolOutput="dicePoolOutput"
 					@cycleRole="handleCycleRole"
@@ -1737,7 +2270,17 @@ defineExpose({
 								<span>{{ copiedEntryId === entry.id ? 'Copied' : 'Copy' }}</span>
 							</button>
 						</div>
-						<div class="roller-log-outcome" v-if="entry.contest && entry.player && entry.opposition">
+						<div class="roller-log-outcome" v-if="entry.contest && entry.pools && entry.pools.length >= 2">
+							<span>
+								{{
+									entry.pools.map((p) => `${p.label} ${p.isBotch ? 'Botch' : p.total} (${p.effectDie})`).join(' vs ')
+								}}
+							</span>
+							<span class="roller-log-hitch-badge" v-if="entry.pools.reduce((s, p) => s + p.hitches, 0) > 0">
+								{{ entry.pools.reduce((s, p) => s + p.hitches, 0) }} Hitch
+							</span>
+						</div>
+						<div class="roller-log-outcome" v-else-if="entry.contest && entry.player && entry.opposition">
 							<span>
 								Player {{ entry.player.isBotch ? 'Botch' : entry.player.total }} ({{ entry.player.effectDie }}) vs Opp
 								{{ entry.opposition.isBotch ? 'Botch' : entry.opposition.total }} ({{ entry.opposition.effectDie }})
@@ -1756,7 +2299,15 @@ defineExpose({
 								</span>
 							</template>
 						</div>
-						<div class="roller-log-dice" v-if="entry.player?.diceSummary || entry.opposition?.diceSummary">
+						<div class="roller-log-dice" v-if="entry.pools && entry.pools.length > 0">
+							{{
+								entry.pools
+									.map((p) => p.diceSummary)
+									.filter(Boolean)
+									.join(' | ')
+							}}
+						</div>
+						<div class="roller-log-dice" v-else-if="entry.player?.diceSummary || entry.opposition?.diceSummary">
 							{{ [entry.player?.diceSummary, entry.opposition?.diceSummary].filter(Boolean).join(' | ') }}
 						</div>
 					</li>
@@ -1784,12 +2335,15 @@ defineExpose({
 			@pointerup="onDialogPointerUp"
 		>
 			<RollerOutcome
-				v-if="isRolled && (playerEvaluation || oppEvaluation)"
+				v-if="isRolled && orderedEvaluations.length > 0"
 				:isContest="isContestRoll"
 				:playerEval="playerEvaluation"
 				:oppositionEval="oppEvaluation"
+				:evaluations="orderedEvaluations"
 				:activeSide="currentSide"
-				:plotPoints="effectivePlotPoints"
+				:activePoolId="currentPoolId"
+				:plotPoints="hitchSpenderPlotPoints"
+				:poolPlotPoints="poolPlotPointsMap"
 				:isModal="true"
 				:dicePoolOutput="dicePoolOutput"
 				@cycleRole="handleCycleRole"

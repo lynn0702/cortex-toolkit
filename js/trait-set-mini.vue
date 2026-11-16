@@ -47,7 +47,7 @@ const emit = defineEmits<{
 	(e: 'applyToSet', updatedSet: any): void;
 }>();
 
-// Canonical rating factory conforming to schema/0.1/character.schema.json.
+// Canonical rating factory conforming to schema/0.2/curiosity.schema.json.
 // Die/Dice ratings omit the range when it equals the base ladder: the
 // blueprint cell carries the set-level definition and instances inherit.
 function isBaseLadder(r: number[]): boolean {
@@ -1475,8 +1475,8 @@ function applyToCurrentSheet() {
 
 function exportCardJson() {
 	const data = {
-		format: 'character-curio-card',
-		version: '0.1',
+		format: 'character-curio-set',
+		version: '0.2',
 		exportedAt: new Date().toISOString(),
 		traitSet: workingSet.value,
 	};

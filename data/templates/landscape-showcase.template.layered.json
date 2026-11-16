@@ -2,22 +2,11 @@
 	"id": "landscape-showcase",
 	"character": {
 		"name": "Landscape Showcase",
-		"pronouns": "",
-		"description": "Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.",
-		"player": "Layout Reference",
-		"game": "Showcase",
 		"plotPoints": 1,
-		"notes": "",
 		"tags": [
 			"showcase",
 			"landscape"
 		],
-		"portrait": {
-			"url": "",
-			"view": {
-				"location": "header"
-			}
-		},
 		"view": {
 			"nickname": "The Panorama Sheet",
 			"pageOrientation": "landscape",
@@ -49,7 +38,8 @@
 						"label": "Name"
 					},
 					"player": {
-						"label": "Player"
+						"label": "Player",
+						"description": "Layout Reference"
 					},
 					"nickname": {
 						"label": "Nickname"
@@ -64,33 +54,18 @@
 						"label": "Game",
 						"view": {
 							"visibility": "hidden"
-						}
+						},
+						"description": "Showcase"
 					},
 					"portrait": {},
 					"caption": {},
-					"plotPoints": {
-						"rating": {
-							"type": "Counter",
-							"value": [
-								1
-							],
-							"range": [
-								0,
-								20
-							]
-						},
-						"label": "PP",
-						"spendable": true,
-						"view": {
-							"visibility": "hidden"
-						}
-					},
 					"notes": {
 						"view": {
 							"visibility": "hidden"
 						}
 					}
-				}
+				},
+				"description": "Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns."
 			},
 			"Roles & Masteries": {
 				"id": "ls-roles",

@@ -69,20 +69,28 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(F.isPlayMutableSet(null) === false, 'null trait set returns false');
 }
 
-// ---- setPlotPoints
+// ---- setPlotPoints & 0.2 validation
 {
 	const char = {
 		plotPoints: 1,
-		traitSets: [
-			{
-				view: { style: { body: 'name' } },
-				traits: [{ name: 'plotPoints', rating: { type: 'Counter', value: [1], range: [0, 20] } }],
-			},
-		],
+		traitSets: [{ id: 'name', name: 'Name', view: { style: { body: 'name' } }, traits: [] }],
 	};
 	F.setPlotPoints(char, 2);
-	ok(char.plotPoints === 2, 'character.plotPoints updated to 2');
-	ok(char.traitSets[0].traits[0].rating.value[0] === 2, 'Counter trait value updated to 2');
+	ok(char.plotPoints === 2, 'curiosity.plotPoints updated to 2');
+	F.setPlotPoints(char, null);
+	ok(char.plotPoints === null, 'curiosity.plotPoints cleared when set to null');
+	ok(
+		F.isValidCurrentCharacter({ id: 'old-1', name: 'Old', version: '0.1', sets: {} }) === false,
+		'0.1 version rejected',
+	);
+	ok(
+		F.isValidCurrentCharacter({ id: 'old-2', name: 'Old', game: 'X', sets: {} }) === false,
+		'retired root game rejected',
+	);
+	ok(
+		F.isValidCurrentCharacter({ id: 'cur-1', name: 'Vault', version: '0.2', sets: {} }) === true,
+		'0.2 curiosity accepted',
+	);
 }
 
 // ---- play-only visibility, resolveSetPillar, getPillarLabel, characterCurioSetPresets

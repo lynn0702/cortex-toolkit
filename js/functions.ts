@@ -19,6 +19,8 @@ import {
 	resolveVisibility,
 	nextVisibility,
 	isHiddenIn,
+	getCuriosityGame,
+	getCuriosityPortrait,
 } from './model.ts';
 import { buildParts } from './sheet-grid.ts';
 import { customFontDomId, parseExternalFontUrl, sanitizeFontFamilyName } from './font-url.ts';
@@ -409,14 +411,14 @@ export const characterCurioFunctions = {
 		return view?.playMutable === true;
 	},
 
-	setPlotPoints: function (char: any, val: number) {
+	setPlotPoints: function (char: any, val: number | null) {
 		if (!char) return;
+		if (val === null || val === undefined) {
+			char.plotPoints = null;
+			return;
+		}
 		const n = Math.max(0, Math.floor(val));
 		char.plotPoints = n;
-		const t = this.getNameTrait(char, 'plotPoints');
-		if (t && getRating(t)?.type === 'Counter') {
-			t.rating = { type: 'Counter', value: [n], range: [0, 20] };
-		}
 	},
 
 	hasTrackPart: function (traitSetArg: any): boolean {
@@ -741,9 +743,9 @@ export const characterCurioFunctions = {
 	},
 
 	INVALID_FILE_MESSAGE:
-		'Unsupported or invalid Character Curio JSON file. Please choose a valid current-format character or template JSON file.',
+		'Unsupported or invalid Character Curio JSON file. Please choose a valid current-format (0.2) curiosity or template JSON file.',
 
-	// Positive structural validation for imported current-format JSON files.
+	// Positive structural validation for imported current-format (0.2) JSON files.
 	isValidCurrentCharacter: function (data: unknown): boolean {
 		if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
 		const root = data as Record<string, unknown>;
@@ -752,6 +754,7 @@ export const characterCurioFunctions = {
 				? (root.data as Record<string, unknown>)
 				: root;
 		const allowedBodies = new Set([
+			'curiosity',
 			'default',
 			'dice-count',
 			'die-rows',
@@ -761,6 +764,7 @@ export const characterCurioFunctions = {
 			'name',
 			'pips',
 			'pool-rows',
+			'portrait-ring',
 			'subtrait-columns',
 			'two-columns-compact',
 			'two-columns-detailed',
@@ -769,6 +773,12 @@ export const characterCurioFunctions = {
 			inner.character && typeof inner.character === 'object' && !Array.isArray(inner.character)
 				? (inner.character as Record<string, unknown>)
 				: inner;
+		if (target.version === '0.1' || inner.version === '0.1') return false;
+		if (typeof target.$schema === 'string' && target.$schema.includes('/0.1/')) return false;
+		if (typeof inner.$schema === 'string' && inner.$schema.includes('/0.1/')) return false;
+		for (const retiredKey of ['pronouns', 'player', 'game', 'nickname', 'notes', 'portrait']) {
+			if (target[retiredKey] !== undefined) return false;
+		}
 		const sets = target.traitSets;
 		if (sets !== undefined && sets !== null && !Array.isArray(sets)) return false;
 		if (Array.isArray(sets)) {
@@ -863,7 +873,7 @@ export const characterCurioFunctions = {
 
 	TEMPLATE_FORMAT_VERSION: 1,
 
-	TEMPLATE_SCHEMA_URL: 'https://characters.lynnjones.rocks/schema/0.1/sheet-template.schema.json',
+	TEMPLATE_SCHEMA_URL: 'https://characters.lynnjones.rocks/schema/0.2/sheet-template.schema.json',
 
 	deepEqual: function (a: unknown, b: unknown) {
 		if (a === b) return true;
@@ -1487,7 +1497,7 @@ export const characterCurioFunctions = {
 		if (meta && typeof meta.title === 'string' && meta.title.trim().length) {
 			const metaTitle = meta.title.trim();
 			const existingTitle = typeof snapshot.view?.listing?.title === 'string' ? snapshot.view.listing.title.trim() : '';
-			if (!existingTitle && metaTitle !== String(snapshot.game || '').trim()) {
+			if (!existingTitle && metaTitle !== getCuriosityGame(snapshot)) {
 				const snapView = ensureView(snapshot);
 				snapView.listing = { ...(snapView.listing || {}), title: metaTitle };
 			}
@@ -1879,8 +1889,8 @@ export const characterCurioFunctions = {
 		dateCreated: '',
 		dateModified: '',
 		dateTouched: '',
-		version: '0.1',
-		$schema: '../schema/0.1/character.schema.json',
+		version: '0.2',
+		$schema: '../schema/0.2/curiosity.schema.json',
 	},
 
 	defaultTraitSet: {
@@ -2239,11 +2249,12 @@ export const characterCurioFunctions = {
 			}
 		};
 		addList(character.tags);
-		addList(character.portrait?.tags);
+		addList(getCuriosityPortrait(character)?.tags);
 		if (Array.isArray(character.traitSets)) {
 			for (const ts of character.traitSets) {
 				if (!ts || typeof ts !== 'object') continue;
 				addList(ts.tags);
+				addList(ts.portrait?.tags);
 				walkTraits(ts.traits);
 			}
 		}

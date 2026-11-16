@@ -1,8 +1,8 @@
 /**
  * Canonical app model types.
  *
- * The core shapes (Character / TraitSet / Trait / Sfx / SheetTemplate) are
- * generated from `schema/0.1/*.schema.json` into `js/model.generated.ts` — see
+ * The core shapes (Curiosity / Character / TraitSet / Trait / SheetTemplate) are
+ * generated from `schema/0.2/*.schema.json` into `js/model.generated.ts` — see
  * `npm run types` (also chained into `npm run build`). The schema is the single
  * source of truth for those, so types never drift from validation.
  *
@@ -16,7 +16,7 @@
  * blocking new keys.
  */
 import type {
-	Character as GeneratedCharacter,
+	Curiosity as GeneratedCuriosity,
 	TraitSet as GeneratedTraitSet,
 	Trait as GeneratedTrait,
 	SheetTemplate as GeneratedSheetTemplate,
@@ -299,11 +299,17 @@ export function isRingBadgeTrait(t: unknown): boolean {
 	return keepsExtraDice(t) > 0;
 }
 
-/** Resolve Plot Points on a character; omitted or `null` defaults to `1` (explicit `0` stays `0`). */
-export function resolvePlotPoints(character: unknown): number {
-	if (!character || typeof character !== 'object') return 1;
-	const rec = character as Record<string, unknown>;
-	if (rec.plotPoints === undefined || rec.plotPoints === null) return 1;
+/** Return true iff this curiosity explicitly tracks Plot Points (`plotPoints` is a finite number). */
+export function hasPlotPoints(curiosity: unknown): boolean {
+	if (!curiosity || typeof curiosity !== 'object') return false;
+	const pp = (curiosity as Record<string, unknown>).plotPoints;
+	return typeof pp === 'number' && Number.isFinite(pp);
+}
+
+/** Resolve Plot Points on a curiosity; omitted or `null` returns `0` (check `hasPlotPoints` for presence). */
+export function resolvePlotPoints(curiosity: unknown): number {
+	if (!hasPlotPoints(curiosity)) return 0;
+	const rec = curiosity as Record<string, unknown>;
 	return Math.max(0, Math.floor(Number(rec.plotPoints) || 0));
 }
 
@@ -950,32 +956,193 @@ export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits'> & {
 	id?: string;
 };
 
-export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'view' | 'traits'> & {
+export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'view' | 'traits' | 'portrait'> & {
 	view?: ViewBag;
 	custom?: Custom;
 	traits: Trait[];
+	portrait?: Portrait | null;
 	/** App-only: stable internal key. */
 	_lid?: string;
 	/** App-only: template trait names removed from this set (D19 restore). */
 	removedTraits?: string[];
 };
 
-export type Character = Omit<GeneratedCharacter, 'custom' | 'view' | 'traitSets' | 'portrait'> & {
+export type Curiosity = Omit<GeneratedCuriosity, 'custom' | 'view' | 'traitSets' | 'curiosities'> & {
 	view?: ViewBag;
 	custom?: Custom;
 	traitSets: TraitSet[];
-	portrait?: Portrait | null;
-	/** App-only: template set ids removed from this character. */
+	curiosities?: Record<string, Curiosity> | null;
+	/** App-only: template set ids removed from this curiosity. */
 	removedSets?: string[];
 };
 
+export type Character = Curiosity;
+
 export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
-	character: Character;
+	character: Curiosity;
 	userSaved?: boolean;
 };
 
 // Convenience aliases used across the app.
 export type CharacterCurio = CharacterCurioCustom;
+
+export type IdentityFieldKey = 'pronouns' | 'player' | 'game' | 'nickname' | 'notes' | 'description';
+
+/** Locate the primary `Name` (`body: 'name'` or `id: 'name'`) set on a render or layered curiosity. */
+export function getNameSet(curiosity: unknown): Record<string, any> | undefined {
+	if (!curiosity || typeof curiosity !== 'object' || Array.isArray(curiosity)) return undefined;
+	const rec = curiosity as Record<string, any>;
+	if (Array.isArray(rec.traitSets)) {
+		const hit = rec.traitSets.find((ts: unknown) => isNameSet(ts));
+		if (hit) return hit as Record<string, any>;
+	}
+	if (rec.sets && typeof rec.sets === 'object' && !Array.isArray(rec.sets)) {
+		for (const [key, val] of Object.entries(rec.sets as Record<string, unknown>)) {
+			if (!val || typeof val !== 'object' || Array.isArray(val)) continue;
+			if (isNameSet(val) || key === 'Name') return val as Record<string, any>;
+		}
+	}
+	return undefined;
+}
+
+/** Locate an identity child trait (`pronouns`, `player`, `game`, `nickname`, `notes`, `description`, `portrait`) inside a `Name` set. */
+export function getIdentityTrait(
+	curiosityOrSet: unknown,
+	key: string,
+	targetSet?: unknown,
+): Record<string, any> | undefined {
+	const ns =
+		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
+			? (targetSet as Record<string, any>)
+			: isNameSet(curiosityOrSet)
+				? (curiosityOrSet as Record<string, any>)
+				: getNameSet(curiosityOrSet);
+	if (!ns) return undefined;
+	const needle = key.trim().toLowerCase();
+	if (Array.isArray(ns.traits)) {
+		return ns.traits.find(
+			(t: any) =>
+				t &&
+				typeof t === 'object' &&
+				String(t.name || '')
+					.trim()
+					.toLowerCase() === needle,
+		);
+	}
+	if (ns.traits && typeof ns.traits === 'object') {
+		for (const [k, v] of Object.entries(ns.traits as Record<string, unknown>)) {
+			if (k.trim().toLowerCase() === needle && v && typeof v === 'object' && !Array.isArray(v)) {
+				return v as Record<string, any>;
+			}
+		}
+	}
+	return undefined;
+}
+
+/** Read an identity text value from the `Name` set (falling back to root `description` when `key === 'description'`). */
+export function getIdentityText(curiosity: unknown, key: IdentityFieldKey, targetSet?: unknown): string {
+	if (!curiosity || typeof curiosity !== 'object') return '';
+	const rec = curiosity as Record<string, any>;
+	const ns =
+		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
+			? (targetSet as Record<string, any>)
+			: getNameSet(rec);
+	const tr = getIdentityTrait(rec, key, ns);
+	if (tr && typeof tr.description === 'string' && tr.description.length > 0) {
+		return tr.description;
+	}
+	if (key === 'description') {
+		if (ns && typeof ns.description === 'string' && ns.description.length > 0) return ns.description;
+		if (typeof rec.description === 'string') return rec.description;
+	}
+	return '';
+}
+
+/** Write an identity text value into the `Name` set (creating the child trait on demand). */
+export function setIdentityText(curiosity: any, key: IdentityFieldKey, val: string, targetSet?: any): void {
+	if (!curiosity || typeof curiosity !== 'object') return;
+	const ns = targetSet && typeof targetSet === 'object' ? targetSet : getNameSet(curiosity);
+	if (key === 'description') {
+		if (ns) {
+			ns.description = val;
+			const tr = getIdentityTrait(curiosity, 'description', ns);
+			if (tr && typeof tr.description === 'string') delete tr.description;
+			if (typeof curiosity.description === 'string') delete curiosity.description;
+		} else {
+			curiosity.description = val;
+		}
+		return;
+	}
+	if (!ns) return;
+	let tr = getIdentityTrait(curiosity, key, ns);
+	if (!tr) {
+		if (!val) return;
+		if (!Array.isArray(ns.traits)) ns.traits = [];
+		tr = { name: key, description: val, traits: [] };
+		ns.traits.push(tr);
+		return;
+	}
+	tr.description = val;
+}
+
+/** Read the portrait object attached to the `Name` set (if present). */
+export function getCuriosityPortrait(curiosity: unknown, targetSet?: unknown): Portrait | undefined {
+	const ns =
+		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
+			? (targetSet as Record<string, any>)
+			: isNameSet(curiosity)
+				? (curiosity as Record<string, any>)
+				: getNameSet(curiosity);
+	if (ns?.portrait && typeof ns.portrait === 'object' && !Array.isArray(ns.portrait)) {
+		return ns.portrait as Portrait;
+	}
+	return undefined;
+}
+
+/** Ensure and return a mutable `portrait` object on the `Name` set. */
+export function ensureCuriosityPortrait(curiosity: any, targetSet?: any): Portrait | undefined {
+	const ns = targetSet && typeof targetSet === 'object' ? targetSet : getNameSet(curiosity);
+	if (!ns) return undefined;
+	if (!ns.portrait || typeof ns.portrait !== 'object' || Array.isArray(ns.portrait)) {
+		ns.portrait = { url: '', alt: '', tags: [] };
+	}
+	ns.portrait.url ??= '';
+	ns.portrait.alt ??= '';
+	ns.portrait.tags ??= [];
+	return ns.portrait as Portrait;
+}
+
+/** Resolve the best available thumbnail image URL for Roster / Navigation cards. */
+export function getCuriosityThumbnailUrl(curiosity: unknown): string {
+	if (!curiosity || typeof curiosity !== 'object') return '';
+	const p = getCuriosityPortrait(curiosity);
+	if (typeof p?.url === 'string' && p.url.trim().length > 0) return p.url.trim();
+	const listingImg = getView(curiosity)?.listing?.image;
+	if (typeof listingImg === 'string' && listingImg.trim().length > 0) return listingImg.trim();
+	const rec = curiosity as Record<string, any>;
+	const sets = Array.isArray(rec.traitSets)
+		? rec.traitSets
+		: rec.sets && typeof rec.sets === 'object'
+			? Object.values(rec.sets)
+			: [];
+	for (const ts of sets) {
+		if (!ts || typeof ts !== 'object') continue;
+		const v = getView(ts);
+		const frameUrl = typeof v?.frame === 'object' ? v?.frame?.image?.url : undefined;
+		if (typeof frameUrl === 'string' && frameUrl.trim().length > 0) return frameUrl.trim();
+		const imgUrl = v?.imageConfig?.url;
+		if (typeof imgUrl === 'string' && imgUrl.trim().length > 0) return imgUrl.trim();
+	}
+	return '';
+}
+
+/** Resolve the `game` label from `Name` set identity traits. */
+export function getCuriosityGame(curiosity: unknown): string {
+	return (
+		getIdentityText(curiosity, 'game').trim() ||
+		trimmedString((curiosity as Record<string, unknown> | null | undefined)?.game)
+	);
+}
 
 function trimmedString(val: unknown): string {
 	return typeof val === 'string' ? val.trim() : '';
@@ -1026,7 +1193,7 @@ export function getTemplateTitle(tmpl: unknown): string {
 	return (
 		trimmedString(listing?.title) ||
 		trimmedString(entry?.title) ||
-		trimmedString(character?.game) ||
+		trimmedString(getCuriosityGame(character)) ||
 		trimmedString(character?.name) ||
 		trimmedString(entry?.name) ||
 		trimmedString(entry?.id)
@@ -1054,22 +1221,18 @@ export function getTemplateVariant(tmpl: unknown): string {
 	return trimmedString(listing?.variant) || trimmedString(entry?.variant);
 }
 
-/** Resolve the Library card description from `view.listing.quote` or `character.description`. */
+/** Resolve the Library card description from `view.listing.quote` or `character` / `Name` description. */
 export function getTemplateDescription(tmpl: unknown): string {
 	const { character } = resolveTemplateRecords(tmpl);
 	const listing = getTemplateListing(tmpl);
-	return trimmedString(listing?.quote) || trimmedString(character?.description);
+	return trimmedString(listing?.quote) || trimmedString(getIdentityText(character, 'description'));
 }
 
 /** Resolve the hero portrait/cover image URL for a Library card. */
 export function getTemplateHeroImage(tmpl: unknown): string {
 	const { character } = resolveTemplateRecords(tmpl);
 	const listing = getTemplateListing(tmpl);
-	const portrait =
-		character?.portrait && typeof character.portrait === 'object'
-			? (character.portrait as Record<string, unknown>)
-			: undefined;
-	return trimmedString(listing?.image) || trimmedString(portrait?.url);
+	return trimmedString(listing?.image) || getCuriosityThumbnailUrl(character);
 }
 
 /** Wrap a `.curio.json` Character in a canonical `SheetTemplate` envelope. */

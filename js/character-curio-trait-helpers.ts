@@ -28,6 +28,8 @@ export type TraitRaw = string | TraitObject;
 
 export interface SetObject {
 	description?: string;
+	portrait?: Portrait | null;
+	ref?: string | null;
 	select?: SelectMode;
 	requiresSelect?: boolean;
 	traits: Record<string, TraitRaw>;
@@ -47,20 +49,15 @@ export interface LayerRef {
 	[key: string]: unknown;
 }
 
-/** Phase-1 freeze: envelope stays file-level; entity carries top-level fields. */
+/** 0.2 Curiosity entity: identity parts live inside sets.Name; plotPoints is optional. */
 export interface Entity {
 	name: string;
-	game?: string;
-	type?: string;
-	challenge?: string;
 	template?: LayerRef;
-	pronouns?: string;
-	description?: string;
-	portrait?: Portrait;
-	plotPoints?: number;
-	notes?: string;
+	description?: string | null;
+	plotPoints?: number | null;
 	tags?: string[];
 	sets: Record<string, SetObject>;
+	curiosities?: Record<string, Entity>;
 	[key: string]: unknown;
 }
 

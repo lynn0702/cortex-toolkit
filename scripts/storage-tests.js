@@ -284,7 +284,7 @@ async function scenario(name, fn) {
 		const newer = demoState();
 		newer.characters[0].name = 'Newer';
 		const stamped = {
-			v: 1,
+			v: 2,
 			savedAt: new Date(Date.now() + 60000).toISOString(),
 			characters: newer.characters,
 			openCharacterIDs: [],

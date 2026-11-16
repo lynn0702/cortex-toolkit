@@ -8,7 +8,15 @@ import TraitSetEditor from '../js/trait-set-editor.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import JsonEditor from '../js/json-editor.vue';
 import { characterCurioFunctions } from '../js/functions.ts';
-import { getRating, getView, isNameSet, resolvePlotPoints, resolveRange, type Character } from '../js/model.ts';
+import {
+	getRating,
+	getView,
+	hasPlotPoints,
+	isNameSet,
+	resolvePlotPoints,
+	resolveRange,
+	type Character,
+} from '../js/model.ts';
 
 function freshBlankCharacter(id = 'jimmy-1'): Character {
 	const ch = structuredClone(characterCurioFunctions.defaultCharacter) as unknown as Character;
@@ -29,7 +37,8 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			range: [],
 		});
 		expect(resolveRange(ch.traitSets[0])).toEqual([4, 6, 8, 10, 12]);
-		expect(resolvePlotPoints(ch)).toBe(1);
+		expect(hasPlotPoints(ch)).toBe(false);
+		expect(resolvePlotPoints(ch)).toBe(0);
 
 		const wrapper = mount(CharacterView, {
 			attachTo: document.body,
@@ -216,6 +225,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		const sheetPartChips = wrapper.findAll('[aria-label="Sheet parts"] .organic-part-chip');
 		expect(sheetPartChips.map((c) => c.text().trim())).toEqual([
 			'Rating',
+			'PP',
 			'Notes',
 			'Description',
 			'Portrait',
@@ -224,6 +234,14 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			'Game',
 			'Player',
 		]);
+		const ppChip = sheetPartChips.find((c) => c.text().trim() === 'PP')!;
+		expect(ppChip.classes()).not.toContain('active');
+		await ppChip.trigger('click');
+		expect(hasPlotPoints(ch)).toBe(true);
+		expect(ch.plotPoints).toBe(1);
+		await ppChip.trigger('click');
+		expect(hasPlotPoints(ch)).toBe(false);
+		expect(ch.plotPoints).toBeUndefined();
 		const pronounsChip = sheetPartChips.find((c) => c.text().includes('Pronouns'))!;
 		expect(pronounsChip.classes()).not.toContain('active');
 		await pronounsChip.trigger('click');
@@ -599,8 +617,8 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			dateCreated: now,
 			dateModified: now,
 			dateTouched: now,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		});
 
 		// Toggling Pronouns on and back off when empty leaves zero hidden-trait clutter
@@ -638,13 +656,12 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		const initialText = (textarea.element as HTMLTextAreaElement).value;
 		expect(initialText.split('\n').length).toBeLessThanOrEqual(22);
 		expect(initialText.trimStart().startsWith('{\n  "name": ""')).toBe(true);
-		expect(initialText.trimEnd().endsWith('"$schema": "../schema/0.1/character.schema.json"\n}')).toBe(true);
+		expect(initialText.trimEnd().endsWith('"$schema": "../schema/0.2/curiosity.schema.json"\n}')).toBe(true);
 
 		const handEdited = JSON.stringify(
 			{
 				name: 'Jimmy the Snitch',
 				plotPoints: null,
-				pronouns: null,
 				sets: {
 					Name: {
 						id: 'name',
@@ -678,8 +695,9 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 
 		const materialized = characterCurioFunctions.materializeCharacter(applied, null) as unknown as Character;
 		expect(materialized.name).toBe('Jimmy the Snitch');
-		expect(resolvePlotPoints(materialized)).toBe(1);
-		expect(resolvePlotPoints({ plotPoints: 0 })).toBe(0);
+		expect(hasPlotPoints(materialized)).toBe(false);
+		expect(resolvePlotPoints(materialized)).toBe(0);
+		expect(resolvePlotPoints({ plotPoints: 2 })).toBe(2);
 		const matNameSet = materialized.traitSets.find((s) => isNameSet(s));
 		expect(getRating(matNameSet)?.value).toEqual([10]);
 		const matSkills = materialized.traitSets.find((s) => s.name === 'Skills');

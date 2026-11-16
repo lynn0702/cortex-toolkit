@@ -6,18 +6,7 @@ const characterCurioLibraryTemplates = [
 		id: 'alien-us',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Alien, Us',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 2,
 				template: 'Alien, Us',
@@ -90,6 +79,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Alien, Us',
 						},
 						{
 							name: 'portrait',
@@ -97,20 +87,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -670,8 +646,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-alien-us',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -679,18 +655,7 @@ const characterCurioLibraryTemplates = [
 		id: 'brighter-stars',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Brighter Stars',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Brighter Stars',
@@ -762,6 +727,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Brighter Stars',
 						},
 						{
 							name: 'portrait',
@@ -769,20 +735,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -1278,8 +1230,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-brighter-stars',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -1287,18 +1239,7 @@ const characterCurioLibraryTemplates = [
 		id: 'camp-bewilderwood',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Camp Bewilderwood',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Camp Bewilderwood',
@@ -1371,6 +1312,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Camp Bewilderwood',
 						},
 						{
 							name: 'portrait',
@@ -1378,20 +1320,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -1920,8 +1848,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-camp-bewilderwood',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -1929,18 +1857,7 @@ const characterCurioLibraryTemplates = [
 		id: 'cosa-nostra',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Cosa Nostra',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Cosa Nostra',
@@ -2014,6 +1931,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Cosa Nostra',
 						},
 						{
 							name: 'portrait',
@@ -2021,20 +1939,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -2417,8 +2321,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-cosa-nostra',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -2426,18 +2330,7 @@ const characterCurioLibraryTemplates = [
 		id: 'eidolon-alpha',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Eidolon Alpha',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Eidolon Alpha',
@@ -2497,6 +2390,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Eidolon Alpha',
 						},
 						{
 							name: 'portrait',
@@ -2504,20 +2398,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -3020,8 +2900,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-eidolon-alpha',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -3029,18 +2909,7 @@ const characterCurioLibraryTemplates = [
 		id: 'hammerheads-character',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Hammerheads',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 2,
 				template: 'Hammerheads',
@@ -3107,6 +2976,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Hammerheads',
 						},
 						{
 							name: 'portrait',
@@ -3114,20 +2984,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -3731,8 +3587,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-hammerheads-character',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -3740,18 +3596,7 @@ const characterCurioLibraryTemplates = [
 		id: 'hammerheads-vehicle',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Hammerheads',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Hammerheads',
@@ -3813,6 +3658,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Hammerheads',
 						},
 						{
 							name: 'portrait',
@@ -3820,20 +3666,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -4144,8 +3976,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-hammerheads-vehicle',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -4153,18 +3985,7 @@ const characterCurioLibraryTemplates = [
 		id: 'inheritors-character',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Inheritors',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Inheritors',
@@ -4237,6 +4058,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Inheritors',
 						},
 						{
 							name: 'portrait',
@@ -4244,20 +4066,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -4944,8 +4752,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-inheritors-char',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -4953,18 +4761,7 @@ const characterCurioLibraryTemplates = [
 		id: 'inheritors-family',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Inheritors',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 2,
 				template: 'Inheritors',
@@ -5039,6 +4836,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Inheritors',
 						},
 						{
 							name: 'portrait',
@@ -5046,20 +4844,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -6123,8 +5907,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-inheritors-family',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -6132,18 +5916,7 @@ const characterCurioLibraryTemplates = [
 		id: 'kitbash-hero',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Kit Bash!',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Kit Bash!',
@@ -6217,6 +5990,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Kit Bash!',
 						},
 						{
 							name: 'portrait',
@@ -6224,20 +5998,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -6807,8 +6567,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-kitbash-hero',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -6816,18 +6576,7 @@ const characterCurioLibraryTemplates = [
 		id: 'kitbash-team',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Kit Bash!',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Kit Bash!',
@@ -6902,6 +6651,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Kit Bash!',
 						},
 						{
 							name: 'portrait',
@@ -6909,20 +6659,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -7021,8 +6757,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-kitbash-team',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -7030,18 +6766,7 @@ const characterCurioLibraryTemplates = [
 		id: 'misty-cove',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Misty Cove',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Misty Cove',
@@ -7113,6 +6838,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Misty Cove',
 						},
 						{
 							name: 'portrait',
@@ -7120,20 +6846,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -7544,8 +7256,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-misty-cove',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -7553,18 +7265,7 @@ const characterCurioLibraryTemplates = [
 		id: 'necromancer',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Necromancer',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Necromancer',
@@ -7637,6 +7338,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Necromancer',
 						},
 						{
 							name: 'portrait',
@@ -7644,20 +7346,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -8105,8 +7793,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-necromancer',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -8114,18 +7802,7 @@ const characterCurioLibraryTemplates = [
 		id: 'retired-crystalline',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Retired No More',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Retired No More',
@@ -8199,6 +7876,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Retired No More',
 						},
 						{
 							name: 'portrait',
@@ -8206,20 +7884,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -8740,8 +8404,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-retired-crystalline',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -8749,18 +8413,7 @@ const characterCurioLibraryTemplates = [
 		id: 'retired-aerial',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Retired No More',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Retired No More',
@@ -8834,6 +8487,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Retired No More',
 						},
 						{
 							name: 'portrait',
@@ -8841,20 +8495,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -9280,8 +8920,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-retired-aerial',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -9289,18 +8929,7 @@ const characterCurioLibraryTemplates = [
 		id: 'safe-zone-survivor',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Safe Zone',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Safe Zone',
@@ -9373,6 +9002,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Safe Zone',
 						},
 						{
 							name: 'portrait',
@@ -9380,20 +9010,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -9935,8 +9551,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-safe-zone-survivor',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -9944,18 +9560,7 @@ const characterCurioLibraryTemplates = [
 		id: 'safe-zone-colony',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Safe Zone',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 2,
 				template: 'Safe Zone',
@@ -10029,6 +9634,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Safe Zone',
 						},
 						{
 							name: 'portrait',
@@ -10036,20 +9642,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -11061,8 +10653,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-safe-zone-colony',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -11070,18 +10662,7 @@ const characterCurioLibraryTemplates = [
 		id: 'snowfall-initiative',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Snowfall Initiative',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Snowfall Initiative',
@@ -11155,6 +10736,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Snowfall Initiative',
 						},
 						{
 							name: 'portrait',
@@ -11162,20 +10744,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -11981,8 +11549,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-snowfall',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -11990,18 +11558,7 @@ const characterCurioLibraryTemplates = [
 		id: 'solarpunk-citizen',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Solarpunk',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Solarpunk',
@@ -12074,6 +11631,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Solarpunk',
 						},
 						{
 							name: 'portrait',
@@ -12081,20 +11639,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -12504,8 +12048,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-solarpunk-citizen',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -12513,18 +12057,7 @@ const characterCurioLibraryTemplates = [
 		id: 'solarpunk-commune',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Solarpunk',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Solarpunk',
@@ -12598,6 +12131,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Solarpunk',
 						},
 						{
 							name: 'portrait',
@@ -12605,20 +12139,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -12924,8 +12444,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-solarpunk-commune',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -12933,18 +12453,7 @@ const characterCurioLibraryTemplates = [
 		id: 'spellcaught',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Spellcaught',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Spellcaught',
@@ -13016,6 +12525,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Spellcaught',
 						},
 						{
 							name: 'portrait',
@@ -13023,20 +12533,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -13620,8 +13116,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-spellcaught',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -13629,18 +13125,7 @@ const characterCurioLibraryTemplates = [
 		id: 'strange-towns',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Strange Towns',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Strange Towns',
@@ -13713,6 +13198,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Strange Towns',
 						},
 						{
 							name: 'portrait',
@@ -13720,20 +13206,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -14085,8 +13557,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-strange-towns',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -14094,18 +13566,7 @@ const characterCurioLibraryTemplates = [
 		id: 'terraverse',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Terraverse',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 2,
 				template: 'Terraverse',
@@ -14178,6 +13639,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Terraverse',
 						},
 						{
 							name: 'portrait',
@@ -14185,20 +13647,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -14974,8 +14422,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-terraverse',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -14983,18 +14431,7 @@ const characterCurioLibraryTemplates = [
 		id: 'titans-handler',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Titans vs Leviathans',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Titans vs Leviathans',
@@ -15068,6 +14505,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Titans vs Leviathans',
 						},
 						{
 							name: 'portrait',
@@ -15075,20 +14513,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -15446,8 +14870,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-titans-handler',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -15455,18 +14879,7 @@ const characterCurioLibraryTemplates = [
 		id: 'titans-titan',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'Titans vs Leviathans',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'Titans vs Leviathans',
@@ -15540,6 +14953,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Titans vs Leviathans',
 						},
 						{
 							name: 'portrait',
@@ -15547,20 +14961,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -15874,8 +15274,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-titans-titan',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -15883,18 +15283,7 @@ const characterCurioLibraryTemplates = [
 		id: 'trace-20',
 		character: {
 			name: '',
-			pronouns: '',
-			description: '',
-			player: '',
-			game: 'TRACE 2.0',
 			plotPoints: 1,
-			notes: '',
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				pageCount: 1,
 				template: 'TRACE 2.0',
@@ -15961,6 +15350,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'TRACE 2.0',
 						},
 						{
 							name: 'portrait',
@@ -15968,20 +15358,6 @@ const characterCurioLibraryTemplates = [
 						},
 						{
 							name: 'caption',
-							traits: [],
-						},
-						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
 							traits: [],
 						},
 						{
@@ -16560,8 +15936,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-trace-20',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},
@@ -16569,22 +15945,8 @@ const characterCurioLibraryTemplates = [
 		id: 'kitchen-sink',
 		character: {
 			name: 'Kitchen Sink Showcase',
-			pronouns: 'They / Them',
-			description:
-				'Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.',
-			player: 'Style Audit',
-			game: 'Showcase',
 			plotPoints: 3,
-			notes: '### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.',
 			tags: ['showcase', 'kitchen-sink'],
-			portrait: {
-				url: '',
-				alt: 'Character Portrait',
-				view: {
-					alignment: 'center-center',
-					location: 'header',
-				},
-			},
 			view: {
 				nickname: 'The Everything Sheet',
 				pageCount: 3,
@@ -16649,6 +16011,7 @@ const characterCurioLibraryTemplates = [
 							name: 'player',
 							label: 'Player',
 							traits: [],
+							description: 'Style Audit',
 						},
 						{
 							name: 'nickname',
@@ -16659,6 +16022,7 @@ const characterCurioLibraryTemplates = [
 							name: 'pronouns',
 							label: 'Pronouns',
 							traits: [],
+							description: 'They / Them',
 						},
 						{
 							name: 'description',
@@ -16672,6 +16036,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Showcase',
 						},
 						{
 							name: 'portrait',
@@ -16682,27 +16047,24 @@ const characterCurioLibraryTemplates = [
 							traits: [],
 						},
 						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [3],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
-							traits: [],
-						},
-						{
 							name: 'notes',
 							view: {
 								visibility: 'hidden',
 							},
 							traits: [],
+							description:
+								'### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.',
 						},
 					],
+					description:
+						'Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.',
+					portrait: {
+						url: '',
+						alt: 'Character Portrait',
+						view: {
+							alignment: 'center-center',
+						},
+					},
 				},
 				{
 					id: 'ks-distinctions',
@@ -18096,8 +17458,8 @@ const characterCurioLibraryTemplates = [
 			dateCreated: '2026-10-14T12:00:00.000Z',
 			dateModified: '2026-10-14T12:00:00.000Z',
 			dateTouched: '2026-10-14T12:00:00.000Z',
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		updatedAt: '2026-10-14T12:00:00.000Z',
 		version: 1,
@@ -18106,20 +17468,8 @@ const characterCurioLibraryTemplates = [
 		id: 'landscape-showcase',
 		character: {
 			name: 'Landscape Showcase',
-			pronouns: '',
-			description:
-				'Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.',
-			player: 'Layout Reference',
-			game: 'Showcase',
 			plotPoints: 1,
-			notes: '',
 			tags: ['showcase', 'landscape'],
-			portrait: {
-				url: '',
-				view: {
-					location: 'header',
-				},
-			},
 			view: {
 				nickname: 'The Panorama Sheet',
 				pageOrientation: 'landscape',
@@ -18157,6 +17507,7 @@ const characterCurioLibraryTemplates = [
 							name: 'player',
 							label: 'Player',
 							traits: [],
+							description: 'Layout Reference',
 						},
 						{
 							name: 'nickname',
@@ -18180,6 +17531,7 @@ const characterCurioLibraryTemplates = [
 								visibility: 'hidden',
 							},
 							traits: [],
+							description: 'Showcase',
 						},
 						{
 							name: 'portrait',
@@ -18190,20 +17542,6 @@ const characterCurioLibraryTemplates = [
 							traits: [],
 						},
 						{
-							name: 'plotPoints',
-							rating: {
-								type: 'Counter',
-								value: [1],
-								range: [0, 20],
-							},
-							label: 'PP',
-							spendable: true,
-							view: {
-								visibility: 'hidden',
-							},
-							traits: [],
-						},
-						{
 							name: 'notes',
 							view: {
 								visibility: 'hidden',
@@ -18211,6 +17549,8 @@ const characterCurioLibraryTemplates = [
 							traits: [],
 						},
 					],
+					description:
+						'Visual layout showcase exercising 3-column landscape layout and column spanning across 1, 2, and 3 columns.',
 				},
 				{
 					id: 'ls-roles',
@@ -19160,8 +18500,8 @@ const characterCurioLibraryTemplates = [
 			],
 			id: 'template-landscape-showcase',
 			isTemplate: true,
-			version: '0.1',
-			$schema: '../schema/0.1/character.schema.json',
+			version: '0.2',
+			$schema: '../schema/0.2/curiosity.schema.json',
 		},
 		version: 1,
 	},

@@ -1,5 +1,5 @@
 /* eslint-disable */
-/* AUTO-GENERATED from schema/0.1/*.schema.json by scripts/gen-types.mjs. Do not edit — run `npm run types`. */
+/* AUTO-GENERATED from schema/0.2/*.schema.json by scripts/gen-types.mjs. Do not edit — run `npm run types`. */
 
 /**
  * A list of taxonomy tags attached to this entity. Tags may include letters, numbers, hyphens, periods, and forward slashes (for namespacing).
@@ -12,76 +12,62 @@ export type View = {
   [k: string]: unknown;
 } | null;
 /**
- * An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.
+ * An open-ended object where apps and services can add custom data to this entity.
  */
 export type Custom = {
   [k: string]: unknown;
 } | null;
+/**
+ * An image attached to an identity or visual set.
+ */
+export type Portrait = {
+  url?: string | null;
+  /**
+   * A description of the image.
+   */
+  alt?: string | null;
+  tags?: Tags;
+  view?: View;
+  custom?: Custom;
+} | null;
 
 /**
- * A JSON schema for a Character Curio player character sheet.
+ * A JSON schema for a Character Curio curiosity (character, GMC, location, vehicle, item, or adventure bundle).
  */
-export interface Character {
+export interface Curiosity {
   /**
-   * The character’s name.
+   * The curiosity’s name.
    */
   name: string;
   /**
-   * An optional nickname or callsign for the character.
-   */
-  nickname?: string | null;
-  /**
-   * The character’s preferred pronouns.
-   */
-  pronouns?: string | null;
-  /**
-   * A short summary or subtitle for the character.
+   * An optional summary or subtitle for the curiosity.
    */
   description?: string | null;
   /**
-   * The player’s name.
-   */
-  player?: string | null;
-  /**
-   * The name of the game or campaign that the character belongs to.
-   */
-  game?: string | null;
-  /**
-   * The character’s current number of plot points. Defaults to 1 when omitted or null.
+   * Optional current Plot Points for this curiosity. Null or omitted means this curiosity does not track Plot Points.
    */
   plotPoints?: number | null;
-  /**
-   * Any additional notes about the character. Format: plaintext or Markdown.
-   */
-  notes?: string | null;
   tags?: Tags;
-  /**
-   * An image to represent the character.
-   */
-  portrait?: {
-    url?: string | null;
-    /**
-     * A description of the image.
-     */
-    alt?: string | null;
-    tags?: Tags;
-    view?: View;
-    custom?: Custom;
-  } | null;
   view?: View;
   custom?: Custom;
   /**
-   * Layered name-keyed map of the character’s trait sets.
+   * Layered name-keyed map of the curiosity’s trait sets.
    */
   sets?: {
     [k: string]: unknown;
   } | null;
   /**
-   * The character’s trait sets (array render shape).
+   * The curiosity’s trait sets (array render shape).
    */
   traitSets?: TraitSet[] | null;
   /**
-   * File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.
+   * Peer Curiosities bundled inside this document, keyed by Curiosity id.
+   */
+  curiosities?: {
+    [k: string]: Curiosity;
+  } | null;
+  /**
+   * File-traveling arrangement (name-keyed set/trait order + declined template versions).
    */
   prefs?: {
     setOrder?: unknown[];
@@ -90,7 +76,7 @@ export interface Character {
     [k: string]: unknown;
   } | null;
   /**
-   * Layout resolution: template names the sheet template whose values fill in anything not set locally (live: bare { id }; file export: full embedded template object).
+   * Layout resolution: template names the sheet template whose values fill in anything not set locally.
    */
   sheet?: {
     /**
@@ -106,31 +92,31 @@ export interface Character {
    */
   template?: {} | string | null;
   /**
-   * A unique identifier for the character.
+   * A unique identifier for the curiosity.
    */
   id: string;
   /**
-   * Whether this character represents a reusable template.
+   * Whether this curiosity represents a reusable template.
    */
   isTemplate?: boolean | null;
   /**
-   * The date and time when the character was first created.
+   * The date and time when the curiosity was first created.
    */
   dateCreated?: string | null;
   /**
-   * The date and time when the character was last changed.
+   * The date and time when the curiosity was last changed.
    */
   dateModified?: string | null;
   /**
-   * The date and time when the character was last loaded, viewed or interacted with.
+   * The date and time when the curiosity was last loaded, viewed or interacted with.
    */
   dateTouched?: string | null;
   /**
-   * Version of character.schema.json to use.
+   * Version of curiosity.schema.json to use.
    */
-  version?: "0.1" | null;
+  version?: "0.2" | null;
   /**
-   * JSON schema URI for character.schema.json.
+   * JSON schema URI for curiosity.schema.json.
    */
   $schema?: string | null;
 }
@@ -155,6 +141,11 @@ export interface TraitSet {
    * The plural noun used to describe multiple traits in this set.
    */
   plural?: string | null;
+  portrait?: Portrait;
+  /**
+   * Optional target Curiosity ID linked from this set.
+   */
+  ref?: string | null;
   /**
    * The traits in the trait set.
    */
@@ -201,6 +192,10 @@ export interface Trait {
    * Category plural label for this trait or child trait.
    */
   plural?: string | null;
+  /**
+   * Optional target Curiosity ID linked from this trait.
+   */
+  ref?: string | null;
   rating?: Rating;
   /**
    * Staging behaviour: adding the node to the roller stages its whole array of available dice.
@@ -264,8 +259,10 @@ export interface Rating {
   out?: boolean | null;
 }
 
+export type Character = Curiosity;
+
 /**
- * A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.
+ * A reusable sheet layout: { id (static), version, updatedAt, character: {...} } with Library listing metadata stored on character.view.listing. Trait sets carry stable ids joining curiosity overrides to template layout. Imports dedupe by static id.
  */
 export interface SheetTemplate {
   /**
@@ -273,7 +270,7 @@ export interface SheetTemplate {
    */
   id: string;
   /**
-   * Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.
+   * Curiosity-shaped blank carrying the layout (view at sheet and set level) plus blank traits.
    */
   character: {};
   updatedAt?: string;

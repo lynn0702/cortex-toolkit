@@ -2,17 +2,7 @@
 	"id": "trace-20",
 	"character": {
 		"name": "",
-		"pronouns": "",
-		"player": "",
-		"game": "TRACE 2.0",
 		"plotPoints": 1,
-		"notes": "",
-		"portrait": {
-			"url": "",
-			"view": {
-				"location": "header"
-			}
-		},
 		"view": {
 			"pageCount": 1,
 			"template": "TRACE 2.0",
@@ -65,27 +55,11 @@
 						"label": "Game",
 						"view": {
 							"visibility": "hidden"
-						}
+						},
+						"description": "TRACE 2.0"
 					},
 					"portrait": {},
 					"caption": {},
-					"plotPoints": {
-						"rating": {
-							"type": "Counter",
-							"value": [
-								1
-							],
-							"range": [
-								0,
-								20
-							]
-						},
-						"label": "PP",
-						"spendable": true,
-						"view": {
-							"visibility": "hidden"
-						}
-					},
 					"notes": {
 						"view": {
 							"visibility": "hidden"

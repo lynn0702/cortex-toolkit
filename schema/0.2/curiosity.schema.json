@@ -1,10 +1,53 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://characters.lynnjones.rocks/schema/0.1/character.schema.json",
-	"title": "Character Curio character",
-	"description": "A JSON schema for a Character Curio player character sheet.",
+	"$id": "https://characters.lynnjones.rocks/schema/0.2/curiosity.schema.json",
+	"title": "Character Curio curiosity",
+	"description": "A JSON schema for a Character Curio curiosity (character, GMC, location, vehicle, item, or adventure bundle).",
 	"type": "object",
 	"$defs": {
+		"portrait": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "An image attached to an identity or visual set.",
+			"properties": {
+				"url": {
+					"anyOf": [
+						{
+							"type": "string",
+							"description": "A URI compatible with the HTML <image> tag.",
+							"format": "uri"
+						},
+						{
+							"type": "string",
+							"description": "An empty string to indicate no image.",
+							"maxLength": 0
+						},
+						{
+							"type": "null"
+						}
+					]
+				},
+				"alt": {
+					"type": [
+						"string",
+						"null"
+					],
+					"description": "A description of the image."
+				},
+				"tags": {
+					"$ref": "#/$defs/tags"
+				},
+				"view": {
+					"$ref": "#/$defs/view"
+				},
+				"custom": {
+					"$ref": "#/$defs/custom"
+				}
+			},
+			"additionalProperties": false
+		},
 		"traitSet": {
 			"type": "object",
 			"properties": {
@@ -39,6 +82,16 @@
 						"null"
 					],
 					"description": "The plural noun used to describe multiple traits in this set."
+				},
+				"portrait": {
+					"$ref": "#/$defs/portrait"
+				},
+				"ref": {
+					"type": [
+						"string",
+						"null"
+					],
+					"description": "Optional target Curiosity ID linked from this set."
 				},
 				"traits": {
 					"type": [
@@ -131,6 +184,13 @@
 						"null"
 					],
 					"description": "Category plural label for this trait or child trait."
+				},
+				"ref": {
+					"type": [
+						"string",
+						"null"
+					],
+					"description": "Optional target Curiosity ID linked from this trait."
 				},
 				"rating": {
 					"$ref": "#/$defs/rating"
@@ -290,109 +350,31 @@
 				"object",
 				"null"
 			],
-			"description": "An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.",
+			"description": "An open-ended object where apps and services can add custom data to this entity.",
 			"additionalProperties": true
 		}
 	},
 	"properties": {
 		"name": {
 			"type": "string",
-			"description": "The character’s name."
-		},
-		"nickname": {
-			"type": [
-				"string",
-				"null"
-			],
-			"description": "An optional nickname or callsign for the character."
-		},
-		"pronouns": {
-			"type": [
-				"string",
-				"null"
-			],
-			"description": "The character’s preferred pronouns."
+			"description": "The curiosity’s name."
 		},
 		"description": {
 			"type": [
 				"string",
 				"null"
 			],
-			"description": "A short summary or subtitle for the character."
-		},
-		"player": {
-			"type": [
-				"string",
-				"null"
-			],
-			"description": "The player’s name."
-		},
-		"game": {
-			"type": [
-				"string",
-				"null"
-			],
-			"description": "The name of the game or campaign that the character belongs to."
+			"description": "An optional summary or subtitle for the curiosity."
 		},
 		"plotPoints": {
 			"type": [
 				"integer",
 				"null"
 			],
-			"description": "The character’s current number of plot points. Defaults to 1 when omitted or null."
-		},
-		"notes": {
-			"type": [
-				"string",
-				"null"
-			],
-			"description": "Any additional notes about the character. Format: plaintext or Markdown."
+			"description": "Optional current Plot Points for this curiosity. Null or omitted means this curiosity does not track Plot Points."
 		},
 		"tags": {
 			"$ref": "#/$defs/tags"
-		},
-		"portrait": {
-			"type": [
-				"object",
-				"null"
-			],
-			"description": "An image to represent the character.",
-			"properties": {
-				"url": {
-					"anyOf": [
-						{
-							"type": "string",
-							"description": "A URI compatible with the HTML <image> tag.",
-							"format": "uri"
-						},
-						{
-							"type": "string",
-							"description": "An empty string to indicate no image.",
-							"maxLength": 0
-						},
-						{
-							"type": "null"
-						}
-					]
-				},
-				"alt": {
-					"type": [
-						"string",
-						"null"
-					],
-					"description": "A description of the image."
-				},
-				"tags": {
-					"$ref": "#/$defs/tags"
-				},
-				"view": {
-					"$ref": "#/$defs/view"
-				},
-				"custom": {
-					"$ref": "#/$defs/custom"
-				}
-			},
-			"additionalProperties": false
 		},
 		"view": {
 			"$ref": "#/$defs/view"
@@ -405,7 +387,7 @@
 				"object",
 				"null"
 			],
-			"description": "Layered name-keyed map of the character’s trait sets.",
+			"description": "Layered name-keyed map of the curiosity’s trait sets.",
 			"additionalProperties": true
 		},
 		"traitSets": {
@@ -413,9 +395,19 @@
 				"array",
 				"null"
 			],
-			"description": "The character’s trait sets (array render shape).",
+			"description": "The curiosity’s trait sets (array render shape).",
 			"items": {
 				"$ref": "#/$defs/traitSet"
+			}
+		},
+		"curiosities": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "Peer Curiosities bundled inside this document, keyed by Curiosity id.",
+			"additionalProperties": {
+				"$ref": "#"
 			}
 		},
 		"prefs": {
@@ -423,7 +415,7 @@
 				"object",
 				"null"
 			],
-			"description": "File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.",
+			"description": "File-traveling arrangement (name-keyed set/trait order + declined template versions).",
 			"properties": {
 				"setOrder": {
 					"type": "array"
@@ -442,7 +434,7 @@
 				"object",
 				"null"
 			],
-			"description": "Layout resolution: template names the sheet template whose values fill in anything not set locally (live: bare { id }; file export: full embedded template object).",
+			"description": "Layout resolution: template names the sheet template whose values fill in anything not set locally.",
 			"properties": {
 				"template": {
 					"type": "object",
@@ -473,7 +465,7 @@
 		},
 		"id": {
 			"type": "string",
-			"description": "A unique identifier for the character.",
+			"description": "A unique identifier for the curiosity.",
 			"format": "uuid"
 		},
 		"isTemplate": {
@@ -481,7 +473,7 @@
 				"boolean",
 				"null"
 			],
-			"description": "Whether this character represents a reusable template."
+			"description": "Whether this curiosity represents a reusable template."
 		},
 		"dateCreated": {
 			"type": [
@@ -489,7 +481,7 @@
 				"null"
 			],
 			"format": "date-time",
-			"description": "The date and time when the character was first created."
+			"description": "The date and time when the curiosity was first created."
 		},
 		"dateModified": {
 			"type": [
@@ -497,7 +489,7 @@
 				"null"
 			],
 			"format": "date-time",
-			"description": "The date and time when the character was last changed."
+			"description": "The date and time when the curiosity was last changed."
 		},
 		"dateTouched": {
 			"type": [
@@ -505,21 +497,21 @@
 				"null"
 			],
 			"format": "date-time",
-			"description": "The date and time when the character was last loaded, viewed or interacted with."
+			"description": "The date and time when the curiosity was last loaded, viewed or interacted with."
 		},
 		"version": {
-			"description": "Version of character.schema.json to use.",
+			"description": "Version of curiosity.schema.json to use.",
 			"type": [
 				"string",
 				"null"
 			],
 			"enum": [
-				"0.1",
+				"0.2",
 				null
 			]
 		},
 		"$schema": {
-			"description": "JSON schema URI for character.schema.json.",
+			"description": "JSON schema URI for curiosity.schema.json.",
 			"type": [
 				"string",
 				"null"

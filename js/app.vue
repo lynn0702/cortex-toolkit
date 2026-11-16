@@ -3,7 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch
 import { characterCurioFunctions } from './functions.ts';
 import { characterCurioStorage } from './storage.ts';
 import { cloneDeep } from './clone-deep.ts';
-import { dicePool as dicePoolModel } from './dice-pool.ts';
+import { dicePool as dicePoolModel, type NamedPool } from './dice-pool.ts';
 import Roster from './roster.vue';
 import Character from './character.vue';
 import StudioPanel from './studio-panel.vue';
@@ -16,7 +16,14 @@ import CommandPalette from './command-palette.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
-import { getView, getTemplateTitle, resolvePlotPoints, resolveVisibility } from './model.ts';
+import {
+	getView,
+	getTemplateTitle,
+	hasPlotPoints,
+	resolvePlotPoints,
+	getCuriosityGame,
+	getCuriosityThumbnailUrl,
+} from './model.ts';
 
 declare const characterCurioLibraryTemplates: any;
 
@@ -39,9 +46,13 @@ const mode = ref('roster');
 const submode = ref<string | null>(null);
 const editing = ref<any>(null);
 const viewY = ref<number | null>(null);
-const dicePool = ref(new dicePoolModel.DicePool());
+const fallbackDicePool = ref(new dicePoolModel.DicePool());
 const oppositionPool = ref(new dicePoolModel.DicePool());
 const activeRollerSide = ref<'player' | 'opposition'>('player');
+const namedPools = ref<NamedPool[]>([]);
+const activePoolId = ref<string>('');
+const explicitlyAddedPoolIds = new Set<string>();
+const manuallyRemovedPoolKeys = new Set<string>();
 const isRollerOpen = ref(false);
 const rollerPosition = ref('right');
 const isStudioPanelOpen = ref(true);
@@ -155,18 +166,85 @@ const character = computed(() => {
 	return characters.value[characterIndex.value];
 });
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
-const activePlayPlotPoints = computed(() => (character.value ? resolvePlotPoints(character.value) : 0));
-const activePlayPlotPointsLabel = computed(() => {
-	if (!character.value) return 'PP';
-	const custom = characterCurioFunctions.getNameTrait(character.value, 'plotPoints')?.label;
-	return typeof custom === 'string' && custom.trim().length ? custom.trim() : 'PP';
+
+function resolveOwnerCuriosity(ownerId: string | null | undefined): any | null {
+	if (!ownerId) return null;
+	const targetId = String(ownerId);
+	if (previewCharacter.value) {
+		if (String(previewCharacter.value.id) === targetId) return previewCharacter.value;
+		if (previewCharacter.value.curiosities?.[targetId]) return previewCharacter.value.curiosities[targetId];
+	}
+	for (const c of characters.value) {
+		if (!c) continue;
+		if (String(c.id) === targetId) return c;
+		if (c.curiosities && typeof c.curiosities === 'object' && c.curiosities[targetId]) {
+			return c.curiosities[targetId];
+		}
+	}
+	return null;
+}
+
+const activeNamedPool = computed<NamedPool | null>(
+	() => namedPools.value.find((p) => p.id === activePoolId.value) || namedPools.value[0] || null,
+);
+
+const dicePool = computed(() => activeNamedPool.value?.pool || fallbackDicePool.value);
+
+const totalStagedDiceCount = computed(() =>
+	namedPools.value.reduce((sum, entry) => sum + (entry.pool?.items?.length || 0), 0),
+);
+
+const nonEmptyNamedPools = computed(() => namedPools.value.filter((entry) => (entry.pool?.items?.length || 0) > 0));
+
+const activePlayPlotPoints = computed(() => {
+	if (submode.value === 'play' && activeNamedPool.value) {
+		const owner = resolveOwnerCuriosity(activeNamedPool.value.ownerId);
+		if (owner) return resolvePlotPoints(owner);
+		if (typeof activeNamedPool.value.plotPoints === 'number') {
+			return Math.max(0, Math.floor(activeNamedPool.value.plotPoints));
+		}
+		return 0;
+	}
+	return character.value ? resolvePlotPoints(character.value) : 0;
 });
+
+function resolveEntityPpBaseLabel(entity: any): string {
+	if (!entity) return 'PP';
+	const viewPp = (getView(entity)?.labels as Record<string, unknown> | undefined)?.pp;
+	if (typeof viewPp === 'string' && viewPp.trim().length) return viewPp.trim();
+	const custom = characterCurioFunctions.getNameTrait(entity, 'plotPoints')?.label;
+	return typeof custom === 'string' && custom.trim().length ? custom.trim() : 'PP';
+}
+
+const activePlayPlotPointsLabel = computed(() => {
+	if (submode.value === 'play' && activeNamedPool.value) {
+		const owner = resolveOwnerCuriosity(activeNamedPool.value.ownerId);
+		const base = resolveEntityPpBaseLabel(owner);
+		const isSingleMatchingOwner =
+			owner &&
+			character.value &&
+			String(owner.id) === String(character.value.id) &&
+			namedPools.value.filter((p) => p.id !== 'opposition').length <= 1;
+		if (isSingleMatchingOwner) return base;
+		const resolvedOwnerName = owner
+			? String(owner.name || 'Unnamed').trim() || 'Unnamed'
+			: activeNamedPool.value.ownerName;
+		return `${resolvedOwnerName} ${base}`;
+	}
+	return resolveEntityPpBaseLabel(character.value);
+});
+
 const showPlayPlotPoints = computed(() => {
-	if (mode.value !== 'character' || submode.value !== 'play' || !character.value) return false;
-	const ppTrait = characterCurioFunctions.getNameTrait(character.value, 'plotPoints');
-	if (!ppTrait) return true;
-	const vis = resolveVisibility(ppTrait);
-	return vis !== 'hidden' && vis !== 'editor-only';
+	if (mode.value !== 'character' || (submode.value !== 'play' && submode.value !== 'edit')) {
+		return false;
+	}
+	if (submode.value === 'play') {
+		if (!activeNamedPool.value) return Boolean(character.value && hasPlotPoints(character.value));
+		const owner = resolveOwnerCuriosity(activeNamedPool.value.ownerId);
+		if (owner) return hasPlotPoints(owner);
+		return typeof activeNamedPool.value.plotPoints === 'number' && Number.isFinite(activeNamedPool.value.plotPoints);
+	}
+	return Boolean(character.value && hasPlotPoints(character.value));
 });
 
 const {
@@ -205,6 +283,108 @@ const openCharacters = computed(() => {
 	return list;
 });
 
+const rollerCuriosities = computed(() => {
+	const seen = new Set<string>();
+	const list: any[] = [];
+	const add = (c: any) => {
+		if (!c || typeof c !== 'object' || c.isTemplate) return;
+		const id = String(c.id || '');
+		if (id && seen.has(id)) return;
+		if (id) seen.add(id);
+		list.push(c);
+		if (c.curiosities && typeof c.curiosities === 'object') {
+			for (const sub of Object.values(c.curiosities)) add(sub);
+		}
+	};
+	for (const oc of openCharacters.value) add(oc);
+	for (const c of characters.value) add(c);
+	return list;
+});
+
+function syncSessionPools(preferCharacterId?: string | null) {
+	const targets = openCharacters.value;
+	const targetIds = new Set(targets.map((c: any) => String(c?.id || '')).filter(Boolean));
+	const next: NamedPool[] = [];
+
+	// Keep existing pools unless they are empty session pools for closed sheets
+	for (const entry of namedPools.value) {
+		if (entry.ownerId) {
+			const owner = resolveOwnerCuriosity(entry.ownerId);
+			if (owner) {
+				entry.ownerName = String(owner.name || 'Unnamed').trim() || 'Unnamed';
+			}
+			const isEmpty = (entry.pool?.items?.length || 0) === 0 && (entry.pool?.wordBank?.length || 0) === 0;
+			if (!owner || (!targetIds.has(String(entry.ownerId)) && isEmpty && !explicitlyAddedPoolIds.has(entry.id))) {
+				continue;
+			}
+		}
+		next.push(entry);
+	}
+
+	// Ensure every open sheet in the session has a NamedPool (inserted before Opposition)
+	for (const c of targets) {
+		if (!c || !c.id) continue;
+		const cid = String(c.id);
+		if (manuallyRemovedPoolKeys.has('owner:' + cid)) continue;
+		if (!next.some((p) => p.ownerId && String(p.ownerId) === cid)) {
+			const created = dicePoolModel.createNamedPool(String(c.name || 'Unnamed').trim() || 'Unnamed', cid);
+			const oppIdx = next.findIndex((p) => p.id === 'opposition');
+			if (oppIdx !== -1) {
+				next.splice(oppIdx, 0, created);
+			} else {
+				next.push(created);
+			}
+		}
+	}
+
+	// Ensure default Opposition pool exists unless manually removed
+	if (!manuallyRemovedPoolKeys.has('opposition') && !next.some((p) => p.id === 'opposition')) {
+		next.push({
+			id: 'opposition',
+			ownerId: null,
+			ownerName: 'Opposition',
+			pool: oppositionPool.value,
+		});
+	}
+
+	// Fallback if everything was removed
+	if (next.length === 0) {
+		next.push({
+			id: 'opposition',
+			ownerId: null,
+			ownerName: 'Opposition',
+			pool: oppositionPool.value,
+		});
+	}
+
+	namedPools.value = next;
+
+	if (preferCharacterId) {
+		const preferred = next.find((p) => p.ownerId && String(p.ownerId) === String(preferCharacterId));
+		if (preferred) {
+			activePoolId.value = preferred.id;
+			activeRollerSide.value = 'player';
+			return;
+		}
+	}
+
+	if (!activePoolId.value || !next.some((p) => p.id === activePoolId.value)) {
+		const forCurrent =
+			character.value && next.find((p) => p.ownerId && String(p.ownerId) === String(character.value.id));
+		const chosen = forCurrent || next[0];
+		activePoolId.value = chosen?.id || '';
+		activeRollerSide.value = chosen?.id === 'opposition' ? 'opposition' : 'player';
+	}
+}
+
+watch(
+	[openCharacters, character, () => character.value?.name],
+	() => {
+		syncSessionPools();
+	},
+	{ immediate: true },
+);
+
 const availableToOpen = computed(() => {
 	const q = (sessionCharacterSearch.value || '').toLowerCase().trim();
 	return characters.value.filter((c: any) => {
@@ -213,7 +393,7 @@ const availableToOpen = computed(() => {
 		if (
 			q.length &&
 			!c.name?.toLowerCase().includes(q) &&
-			!c.game?.toLowerCase().includes(q) &&
+			!getCuriosityGame(c).toLowerCase().includes(q) &&
 			!characterCurioFunctions.characterMatchesTagQuery(c, q)
 		)
 			return false;
@@ -426,6 +606,9 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 	mode.value = m;
 	submode.value = sub;
 	if (m === 'character' && sub === 'play') {
+		if (totalStagedDiceCount.value === 0 && character.value?.id) {
+			syncSessionPools(character.value.id);
+		}
 		// Narrow viewports (overlay drawer): land on the sheet, panel
 		// closed — it would otherwise cover the sheet on arrival. The
 		// Roller handle opens it explicitly.
@@ -589,9 +772,141 @@ function isNarrowViewport() {
 	return Boolean(window.matchMedia && window.matchMedia('(max-width: 1399px)').matches);
 }
 
+function selectActivePoolId(poolId: string) {
+	if (!poolId) return;
+	activePoolId.value = poolId;
+	activeRollerSide.value = poolId === 'opposition' ? 'opposition' : 'player';
+}
+
+function handleActivePoolSideChange(side: 'player' | 'opposition') {
+	activeRollerSide.value = side;
+	if (side === 'opposition') {
+		const opp = namedPools.value.find((p) => p.id === 'opposition') || namedPools.value[1];
+		if (opp) activePoolId.value = opp.id;
+	} else if (activePoolId.value === 'opposition') {
+		const primary = namedPools.value.find((p) => p.id !== 'opposition') || namedPools.value[0];
+		if (primary) activePoolId.value = primary.id;
+	}
+}
+
+function cycleActiveNamedPool() {
+	if (namedPools.value.length <= 1) return;
+	const idx = Math.max(
+		0,
+		namedPools.value.findIndex((p) => p.id === activePoolId.value),
+	);
+	const next = namedPools.value[(idx + 1) % namedPools.value.length];
+	if (next) selectActivePoolId(next.id);
+}
+
+function handleAddNamedPool(payload: { ownerId: string | null; ownerName: string; withPP?: boolean }) {
+	if (payload.ownerId) {
+		const cid = String(payload.ownerId);
+		manuallyRemovedPoolKeys.delete('owner:' + cid);
+		const existing = namedPools.value.find((p) => p.ownerId && String(p.ownerId) === cid);
+		if (existing) {
+			selectActivePoolId(existing.id);
+			return;
+		}
+		const owner = resolveOwnerCuriosity(cid);
+		const created = dicePoolModel.createNamedPool(
+			String(owner?.name || payload.ownerName || 'Unnamed').trim() || 'Unnamed',
+			cid,
+		);
+		explicitlyAddedPoolIds.add(created.id);
+		const oppIdx = namedPools.value.findIndex((p) => p.id === 'opposition');
+		if (oppIdx !== -1) {
+			namedPools.value.splice(oppIdx, 0, created);
+		} else {
+			namedPools.value.push(created);
+		}
+		selectActivePoolId(created.id);
+		return;
+	}
+
+	const cleanName = String(payload.ownerName || '').trim();
+	if (!cleanName) return;
+	if (cleanName.toLowerCase() === 'opposition' && !namedPools.value.some((p) => p.id === 'opposition')) {
+		manuallyRemovedPoolKeys.delete('opposition');
+		const oppEntry: NamedPool = {
+			id: 'opposition',
+			ownerId: null,
+			ownerName: 'Opposition',
+			pool: oppositionPool.value,
+			...(payload.withPP ? { plotPoints: 1 } : {}),
+		};
+		namedPools.value.push(oppEntry);
+		selectActivePoolId(oppEntry.id);
+		return;
+	}
+	const created = dicePoolModel.createNamedPool(cleanName, null, payload.withPP ? 1 : undefined);
+	explicitlyAddedPoolIds.add(created.id);
+	namedPools.value.push(created);
+	selectActivePoolId(created.id);
+}
+
+function handleRemoveNamedPool(poolId: string) {
+	if (namedPools.value.length <= 1) return;
+	const idx = namedPools.value.findIndex((p) => p.id === poolId);
+	if (idx === -1) return;
+	const removed = namedPools.value[idx];
+	explicitlyAddedPoolIds.delete(removed.id);
+	if (removed.id === 'opposition') {
+		manuallyRemovedPoolKeys.add('opposition');
+	} else if (removed.ownerId) {
+		manuallyRemovedPoolKeys.add('owner:' + String(removed.ownerId));
+	}
+	removed.pool?.clear?.();
+	namedPools.value.splice(idx, 1);
+	if (activePoolId.value === poolId) {
+		const fallback = namedPools.value[Math.max(0, idx - 1)] || namedPools.value[0];
+		if (fallback) selectActivePoolId(fallback.id);
+	}
+}
+
+function persistOwnerMutation(owner: any) {
+	if (!owner) return;
+	if (character.value && String(character.value.id) === String(owner.id)) {
+		updateCharacter(owner);
+		return;
+	}
+	const topIdx = characters.value.findIndex((c: any) => c && String(c.id) === String(owner.id));
+	if (topIdx !== -1) {
+		owner.dateModified = new Date().toISOString();
+		characters.value[topIdx] = characterCurioFunctions.orderCharacterKeys(owner);
+		persist();
+		return;
+	}
+	// Nested curiosity inside a parent root
+	for (let i = 0; i < characters.value.length; i++) {
+		const parent = characters.value[i];
+		if (parent?.curiosities && parent.curiosities[owner.id]) {
+			parent.dateModified = new Date().toISOString();
+			persist();
+			return;
+		}
+	}
+	persist();
+}
+
+function handleTogglePoolPP(poolId: string) {
+	const entry = namedPools.value.find((p) => p.id === poolId);
+	if (!entry) return;
+	const owner = resolveOwnerCuriosity(entry.ownerId);
+	if (owner) {
+		characterCurioFunctions.setPlotPoints(owner, hasPlotPoints(owner) ? null : 1);
+		persistOwnerMutation(owner);
+	} else {
+		entry.plotPoints = typeof entry.plotPoints === 'number' ? null : 1;
+	}
+}
+
 function addDieToRoller(dieData: any) {
-	const isOpp = activeRollerSide.value === 'opposition';
-	const targetPool = isOpp ? oppositionPool.value : dicePool.value;
+	if (namedPools.value.length === 0) {
+		syncSessionPools();
+	}
+	const targetEntry = activeNamedPool.value;
+	const targetPool = targetEntry ? targetEntry.pool : dicePool.value;
 	targetPool.add(dieData);
 	if (submode.value === 'play' && !isNarrowViewport()) {
 		isStudioPanelOpen.value = true;
@@ -605,7 +920,8 @@ function addDieToRoller(dieData: any) {
 	} else {
 		label = dieData.source ? dieData.source : `d${dieData.size}`;
 	}
-	showToast(`Added ${label} to ${isOpp ? 'opposition' : 'dice'} pool`);
+	const ownerTag = targetEntry ? `${targetEntry.ownerName} pool` : 'dice pool';
+	showToast(`Added ${label} to ${ownerTag}`);
 }
 
 const studioPanelRef = ref<any>(null);
@@ -637,25 +953,42 @@ function hasUncommittedSessionChanges(): boolean {
 }
 
 function removeDieFromRoller(index: number) {
-	if (activeRollerSide.value === 'opposition') {
-		oppositionPool.value.removeAt(index);
-	} else {
-		dicePool.value.removeAt(index);
-	}
+	const target = activeNamedPool.value?.pool || dicePool.value;
+	target.removeAt(index);
 }
 
 function clearDicePool() {
-	dicePool.value.clear();
+	for (const entry of namedPools.value) {
+		entry.pool.clear();
+	}
+	fallbackDicePool.value.clear();
 }
 
 function clearOppositionPool() {
 	oppositionPool.value.clear();
 }
 
-function handleSettlePP(delta: number) {
-	if (character.value && delta !== 0) {
+function handleSettlePP(delta: number, poolId?: string) {
+	if (delta === 0) return;
+	if (submode.value === 'play' || poolId) {
+		const target = (poolId ? namedPools.value.find((p) => p.id === poolId) : activeNamedPool.value) || null;
+		if (target) {
+			const owner = resolveOwnerCuriosity(target.ownerId);
+			if (owner) {
+				const currentPP = characterCurioFunctions.resolvePlotPoints(owner);
+				characterCurioFunctions.setPlotPoints(owner, Math.max(0, currentPP + delta));
+				persistOwnerMutation(owner);
+				return;
+			}
+			if (typeof target.plotPoints === 'number') {
+				target.plotPoints = Math.max(0, target.plotPoints + delta);
+				return;
+			}
+		}
+	}
+	if (character.value) {
 		const currentPP = characterCurioFunctions.resolvePlotPoints(character.value);
-		characterCurioFunctions.setPlotPoints(character.value, currentPP + delta);
+		characterCurioFunctions.setPlotPoints(character.value, Math.max(0, currentPP + delta));
 		updateCharacter(character.value);
 	}
 }
@@ -735,7 +1068,7 @@ function discardPlaySession() {
 			}
 		}
 	}
-	dicePool.value.clear();
+	clearDicePool();
 	oppositionPool.value.clear();
 	showToast('Discarded session changes.');
 	if (pendingNavigation) {
@@ -996,6 +1329,11 @@ function setModeForChar(charId: string, sub: string) {
 
 // DATA
 function createCharacter(isTemplate: boolean | string = false, templateId?: string | null) {
+	if (previewCharacter.value) {
+		previewCharacter.value = null;
+		previewTemplateEntry.value = null;
+		previewDismissed.value = true;
+	}
 	let asTemplate = false;
 	let targetTemplateId: string | null = null;
 	if (typeof isTemplate === 'boolean') {
@@ -1020,7 +1358,8 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 			const entry = characterCurioFunctions.extractSheetTemplate(template, {
 				id: reuse,
 				version: 1,
-				title: getView(template)?.listing?.title || (!template.game ? template.name || 'Template' : undefined),
+				title:
+					getView(template)?.listing?.title || (!getCuriosityGame(template) ? template.name || 'Template' : undefined),
 			});
 			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
 				...cloneDeep(entry),
@@ -1030,7 +1369,6 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 			const now = new Date().toISOString();
 			const entity = {
 				name: asTemplate ? template.name || 'New Template' : '',
-				game: template.game || template.name || '',
 				sets: {},
 				template: { id: entry.id, version: entry.version || 1 },
 				id: characterCurioFunctions.generateUUID(),
@@ -1089,6 +1427,9 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 		openCharacterIDs.value.push(characterData.id);
 	}
 	saveOpenCharacterIDs();
+	if (totalStagedDiceCount.value === 0) {
+		syncSessionPools(characterData.id);
+	}
 	initHistory();
 	setMode('character', templateId ? (submode.value ?? 'edit') : 'edit', true);
 
@@ -1112,7 +1453,6 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 	const now = new Date().toISOString();
 	const entity = {
 		name: asTemplate ? (itemTitle ? itemTitle.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '',
-		game: libraryItem.character?.game || libraryItem.game || itemTitle || '',
 		sets: {},
 		template: { id: libraryItem.id, version: libraryItem.version || 1 },
 		id: characterCurioFunctions.generateUUID(),
@@ -1219,12 +1559,20 @@ function duplicateCharacter(id: string) {
 }
 
 function loadCharacter(id: string, targetSubmode?: string | null) {
+	if (previewCharacter.value) {
+		previewCharacter.value = null;
+		previewTemplateEntry.value = null;
+		previewDismissed.value = true;
+	}
+	const wasAllEmpty = totalStagedDiceCount.value === 0;
+	manuallyRemovedPoolKeys.delete('owner:' + String(id));
 	if (!openCharacterIDs.value.includes(id)) {
 		openCharacterIDs.value.push(id);
 	}
 	characterID.value = id;
 	touchCharacter(id);
 	saveOpenCharacterIDs();
+	syncSessionPools(wasAllEmpty ? id : null);
 	persist();
 	initHistory();
 	setMode('character', targetSubmode ?? submode.value ?? 'edit', true);
@@ -1429,7 +1777,11 @@ async function exportCharacter(id: string) {
 function fallbackTemplateTitle(characterData: any) {
 	return (
 		getView(characterData)?.listing?.title ||
-		(characterData.game ? undefined : characterData.name ? `${characterData.name} Layout` : 'Custom Layout')
+		(getCuriosityGame(characterData)
+			? undefined
+			: characterData.name
+				? `${characterData.name} Layout`
+				: 'Custom Layout')
 	);
 }
 
@@ -1492,7 +1844,7 @@ async function exportAllCharacters() {
 	});
 
 	const bundle = {
-		version: '0.1',
+		version: '0.2',
 		type: 'bundle',
 		dateExported: new Date().toISOString(),
 		count: out.length,
@@ -1503,7 +1855,7 @@ async function exportAllCharacters() {
 	const filename = `Character_Curio_Bundle_${timestamp}.json`;
 
 	downloadJson(filename, bundle);
-	showToast(`Exported ${out.length} characters`);
+	showToast(`Exported ${out.length} curiosities`);
 }
 
 function updateCharacter(characterData: any) {
@@ -1955,6 +2307,12 @@ defineExpose({
 	dicePool,
 	oppositionPool,
 	activeRollerSide,
+	namedPools,
+	activePoolId,
+	selectActivePoolId,
+	handleAddNamedPool,
+	handleRemoveNamedPool,
+	handleTogglePoolPP,
 	isRollerOpen,
 	rollerPosition,
 	isStudioPanelOpen,
@@ -2097,6 +2455,7 @@ defineExpose({
 			ref="studioPanelRef"
 			v-if="mode === 'character' && submode !== 'print'"
 			:character="character"
+			:curiosities="rollerCuriosities"
 			:editing="editing"
 			:submode="submode"
 			:mode="mode"
@@ -2107,9 +2466,15 @@ defineExpose({
 			:dicePool="dicePool"
 			:oppositionPool="oppositionPool"
 			:activePoolSide="activeRollerSide"
+			:namedPools="namedPools"
+			:activePoolId="activePoolId"
 			:viewY="viewY"
 			@update:panelTab="studioPanelTab = $event"
-			@update:activePoolSide="activeRollerSide = $event"
+			@update:activePoolSide="handleActivePoolSideChange"
+			@update:activePoolId="selectActivePoolId"
+			@addNamedPool="handleAddNamedPool"
+			@removeNamedPool="handleRemoveNamedPool"
+			@togglePoolPP="handleTogglePoolPP"
 			@update:isOpen="setPanelOpen($event)"
 			@update:drawerState="setMobileDrawerState($event)"
 			@togglePosition="togglePanelPosition"
@@ -2136,7 +2501,7 @@ defineExpose({
 				:playViewMode="playViewMode"
 				:isStudioPanelOpen="isStudioPanelOpen"
 				:studioPanelTab="studioPanelTab"
-				:rollerCount="dicePool.items.length + oppositionPool.items.length"
+				:rollerCount="totalStagedDiceCount"
 				:isDesktopPillars="isDesktopPillars"
 				@focus="focusCharacter"
 				@close="closeOpenCharacter"
@@ -2212,12 +2577,12 @@ defineExpose({
 							<div class="banner-title-group" @click="focusCharacter(char.id)">
 								<span
 									class="banner-avatar"
-									v-if="char.portrait && char.portrait.url"
-									:style="'background-image:url(' + safeImageUrl(char.portrait.url) + ')'"
+									v-if="getCuriosityThumbnailUrl(char)"
+									:style="'background-image:url(' + safeImageUrl(getCuriosityThumbnailUrl(char)) + ')'"
 								></span>
-								<span class="banner-icon" v-else><i class="fas fa-shield-alt"></i></span>
+								<span class="banner-icon" v-else><i class="fas fa-lightbulb"></i></span>
 								<span class="banner-name">{{ char.name || 'Unnamed' }}</span>
-								<span class="banner-game" v-if="char.game">{{ char.game }}</span>
+								<span class="banner-game" v-if="getCuriosityGame(char)">{{ getCuriosityGame(char) }}</span>
 							</div>
 							<div class="banner-actions">
 								<button
@@ -2313,7 +2678,7 @@ defineExpose({
 				class="mobile-roller-pill-bar"
 				v-if="mode === 'character' && submode === 'play'"
 				:class="{
-					'has-dice': dicePool.items.length + oppositionPool.items.length > 0,
+					'has-dice': totalStagedDiceCount > 0,
 					'is-open': isStudioPanelOpen && studioPanelTab === 'roller',
 				}"
 				@touchstart.passive="onPillTouchStart"
@@ -2362,11 +2727,13 @@ defineExpose({
 						"
 					>
 						<span class="pill-result-total"
-							>Player <strong>{{ studioPanelRef.diceRoller.contestSummary.playerTotal }}</strong></span
+							>{{ studioPanelRef.diceRoller.contestSummary.playerLabel || 'Player' }}
+							<strong>{{ studioPanelRef.diceRoller.contestSummary.playerTotal }}</strong></span
 						>
 						<span class="pill-bullet">vs</span>
 						<span class="pill-result-effect"
-							>Opp <strong>{{ studioPanelRef.diceRoller.contestSummary.oppTotal }}</strong></span
+							>{{ studioPanelRef.diceRoller.contestSummary.oppLabel || 'Opp' }}
+							<strong>{{ studioPanelRef.diceRoller.contestSummary.oppTotal }}</strong></span
 						>
 					</template>
 					<template v-else-if="studioPanelRef?.diceRoller?.isRolled && studioPanelRef?.diceRoller?.bestTotalInfo">
@@ -2378,22 +2745,26 @@ defineExpose({
 							>Effect: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.effect }}</strong></span
 						>
 					</template>
-					<template v-else-if="dicePool.items.length + oppositionPool.items.length > 0">
-						<span v-for="(item, pIdx) in dicePool.items" :key="'p-' + pIdx" class="pill-die">
-							<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
-							<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
-						</span>
-						<span v-if="dicePool.items.length > 0 && oppositionPool.items.length > 0" class="pill-vs-tag">vs</span>
-						<span v-for="(item, oIdx) in oppositionPool.items" :key="'o-' + oIdx" class="pill-die pill-die-opp">
-							<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
-						</span>
+					<template v-else-if="totalStagedDiceCount > 0">
+						<template v-for="(npEntry, npIdx) in nonEmptyNamedPools" :key="'pill-np-' + npEntry.id">
+							<span v-if="npIdx > 0" class="pill-vs-tag">vs</span>
+							<span
+								v-for="(item, dIdx) in npEntry.pool.items"
+								:key="'pd-' + npEntry.id + '-' + dIdx"
+								class="pill-die"
+								:class="{ 'pill-die-opp': npEntry.id === 'opposition' || (!npEntry.ownerId && npIdx > 0) }"
+							>
+								<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
+								<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
+							</span>
+						</template>
 					</template>
 					<template v-else>
 						<span class="pill-empty-label"><i class="fas fa-dice" aria-hidden="true"></i> Tap traits</span>
 					</template>
 				</div>
 				<div class="mobile-roller-pill-right">
-					<template v-if="dicePool.items.length + oppositionPool.items.length > 0">
+					<template v-if="totalStagedDiceCount > 0">
 						<button type="button" class="btn-pill-roll" @click.stop="triggerRollFromPill" title="Roll dice">
 							<i class="fas fa-dice" aria-hidden="true"></i> Roll
 						</button>
@@ -2409,7 +2780,7 @@ defineExpose({
 					</template>
 					<button type="button" class="btn-pill-expand" @click.stop="toggleMobileRollerDrawer" title="Open dice roller">
 						<i class="fas fa-dice" aria-hidden="true"></i>
-						{{ dicePool.items.length + oppositionPool.items.length > 0 ? 'Pool' : 'Roller' }}
+						{{ totalStagedDiceCount > 0 ? 'Pool' : 'Roller' }}
 					</button>
 				</div>
 			</div>
@@ -2439,13 +2810,13 @@ defineExpose({
 		:submode="submode"
 		:activePoolSide="activeRollerSide"
 		:playerPoolCount="dicePool.items.length"
-		:oppositionPoolCount="oppositionPool.items.length"
+		:oppositionPoolCount="Math.max(0, totalStagedDiceCount - dicePool.items.length)"
 		:isDarkMode="isDarkMode"
 		@close="isPaletteOpen = false"
 		@addDie="addDieToRoller"
 		@rollPool="triggerRollFromPill"
 		@clearPools="triggerClearFromPill"
-		@togglePoolSide="activeRollerSide = activeRollerSide === 'opposition' ? 'player' : 'opposition'"
+		@togglePoolSide="cycleActiveNamedPool"
 		@selectElement="selectElement"
 		@navigate="setMode"
 		@loadCharacter="loadCharacter"

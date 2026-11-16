@@ -14,7 +14,11 @@ import {
 	resolveSetPillar,
 	getPillarLabel,
 	resolveAltRoll,
+	hasPlotPoints,
 	resolvePlotPoints,
+	getCuriosityGame,
+	getCuriosityPortrait,
+	getIdentityText,
 	type Character,
 	type TraitSet,
 	type Trait,
@@ -111,11 +115,15 @@ watch(
 	},
 );
 
+type SheetQuickPartKey =
+	'rating' | 'pp' | 'notes' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player';
+
 const SHEET_QUICK_PARTS: ReadonlyArray<{
-	key: 'rating' | 'notes' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player';
+	key: SheetQuickPartKey;
 	label: string;
 }> = [
 	{ key: 'rating', label: 'Rating' },
+	{ key: 'pp', label: 'PP' },
 	{ key: 'notes', label: 'Notes' },
 	{ key: 'description', label: 'Description' },
 	{ key: 'portrait', label: 'Portrait' },
@@ -152,45 +160,47 @@ function lastNonNameSetIndex(page = 1): number {
 	return -1;
 }
 
-function isSheetIdentityPartActive(
-	key: 'rating' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player' | 'notes',
-): boolean {
+function isSheetIdentityPartActive(key: SheetQuickPartKey): boolean {
 	const ch = props.character;
 	if (!ch) return false;
 	if (key === 'rating') {
 		const ns = (ch.traitSets || []).find((s) => isNameSet(s));
 		return Boolean(getRating(ns));
 	}
+	if (key === 'pp') {
+		return hasPlotPoints(ch);
+	}
 	const t = characterCurioFunctions.getNameTrait(ch, key);
 	const shown = !t || resolveVisibility(t) !== 'hidden';
 	if (key === 'nickname') {
-		return shown && Boolean(ch.nickname || getView(ch)?.hasNickname);
+		return shown && Boolean(getIdentityText(ch, 'nickname') || getView(ch)?.hasNickname || Boolean(t));
 	}
 	if (key === 'portrait') {
-		if (ch.portrait?.url && shown) return true;
+		const p = getCuriosityPortrait(ch);
+		if (p?.url && shown) return true;
 		return Boolean(t) && resolveVisibility(t) !== 'hidden' && !isSheetIdentityPartActive('description');
 	}
 	if (key === 'player') {
-		return shown && (Boolean(ch.player) || (Boolean(t) && !isSheetIdentityPartActive('description')));
+		return (
+			shown && (Boolean(getIdentityText(ch, 'player')) || (Boolean(t) && !isSheetIdentityPartActive('description')))
+		);
 	}
 	if (key === 'description') {
-		return shown && (Boolean(ch.description) || Boolean(t));
+		return shown && (Boolean(getIdentityText(ch, 'description')) || Boolean(t));
 	}
 	if (key === 'pronouns') {
-		return shown && (Boolean(ch.pronouns) || Boolean(t));
+		return shown && (Boolean(getIdentityText(ch, 'pronouns')) || Boolean(t));
 	}
 	if (key === 'game') {
-		return shown && (Boolean(ch.game) || Boolean(t));
+		return shown && (Boolean(getIdentityText(ch, 'game')) || Boolean(t));
 	}
 	if (key === 'notes') {
-		return shown && (Boolean(ch.notes) || Boolean(t));
+		return shown && (Boolean(getIdentityText(ch, 'notes')) || Boolean(t));
 	}
 	return shown;
 }
 
-function toggleSheetIdentityPart(
-	key: 'rating' | 'description' | 'portrait' | 'pronouns' | 'nickname' | 'game' | 'player' | 'notes',
-) {
+function toggleSheetIdentityPart(key: SheetQuickPartKey) {
 	const ch = props.character as Character;
 	if (!ch) return;
 	if (key === 'rating') {
@@ -208,13 +218,26 @@ function toggleSheetIdentityPart(
 		updateCharacter(ch);
 		return;
 	}
+	if (key === 'pp') {
+		if (hasPlotPoints(ch)) {
+			if (ch.sheet?.template) {
+				ch.plotPoints = null;
+			} else {
+				delete ch.plotPoints;
+			}
+		} else {
+			ch.plotPoints = 1;
+		}
+		updateCharacter(ch);
+		return;
+	}
 	const currentlyActive = isSheetIdentityPartActive(key);
 	if (currentlyActive) {
 		if (key === 'nickname') {
 			delete ensureView(ch).hasNickname;
 		}
 		const existing = characterCurioFunctions.getNameTrait(ch, key);
-		const fieldEmpty = key === 'portrait' ? !ch.portrait?.url : !(ch as any)[key];
+		const fieldEmpty = key === 'portrait' ? !getCuriosityPortrait(ch)?.url : !getIdentityText(ch, key);
 		const hasTemplate = Boolean((ch as any).sheet?.template);
 		if (!hasTemplate && fieldEmpty && !existing?.label) {
 			const ns = (ch.traitSets || []).find((s) => isNameSet(s));
@@ -238,7 +261,7 @@ function toggleSheetIdentityPart(
 		if (key === 'nickname') {
 			ensureView(ch).hasNickname = true;
 		}
-		if (key === 'portrait' && isSheetIdentityPartActive('description') && !ch.portrait?.url) {
+		if (key === 'portrait' && isSheetIdentityPartActive('description') && !getCuriosityPortrait(ch)?.url) {
 			selectElement(['name']);
 		}
 	}
@@ -323,7 +346,7 @@ watch(
 );
 
 const name = computed(() => props.character?.name ?? '');
-const game = computed(() => props.character?.game ?? '');
+const game = computed(() => getCuriosityGame(props.character));
 const traitSets = computed(() => props.character?.traitSets ?? []);
 
 const pageCount = computed(() => {

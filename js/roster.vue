@@ -13,6 +13,10 @@ import {
 	getTemplateDescription,
 	getTemplateHeroImage,
 	characterToSheetTemplate,
+	getCuriosityGame,
+	getCuriosityPortrait,
+	getCuriosityThumbnailUrl,
+	getIdentityText,
 } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
 import TraitSetFrame from './trait-set-frame.vue';
@@ -94,7 +98,7 @@ const matchingCharacters = computed(() => {
 	if (!q) return charactersSorted.value;
 	return charactersSorted.value.filter((c: any) => {
 		const name = (c.name || '').toLowerCase();
-		const game = (c.game || '').toLowerCase();
+		const game = getCuriosityGame(c).toLowerCase();
 		const type = (c.type || getView(c)?.type || '').toLowerCase();
 		return (
 			name.includes(q) || game.includes(q) || type.includes(q) || characterCurioFunctions.characterMatchesTagQuery(c, q)
@@ -199,9 +203,7 @@ const libraryTemplatesFiltered = computed(() => {
 				getTemplateGenre(t).toLowerCase().includes(q) ||
 				getTemplateVariant(t).toLowerCase().includes(q) ||
 				getTemplateDescription(t).toLowerCase().includes(q) ||
-				String(t?.character?.game || '')
-					.toLowerCase()
-					.includes(q) ||
+				getCuriosityGame(t?.character).toLowerCase().includes(q) ||
 				(t.character?.traitSets || []).some((s: any) =>
 					String(s?.name || '')
 						.toLowerCase()
@@ -647,7 +649,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						</button>
 
 						<button type="button" class="roster-button roster-button-new" @click.stop="createCharacter">
-							<span><i class="fas fa-plus" aria-hidden="true"></i> New Sheet</span>
+							<span><i class="fas fa-lightbulb" aria-hidden="true"></i> New Curiosity</span>
 						</button>
 
 						<label class="roster-template-picker">
@@ -753,7 +755,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						:aria-pressed="filterMode === 'characters'"
 						@click="filterMode = 'characters'"
 					>
-						Characters <span class="tab-count">({{ characterCount }})</span>
+						Curiosities <span class="tab-count">({{ characterCount }})</span>
 					</button>
 					<button
 						type="button"
@@ -841,21 +843,23 @@ function getRelativeDateLabel(date1: any, date2: any) {
 					<div class="roster-item-media">
 						<button
 							type="button"
-							:class="'roster-item-portrait alignment-' + (getView(character.portrait)?.alignment || 'center')"
-							:aria-label="'Open ' + (character.name || character.game || 'Unnamed')"
+							:class="
+								'roster-item-portrait alignment-' + (getView(getCuriosityPortrait(character))?.alignment || 'center')
+							"
+							:aria-label="'Open ' + (character.name || getCuriosityGame(character) || 'Unnamed')"
 							@click.stop="loadCharacter(character.id)"
 						>
 							<img
-								v-if="character.portrait?.url?.length"
-								:src="safeImageUrl(character.portrait.url)"
+								v-if="getCuriosityThumbnailUrl(character)"
+								:src="safeImageUrl(getCuriosityThumbnailUrl(character))"
 								alt=""
 								width="160"
 								height="160"
 								loading="lazy"
 								decoding="async"
 							/>
-							<span class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length">
-								<i class="fas fa-user" aria-hidden="true"></i>
+							<span class="roster-item-portrait-placeholder" v-if="!getCuriosityThumbnailUrl(character)">
+								<i class="fas fa-lightbulb" aria-hidden="true"></i>
 							</span>
 						</button>
 					</div>
@@ -868,7 +872,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 									class="roster-item-name-btn"
 									:class="{ 'is-unnamed': !character.name }"
 									@click.stop="loadCharacter(character.id)"
-									v-text="character.name || character.game || 'Unnamed'"
+									v-text="character.name || getCuriosityGame(character) || 'Unnamed'"
 								></button>
 							</h2>
 							<span class="roster-badge-template" v-if="character.isTemplate"
@@ -879,8 +883,8 @@ function getRelativeDateLabel(date1: any, date2: any) {
 
 						<div
 							class="roster-item-game"
-							v-if="character.game && character.name && character.game !== character.name"
-							v-text="character.game"
+							v-if="getCuriosityGame(character) && character.name && getCuriosityGame(character) !== character.name"
+							v-text="getCuriosityGame(character)"
 						></div>
 
 						<div class="roster-date">
@@ -890,7 +894,11 @@ function getRelativeDateLabel(date1: any, date2: any) {
 					</div>
 
 					<div class="roster-item-body">
-						<div class="roster-description" v-if="character.description" v-text="character.description"></div>
+						<div
+							class="roster-description"
+							v-if="getIdentityText(character, 'description')"
+							v-text="getIdentityText(character, 'description')"
+						></div>
 
 						<div class="roster-tags" v-if="Array.isArray(character.tags) && character.tags.length > 0">
 							<button
