@@ -56,7 +56,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 
 		const characterWithAlien = {
 			sheet: {
-				template: 'alien-us',
+				template: { id: 'alien-us' },
 			},
 		} as unknown as Character;
 
@@ -66,7 +66,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 
 		const characterWithHammerheads = {
 			sheet: {
-				template: 'hammerheads-character',
+				template: { id: 'hammerheads-character' },
 			},
 		} as unknown as Character;
 

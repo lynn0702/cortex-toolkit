@@ -122,7 +122,7 @@ function walk(node, fn) {
 			],
 		},
 	};
-	const live = JSON.parse(JSON.stringify(base.character));
+	const live = structuredClone(base.character);
 	live.id = 'c9';
 	live.name = 'Hero';
 	live.sheet = { template: { id: 'tpl', version: 1 } };
@@ -184,7 +184,7 @@ function walk(node, fn) {
 			],
 		},
 	};
-	const live = JSON.parse(JSON.stringify(base.character));
+	const live = structuredClone(base.character);
 	live.id = 'c9';
 	live.traitSets[0].name = 'Personas';
 	const deltas = F.stripCharacterToDeltas(live, base);

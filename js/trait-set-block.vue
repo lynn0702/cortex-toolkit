@@ -48,10 +48,10 @@ const {
 	addTrait,
 	removeTrait,
 	removeTraitSet,
-	resolveTraitRating,
 	getRating,
 	renderDieValue,
 	getCounterLabel,
+	hasTraitCounter,
 	isHiddenIn,
 	resolvedBorder,
 	resolvedFrame,
@@ -401,9 +401,7 @@ watch(rootEl, (el) => {
 					<div
 						class="trait-set-header-counter"
 						v-if="
-							headerTop &&
-							traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter') &&
-							getCounterLabel(traitSet).length > 0
+							headerTop && traitSet.traits?.some((t: any) => hasTraitCounter(t)) && getCounterLabel(traitSet).length > 0
 						"
 					>
 						{{ getCounterLabel(traitSet) }}
@@ -690,9 +688,7 @@ watch(rootEl, (el) => {
 					<div
 						class="trait-set-header-counter"
 						v-if="
-							headerTop &&
-							traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter') &&
-							getCounterLabel(traitSet).length > 0
+							headerTop && traitSet.traits?.some((t: any) => hasTraitCounter(t)) && getCounterLabel(traitSet).length > 0
 						"
 					>
 						{{ getCounterLabel(traitSet) }}

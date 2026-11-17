@@ -92,8 +92,7 @@ SKILL.md file directly from `.agents/skills/<name>/`.
   chained into `npm run build`). `js/model.ts` re-exports the generated shapes
   and adds the app-only `view` types the schema leaves open.
 - Presentation settings live under `view` (`getView` / `ensureView` in `js/model.ts`); Never add new unapproved top-level fields to a character, trait set, or trait.
-- localStorage: single key `characterCurioData`, namespaced as
-  `{ "0.1": { characters } }`. Bump the namespace when the schema changes.
+- Storage: IndexedDB database `character-curio` (v2, `state` store) with `localStorage` fallback key `characterCurioFallback` in `js/storage.ts`, persisting schema `0.2` layered entities and pinned template snapshots.
 - Deep clones: use `structuredClone()` everywhere (wrap Vue reactive proxies with `toRaw(v)` before cloning: `structuredClone(toRaw(v))`). Do not use the `JSON.parse(JSON.stringify(...))` idiom.
 
 ## Security rules (non-negotiable)

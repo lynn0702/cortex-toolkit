@@ -11,6 +11,8 @@ import {
 	resolveHitches,
 	keepsExtraDice,
 	isRingBadgeTrait,
+	getRingBadgeDie,
+	setRingBadgeDie,
 	type Character,
 	type Trait,
 } from './model.ts';
@@ -118,7 +120,7 @@ const ringSlots = computed<RingSlot[]>(() => {
 	}
 	if (slots.length === 0 && ringSet.value) {
 		const setRating = getRating(ringSet.value);
-		const hasRingConfig = Boolean(activeFrame?.ring || activeFrame?.ringConfig || activeFrame?.traitsSpan);
+		const hasRingConfig = Boolean(activeFrame?.ring || activeFrame?.traitsSpan);
 		if (setRating && (setRating.type === 'Dice' || hasRingConfig)) {
 			const dice = ratingDice(setRating);
 			const sourceLabel =
@@ -147,18 +149,7 @@ const badgeKeepCount = computed(() => {
 	const extra = ringBadgeTrait.value ? keepsExtraDice(ringBadgeTrait.value) : 1;
 	return 2 + (extra > 0 ? extra : 1);
 });
-const scaleDieValue = computed(() => {
-	const st = ringBadgeTrait.value;
-	if (st) return ratingDice(resolveRating(st, [ringSet.value]))[0] || 8;
-	const setNode = ringSet.value;
-	if (getView(setNode)?.scaleDie) {
-		return Number(getView(setNode)?.scaleDie);
-	}
-	if (getView(props.character)?.scale) {
-		return Number(getView(props.character)?.scale);
-	}
-	return 0;
-});
+const scaleDieValue = computed(() => getRingBadgeDie(ringSet.value));
 const isTraitEditorOpen = computed(() =>
 	Boolean(props.editing && props.editing[0] === 'trait' && props.editing[1] === props.ringTraitID),
 );
@@ -167,7 +158,7 @@ const isScaleSelected = computed(() => isSelected(['scaleDie', props.ringTraitID
 const ringConfig = computed(() => {
 	const setNode = ringSet.value;
 	const frameCfg = resolveFrame(setNode);
-	const cfg = frameCfg?.ringConfig;
+	const cfg = frameCfg?.ring;
 	const baseArcAngle = cfg?.arcAngle ?? -90;
 	const baseScaleAngle = cfg?.scaleAngle ?? 0;
 	return {
@@ -234,9 +225,7 @@ function getTraitAngle(t: number | string) {
 		const spreadPct = cfg.arcSpread ?? 100;
 		if (spreadPct >= 99.9) {
 			const baseAngle =
-				dragArcAngle.value !== null
-					? dragArcAngle.value
-					: (frameCfg.ringConfig?.arcAngle ?? (frameCfg.span[0] ?? 0) - 90);
+				dragArcAngle.value !== null ? dragArcAngle.value : (frameCfg.ring?.arcAngle ?? (frameCfg.span[0] ?? 0) - 90);
 			return baseAngle + (idx / count) * 360;
 		}
 	}
@@ -527,9 +516,9 @@ function setRingConfigProp(key: string, value: any) {
 		const frameObj =
 			typeof view.frame === 'object' && view.frame !== null ? (view.frame as any) : { shape: view.frame };
 		view.frame = frameObj;
-		const existingRing = frameObj.ring || view.ringConfig;
+		const existingRing = frameObj.ring;
 		frameObj.ring ??= {
-			arcAngle: existingRing?.arcAngle ?? (existingRing?.arcSlide !== undefined ? existingRing.arcSlide * 3 : -90),
+			arcAngle: existingRing?.arcAngle ?? -90,
 			arcSpread: existingRing?.arcSpread ?? 100,
 			arcDistance: existingRing?.arcDistance ?? 0,
 			scaleAngle: existingRing?.scaleAngle ?? 0,
@@ -542,24 +531,9 @@ function setRingConfigProp(key: string, value: any) {
 }
 
 function setScaleDieValue(val: any) {
-	const num = Number(val) || 0;
-	const ringSetNode = ringSet.value;
-	if (ringSetNode) {
-		ensureView(ringSetNode).scaleDie = num;
-
-		const traitsList = Array.isArray(ringSetNode.traits) ? ringSetNode.traits : [];
-		const stIndex = traitsList.findIndex((t: any) => isRingBadgeTrait(t));
-		if (num === 0) {
-			if (stIndex !== -1) {
-				traitsList.splice(stIndex, 1);
-			}
-		} else if (stIndex !== -1) {
-			const st = traitsList[stIndex] as unknown as Record<string, any>;
-			st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
-			if (!keepsExtraDice(st)) st.keepsExtra = 1;
-		}
+	if (ringSet.value) {
+		setRingBadgeDie(ringSet.value, Number(val) || 0);
 	}
-	ensureView(props.character).scale = num;
 	updateCharacter(structuredClone(toRaw(props.character)));
 }
 

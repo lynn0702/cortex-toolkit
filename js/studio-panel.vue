@@ -2,14 +2,12 @@
 import { computed, defineAsyncComponent, nextTick, ref, toRaw, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import {
-	ensureView,
+	getRingBadgeDie,
 	getView,
 	isNameSet,
 	isRingBadgeTrait,
-	keepsExtraDice,
-	ratingDice,
-	resolveRating,
 	resolveSubtraitNoun,
+	setRingBadgeDie,
 } from './model.ts';
 import DiceRoller from './dice-roller.vue';
 import type { NamedPool } from './dice-pool.ts';
@@ -193,10 +191,7 @@ const scaleRingSetIndex = computed<number>(() => {
 	}
 	const sets = props.character?.traitSets;
 	if (!Array.isArray(sets)) return -1;
-	return sets.findIndex(
-		(s: any) =>
-			Number(getView(s)?.scaleDie) > 0 || (Array.isArray(s?.traits) && s.traits.some((t: any) => isRingBadgeTrait(t))),
-	);
+	return sets.findIndex((s: any) => Array.isArray(s?.traits) && s.traits.some((t: any) => isRingBadgeTrait(t)));
 });
 
 const scaleRingSet = computed(() =>
@@ -213,34 +208,16 @@ const ringBadgeLabel = computed(() => {
 	return (st && (st.name?.trim() || (getView(st)?.noun as string))) || 'Ring Die';
 });
 
-const scaleDieValue = computed<number>(() => {
-	const setNode = scaleRingSet.value;
-	const st = ringBadgeTrait.value;
-	if (st) return ratingDice(resolveRating(st, [setNode]))[0] || 8;
-	if (getView(setNode)?.scaleDie) return Number(getView(setNode)?.scaleDie);
-	if (getView(props.character)?.scale) return Number(getView(props.character)?.scale);
-	return 0;
-});
+const scaleDieValue = computed<number>(() => getRingBadgeDie(scaleRingSet.value));
 
 function setScaleDieValue(val: number): void {
 	if (!props.character) return;
 	const num = Number(val) || 0;
-	const ringSetNode = scaleRingSet.value;
-	if (ringSetNode) {
-		ensureView(ringSetNode).scaleDie = num;
-		const traitsList = Array.isArray(ringSetNode.traits) ? ringSetNode.traits : [];
-		const stIndex = traitsList.findIndex((t: any) => isRingBadgeTrait(t));
-		if (num === 0) {
-			if (stIndex !== -1) traitsList.splice(stIndex, 1);
-		} else if (stIndex !== -1) {
-			const st = traitsList[stIndex] as Record<string, any>;
-			st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
-			if (!keepsExtraDice(st)) st.keepsExtra = 1;
-		}
+	if (scaleRingSet.value) {
+		setRingBadgeDie(scaleRingSet.value, num);
 	}
-	ensureView(props.character).scale = num;
 	emit('updateCharacter', structuredClone(toRaw(props.character)));
-	if (num === 0) {
+	if (num <= 0) {
 		emit('selectElement', []);
 	}
 }

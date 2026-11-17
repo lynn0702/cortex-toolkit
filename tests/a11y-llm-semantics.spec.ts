@@ -1217,7 +1217,11 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			// 3) Morph to Block
 			const blockSet = {
 				...set,
-				view: { ...set.view, frame: { shape: 'block', corner: 'cut', stroke: 'primary' } },
+				view: {
+					...set.view,
+					border: { shape: 'block', corner: 'cut', stroke: 'primary' },
+					frame: { shape: 'none', array: 'none' },
+				},
 			};
 			await wrapper.setProps({ character: { name: 'Morph Hero', traitSets: [blockSet] } });
 			await wrapper.vm.$nextTick();
@@ -1262,10 +1266,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(anchorsArc[1].angle).toBe(135);
 		});
 
-		it('4. Bare-Path Section Line (shape: "line"): renders crisp SVG section divider across Edit, Play, and Print', () => {
+		it('4. Bare-Path Section Line (border shape: "line"): renders crisp SVG section divider across Edit, Play, and Print', () => {
 			const lineSet: any = {
 				name: 'Divider Section',
-				view: { frame: { shape: 'line', stroke: 'accent' } },
+				view: { border: { shape: 'line', stroke: 'accent' } },
 				traits: [{ name: 'Followup Trait' }],
 			};
 			const char: any = { name: 'Line Hero', traitSets: [lineSet] };
@@ -2391,38 +2395,36 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							{ name: 'Engineer', rating: { type: 'Die', value: [10] } },
 						],
 					},
-					// Set 1: style alias portrait-ring without frame
+					// Set 1: style alias portrait-ring with frame.ring + imageConfig
 					{
 						name: 'Alias Roles',
 						noun: 'Role',
 						view: {
 							style: { body: 'portrait-ring' },
-							ringConfig: { arcAngle: -90, arcSpread: 100 },
+							frame: { shape: 'ring', ring: { arcAngle: -90, arcSpread: 100 } },
 							imageConfig: { url: 'https://example.com/alias-hub.jpg', zoom: 0.75 },
 						},
 						traits: [{ name: 'Gunner', rating: { type: 'Die', value: [8] } }],
 					},
-					// Set 2: block frame with image
+					// Set 2: block border + portrait circle frame with image
 					{
 						name: 'Equipment',
 						noun: 'Item',
 						view: {
+							border: 'block',
 							frame: {
-								shape: 'block',
+								shape: 'circle',
 								image: { url: 'https://example.com/hero.jpg' },
 							},
 						},
 						traits: [{ name: 'Blaster', rating: { type: 'Die', value: [6] } }],
 					},
-					// Set 3: line frame with image (ignored)
+					// Set 3: line border divider (no portrait hub)
 					{
 						name: 'Divider Set',
 						noun: 'Divider',
 						view: {
-							frame: {
-								shape: 'line',
-								image: { url: 'https://example.com/ignored.jpg' },
-							},
+							border: 'line',
 						},
 						traits: [{ name: 'Note', rating: { type: 'Die', value: [6] } }],
 					},
@@ -2450,7 +2452,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			trait0.element.dispatchEvent(new Event('pointerdown'));
 			w0.unmount();
 
-			// 2. Style body alias portrait-ring renders ring with fallback to ringConfig & imageConfig
+			// 2. Style body alias portrait-ring renders ring with imageConfig
 			const w1 = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 1, submode: 'edit', editing: [] },
 			});
@@ -2461,7 +2463,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(style1).toContain('background-size: 75%');
 			w1.unmount();
 
-			// 3. Block frame with image renders block border AND portrait hub
+			// 3. Block border + portrait circle frame renders block border AND portrait hub
 			const w2 = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 2, submode: 'edit', editing: [] },
 			});
@@ -2471,7 +2473,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(circle2.attributes('style')).toContain('https://example.com/hero.jpg');
 			w2.unmount();
 
-			// 4. Line frame with image ignores image
+			// 4. Line border renders line SVG without portrait hub
 			const w3 = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 3, submode: 'edit', editing: [] },
 			});

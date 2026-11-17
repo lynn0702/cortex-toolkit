@@ -86,8 +86,6 @@ const namedPools = ref<NamedPool[]>([]);
 const activePoolId = ref<string>('');
 const explicitlyAddedPoolIds = new Set<string>();
 const manuallyRemovedPoolKeys = new Set<string>();
-const isRollerOpen = ref(false);
-const rollerPosition = ref('right');
 const isStudioPanelOpen = ref(true);
 const studioPanelTab = ref<'properties' | 'roller' | 'json'>('properties');
 const mobileDrawerState = ref<'staged' | 'split' | 'full'>('staged');
@@ -522,9 +520,9 @@ const availableToOpen = computed(() => {
 const pendingTemplateUpdate = computed(() => {
 	if (mode.value !== 'character' || !character.value) return null;
 	const t = character.value.sheet && character.value.sheet.template;
-	const id = t ? (typeof t === 'string' ? t : t.id) : null;
+	const id = t && typeof t === 'object' ? t.id : null;
 	if (!id) return null;
-	const pinned = (t && typeof t === 'object' && t.version) || 1;
+	const pinned = (typeof t === 'object' && t.version) || 1;
 	if (typeof characterCurioLibraryTemplates === 'undefined') return null;
 	const builtin = characterCurioFunctions.findLibraryTemplate(id);
 	if (!builtin) return null;
@@ -601,22 +599,14 @@ onMounted(async () => {
 		const handler = (e: MediaQueryListEvent) => {
 			systemPrefersDark.value = e.matches;
 		};
-		if (mql.addEventListener) {
-			mql.addEventListener('change', handler);
-		} else if ((mql as any).addListener) {
-			(mql as any).addListener(handler);
-		}
+		mql.addEventListener('change', handler);
 
 		mobileViewportMql = window.matchMedia('(max-width: 48rem)');
 		isMobileViewport.value = mobileViewportMql.matches;
 		mobileViewportHandler = (e: MediaQueryListEvent) => {
 			isMobileViewport.value = e.matches;
 		};
-		if (mobileViewportMql.addEventListener) {
-			mobileViewportMql.addEventListener('change', mobileViewportHandler);
-		} else if ((mobileViewportMql as any).addListener) {
-			(mobileViewportMql as any).addListener(mobileViewportHandler);
-		}
+		mobileViewportMql.addEventListener('change', mobileViewportHandler);
 	}
 	if (typeof document !== 'undefined') {
 		document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -629,11 +619,7 @@ onMounted(async () => {
 onUnmounted(() => {
 	cancelDeferredSave();
 	if (mobileViewportMql && mobileViewportHandler) {
-		if (mobileViewportMql.removeEventListener) {
-			mobileViewportMql.removeEventListener('change', mobileViewportHandler);
-		} else if ((mobileViewportMql as any).removeListener) {
-			(mobileViewportMql as any).removeListener(mobileViewportHandler);
-		}
+		mobileViewportMql.removeEventListener('change', mobileViewportHandler);
 	}
 	if (typeof document !== 'undefined') {
 		document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -717,6 +703,7 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 	}
 	if (m === 'character' && !character.value) return;
 	if (m !== 'character' || sub !== 'edit') {
+		flushDeferredSave();
 		commitHistorySnapshot();
 		editing.value = [];
 	}
@@ -733,7 +720,6 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 		mobileDrawerState.value = 'staged';
 		isStudioPanelOpen.value = !narrow;
 		studioPanelTab.value = 'roller';
-		isRollerOpen.value = !narrow;
 	} else if (m === 'character' && sub === 'edit') {
 		// Same overlay rule as Play: land on the sheet with the drawer
 		// closed. Tapping any trait opens it explicitly.
@@ -741,10 +727,8 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 		const narrowEdit = isNarrowViewport();
 		isStudioPanelOpen.value = !narrowEdit;
 		studioPanelTab.value = 'properties';
-		isRollerOpen.value = !narrowEdit;
 	} else {
 		mobileDrawerState.value = 'staged';
-		isRollerOpen.value = false;
 	}
 	if (updateHash) {
 		updateRouteHash();
@@ -831,14 +815,6 @@ function updateRouteHash() {
 	}
 }
 
-function toggleRoller() {
-	isStudioPanelOpen.value = !isStudioPanelOpen.value;
-	isRollerOpen.value = isStudioPanelOpen.value;
-	if (isStudioPanelOpen.value) {
-		studioPanelTab.value = submode.value === 'play' ? 'roller' : 'properties';
-	}
-}
-
 function isMobilePlayViewport() {
 	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
 }
@@ -847,13 +823,11 @@ function setMobileDrawerState(next: 'staged' | 'split' | 'full') {
 	mobileDrawerState.value = next;
 	if (mode.value === 'character' && submode.value === 'play') {
 		isStudioPanelOpen.value = next !== 'staged';
-		isRollerOpen.value = next !== 'staged';
 	}
 }
 
 function setPanelOpen(open: boolean) {
 	isStudioPanelOpen.value = open;
-	isRollerOpen.value = open;
 	if (submode.value === 'play' && isMobilePlayViewport()) {
 		mobileDrawerState.value = open
 			? mobileDrawerState.value === 'staged'
@@ -867,22 +841,15 @@ function handleToggleStudio(tab: 'properties' | 'roller' | 'json') {
 	if (tab === 'roller' && submode.value !== 'play') tab = 'properties';
 	if (isStudioPanelOpen.value && studioPanelTab.value === tab) {
 		isStudioPanelOpen.value = false;
-		isRollerOpen.value = false;
 	} else {
 		isStudioPanelOpen.value = true;
-		isRollerOpen.value = true;
 		studioPanelTab.value = tab;
 	}
 }
 
 function togglePanelPosition() {
 	panelPosition.value = panelPosition.value === 'right' ? 'left' : 'right';
-	rollerPosition.value = panelPosition.value;
 	persist();
-}
-
-function toggleRollerPosition() {
-	togglePanelPosition();
 }
 
 function openSheetPropertiesFromHeader() {
@@ -1044,7 +1011,6 @@ function addDieToRoller(dieData: any) {
 	if (submode.value === 'play' && !isNarrowViewport()) {
 		isStudioPanelOpen.value = true;
 		studioPanelTab.value = 'roller';
-		isRollerOpen.value = true;
 	}
 	let label;
 	if (Array.isArray(dieData)) {
@@ -1201,7 +1167,6 @@ function closeStudioDrawer() {
 		setMobileDrawerState('staged');
 	} else {
 		isStudioPanelOpen.value = false;
-		isRollerOpen.value = false;
 	}
 }
 
@@ -1396,10 +1361,7 @@ function resolveStoredCharacter(c: any) {
 	characterCurioFunctions.ensureTraitSetIds(c);
 	let ref: any = null;
 	const t = c.sheet && c.sheet.template;
-	if (typeof t === 'string' && t.length) {
-		ref = { id: t, version: null };
-		c.sheet = { template: { id: t } };
-	} else if (t && typeof t === 'object') {
+	if (t && typeof t === 'object') {
 		if (t.character && t.id) {
 			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, t);
 			ref = { id: t.id, version: t.version || 1 };
@@ -1682,10 +1644,8 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 		const template = characters.value.find((c: any) => c.id === targetTemplateId);
 		if (template) {
 			const currentRef =
-				template.sheet && template.sheet.template
-					? typeof template.sheet.template === 'string'
-						? template.sheet.template
-						: template.sheet.template.id
+				template.sheet && template.sheet.template && typeof template.sheet.template === 'object'
+					? template.sheet.template.id
 					: null;
 			const reuse =
 				currentRef && !characterCurioFunctions.findLibraryTemplate(currentRef) ? currentRef : 'custom-' + template.id;
@@ -2098,9 +2058,9 @@ function downloadJson(filename: string, payload: any) {
 function sheetTemplateForExport(characterData: any) {
 	if (!characterData) return null;
 	const t = characterData.sheet && characterData.sheet.template;
-	const ref = t ? (typeof t === 'string' ? { id: t, version: null } : { id: t.id, version: t.version || null }) : null;
+	const ref = t && typeof t === 'object' ? { id: t.id, version: t.version || null } : null;
 	if (!ref || !ref.id) return null;
-	if (t && typeof t === 'object' && t.character) return t;
+	if (t.character) return t;
 	return resolveTemplateEntry(ref.id, ref.version);
 }
 
@@ -2142,10 +2102,8 @@ function saveSheetTemplate() {
 	const characterData = character.value;
 	if (!characterData) return;
 	const currentRef =
-		characterData.sheet && characterData.sheet.template
-			? typeof characterData.sheet.template === 'string'
-				? characterData.sheet.template
-				: characterData.sheet.template.id
+		characterData.sheet && characterData.sheet.template && typeof characterData.sheet.template === 'object'
+			? characterData.sheet.template.id
 			: null;
 	// Re-saving a custom template updates it in place (version bump);
 	// forking off a built-in (or nothing) mints a fresh static id.
@@ -2169,10 +2127,8 @@ function exportSheetTemplate() {
 	const characterData = character.value;
 	if (!characterData) return;
 	const ref =
-		characterData.sheet && characterData.sheet.template
-			? typeof characterData.sheet.template === 'string'
-				? characterData.sheet.template
-				: characterData.sheet.template.id
+		characterData.sheet && characterData.sheet.template && typeof characterData.sheet.template === 'object'
+			? characterData.sheet.template.id
 			: null;
 	let entry = ref ? resolveTemplateEntry(ref) : null;
 	if (!entry)
@@ -2505,7 +2461,6 @@ async function bootFromStorage() {
 		playViewMode.value = stored.playViewMode || 'split';
 		panelPosition.value =
 			stored.rollerPosition === 'left' || stored.rollerPosition === 'right' ? stored.rollerPosition : 'right';
-		rollerPosition.value = panelPosition.value;
 		openCharacterIDs.value = (stored.openCharacterIDs || []).filter((id: string) =>
 			characters.value.some((c: any) => c.id === id),
 		);
@@ -2515,17 +2470,13 @@ async function bootFromStorage() {
 		lastSavedSession = JSON.stringify({
 			openCharacterIDs: openCharacterIDs.value,
 			playViewMode: playViewMode.value,
-			rollerPosition: rollerPosition.value,
+			rollerPosition: panelPosition.value,
 			templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
 			preferences: prefs.value,
 		});
 		if (stored.loadError) {
 			storeError.value = stored.loadError;
 			showToast('Saved data was damaged — starting fresh. Export backups regularly.');
-		} else if (stored.migrationError) {
-			showToast('Migrated your data, but the old copy could not be removed.');
-		} else if (stored.migrated) {
-			showToast('Library upgraded to the new local database.');
 		}
 	} catch (err) {
 		storeError.value = err;
@@ -2551,11 +2502,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 		await ensureLibraryTemplates();
 		const sparse = (characters.value || []).map((c: any) => {
 			const ct = c.sheet && c.sheet.template;
-			const ref = ct
-				? typeof ct === 'string'
-					? { id: ct, version: null }
-					: { id: ct.id, version: ct.version || null }
-				: null;
+			const ref = ct && typeof ct === 'object' ? { id: ct.id, version: ct.version || null } : null;
 			// Strip against the PINNED version (the base this
 			// character was merged from), never the newer bundle.
 			const entry = ref ? resolveTemplateEntry(ref.id, ref.version) : null;
@@ -2581,7 +2528,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 		session = cloneDeep({
 			openCharacterIDs: openCharacterIDs.value,
 			playViewMode: playViewMode.value,
-			rollerPosition: rollerPosition.value,
+			rollerPosition: panelPosition.value,
 			templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
 			preferences: prefs.value,
 		});
@@ -2695,8 +2642,6 @@ defineExpose({
 	handleAddNamedPool,
 	handleRemoveNamedPool,
 	handleTogglePoolPP,
-	isRollerOpen,
-	rollerPosition,
 	isStudioPanelOpen,
 	studioPanelTab,
 	panelPosition,
@@ -2715,8 +2660,6 @@ defineExpose({
 	setMode,
 	parseRouteHash,
 	updateRouteHash,
-	toggleRoller,
-	toggleRollerPosition,
 	addDieToRoller,
 	removeDieFromRoller,
 	clearDicePool,
@@ -2837,8 +2780,6 @@ defineExpose({
 			'panel-open': isStudioPanelOpen && mode === 'character' && submode !== 'print',
 			'panel-right': panelPosition === 'right',
 			'panel-left': panelPosition === 'left',
-			'roller-open': isStudioPanelOpen && mode === 'character' && submode !== 'print',
-			'roller-right': panelPosition === 'right',
 		}"
 	>
 		<!-- STUDIO PANEL: PROPERTIES INSPECTOR & DICE ROLLER -->

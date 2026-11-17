@@ -18,6 +18,8 @@ import {
 	DIE_LADDER,
 	getView,
 	ensureView,
+	getRingBadgeDie,
+	setRingBadgeDie,
 	isNameSet,
 	getRating,
 	preserveInheritedTraitTypes,
@@ -170,7 +172,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				view.style.header = 'portrait-ring';
 				delete (view as Record<string, unknown>).location;
 				(view as Record<string, unknown>).border = 'none';
-				delete (view as Record<string, unknown>).borderless;
 				const prev = normalizedFrameBase();
 				(view as any).frame = {
 					...prev,
@@ -179,7 +180,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 					span: [0, 360],
 				};
 				delete (view as any).frame.traitsSpan;
-				delete (view as any).frame.box;
 			} else {
 				view.style.body = value;
 				view.style.header = value;
@@ -709,7 +709,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				return Math.max(10, Math.min(100, Math.round(raw)));
 			}
 			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.arcSpread ?? view?.ringConfig?.arcSpread ?? 100;
+			return (view?.frame as any)?.ring?.arcSpread ?? 100;
 		},
 		set: (val: number) => {
 			const num = Number(val);
@@ -723,7 +723,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const ringDistance = computed({
 		get: () => {
 			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.arcDistance ?? view?.ringConfig?.arcDistance ?? 0;
+			return (view?.frame as any)?.ring?.arcDistance ?? 0;
 		},
 		set: (val: number) => {
 			setRingConfig('arcDistance', Number(val));
@@ -740,8 +740,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				return a;
 			}
 			const view = getView(traitSet.value);
-			const cfg = (view?.frame as any)?.ring ?? view?.ringConfig;
-			return cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
+			const cfg = (view?.frame as any)?.ring;
+			return cfg?.arcAngle ?? -90;
 		},
 		set: (val: number) => {
 			const num = Number(val);
@@ -764,7 +764,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const scaleAngle = computed({
 		get: () => {
 			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleAngle ?? view?.ringConfig?.scaleAngle ?? 0;
+			return (view?.frame as any)?.ring?.scaleAngle ?? 0;
 		},
 		set: (val: number) => {
 			setRingConfig('scaleAngle', Number(val));
@@ -783,7 +783,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const scaleDistance = computed({
 		get: () => {
 			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleDistance ?? view?.ringConfig?.scaleDistance ?? 0;
+			return (view?.frame as any)?.ring?.scaleDistance ?? 0;
 		},
 		set: (val: number) => {
 			setRingConfig('scaleDistance', Number(val));
@@ -793,7 +793,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const ringScaleY = computed({
 		get: () => {
 			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleDieY ?? view?.ringConfig?.scaleDieY ?? 0;
+			return (view?.frame as any)?.ring?.scaleDieY ?? 0;
 		},
 		set: (val: number) => {
 			setRingConfig('scaleDieY', Number(val));
@@ -803,7 +803,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const ringScaleX = computed({
 		get: () => {
 			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleDieX ?? view?.ringConfig?.scaleDieX ?? 0;
+			return (view?.frame as any)?.ring?.scaleDieX ?? 0;
 		},
 		set: (val: number) => {
 			setRingConfig('scaleDieX', Number(val));
@@ -811,10 +811,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const scaleDieValue = computed({
-		get: () => getView(traitSet.value)?.scaleDie || getView(props.character)?.scale || 0,
+		get: () => getRingBadgeDie(traitSet.value),
 		set: (val: number) => {
-			ensureView(traitSet.value).scaleDie = val;
-			ensureView(props.character).scale = val;
+			if (!traitSet.value) return;
+			setRingBadgeDie(traitSet.value, val);
 			updateCharacter(props.character);
 		},
 	});
@@ -912,7 +912,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				copy.shape = res.portraitShape;
 				copy.array = res.array;
 			}
-			delete copy.box;
 			return copy;
 		}
 		if (res) {
@@ -926,7 +925,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				...(res.size !== undefined ? { size: res.size } : {}),
 				...(res.position ? { position: res.position } : {}),
 				...(res.image ? { image: structuredClone(res.image) } : {}),
-				...(res.ringConfig ? { ring: structuredClone(res.ringConfig) } : {}),
+				...(res.ring ? { ring: structuredClone(res.ring) } : {}),
 			};
 		}
 		return {
@@ -1535,12 +1534,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const counterLabel = computed({
 		get: () => {
-			const v = getView(traitSet.value);
-			const fromLabels = (v?.labels as Record<string, unknown> | undefined)?.counter;
-			if (typeof fromLabels === 'string') return fromLabels;
-			if (typeof v?.counterLabel === 'string') return v.counterLabel;
-			if (typeof traitSet.value?.counterLabel === 'string') return traitSet.value.counterLabel;
-			return '';
+			const fromLabels = (getView(traitSet.value)?.labels as Record<string, unknown> | undefined)?.counter;
+			return typeof fromLabels === 'string' ? fromLabels : '';
 		},
 		set: (val: string) => {
 			const view = ensureView(traitSet.value);
@@ -1548,10 +1543,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (!view.labels || typeof view.labels !== 'object') view.labels = {};
 			if (str.length > 0) view.labels.counter = str;
 			else delete view.labels.counter;
-			delete view.counterLabel;
-			if (traitSet.value && typeof traitSet.value === 'object') {
-				delete (traitSet.value as any).counterLabel;
-			}
 			updateCharacter(props.character);
 		},
 	});
@@ -1638,24 +1629,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function setBorderShape(shape: BorderShape) {
 		const ctk = ctkFor(props.traitSetID);
-		delete (ctk as Record<string, unknown>).borderless;
-		if (shape === 'none') {
-			ctk.border = 'none';
-			if (ctk.frame && typeof ctk.frame === 'object') {
-				delete (ctk.frame as any).box;
-				if ((ctk.frame as any).shape === 'block' || (ctk.frame as any).shape === 'line') {
-					(ctk.frame as any).shape = (ctk.frame as any).image?.url ? 'circle' : 'none';
-				}
-			}
-		} else {
-			ctk.border = normalizedBorderObj(shape) as any;
-			if (ctk.frame && typeof ctk.frame === 'object') {
-				delete (ctk.frame as any).box;
-				if ((ctk.frame as any).shape === 'block' || (ctk.frame as any).shape === 'line') {
-					(ctk.frame as any).shape = (ctk.frame as any).image?.url ? 'circle' : 'none';
-				}
-			}
-		}
+		ctk.border = shape === 'none' ? 'none' : (normalizedBorderObj(shape) as any);
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1689,7 +1663,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function setBorderProp(key: string, value: any) {
 		const ctk = ctkFor(props.traitSetID);
-		delete (ctk as Record<string, unknown>).borderless;
 		const shape = resolvedBorder.value.shape === 'none' ? 'block' : resolvedBorder.value.shape;
 		const obj = normalizedBorderObj(shape);
 		if (value === undefined || value === '') {
@@ -2068,16 +2041,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function setRingConfig(key: keyof RingConfig, value: any) {
 		const ctk = ctkFor(props.traitSetID);
 		const frameObj = normalizedFrameBase();
-		const existingRing = frameObj.ring || ctk.ringConfig;
+		const existingRing = frameObj.ring;
 		frameObj.ring ??= {
-			arcAngle: existingRing?.arcAngle ?? (existingRing?.arcSlide !== undefined ? existingRing.arcSlide * 3 : -90),
+			arcAngle: existingRing?.arcAngle ?? -90,
 			arcSpread: existingRing?.arcSpread ?? 100,
 			arcDistance: existingRing?.arcDistance ?? 0,
 			scaleAngle: existingRing?.scaleAngle ?? 0,
 			scaleDistance: existingRing?.scaleDistance ?? 0,
 			scaleDieX: existingRing?.scaleDieX ?? 0,
 			scaleDieY: existingRing?.scaleDieY ?? 0,
-			arcSlide: existingRing?.arcSlide ?? 0,
 		};
 		frameObj.ring[key] = value;
 		ctk.frame = frameObj as any;
@@ -2095,7 +2067,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			scaleDistance: 0,
 			scaleDieX: 0,
 			scaleDieY: 0,
-			arcSlide: 0,
 		};
 		ctk.frame = frameObj as any;
 		updateCharacter(structuredClone(toRaw(props.character)));

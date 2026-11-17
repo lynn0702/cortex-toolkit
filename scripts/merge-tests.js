@@ -403,7 +403,7 @@ function tpl() {
 {
 	const a = tpl();
 	let store = storage.upsertTemplate([], a);
-	store = storage.upsertTemplate(store, JSON.parse(JSON.stringify(a)));
+	store = storage.upsertTemplate(store, structuredClone(a));
 	ok(store.length === 1, 're-import replaces, never duplicates');
 	const b = tpl();
 	b.title = 'Changed';
@@ -496,7 +496,7 @@ function tpl() {
 	let store = storage.upsertTemplate([], a);
 	store = storage.upsertTemplate(store, b);
 	ok(store.length === 2, 'versions coexist by (id, version)');
-	store = storage.upsertTemplate(store, JSON.parse(JSON.stringify(b)));
+	store = storage.upsertTemplate(store, structuredClone(b));
 	ok(store.length === 2, 'same version replaces, never duplicates');
 }
 

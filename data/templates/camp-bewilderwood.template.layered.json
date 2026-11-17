@@ -464,7 +464,6 @@
 			"Badges": {
 				"id": "badges",
 				"description": "Merit badges earned at camp",
-				"counterLabel": "XP",
 				"view": {
 					"features": {
 						"description": false,
@@ -477,7 +476,9 @@
 						"header": "default",
 						"body": "die-rows"
 					},
-					"counterLabel": "XP",
+					"labels": {
+						"counter": "XP"
+					},
 					"ratingLadder": [
 						6,
 						8,

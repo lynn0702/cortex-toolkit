@@ -10,7 +10,7 @@ export type PortraitFrameShape = 'none' | 'circle' | 'square' | 'round' | 'cut';
 
 export type TraitArrayMode = 'none' | 'ring' | 'arc';
 
-export type FrameShape = PortraitFrameShape | 'ring' | 'arc' | 'block' | 'line';
+export type FrameShape = PortraitFrameShape | 'ring' | 'arc';
 
 export type FrameColor = 'primary' | 'secondary' | 'accent' | 'muted' | 'strong' | 'black' | (string & {});
 
@@ -32,7 +32,6 @@ export interface RingConfig {
 	scaleDistance?: number;
 	scaleDieX?: number;
 	scaleDieY?: number;
-	arcSlide?: number;
 }
 
 export interface FrameImageConfig {
@@ -52,11 +51,9 @@ export interface FrameConfig {
 	stroke: string;
 	color: FrameColor;
 	dash?: string;
-	box?: boolean;
 	path?: string | null;
 	image?: FrameImageConfig | null;
 	ring?: RingConfig | null;
-	ringConfig?: RingConfig | null;
 	position?: 'left' | 'right' | 'center';
 }
 
@@ -124,8 +121,8 @@ function parseCorner(rawCorner: unknown, fallback = 8): number | 'cut' {
 
 /**
  * Resolves section container border (`view.border`: `'none' | 'block' | 'line'`).
- * Preserves classic card borders for Library sets without explicit `view.border`,
- * `borderless`, or portrait/radial frame declarations.
+ * Preserves classic card borders for Library sets without explicit `view.border`
+ * or portrait/radial frame declarations.
  */
 export function resolveBorder(traitSetOrView: any): BorderConfig {
 	const fallbackClassic: BorderConfig = { shape: 'block', explicit: false, stroke: '2px', color: 'strong', corner: 0 };
@@ -169,38 +166,7 @@ export function resolveBorder(traitSetOrView: any): BorderConfig {
 		};
 	}
 
-	// Legacy fallbacks: frame.shape = 'block' | 'line', frame.box = true, or view.borderless = true
 	const rawFrame = view.frame as any;
-	if (typeof rawFrame === 'string' && (rawFrame === 'block' || rawFrame === 'line')) {
-		return {
-			shape: rawFrame,
-			explicit: true,
-			stroke: '2px',
-			color: 'primary',
-			corner: 8,
-			...(viewTint ? { tint: viewTint } : {}),
-		};
-	}
-	if (
-		rawFrame &&
-		typeof rawFrame === 'object' &&
-		(rawFrame.shape === 'block' || rawFrame.shape === 'line' || rawFrame.box)
-	) {
-		const shape: BorderShape = rawFrame.shape === 'line' ? 'line' : 'block';
-		const sc = parseFrameStrokeAndColor(rawFrame);
-		return {
-			shape,
-			explicit: true,
-			stroke: sc.stroke,
-			color: sc.color,
-			corner: parseCorner(rawFrame.corner, 8),
-			...(sc.dash ? { dash: sc.dash } : {}),
-			...(viewTint ? { tint: viewTint } : {}),
-		};
-	}
-	if (view.borderless === true) {
-		return { shape: 'none', explicit: true, stroke: '2px', color: 'primary', corner: 8 };
-	}
 	if (isName || view.style?.body === 'name' || view.style?.body === 'portrait-ring') {
 		return { shape: 'none', explicit: false, stroke: '2px', color: 'primary', corner: 8 };
 	}
@@ -250,15 +216,10 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 					...(imageZoom !== undefined ? { zoom: imageZoom } : {}),
 				}
 			: null;
-	const rawRingCfg =
-		rawObj?.ring ||
-		(view?.frame as any)?.ring ||
-		view?.ringConfig ||
-		rawObj?.ringConfig ||
-		(traitSetOrFrame as any)?.ringConfig;
+	const rawRingCfg = rawObj?.ring || (view?.frame as any)?.ring;
 	const ringConfig: RingConfig | null = rawRingCfg
 		? {
-				arcAngle: rawRingCfg.arcAngle ?? (rawRingCfg.arcSlide !== undefined ? rawRingCfg.arcSlide * 3 : -90),
+				arcAngle: rawRingCfg.arcAngle ?? -90,
 				arcSpread: rawRingCfg.arcSpread ?? 100,
 				arcDistance: rawRingCfg.arcDistance ?? 0,
 				scaleAngle: rawRingCfg.scaleAngle ?? 0,
@@ -286,11 +247,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 				corner: 8,
 				stroke: '2px',
 				color: 'primary',
-				box: false,
 				path: null,
 				...(frameImage ? { image: frameImage } : {}),
 				ring: ringConfig,
-				ringConfig,
 			};
 		}
 		if (view?.style?.body !== 'image' && view?.style?.body !== 'name' && view?.imageConfig?.url) {
@@ -303,21 +262,20 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 				corner: 8,
 				stroke: '2px',
 				color: 'primary',
-				box: false,
 				path: null,
 				image: {
 					url: String(view.imageConfig.url).trim(),
 					...(view.imageConfig.alignment ? { alignment: String(view.imageConfig.alignment) } : {}),
 					...(normalizeZoom(view.imageConfig.zoom) !== undefined ? { zoom: normalizeZoom(view.imageConfig.zoom) } : {}),
 				},
-				ringConfig: null,
+				ring: null,
 			};
 		}
 		return null;
 	}
 
 	if (typeof raw === 'string') {
-		if (raw === 'none' || raw === 'line' || !raw.trim()) return null;
+		if (raw === 'none' || !raw.trim()) return null;
 		const normalized = raw.trim() === 'ellipse' ? 'circle' : raw.trim();
 		const shape = normalized as FrameShape;
 		const portraitShape = toPortraitShape(shape);
@@ -330,17 +288,15 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			corner: 8,
 			stroke: '2px',
 			color: 'primary',
-			box: false,
 			path: null,
 			...(frameImage ? { image: frameImage } : {}),
-			...(array !== 'none' ? { ring: ringConfig, ringConfig } : { ringConfig: null }),
+			ring: array !== 'none' ? ringConfig : null,
 		};
 	}
 
 	if (typeof raw === 'object' && !Array.isArray(raw)) {
 		const rawShape = raw.shape === 'ellipse' ? 'circle' : raw.shape;
 		const shape = (rawShape || 'none') as FrameShape;
-		if ((shape as string) === 'line') return null;
 		const explicitArray: TraitArrayMode | undefined =
 			raw.array === 'none' || raw.array === 'ring' || raw.array === 'arc' ? raw.array : undefined;
 		const position =
@@ -383,7 +339,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		} else if (traitsSpan || shape === 'arc') {
 			array = 'arc';
 		} else if (shape === 'ring' || view?.style?.body === 'portrait-ring') {
-			if (frameImage?.url && !raw.ring && !raw.ringConfig && !hasExplicitRingTraits && setRatingType !== 'Dice') {
+			if (frameImage?.url && !raw.ring && !hasExplicitRingTraits && setRatingType !== 'Dice') {
 				array = 'none';
 			} else {
 				array = 'ring';
@@ -392,16 +348,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			array = 'none';
 		}
 
-		const portraitShape: PortraitFrameShape =
-			shape === 'block' || shape === 'line'
-				? frameImage?.url || ringSize !== undefined || array !== 'none'
-					? 'circle'
-					: 'none'
-				: toPortraitShape(shape);
-
-		const effectiveRingConfig = array !== 'none' ? rawObj?.ring || rawObj?.ringConfig || ringConfig || null : null;
+		const portraitShape: PortraitFrameShape = toPortraitShape(shape);
+		const effectiveRingConfig = array !== 'none' ? ringConfig : null;
 		const sc = parseFrameStrokeAndColor(raw);
-		const box = Boolean(raw.box);
 
 		return {
 			shape,
@@ -414,11 +363,10 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			stroke: sc.stroke,
 			color: sc.color,
 			...(sc.dash ? { dash: sc.dash } : {}),
-			box,
 			path: typeof raw.path === 'string' && raw.path.trim() ? raw.path.trim() : null,
 			...(frameImage ? { image: frameImage } : {}),
 			...(position ? { position } : {}),
-			...(effectiveRingConfig ? { ring: effectiveRingConfig, ringConfig: effectiveRingConfig } : { ringConfig: null }),
+			ring: effectiveRingConfig,
 		};
 	}
 	return null;
@@ -428,7 +376,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
  * Dynamically computes positional anchors around a frame for N visible traits.
  */
 export function computeFrameAnchors(count: number, config: FrameConfig): FrameAnchor[] {
-	if (config.shape === 'line' || config.shape === 'block' || count <= 0) {
+	if (count <= 0) {
 		return [];
 	}
 
@@ -552,24 +500,9 @@ export function buildRadialShapePath(config: FrameConfig): string {
 }
 
 /**
- * Deterministic SVG path generator for frame shapes inside a 100x100 (or 100x12 for line) viewBox.
+ * Deterministic SVG path generator for radial frame shapes inside a 100x100 viewBox.
  */
 export function buildFrameSvgPath(config: FrameConfig): string {
 	if (config.path) return config.path;
-
-	if (config.shape === 'line') {
-		return 'M 0,6 L 100,6';
-	}
-
-	if (config.shape === 'block') {
-		return buildBlockPath(config.corner, 100, 100);
-	}
-
-	const radial = buildRadialShapePath(config);
-	if (config.box && (config.shape === 'ring' || config.shape === 'arc')) {
-		const box = buildBlockPath(config.corner, 100, 100);
-		return `${box} ${radial}`;
-	}
-
-	return radial;
+	return buildRadialShapePath(config);
 }

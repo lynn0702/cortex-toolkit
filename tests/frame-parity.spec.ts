@@ -23,7 +23,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Attribute',
 						view: {
 							header: 'sidebar',
-							frame: { shape: 'block', color: 'strong' },
+							border: { shape: 'block', color: 'strong' },
 						},
 						traits: [{ name: 'Agility', rating: { type: 'Die', value: [8] } }],
 					},
@@ -67,7 +67,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Skill',
 						view: {
 							header: 'top',
-							frame: { shape: 'block', stroke: 'strong' },
+							border: { shape: 'block', stroke: 'strong' },
 						},
 						traits: [{ name: 'Fight', rating: { type: 'Die', value: [6] } }],
 					},
@@ -99,7 +99,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Trait',
 						view: {
 							header: 'top',
-							frame: { shape: 'block', stroke: 'strong' },
+							border: { shape: 'block', stroke: 'strong' },
 						},
 						traits: [{ name: 'Stealth', rating: { type: 'Die', value: [6] } }],
 					},
@@ -131,7 +131,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Asset',
 						view: {
 							tint: '#e0f2fe',
-							frame: { shape: 'block', stroke: 'primary' },
+							border: { shape: 'block', stroke: 'primary' },
 						},
 						traits: [{ name: 'Hoverbike', rating: { type: 'Die', value: [8] } }],
 					},
@@ -153,7 +153,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			const traitSet = {
 				name: 'Test Block',
 				view: {
-					frame: { shape: 'block', color: 'primary', corner: 4 },
+					border: { shape: 'block', color: 'primary', corner: 4 },
 				},
 			};
 
@@ -177,7 +177,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 	});
 
 	describe('Baseline 2: Ring Parity Geometry (Equidistant Distribution)', () => {
-		it('resolveFrame with view.attributesRing: true and no frame, and no ringConfig returns null', () => {
+		it('resolveFrame with view.attributesRing: true and no frame or frame.ring returns null', () => {
 			const setWithAttrRing = {
 				name: 'Attributes',
 				view: {
@@ -194,15 +194,17 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(resolveFrame(setLevelAttrRing)).toBeNull();
 		});
 
-		it('resolves frame ring carrying ringConfig', () => {
+		it('resolves frame ring carrying frame.ring', () => {
 			const ringSet = {
 				name: 'Attributes',
 				view: {
-					frame: { shape: 'ring' },
-					ringConfig: {
-						arcAngle: -90,
-						arcSpread: 100,
-						arcDistance: 0,
+					frame: {
+						shape: 'ring',
+						ring: {
+							arcAngle: -90,
+							arcSpread: 100,
+							arcDistance: 0,
+						},
 					},
 				},
 			};
@@ -210,9 +212,9 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			const resolved = resolveFrame(ringSet);
 			expect(resolved).not.toBeNull();
 			expect(resolved?.shape).toBe('ring');
-			expect(resolved?.ringConfig).toBeDefined();
-			expect(resolved?.ringConfig?.arcAngle).toBe(-90);
-			expect(resolved?.ringConfig?.arcSpread).toBe(100);
+			expect(resolved?.ring).toBeDefined();
+			expect(resolved?.ring?.arcAngle).toBe(-90);
+			expect(resolved?.ring?.arcSpread).toBe(100);
 		});
 
 		it('normalizes image zoom multiplier to three decimal places', () => {
@@ -316,9 +318,8 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				corner: 8,
 				stroke: '2px',
 				color: 'primary',
-				box: false,
 				path: null,
-				ringConfig: null,
+				ring: null,
 			});
 			expect('dash' in res!).toBe(false);
 		});
@@ -603,7 +604,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 		});
 
 		it('Orthogonal model: resolveBorder, buildPortraitFramePath, non-exclusive Style presetting, and Dice array off', () => {
-			// 1. resolveBorder handles explicit none/block/line and legacy borderless/frame fallbacks
+			// 1. resolveBorder handles explicit none/block/line
 			expect(resolveBorder({ view: { border: 'none' } }).shape).toBe('none');
 			expect(resolveBorder({ view: { border: { shape: 'block', corner: 'cut' } } })).toMatchObject({
 				shape: 'block',
@@ -615,7 +616,6 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				explicit: true,
 				color: 'strong',
 			});
-			expect(resolveBorder({ view: { borderless: true } }).shape).toBe('none');
 
 			// 2. buildPortraitFramePath generates distinct geometry for circle, square, round, cut, and none
 			expect(buildPortraitFramePath('none')).toBe('');

@@ -297,6 +297,7 @@ templates.forEach((tpl, ti) => {
 	}
 	ch.traitSets.forEach((ts, si) => {
 		const bag = (ts && (ts.view || (ts.custom && ts.custom.characterCurio))) || {};
+		if (ts && ts.counterLabel !== undefined) err(`${where}.traitSets[${si}]: retired counterLabel key`);
 		if (bag.headerRight !== undefined) err(`${where}.traitSets[${si}]: retired headerRight key (2026-10-22)`);
 		checkViewRetired(bag, `${where}.traitSets[${si}].view`);
 		checkNodeOptions(ts, `${where}.traitSets[${si}]`);
@@ -500,6 +501,9 @@ function checkViewRetired(bag, where) {
 	if (bag.sharedHinder !== undefined || bag.sharedHinderText !== undefined) {
 		err(`${where}: retired sharedHinder key (use view.altRoll and view.notes)`);
 	}
+	for (const k of ['counterLabel', 'borderless', 'ringConfig', 'scaleDie']) {
+		if (bag[k] !== undefined) err(`${where}: retired ${k} key`);
+	}
 	const vis = bag.visibility;
 	if (vis !== undefined && vis !== 'shown' && vis !== 'play-only' && vis !== 'editor-only' && vis !== 'hidden') {
 		err(`${where}: view.visibility must be shown|play-only|editor-only|hidden`);
@@ -522,9 +526,18 @@ function checkViewRetired(bag, where) {
 	]) {
 		if (bag[k] !== undefined) err(`${where}: retired column/band key ${k} (place supersedes it)`);
 	}
+	if (bag.frame === 'block' || bag.frame === 'line') {
+		err(`${where}: retired frame '${bag.frame}' (use view.border)`);
+	}
 	if (bag.frame && typeof bag.frame === 'object') {
 		if (bag.frame.shape === 'ellipse') {
 			err(`${where}: retired ellipse frame shape`);
+		}
+		if (bag.frame.shape === 'block' || bag.frame.shape === 'line') {
+			err(`${where}: retired frame.shape '${bag.frame.shape}' (use view.border)`);
+		}
+		if (bag.frame.box !== undefined) {
+			err(`${where}: retired frame.box key (use view.border)`);
 		}
 		if (bag.frame.traitsSpan !== undefined) {
 			if (
@@ -543,6 +556,8 @@ function checkRetiredTraitKeys(node, where) {
 	if (!node || typeof node !== 'object' || Array.isArray(node)) return;
 	if (node.value !== undefined) err(`${where}: retired value key (rating supersedes it)`);
 	if (node.dice !== undefined) err(`${where}: retired dice key (rating supersedes it)`);
+	if (node.xp !== undefined) err(`${where}: retired xp key (Counter child trait supersedes it)`);
+	if (node.counter !== undefined) err(`${where}: retired counter key (Counter rating supersedes it)`);
 	if (
 		node.custom &&
 		typeof node.custom === 'object' &&
@@ -802,6 +817,7 @@ function checkTemplateFile(where, data) {
 		// Retired view keys: headerRight read nowhere; setDie, challenge-pool
 		// flags, hidden booleans, and view.pool superseded by the node shape.
 		const setBag = set.view || (set.custom && set.custom.characterCurio) || {};
+		if (set.counterLabel !== undefined) err(`${where}/${name}: retired counterLabel key`);
 		if (setBag.headerRight !== undefined) err(`${where}/${name}: retired headerRight key`);
 		checkViewRetired(setBag, `${where}/${name}.view`);
 		checkNodeOptions(set, `${where}/${name}`);

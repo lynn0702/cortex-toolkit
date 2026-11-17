@@ -87,7 +87,7 @@ const templateSheets = computed(() => props.characters.filter((c) => !!c.isTempl
 
 const charactersSorted = computed(() => {
 	const ts = (d: unknown) => (typeof d === 'string' || typeof d === 'number' ? new Date(d).getTime() || 0 : 0);
-	return [...props.characters].sort((a, b) => {
+	return props.characters.toSorted((a, b) => {
 		const aDate = Math.max(ts(a.dateCreated), ts(a.dateModified), ts(a.dateTouched));
 		const bDate = Math.max(ts(b.dateCreated), ts(b.dateModified), ts(b.dateTouched));
 		return bDate - aDate;

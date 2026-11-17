@@ -148,11 +148,11 @@ function freshStore() {
 const demoChars = [{ id: 'c1', name: 'Test', traitSets: [], sheet: { template: { id: 't1', version: 1 } } }];
 const demoTpls = [{ id: 't1', version: 1, title: 'T', character: { traitSets: [] } }];
 const demoState = () => ({
-	characters: JSON.parse(JSON.stringify(demoChars)),
+	characters: structuredClone(demoChars),
 	openCharacterIDs: ['c1'],
 	playViewMode: 'split',
 	rollerPosition: 'left',
-	templates: JSON.parse(JSON.stringify(demoTpls)),
+	templates: structuredClone(demoTpls),
 	preferences: { version: 1 },
 });
 

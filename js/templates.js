@@ -1770,7 +1770,6 @@ const characterCurioLibraryTemplates = [
 					id: 'badges',
 					name: 'Badges',
 					description: 'Merit badges earned at camp',
-					counterLabel: 'XP',
 					view: {
 						features: {
 							description: false,
@@ -1783,7 +1782,9 @@ const characterCurioLibraryTemplates = [
 							header: 'default',
 							body: 'die-rows',
 						},
-						counterLabel: 'XP',
+						labels: {
+							counter: 'XP',
+						},
 						ratingLadder: [6, 8, 10, 12],
 						multiDie: false,
 						notes: '',
@@ -16488,7 +16489,6 @@ const characterCurioLibraryTemplates = [
 				{
 					id: 'ks-die-rows',
 					name: 'Badges',
-					counterLabel: 'XP',
 					view: {
 						page: 1,
 						header: 'top',
@@ -16496,6 +16496,9 @@ const characterCurioLibraryTemplates = [
 						style: {
 							header: 'default',
 							body: 'die-rows',
+						},
+						labels: {
+							counter: 'XP',
 						},
 						features: {
 							description: false,
@@ -16523,8 +16526,18 @@ const characterCurioLibraryTemplates = [
 								value: [8],
 								range: [4, 6, 8, 10, 12],
 							},
-							xp: 3,
-							traits: [],
+							traits: [
+								{
+									name: 'XP',
+									noun: 'XP',
+									rating: {
+										type: 'Counter',
+										value: [3],
+										range: [0, 20],
+									},
+									traits: [],
+								},
+							],
 						},
 						{
 							name: 'Trailblazer',
@@ -16533,8 +16546,18 @@ const characterCurioLibraryTemplates = [
 								value: [6],
 								range: [4, 6, 8, 10, 12],
 							},
-							xp: 1,
-							traits: [],
+							traits: [
+								{
+									name: 'XP',
+									noun: 'XP',
+									rating: {
+										type: 'Counter',
+										value: [1],
+										range: [0, 20],
+									},
+									traits: [],
+								},
+							],
 						},
 					],
 				},

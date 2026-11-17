@@ -395,7 +395,7 @@ const {
 			</div>
 
 			<div class="editor-field">
-				<div class="editor-label">Scale Die</div>
+				<div class="editor-label">Ring Die</div>
 				<div class="rating-scale-container">
 					<div class="rating-scale-chips">
 						<button
@@ -403,7 +403,7 @@ const {
 							class="rating-scale-chip set-rating-die-none"
 							:class="{ active: scaleDieValue === 0 }"
 							:aria-pressed="scaleDieValue === 0"
-							aria-label="Clear Scale Die"
+							aria-label="Clear Ring Die"
 							@click.stop="scaleDieValue = 0"
 						>
 							<span class="chip-label">None</span>
@@ -415,7 +415,7 @@ const {
 							class="rating-scale-chip"
 							:class="{ active: scaleDieValue === s }"
 							:aria-pressed="scaleDieValue === s"
-							:aria-label="'Set Scale Die d' + s"
+							:aria-label="'Set Ring Die d' + s"
 							:title="'d' + s"
 							@click.stop="scaleDieValue = s"
 						>
@@ -429,7 +429,7 @@ const {
 				<div class="ring-sliders">
 					<div class="slider-row">
 						<div class="slider-header">
-							<span>Scale Die Angle</span>
+							<span>Ring Die Angle</span>
 							<span class="slider-val">{{ scaleAngleLabel }}</span>
 						</div>
 						<div class="ring-presets">

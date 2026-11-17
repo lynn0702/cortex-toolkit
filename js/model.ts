@@ -299,6 +299,44 @@ export function isRingBadgeTrait(t: unknown): boolean {
 	return keepsExtraDice(t) > 0;
 }
 
+/** Return the primary die size of a set's `ringBadge` trait, or `0` if absent. */
+export function getRingBadgeDie(setNode: unknown): number {
+	if (!setNode || typeof setNode !== 'object') return 0;
+	const traits = (setNode as { traits?: unknown[] }).traits;
+	if (!Array.isArray(traits)) return 0;
+	const st = traits.find((t) => isRingBadgeTrait(t));
+	if (!st) return 0;
+	return ratingDice(resolveRating(st, [setNode]))[0] || 8;
+}
+
+/** Create, update, or remove a set's `ringBadge` die trait (`dieSize <= 0` removes it). */
+export function setRingBadgeDie(setNode: unknown, dieSize: number): void {
+	if (!setNode || typeof setNode !== 'object') return;
+	const rec = setNode as { traits?: Record<string, any>[] };
+	if (!Array.isArray(rec.traits)) rec.traits = [];
+	const num = Number(dieSize) || 0;
+	const idx = rec.traits.findIndex((t) => isRingBadgeTrait(t));
+	if (num <= 0) {
+		if (idx !== -1) rec.traits.splice(idx, 1);
+		return;
+	}
+	if (idx !== -1) {
+		const st = rec.traits[idx];
+		st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
+		if (!keepsExtraDice(st)) st.keepsExtra = 1;
+	} else {
+		rec.traits.push({
+			name: 'Ring Die',
+			description: '',
+			traits: [],
+			tags: [],
+			keepsExtra: 1,
+			rating: { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] },
+			view: { ringBadge: true },
+		});
+	}
+}
+
 /** Return true iff this curiosity explicitly tracks Plot Points (`plotPoints` is a finite number). */
 export function hasPlotPoints(curiosity: unknown): boolean {
 	if (!curiosity || typeof curiosity !== 'object') return false;
@@ -414,14 +452,14 @@ export function resolveRange(node: unknown, fallbacks?: Array<unknown>): number[
 		const link = chain[i];
 		const r = resolveRating(link, chain.slice(i + 1));
 		if ((r?.type === 'Die' || r?.type === 'Dice') && Array.isArray(r.range) && r.range.length > 0) {
-			return [...r.range].sort((a, b) => a - b);
+			return r.range.toSorted((a, b) => a - b);
 		}
 	}
 	for (const link of chain) {
 		const v = getView(link);
 		const ladder = v && typeof v === 'object' ? (v as Record<string, unknown>).ratingLadder : undefined;
 		if (Array.isArray(ladder) && ladder.length > 0 && ladder.every((x) => typeof x === 'number')) {
-			return [...(ladder as number[])].sort((a, b) => a - b);
+			return (ladder as number[]).toSorted((a, b) => a - b);
 		}
 	}
 	return [...DIE_LADDER];
@@ -607,8 +645,7 @@ export function resolveSetPillar(traitSet: unknown): string {
 
 /**
  * Resolve the display label for a pillar key on a character sheet.
- * Reads `view.labels.pillars[pillarKey]` or `view.labels['pillar_' + pillarKey]`,
- * falling back to capitalizing the pillar key.
+ * Reads `view.labels.pillars[pillarKey]`, falling back to capitalizing the pillar key.
  */
 export function getPillarLabel(character: unknown, pillarKey: string): string {
 	const key = String(pillarKey || '').trim();
@@ -620,8 +657,6 @@ export function getPillarLabel(character: unknown, pillarKey: string): string {
 			const custom = map[key];
 			if (typeof custom === 'string' && custom.trim().length > 0) return custom.trim();
 		}
-		const flat = labels['pillar_' + key];
-		if (typeof flat === 'string' && flat.trim().length > 0) return flat.trim();
 	}
 	const sets =
 		character && typeof character === 'object' && Array.isArray((character as any).traitSets)
@@ -635,8 +670,6 @@ export function getPillarLabel(character: unknown, pillarKey: string): string {
 				const tsCustom = tsMap[key];
 				if (typeof tsCustom === 'string' && tsCustom.trim().length > 0) return tsCustom.trim();
 			}
-			const tsFlat = tsLabels['pillar_' + key];
-			if (typeof tsFlat === 'string' && tsFlat.trim().length > 0) return tsFlat.trim();
 		}
 	}
 	return key.charAt(0).toUpperCase() + key.slice(1);
@@ -661,7 +694,6 @@ export interface RingConfig {
 	arcAngle?: number;
 	arcSpread?: number;
 	arcDistance?: number;
-	arcSlide?: number;
 	scaleAngle?: number;
 	scaleDistance?: number;
 	scaleDieX?: number;
@@ -766,7 +798,6 @@ export interface CharacterCurioCustom {
 
 	// style-specific config
 	pips?: PipsConfig;
-	ringConfig?: RingConfig;
 	imageConfig?: ImageConfig;
 	/** Generic Out indicator for any stepped track; default off. */
 	outIndicator?: boolean;
@@ -801,8 +832,6 @@ export interface CharacterCurioCustom {
 	/** When true, trait is placed on the set's ring rather than the trait list. */
 	ring?: boolean;
 	pipSeparator?: string;
-	/** Remove borders, backgrounds, and box-shadows around the section. */
-	borderless?: boolean;
 	/** Section border configuration (`none | block | line`). */
 	border?: import('./frame-geometry.ts').BorderShape | Partial<import('./frame-geometry.ts').BorderConfig> | string;
 	/** Singular noun override for traits on a ring (e.g. "Boss Die"). */
@@ -810,7 +839,6 @@ export interface CharacterCurioCustom {
 	// behavior / labels
 	/** Rung label direction on ladder layouts: horizontal text or rotated vertical. */
 	labelPosition?: 'horizontal' | 'vertical';
-	counterLabel?: string;
 	branchArrows?: boolean;
 	endWord?: string;
 	/** Pool staging on the set node (one recursive shape): clicks stage the whole array. */
@@ -829,8 +857,6 @@ export interface CharacterCurioCustom {
 		| string;
 
 	// ring / portrait ring
-	scaleDie?: number;
-	scale?: number;
 	ringBadge?: boolean;
 	ringBadgeDie?: number;
 
@@ -1207,17 +1233,13 @@ function resolveTemplateRecords(tmplOrChar: unknown): {
 	return { entry, character };
 }
 
-/** Read Library listing metadata from `character.view.listing` (with legacy entry fallback). */
+/** Read Library listing metadata from `character.view.listing`. */
 export function getTemplateListing(tmplOrChar: unknown): TemplateListing | undefined {
 	const { entry, character } = resolveTemplateRecords(tmplOrChar);
 	if (!entry) return undefined;
 	const viewListing = getView(character)?.listing;
 	if (viewListing && typeof viewListing === 'object' && !Array.isArray(viewListing)) {
 		return viewListing as TemplateListing;
-	}
-	const legacyListing = entry.listing;
-	if (legacyListing && typeof legacyListing === 'object' && !Array.isArray(legacyListing)) {
-		return legacyListing as TemplateListing;
 	}
 	return undefined;
 }

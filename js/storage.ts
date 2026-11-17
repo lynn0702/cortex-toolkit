@@ -14,9 +14,7 @@ export interface StorageState {
 	rollerPosition: 'left' | 'right';
 	templates: unknown[];
 	preferences: unknown;
-	migrated: boolean;
 	loadError?: unknown;
-	migrationError?: unknown;
 }
 
 // Granular save payload: whole character entries are upserted/deleted by
@@ -125,9 +123,9 @@ export const characterCurioStorage: CharacterCurioStorage = {
 		const pinned = new Set();
 		(Array.isArray(characters) ? characters : []).forEach((c) => {
 			const t = c && c.sheet && c.sheet.template;
-			const id = t ? (typeof t === 'string' ? t : t.id) : null;
+			const id = t && typeof t === 'object' ? t.id : null;
 			if (!id) return;
-			const ver = (t && typeof t === 'object' && t.version) || 1;
+			const ver = t.version || 1;
 			pinned.add(id + '@' + ver);
 		});
 		return list.filter((t) => Boolean(t && (t as any).userSaved) || pinned.has(this.templateKey(t)));
@@ -213,20 +211,6 @@ export const characterCurioStorage: CharacterCurioStorage = {
 						.replace(/\s*\([^)]*\)/g, '')
 						.trim();
 				}
-				// D5: load must not materialize defaults.
-				const ns =
-					c.sets?.Name || (Array.isArray(c.traitSets) ? c.traitSets.find((s: any) => s && s.id === 'name') : undefined);
-				if (ns?.portrait?.url) {
-					const pUrl = String(ns.portrait.url);
-					if (
-						pUrl.includes('camp_bewilderwood_logo') ||
-						pUrl.includes('cosa_nostra_logo') ||
-						pUrl.includes('brighter_stars_logo')
-					) {
-						ns.portrait.url = '';
-					}
-				}
-
 				return c;
 			})
 			.filter(Boolean);
@@ -380,7 +364,6 @@ export const characterCurioStorage: CharacterCurioStorage = {
 			rollerPosition: 'left',
 			templates: [],
 			preferences: this.normalizePreferences(null),
-			migrated: false,
 		});
 		const fromRecord = (record: any): StorageState | null => {
 			if (!record || record.v !== 2 || !Array.isArray(record.characters)) return null;
@@ -391,7 +374,6 @@ export const characterCurioStorage: CharacterCurioStorage = {
 				rollerPosition: record.rollerPosition === 'right' ? 'right' : 'left',
 				templates: this.normalizeTemplates(record.templates),
 				preferences: this.normalizePreferences(record.preferences),
-				migrated: false,
 			};
 		};
 		const pick = await this.readRecord();

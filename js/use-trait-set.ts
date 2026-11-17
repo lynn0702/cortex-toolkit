@@ -679,16 +679,29 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function getCounterLabel(traitSetArg: TraitSet): string {
 		const fromLabels = (getView(traitSetArg)?.labels as Record<string, unknown> | undefined)?.counter;
-		if (typeof fromLabels === 'string') return fromLabels;
-		const fromView = getView(traitSetArg)?.counterLabel;
-		if (typeof fromView === 'string') return fromView;
-		const fromSet = (traitSetArg as any)?.counterLabel;
-		if (typeof fromSet === 'string') return fromSet;
+		return typeof fromLabels === 'string' ? fromLabels : '';
+	}
+
+	function getTraitCounter(trait: Trait): number | '' {
+		const direct = resolveTraitRating(trait);
+		if (direct?.type === 'Counter') {
+			const val = direct.value?.[0];
+			return typeof val === 'number' ? val : 0;
+		}
+		if (Array.isArray(trait?.traits)) {
+			for (const c of trait.traits) {
+				const cr = resolveTraitRating(c, [trait]);
+				if (cr?.type === 'Counter') {
+					const val = cr.value?.[0];
+					return typeof val === 'number' ? val : 0;
+				}
+			}
+		}
 		return '';
 	}
 
-	function getTraitCounter(trait: Trait) {
-		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView(trait)?.xp ?? '';
+	function hasTraitCounter(trait: Trait): boolean {
+		return getTraitCounter(trait) !== '';
 	}
 
 	function renderDieValue(value: number, isActive = true) {
@@ -2198,6 +2211,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		isPartsInline,
 		getCounterLabel,
 		getTraitCounter,
+		hasTraitCounter,
 		renderDieValue,
 		selectElement,
 		updateCharacter,

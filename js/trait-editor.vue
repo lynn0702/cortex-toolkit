@@ -261,30 +261,6 @@ const isListStyle = computed(() => {
 const hasSfxChildren = computed(() => characterCurioFunctions.blockChildren(trait.value, traitSet.value).length > 0);
 const hasBadge = computed(() => Boolean((getView(trait.value) as any)?.badge));
 
-const counterLabel = computed(() => {
-	const fromLabels = (getView(traitSet.value)?.labels as Record<string, unknown> | undefined)?.counter;
-	if (typeof fromLabels === 'string' && fromLabels.length) return fromLabels;
-	const legacy = getView(traitSet.value)?.counterLabel ?? traitSet.value?.counterLabel;
-	if (typeof legacy === 'string' && legacy.length) return legacy;
-	return 'Counter';
-});
-
-const counterValue = computed({
-	get() {
-		return trait.value?.counter ?? trait.value?.xp ?? trait.value?.custom?.counter ?? trait.value?.custom?.xp ?? '';
-	},
-	set(val: any) {
-		if (!trait.value) return;
-		trait.value.counter = val;
-		delete trait.value.xp;
-		if (trait.value.custom) {
-			delete trait.value.custom.counter;
-			delete trait.value.custom.xp;
-		}
-		updateCharacter(props.character);
-	},
-});
-
 const isLabeledPipsSet = computed(() => {
 	if (isSubtraitMode.value) return false;
 	const v = getView(traitSet.value);
@@ -1913,18 +1889,6 @@ const hasAdvancedTraitSettings = computed(() =>
 					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description" rows="2"></textarea>
-					</div>
-
-					<!-- COUNTER / XP FIELD -->
-					<div class="editor-field" v-if="ratingType === 'Counter'">
-						<label :for="'trait-counter-' + traitID">{{ counterLabel }}</label>
-						<input
-							type="text"
-							:id="'trait-counter-' + traitID"
-							name="traitCounter"
-							v-model="counterValue"
-							:placeholder="counterLabel"
-						/>
 					</div>
 
 					<!-- PIP ROW CHECKBOX -->

@@ -1093,7 +1093,7 @@ function evaluatePoolResults(
 			bestEffect = { isBotch: true };
 			log = `${label} (Keep ${keepCount}): Botch`;
 		} else {
-			const sortedForTotal = [...eligible].sort((a, b) => b.value - a.value);
+			const sortedForTotal = eligible.toSorted((a, b) => b.value - a.value);
 			const totalDice = sortedForTotal.slice(0, keepCount);
 			const remainingForEffect = sortedForTotal.slice(keepCount).sort((a, b) => b.size - a.size);
 			const effectDie = remainingForEffect.length > 0 ? 'd' + remainingForEffect[0].size : 'd4';
@@ -1102,7 +1102,7 @@ function evaluatePoolResults(
 
 			bestTotal = { total: totalSum, formula: totalFormula, effect: effectDie, dice: totalDice };
 
-			const sortedForEffect = [...eligible].sort((a, b) => (a.size !== b.size ? b.size - a.size : a.value - b.value));
+			const sortedForEffect = eligible.toSorted((a, b) => (a.size !== b.size ? b.size - a.size : a.value - b.value));
 			const effectBest = sortedForEffect.length > 0 ? 'd' + sortedForEffect[0].size : 'd4';
 			const totalDiceForEffect = sortedForEffect
 				.slice(1)
@@ -1133,23 +1133,19 @@ function evaluatePoolResults(
 		let actionRemaining: RollResult[] = [];
 
 		if (actionEligible.length > 0) {
-			const sortedAction = [...actionEligible].sort((a, b) => b.value - a.value);
+			const sortedAction = actionEligible.toSorted((a, b) => b.value - a.value);
 			actionTotalDice = sortedAction.slice(0, actionKeep);
 			actionRemaining = sortedAction.slice(actionKeep).sort((a, b) => b.size - a.size);
 			actionEffect = actionRemaining.length > 0 ? 'd' + actionRemaining[0].size : 'd4';
 			actionTotal = actionTotalDice.reduce((sum, d) => sum + d.value, 0);
 		}
 
-		const groupMap: Record<string, RollResult[]> = {};
-		for (const r of separateResults) {
-			const name = (r.source || 'Separate').trim() || 'Separate';
-			if (!groupMap[name]) groupMap[name] = [];
-			groupMap[name].push(r);
-		}
+		const groupMap = Object.groupBy(separateResults, (r) => (r.source || 'Separate').trim() || 'Separate');
 
 		let totalSeparateBonus = 0;
 		for (const [name, dice] of Object.entries(groupMap)) {
-			const sortedSep = [...dice].sort((a, b) => b.value - a.value);
+			if (!dice || dice.length === 0) continue;
+			const sortedSep = dice.toSorted((a, b) => b.value - a.value);
 			const keptDie = sortedSep[0];
 			totalSeparateBonus += keptDie.value;
 			if (!preserveManualRoles) {
@@ -1173,7 +1169,7 @@ function evaluatePoolResults(
 		let actionEffectBestDie = 'd4';
 		let actionEffectTotal = 0;
 		if (actionEligible.length > 0) {
-			const sortedActionForEffect = [...actionEligible].sort((a, b) =>
+			const sortedActionForEffect = actionEligible.toSorted((a, b) =>
 				a.size !== b.size ? b.size - a.size : a.value - b.value,
 			);
 			actionEffectBestDie = 'd' + sortedActionForEffect[0].size;
@@ -1664,7 +1660,7 @@ function handleApplyPreset(targetId: string, preset: 'total' | 'effect') {
 		}
 		for (const g of targetEval.separateGroups) {
 			if (!g.dice.some((d) => d.manualRole === 'total') && g.dice.length > 0) {
-				const topSep = [...g.dice].sort((a, b) => b.value - a.value)[0];
+				const topSep = g.dice.toSorted((a, b) => b.value - a.value)[0];
 				topSep.manualRole = 'total';
 			}
 		}

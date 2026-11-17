@@ -398,7 +398,6 @@ function setNameBorderShape(shape: 'none' | 'block' | 'line') {
 	const { set } = ensureNameSet();
 	if (!set) return;
 	const v = ensureView(set) as Record<string, unknown>;
-	delete v.borderless;
 	if (shape === 'block') {
 		delete v.border;
 	} else {
@@ -514,14 +513,13 @@ function removeCustomPillar(key: string) {
 			delete pillarsMap[key];
 			if (!Object.keys(pillarsMap).length) delete v.labels.pillars;
 		}
-		delete (v.labels as Record<string, unknown>)['pillar_' + key];
 	}
 	updateCharacter(props.character);
 }
 
 function pillarLabelValue(key: string): string {
 	const labels = getView(props.character)?.labels as Record<string, any> | undefined;
-	return labels?.pillars?.[key] ?? labels?.['pillar_' + key] ?? '';
+	return labels?.pillars?.[key] ?? '';
 }
 
 function pillarLabelPlaceholder(key: string): string {
@@ -540,7 +538,6 @@ function setPillarLabel(key: string, val: string) {
 		v.labels.pillars[key] = trimmed;
 	} else {
 		delete v.labels.pillars[key];
-		delete v.labels['pillar_' + key];
 	}
 	updateCharacter(props.character);
 }
@@ -626,9 +623,7 @@ const pageOrientation = computed({
 // against (values not set locally fall through to the template).
 const sheetTemplateId = computed(() => {
 	const t = props.character?.sheet?.template;
-	if (!t) return '';
-	if (typeof t === 'string') return t;
-	return t.id || '';
+	return t && typeof t === 'object' ? t.id || '' : '';
 });
 
 const LISTING_RATING_OPTIONS = ['', 'd4', 'd6', 'd8', 'd10', 'd12'] as const;

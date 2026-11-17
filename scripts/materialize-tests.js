@@ -129,9 +129,7 @@ function compareRender(render, label) {
 	ov.traitSets[0].noun = 'ZZZ NOUN';
 	const back = materializeCharacter(toLayeredEntity(ov), ov);
 	ok(
-		(back.traitSets[0].view?.style?.body ||
-			back.traitSets[0].custom?.characterCurio?.style?.body ||
-			back.traitSets[0].custom?.cortexToolkit?.style?.body) === 'zzz-body',
+		back.traitSets[0].view?.style?.body === 'zzz-body',
 		'set style override survives',
 		back.traitSets[0].view?.style?.body,
 	);
@@ -263,7 +261,7 @@ function compareRender(render, label) {
 			],
 		},
 	};
-	const live = JSON.parse(JSON.stringify(tmpl.character));
+	const live = structuredClone(tmpl.character);
 	live.traitSets[0].traits[0].rating = { type: 'Pip', value: [true] };
 	live.traitSets[1].traits[0].rating = { range: [6, 8, 10], value: [10] };
 
@@ -312,7 +310,7 @@ function compareRender(render, label) {
 	);
 
 	// Switching type explicitly must not leak the prior type's range
-	const switched = JSON.parse(JSON.stringify(tmpl.character));
+	const switched = structuredClone(tmpl.character);
 	switched.traitSets[1].traits[0].rating = { type: 'Pip', value: [true] };
 	const switchedRestored = materializeCharacter(
 		toLayeredEntity(F.stripCharacterToDeltas(switched, tmpl)),

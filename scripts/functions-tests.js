@@ -116,11 +116,10 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(F.resolveSetPillar({ view: { style: { body: 'default' } } }) === 'plus', 'default style defaults to plus pillar');
 
 	const charWithLabels = {
-		view: { labels: { pillars: { prime: 'Core', cyberware: 'Augments' }, pillar_play: 'Session' } },
+		view: { labels: { pillars: { prime: 'Core', cyberware: 'Augments' } } },
 	};
 	ok(F.getPillarLabel(charWithLabels, 'prime') === 'Core', 'getPillarLabel reads view.labels.pillars');
 	ok(F.getPillarLabel(charWithLabels, 'cyberware') === 'Augments', 'getPillarLabel reads custom pillar label');
-	ok(F.getPillarLabel(charWithLabels, 'play') === 'Session', 'getPillarLabel reads flat pillar_ fallback');
 	ok(F.getPillarLabel(charWithLabels, 'plus') === 'Plus', 'getPillarLabel capitalizes uncustomized key');
 
 	const presets = F.characterCurioSetPresets;

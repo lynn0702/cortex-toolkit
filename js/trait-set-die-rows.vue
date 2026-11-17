@@ -21,8 +21,8 @@ const {
 	getParts,
 	renderDieValueForPrint,
 	handleSingleDieClick,
-	resolveTraitRating,
 	getTraitCounter,
+	hasTraitCounter,
 	firstDie,
 	isDieActive,
 	isPlayMutableSet,
@@ -118,10 +118,7 @@ const {
 					</div>
 					<span
 						class="die-row-counter"
-						v-if="
-							resolveTraitRating(item.trait)?.type === 'Counter' ||
-							traitSet.traits?.some((t: any) => resolveTraitRating(t)?.type === 'Counter')
-						"
+						v-if="hasTraitCounter(item.trait) || traitSet.traits?.some((t: any) => hasTraitCounter(t))"
 					>
 						{{ !printBlank && !item.isPlaceholder ? getTraitCounter(item.trait) : '' }}
 					</span>

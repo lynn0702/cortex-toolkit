@@ -624,7 +624,7 @@ export class DicePool {
 			displayHitches = true;
 		}
 		let output = '';
-		const rollsSorted = [...rolls].sort((a, b) => b.values[0] - a.values[0]);
+		const rollsSorted = rolls.toSorted((a, b) => b.values[0] - a.values[0]);
 		const best_total_dice = rollsSorted.slice(0, keep);
 		const best_effect_dice = rollsSorted.slice(keep).sort((a, b) => b.size - a.size);
 		best_effect_dice.push(DEFAULT_D4);
@@ -644,7 +644,7 @@ export class DicePool {
 			displayHitches = true;
 		}
 		let output = '';
-		const rollsSorted = [...rolls].sort((a, b) => {
+		const rollsSorted = rolls.toSorted((a, b) => {
 			if (a.size !== b.size) {
 				return b.size - a.size;
 			}

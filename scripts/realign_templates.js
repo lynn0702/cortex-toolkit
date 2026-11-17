@@ -66,8 +66,6 @@ templates = templates.map((item) => {
 				if (!ctk.style) ctk.style = {};
 				ctk.style.header = 'default';
 				ctk.style.body = 'default';
-				delete ctk.ringConfig;
-				delete ctk.scaleDie;
 				ctk.ringTrait = false;
 			}
 

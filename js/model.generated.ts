@@ -90,7 +90,7 @@ export interface Curiosity {
   /**
    * Pinned sheet template reference in layered form.
    */
-  template?: {} | string | null;
+  template?: {} | null;
   /**
    * A unique identifier for the curiosity.
    */
@@ -150,10 +150,6 @@ export interface TraitSet {
    * The traits in the trait set.
    */
   traits?: Trait[] | null;
-  /**
-   * Label for the secondary counter column header, e.g. 'XP'.
-   */
-  counterLabel?: string | null;
   tags?: Tags;
   rating?: Rating;
   /**
@@ -221,14 +217,6 @@ export interface Trait {
    * A description of the trait.
    */
   description?: string | null;
-  /**
-   * XP or numeral counter value for this trait.
-   */
-  xp?: number | string | null;
-  /**
-   * Alternative counter value for this trait.
-   */
-  counter?: number | string | null;
   /**
    * Any child traits attached this parent trait.
    */

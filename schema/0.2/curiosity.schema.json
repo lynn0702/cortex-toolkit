@@ -103,13 +103,6 @@
 						"$ref": "#/$defs/trait"
 					}
 				},
-				"counterLabel": {
-					"type": [
-						"string",
-						"null"
-					],
-					"description": "Label for the secondary counter column header, e.g. 'XP'."
-				},
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
@@ -236,22 +229,6 @@
 						"null"
 					],
 					"description": "A description of the trait."
-				},
-				"xp": {
-					"type": [
-						"integer",
-						"string",
-						"null"
-					],
-					"description": "XP or numeral counter value for this trait."
-				},
-				"counter": {
-					"type": [
-						"integer",
-						"string",
-						"null"
-					],
-					"description": "Alternative counter value for this trait."
 				},
 				"traits": {
 					"type": [
@@ -458,7 +435,6 @@
 		"template": {
 			"type": [
 				"object",
-				"string",
 				"null"
 			],
 			"description": "Pinned sheet template reference in layered form."

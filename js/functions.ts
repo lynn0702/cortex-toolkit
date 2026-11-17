@@ -392,7 +392,7 @@ export const characterCurioFunctions = {
 	getTraitSetRatings: function (traitSet: TraitSet) {
 		const custom = getView(traitSet);
 		if (Array.isArray(custom?.ratingLadder) && custom.ratingLadder.length > 0) {
-			return [...custom.ratingLadder].sort((a, b) => a - b);
+			return custom.ratingLadder.toSorted((a, b) => a - b);
 		}
 		return [4, 6, 8, 10, 12];
 	},
@@ -400,7 +400,7 @@ export const characterCurioFunctions = {
 	getSubtraitRatings: function (traitSet: TraitSet) {
 		const custom = getView(traitSet);
 		if (Array.isArray(custom?.subtraitRatingLadder) && custom.subtraitRatingLadder.length > 0) {
-			return [...custom.subtraitRatingLadder].sort((a, b) => a - b);
+			return custom.subtraitRatingLadder.toSorted((a, b) => a - b);
 		}
 		return [4, 6, 8, 10, 12];
 	},
@@ -473,7 +473,7 @@ export const characterCurioFunctions = {
 		if (!traitSetArg) return [4, 6, 8, 10, 12];
 		const view = getView(traitSetArg);
 		if (Array.isArray(view?.subtraitRatingLadder) && view.subtraitRatingLadder.length > 0) {
-			return [...view.subtraitRatingLadder].sort((a, b) => a - b);
+			return view.subtraitRatingLadder.toSorted((a, b) => a - b);
 		}
 		const explicitLabel = typeof view?.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
 		const rawTraits = traitSetArg?.traits;
@@ -1048,7 +1048,7 @@ export const characterCurioFunctions = {
 	// (passed in by editors via $root), then the built-in library.
 	resolveTemplateFor: function (character: Character, storeTemplates: SheetTemplate[] | null): SheetTemplate | null {
 		const t = character && character.sheet && character.sheet.template;
-		const id = t ? (typeof t === 'string' ? t : t.id) : null;
+		const id = t && typeof t === 'object' ? t.id : null;
 		if (!id) return null;
 		const ver = (t && typeof t === 'object' && t.version) || null;
 		if (Array.isArray(storeTemplates)) {
@@ -1527,9 +1527,6 @@ export const characterCurioFunctions = {
 		snapshot.name = '';
 		if (snapshot.view) {
 			delete snapshot.view.nickname; // Character data, not layout.
-		}
-		if (snapshot.custom && snapshot.custom.characterCurio) {
-			delete snapshot.custom.characterCurio.nickname;
 		}
 		if (snapshot.view && typeof snapshot.view === 'object' && !Array.isArray(snapshot.view)) {
 			const rawListing = snapshot.view.listing;

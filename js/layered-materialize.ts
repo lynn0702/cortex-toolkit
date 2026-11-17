@@ -29,8 +29,6 @@ export interface RenderTrait {
 	traits?: RenderTrait[] | null;
 	tags?: unknown[] | null;
 	custom?: Record<string, unknown> | null;
-	xp?: unknown;
-	counter?: unknown;
 	_lid?: string;
 	id?: string | null;
 	[key: string]: unknown;
@@ -177,7 +175,7 @@ const traitDice = (t: RenderTrait): number[] => {
 // rating object for ints (canonical layered emit)
 const ratingForDice = (dice: number[]): Record<string, unknown> => ({
 	type: dice.length > 1 ? 'Dice' : 'Die',
-	value: dice.slice().sort((a, b) => b - a),
+	value: dice.toSorted((a, b) => b - a),
 	range: [4, 6, 8, 10, 12],
 });
 

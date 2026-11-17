@@ -537,7 +537,6 @@
 			},
 			"Badges": {
 				"id": "ks-die-rows",
-				"counterLabel": "XP",
 				"view": {
 					"page": 1,
 					"header": "top",
@@ -545,6 +544,9 @@
 					"style": {
 						"header": "default",
 						"body": "die-rows"
+					},
+					"labels": {
+						"counter": "XP"
 					},
 					"features": {
 						"description": false,
@@ -576,7 +578,21 @@
 								8
 							]
 						},
-						"xp": 3
+						"traits": {
+							"XP": {
+								"noun": "XP",
+								"rating": {
+									"type": "Counter",
+									"value": [
+										3
+									],
+									"range": [
+										0,
+										20
+									]
+								}
+							}
+						}
 					},
 					"Trailblazer": {
 						"rating": {
@@ -584,7 +600,21 @@
 								6
 							]
 						},
-						"xp": 1
+						"traits": {
+							"XP": {
+								"noun": "XP",
+								"rating": {
+									"type": "Counter",
+									"value": [
+										1
+									],
+									"range": [
+										0,
+										20
+									]
+								}
+							}
+						}
 					}
 				},
 				"rating": {
