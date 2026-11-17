@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, toRaw, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRaw, watch } from 'vue';
 import {
 	DIE_LADDER,
 	ensureView,
@@ -342,6 +342,168 @@ function onFileImportSelected(ev: Event) {
 	reader.readAsText(file);
 	if (input) input.value = '';
 }
+
+const NARROW_MEDIA = '(max-width: 56.25rem)';
+const NON_KEYBOARD_INPUT_TYPES = new Set([
+	'checkbox',
+	'radio',
+	'range',
+	'button',
+	'submit',
+	'reset',
+	'file',
+	'color',
+	'hidden',
+]);
+
+const bodyEl = ref<HTMLElement | null>(null);
+const isNarrowViewport = ref(false);
+const userCollapsedPreview = ref(false);
+const isTextEntryFocused = ref(false);
+const isVisualViewportCompressed = ref(false);
+const keyboardPeekOverride = ref(false);
+
+const keyboardOpen = computed(
+	() => isNarrowViewport.value && (isTextEntryFocused.value || isVisualViewportCompressed.value),
+);
+const effectivePreviewCollapsed = computed(
+	() => isNarrowViewport.value && (keyboardOpen.value ? !keyboardPeekOverride.value : userCollapsedPreview.value),
+);
+
+let narrowMql: MediaQueryList | null = null;
+let baselineHeight = 0;
+let lastIsLandscape = false;
+let focusOutTimer: ReturnType<typeof setTimeout> | null = null;
+
+function isVirtualKeyboardTarget(target: EventTarget | null): boolean {
+	if (!(target instanceof HTMLElement)) return false;
+	if (!target.closest('.mini-inspector-pane, .mini-save-section')) return false;
+	if ('disabled' in target && (target as HTMLInputElement).disabled) return false;
+	if ('readOnly' in target && (target as HTMLInputElement).readOnly) return false;
+	if (target instanceof HTMLTextAreaElement) return true;
+	if (target.isContentEditable || target.getAttribute('contenteditable') === 'true') return true;
+	if (target instanceof HTMLInputElement) {
+		const type = (target.type || 'text').toLowerCase();
+		return !NON_KEYBOARD_INPUT_TYPES.has(type);
+	}
+	return false;
+}
+
+function getDialogElement(): HTMLElement | null {
+	return (bodyEl.value?.closest('dialog') as HTMLElement | null) ?? null;
+}
+
+function clearViewportVars(dialogEl?: HTMLElement | null) {
+	const target = dialogEl ?? getDialogElement();
+	target?.style.removeProperty('--mini-vvh');
+	target?.style.removeProperty('--mini-vv-top');
+}
+
+function syncViewportMetrics() {
+	if (typeof window === 'undefined') return;
+	const narrowed = narrowMql ? narrowMql.matches : Boolean(window.matchMedia?.(NARROW_MEDIA)?.matches);
+	isNarrowViewport.value = narrowed;
+
+	const vv = window.visualViewport;
+	const layoutHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+	const layoutWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
+	const isLandscape = layoutWidth > layoutHeight;
+	const currentHeight = vv ? vv.height : layoutHeight;
+
+	if (isLandscape !== lastIsLandscape) {
+		lastIsLandscape = isLandscape;
+		baselineHeight = currentHeight;
+	} else if (!isTextEntryFocused.value && (!vv || vv.height >= layoutHeight - 2)) {
+		if (baselineHeight === 0 || currentHeight >= baselineHeight * 0.9 || currentHeight > baselineHeight) {
+			baselineHeight = currentHeight;
+		}
+	}
+
+	const wasCompressed = isVisualViewportCompressed.value;
+	const vvCompressed = Boolean(narrowed && vv && layoutHeight > 0 && vv.height < layoutHeight * 0.78);
+	const layoutCompressed = Boolean(
+		narrowed && baselineHeight > 0 && layoutHeight < baselineHeight * 0.78 && layoutHeight < 560,
+	);
+	const nextCompressed = vvCompressed || layoutCompressed;
+	isVisualViewportCompressed.value = nextCompressed;
+
+	if (wasCompressed && !nextCompressed) {
+		keyboardPeekOverride.value = false;
+	}
+
+	const dialogEl = getDialogElement();
+	if (dialogEl) {
+		if (narrowed && vv && layoutHeight > 0 && vv.height < layoutHeight - 2) {
+			dialogEl.style.setProperty('--mini-vvh', `${Math.round(vv.height)}px`);
+			dialogEl.style.setProperty('--mini-vv-top', `${Math.max(0, Math.round(vv.offsetTop))}px`);
+		} else {
+			clearViewportVars(dialogEl);
+		}
+	}
+}
+
+async function onBodyFocusIn(ev: FocusEvent) {
+	if (focusOutTimer !== null) {
+		clearTimeout(focusOutTimer);
+		focusOutTimer = null;
+	}
+	if (isNarrowViewport.value && isVirtualKeyboardTarget(ev.target)) {
+		isTextEntryFocused.value = true;
+		await nextTick();
+		(ev.target as HTMLElement).scrollIntoView?.({ block: 'nearest' });
+	}
+}
+
+function onBodyFocusOut() {
+	if (focusOutTimer !== null) {
+		clearTimeout(focusOutTimer);
+	}
+	focusOutTimer = setTimeout(() => {
+		focusOutTimer = null;
+		const active = typeof document !== 'undefined' ? document.activeElement : null;
+		const insideBody = active instanceof HTMLElement && bodyEl.value?.contains(active);
+		if (isNarrowViewport.value && insideBody && isVirtualKeyboardTarget(active)) {
+			isTextEntryFocused.value = true;
+			return;
+		}
+		isTextEntryFocused.value = false;
+		keyboardPeekOverride.value = false;
+		syncViewportMetrics();
+	}, 60);
+}
+
+function togglePreviewCollapsed() {
+	if (keyboardOpen.value) {
+		keyboardPeekOverride.value = !keyboardPeekOverride.value;
+	} else {
+		userCollapsedPreview.value = !userCollapsedPreview.value;
+	}
+}
+
+onMounted(() => {
+	if (typeof window === 'undefined') return;
+	narrowMql = window.matchMedia?.(NARROW_MEDIA) ?? null;
+	lastIsLandscape = (window.innerWidth || 0) > (window.innerHeight || 0);
+	syncViewportMetrics();
+	narrowMql?.addEventListener?.('change', syncViewportMetrics);
+	window.addEventListener('resize', syncViewportMetrics);
+	window.visualViewport?.addEventListener?.('resize', syncViewportMetrics);
+	window.visualViewport?.addEventListener?.('scroll', syncViewportMetrics);
+});
+
+onBeforeUnmount(() => {
+	if (focusOutTimer !== null) {
+		clearTimeout(focusOutTimer);
+		focusOutTimer = null;
+	}
+	narrowMql?.removeEventListener?.('change', syncViewportMetrics);
+	if (typeof window !== 'undefined') {
+		window.removeEventListener('resize', syncViewportMetrics);
+		window.visualViewport?.removeEventListener?.('resize', syncViewportMetrics);
+		window.visualViewport?.removeEventListener?.('scroll', syncViewportMetrics);
+	}
+	clearViewportVars();
+});
 </script>
 
 <template>
@@ -351,15 +513,6 @@ function onFileImportSelected(ev: Event) {
 		dialog-class="trait-set-mini-dialog trait-set-mini"
 		@close="emit('close')"
 	>
-		<input
-			ref="fileImportInput"
-			type="file"
-			accept=".json,application/json"
-			class="sr-only"
-			aria-label="Import trait set file"
-			@change="onFileImportSelected"
-		/>
-
 		<header class="mini-header">
 			<div class="mini-header-left">
 				<span class="mini-header-icon" aria-hidden="true">
@@ -380,7 +533,76 @@ function onFileImportSelected(ev: Event) {
 			</div>
 		</header>
 
-		<div class="mini-body">
+		<div ref="bodyEl" class="mini-body" @focusin="onBodyFocusIn" @focusout="onBodyFocusOut">
+			<section
+				class="mini-card-preview-section"
+				:class="{ 'is-collapsed': effectivePreviewCollapsed }"
+				aria-label="Live Set Preview"
+			>
+				<div class="preview-mode-bar">
+					<div class="preview-mode-heading">
+						<span class="preview-mode-title">Preview</span>
+						<span v-if="effectivePreviewCollapsed" class="preview-collapsed-summary">
+							{{ workingSet?.name || 'Set' }}
+						</span>
+					</div>
+					<div class="preview-mode-actions">
+						<div
+							v-show="!effectivePreviewCollapsed"
+							class="preview-mode-toggles"
+							role="group"
+							aria-label="Preview mode"
+						>
+							<button
+								v-for="m in [
+									{ id: 'edit', label: 'Edit' },
+									{ id: 'play', label: 'Play' },
+									{ id: 'print', label: 'Print' },
+								] as const"
+								:key="m.id"
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: previewSubmode === m.id }"
+								:aria-pressed="previewSubmode === m.id"
+								@click="previewSubmode = m.id"
+							>
+								{{ m.label }}
+							</button>
+						</div>
+						<button
+							type="button"
+							class="mini-preview-collapse-btn"
+							:aria-expanded="!effectivePreviewCollapsed"
+							aria-controls="mini-live-preview-frame"
+							:aria-label="effectivePreviewCollapsed ? 'Show preview' : 'Hide preview'"
+							@click="togglePreviewCollapsed"
+						>
+							<span>{{ effectivePreviewCollapsed ? 'Show' : 'Hide' }}</span>
+							<i
+								class="fas"
+								:class="effectivePreviewCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'"
+								aria-hidden="true"
+							></i>
+						</button>
+					</div>
+				</div>
+
+				<div id="mini-live-preview-frame" v-show="!effectivePreviewCollapsed" class="mini-preview-sheet-frame">
+					<div class="character-sheet" :class="'submode-' + previewSubmode">
+						<TraitSetBlock
+							:character="workingCharacter"
+							:traitSetID="0"
+							:submode="previewSubmode"
+							:editing="editing"
+							@selectElement="onSelectElement"
+							@updateCharacter="onUpdateCharacter"
+							@addTrait="onAddTrait"
+							@removeTrait="onRemoveTrait"
+						/>
+					</div>
+				</div>
+			</section>
+
 			<div class="mini-authoring-column studio-panel-body mini-inspector-pane">
 				<nav v-if="editingType !== 'traitSet'" class="studio-breadcrumb mini-breadcrumb" aria-label="Set breadcrumb">
 					<template v-for="(c, idx) in crumbs" :key="idx">
@@ -418,113 +640,83 @@ function onFileImportSelected(ev: Event) {
 				/>
 			</div>
 
-			<div class="mini-preview-column">
-				<section class="mini-card-preview-section" aria-label="Live Set Preview">
-					<div class="preview-mode-bar">
-						<span class="preview-mode-title">Live Preview</span>
-						<div class="preview-mode-toggles" role="group" aria-label="Preview mode">
-							<button
-								v-for="m in [
-									{ id: 'edit', label: 'Edit' },
-									{ id: 'play', label: 'Play' },
-									{ id: 'print', label: 'Print' },
-								] as const"
-								:key="m.id"
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: previewSubmode === m.id }"
-								:aria-pressed="previewSubmode === m.id"
-								@click="previewSubmode = m.id"
-							>
-								{{ m.label }}
-							</button>
+			<section class="mini-save-section" aria-label="Save Preset">
+				<h3 class="mini-save-title">Preset &amp; JSON</h3>
+
+				<div class="mini-save-fields">
+					<label class="mini-field">
+						<span class="mini-field-label">Preset Name</span>
+						<input
+							v-model="presetLabel"
+							type="text"
+							class="mini-input"
+							placeholder="Preset name"
+							aria-label="Preset Label"
+						/>
+						<div v-if="hasCollision" class="mini-collision-alert">
+							A preset with ID "{{ derivedId }}" already exists.
 						</div>
+					</label>
+
+					<label class="mini-field">
+						<span class="mini-field-label">Blurb</span>
+						<input
+							v-model="presetBlurb"
+							type="text"
+							class="mini-input"
+							placeholder="Short description"
+							aria-label="Preset Blurb"
+						/>
+					</label>
+
+					<div v-if="saveStatusMessage" class="mini-save-status success">
+						<i class="fas fa-check-circle" aria-hidden="true"></i> {{ saveStatusMessage }}
 					</div>
-
-					<div class="mini-preview-sheet-frame">
-						<div class="character-sheet" :class="'submode-' + previewSubmode">
-							<TraitSetBlock
-								:character="workingCharacter"
-								:traitSetID="0"
-								:submode="previewSubmode"
-								:editing="editing"
-								@selectElement="onSelectElement"
-								@updateCharacter="onUpdateCharacter"
-								@addTrait="onAddTrait"
-								@removeTrait="onRemoveTrait"
-							/>
-						</div>
+					<div v-if="saveErrorMessage" class="mini-save-status error">
+						<i class="fas fa-exclamation-circle" aria-hidden="true"></i> {{ saveErrorMessage }}
 					</div>
-				</section>
+				</div>
 
-				<section class="mini-save-section" aria-label="Save Preset">
-					<h3 class="mini-save-title">Preset &amp; JSON</h3>
+				<div class="mini-save-actions">
+					<button v-if="props.character" type="button" class="btn-apply-sheet" @click="applyToCurrentSheet">
+						{{ props.applyLabel || 'Add to Sheet' }}
+					</button>
 
-					<div class="mini-save-fields">
-						<label class="mini-field">
-							<span class="mini-field-label">Preset Name</span>
-							<input
-								v-model="presetLabel"
-								type="text"
-								class="mini-input"
-								placeholder="Preset name"
-								aria-label="Preset Label"
-							/>
-							<div v-if="hasCollision" class="mini-collision-alert">
-								A preset with ID "{{ derivedId }}" already exists.
-							</div>
-						</label>
+					<button
+						type="button"
+						class="btn-save-preset mini-save-preset-btn"
+						:disabled="!presetLabel.trim() || hasCollision"
+						@click="saveAsPresetCard"
+					>
+						<i class="fas fa-bookmark" aria-hidden="true"></i> Save Preset
+					</button>
 
-						<label class="mini-field">
-							<span class="mini-field-label">Blurb</span>
-							<input
-								v-model="presetBlurb"
-								type="text"
-								class="mini-input"
-								placeholder="Short description"
-								aria-label="Preset Blurb"
-							/>
-						</label>
-
-						<div v-if="saveStatusMessage" class="mini-save-status success">
-							<i class="fas fa-check-circle" aria-hidden="true"></i> {{ saveStatusMessage }}
-						</div>
-						<div v-if="saveErrorMessage" class="mini-save-status error">
-							<i class="fas fa-exclamation-circle" aria-hidden="true"></i> {{ saveErrorMessage }}
-						</div>
-					</div>
-
-					<div class="mini-save-actions">
-						<button v-if="props.character" type="button" class="btn-apply-sheet" @click="applyToCurrentSheet">
-							{{ props.applyLabel || 'Add to Sheet' }}
+					<div class="mini-json-card-actions">
+						<button type="button" class="btn-json-action" title="Export standalone .json set" @click="exportCardJson">
+							<i class="fas fa-file-download" aria-hidden="true"></i> Export JSON
 						</button>
 
 						<button
 							type="button"
-							class="btn-save-preset mini-save-preset-btn"
-							:disabled="!presetLabel.trim() || hasCollision"
-							@click="saveAsPresetCard"
+							class="btn-json-action"
+							title="Import standalone .json set"
+							@click="triggerImportCardJson"
 						>
-							<i class="fas fa-bookmark" aria-hidden="true"></i> Save Preset
+							<i class="fas fa-file-upload" aria-hidden="true"></i> Import JSON
 						</button>
-
-						<div class="mini-json-card-actions">
-							<button type="button" class="btn-json-action" title="Export standalone .json set" @click="exportCardJson">
-								<i class="fas fa-file-download" aria-hidden="true"></i> Export JSON
-							</button>
-
-							<button
-								type="button"
-								class="btn-json-action"
-								title="Import standalone .json set"
-								@click="triggerImportCardJson"
-							>
-								<i class="fas fa-file-upload" aria-hidden="true"></i> Import JSON
-							</button>
-						</div>
 					</div>
-				</section>
-			</div>
+				</div>
+			</section>
 		</div>
+
+		<input
+			ref="fileImportInput"
+			type="file"
+			accept=".json,application/json"
+			class="sr-only"
+			tabindex="-1"
+			aria-label="Import trait set file"
+			@change="onFileImportSelected"
+		/>
 	</ModalDialog>
 </template>

@@ -650,6 +650,77 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		window.localStorage.removeItem('characterCurioCustomSetPresets');
 	});
 
+	it('TraitSetMini mobile sticky preview: manual disclosure, text-input keyboard auto-collapse, peek override, and WCAG 2.2 AA audit', async () => {
+		const originalMatchMedia = window.matchMedia;
+		window.matchMedia = vi.fn((query: string) => ({
+			matches: query.includes('56.25rem'),
+			media: query,
+			onchange: null,
+			addListener: vi.fn(),
+			removeListener: vi.fn(),
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			dispatchEvent: vi.fn(),
+		})) as unknown as typeof window.matchMedia;
+
+		const wrapper = mount(TraitSetMini, { attachTo: document.body });
+		try {
+			await nextTick();
+			const collapseBtn = wrapper.find('.mini-preview-collapse-btn');
+			expect(collapseBtn.exists()).toBe(true);
+			expect(collapseBtn.attributes('aria-expanded')).toBe('true');
+			expect(collapseBtn.attributes('aria-controls')).toBe('mini-live-preview-frame');
+			expect(wrapper.find('.mini-card-preview-section').classes()).not.toContain('is-collapsed');
+
+			// Focus text input inside .mini-inspector-pane -> auto-collapses mobile preview
+			const nameInput = wrapper.find('input[name="traitSetName"]');
+			expect(nameInput.exists()).toBe(true);
+			(nameInput.element as HTMLInputElement).focus();
+			await nameInput.trigger('focusin');
+			await nextTick();
+
+			expect(wrapper.find('.mini-card-preview-section').classes()).toContain('is-collapsed');
+			expect(collapseBtn.attributes('aria-expanded')).toBe('false');
+			expect(wrapper.find('.preview-collapsed-summary').text()).toBe('New Set');
+
+			// Manual peek override while text input still holds focus
+			await collapseBtn.trigger('click');
+			await nextTick();
+			expect(wrapper.find('.mini-card-preview-section').classes()).not.toContain('is-collapsed');
+			expect(collapseBtn.attributes('aria-expanded')).toBe('true');
+
+			// Focus leaves text inputs -> keyboard closes, preview remains expanded and manual toggle works
+			(document.activeElement as HTMLElement | null)?.blur?.();
+			await nameInput.trigger('focusout');
+			await new Promise((r) => setTimeout(r, 80));
+			await nextTick();
+			expect(wrapper.find('.mini-card-preview-section').classes()).not.toContain('is-collapsed');
+			expect(collapseBtn.attributes('aria-expanded')).toBe('true');
+
+			await collapseBtn.trigger('click');
+			await nextTick();
+			expect(wrapper.find('.mini-card-preview-section').classes()).toContain('is-collapsed');
+			expect(collapseBtn.attributes('aria-expanded')).toBe('false');
+
+			await collapseBtn.trigger('click');
+			await nextTick();
+			expect(wrapper.find('.mini-card-preview-section').classes()).not.toContain('is-collapsed');
+			expect(collapseBtn.attributes('aria-expanded')).toBe('true');
+			await runAxeAudit(wrapper.element as HTMLElement);
+
+			// Re-trigger text focus collapse and verify collapsed state passes WCAG 2.2 AA
+			document.body.appendChild(wrapper.element);
+			(nameInput.element as HTMLInputElement).focus();
+			await nameInput.trigger('focusin');
+			await nextTick();
+			expect(wrapper.find('.mini-card-preview-section').classes()).toContain('is-collapsed');
+			await runAxeAudit(wrapper.element as HTMLElement);
+		} finally {
+			wrapper.unmount();
+			window.matchMedia = originalMatchMedia;
+		}
+	});
+
 	it('supports trait-specific custom companion track names (Injured, Worried) with track fallback and T/L marker toggles', async () => {
 		const customSet: any = {
 			name: 'Attributes',

@@ -1101,6 +1101,9 @@ function selectElement(selector: any[]) {
 }
 
 async function focusFirstInput() {
+	if (typeof window !== 'undefined' && window.matchMedia?.('(max-width: 56.25rem), (pointer: coarse)').matches) {
+		return;
+	}
 	await nextTick();
 	if (inputName.value) {
 		inputName.value.focus({ preventScroll: true });
