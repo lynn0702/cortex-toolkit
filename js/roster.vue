@@ -32,10 +32,12 @@ const props = withDefaults(
 		characters: any[];
 		openCharacterIDs?: string[];
 		sheetTemplates?: any[];
+		customPresets?: any[];
 	}>(),
 	{
 		openCharacterIDs: () => [],
 		sheetTemplates: () => [],
+		customPresets: () => [],
 	},
 );
 
@@ -53,6 +55,7 @@ const emit = defineEmits<{
 	(e: 'deleteCharacter', id: string): void;
 	(e: 'deleteAllCharacters'): void;
 	(e: 'importSheetTemplate', char: any): void;
+	(e: 'importSetPresets', presets: any[]): void;
 	(e: 'deleteSheetTemplate', id: string): void;
 	(e: 'importCharacter', character: any): void;
 }>();
@@ -463,6 +466,21 @@ function processImportFiles(files: FileList | null | undefined) {
 		reader.onload = () => {
 			try {
 				const data = JSON.parse(reader.result as string);
+				if (
+					data &&
+					!Array.isArray(data) &&
+					data.format === 'character-curio-set' &&
+					data.traitSet &&
+					typeof data.traitSet === 'object'
+				) {
+					emit('importSetPresets', [data]);
+					return;
+				}
+				let presetsAdded = 0;
+				if (data && !Array.isArray(data) && Array.isArray(data.presets) && data.presets.length > 0) {
+					emit('importSetPresets', data.presets);
+					presetsAdded = data.presets.length;
+				}
 				let candidates: any[] = [];
 				if (Array.isArray(data)) {
 					candidates = data;
@@ -485,7 +503,7 @@ function processImportFiles(files: FileList | null | undefined) {
 					// guard and gets rejected as an id-less object.)
 					candidates = Array.isArray(data.data) ? data.data : [data];
 				}
-				if (!candidates.length) {
+				if (!candidates.length && presetsAdded === 0) {
 					importError.value = 'No characters found in “' + file.name + '”.';
 				}
 				let added = 0;
@@ -522,7 +540,7 @@ function processImportFiles(files: FileList | null | undefined) {
 						file.name +
 						'”.';
 				}
-				if (invalidSkipped && added === 0 && templatesAdded === 0) {
+				if (invalidSkipped && added === 0 && templatesAdded === 0 && presetsAdded === 0) {
 					importError.value = characterCurioFunctions.INVALID_FILE_MESSAGE;
 				}
 				importNextQueueItem();
@@ -694,7 +712,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 							type="button"
 							class="roster-button roster-button-export"
 							@click.stop="exportAll"
-							v-if="characters.length > 0"
+							v-if="characters.length > 0 || (customPresets && customPresets.length > 0)"
 						>
 							<span><i class="fas fa-file-export" aria-hidden="true"></i> Export All</span>
 						</button>

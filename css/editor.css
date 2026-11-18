@@ -69,7 +69,7 @@
 		letter-spacing: 0.01em;
 		line-height: 1.3;
 		margin-bottom: 0.25rem;
-		color: color-mix(in oklch, currentColor 86%, transparent);
+		color: color-mix(in oklab, currentColor 86%, transparent);
 		.editor-subgroup & {
 			font-size: smaller;
 			text-transform: uppercase;
@@ -86,12 +86,12 @@
 		width: 100%;
 		min-height: 2rem;
 		border-radius: 0.375rem;
-		border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
+		border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
 		padding: 0.32rem 0.55rem;
 		font-family: var(--font-primary);
 		font-size: 0.8125rem;
 		line-height: 1.35;
-		background: color-mix(in oklch, currentColor 7%, transparent);
+		background: color-mix(in oklab, currentColor 7%, transparent);
 		color: currentColor;
 		box-sizing: border-box;
 
@@ -101,7 +101,7 @@
 
 		@media (hover: hover) {
 			&:hover {
-				border-color: color-mix(in oklch, currentColor 32%, transparent);
+				border-color: color-mix(in oklab, currentColor 32%, transparent);
 			}
 		}
 
@@ -150,8 +150,8 @@
 		min-height: 2.75rem;
 		padding: 0.25rem 0.45rem;
 		border-radius: 0.375rem;
-		border: 1px solid color-mix(in oklch, currentColor 20%, transparent);
-		background: color-mix(in oklch, currentColor 6%, transparent);
+		border: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+		background: color-mix(in oklab, currentColor 6%, transparent);
 		color: currentColor;
 		font-family: var(--font-primary);
 		font-size: 0.8125rem;
@@ -166,12 +166,12 @@
 		}
 
 		&:hover {
-			border-color: color-mix(in oklch, currentColor 40%, transparent);
+			border-color: color-mix(in oklab, currentColor 40%, transparent);
 		}
 
 		&.active {
 			border-color: var(--color-primary);
-			background: color-mix(in oklch, var(--color-primary) 22%, transparent);
+			background: color-mix(in oklab, var(--color-primary) 22%, transparent);
 		}
 	}
 
@@ -185,8 +185,8 @@
 		min-height: 1.95rem;
 		padding: 0.32rem 0.7rem;
 		opacity: 1;
-		background: color-mix(in oklch, var(--color-interactive) 14%, transparent);
-		border: 1px solid color-mix(in oklch, var(--color-interactive) 45%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 14%, transparent);
+		border: 1px solid color-mix(in oklab, var(--color-interactive) 45%, transparent);
 		color: currentColor;
 		display: inline-flex;
 		align-items: center;
@@ -201,7 +201,7 @@
 
 		@media (hover: hover) {
 			&:hover:not(:disabled) {
-				background: color-mix(in oklch, var(--color-interactive) 24%, transparent);
+				background: color-mix(in oklab, var(--color-interactive) 24%, transparent);
 				border-color: var(--color-interactive);
 			}
 		}
@@ -209,13 +209,13 @@
 
 	.editor-btn-danger-mini,
 	.editor-button-remove {
-		background: color-mix(in oklch, var(--color-primary) 14%, transparent);
-		border: 1px solid color-mix(in oklch, var(--color-primary) 45%, transparent);
+		background: color-mix(in oklab, var(--color-primary) 14%, transparent);
+		border: 1px solid color-mix(in oklab, var(--color-primary) 45%, transparent);
 		color: currentColor;
 
 		@media (hover: hover) {
 			&:hover:not(:disabled) {
-				background: color-mix(in oklch, var(--color-primary) 24%, transparent);
+				background: color-mix(in oklab, var(--color-primary) 24%, transparent);
 				border-color: var(--color-primary);
 			}
 		}
@@ -267,9 +267,9 @@
 		font-size: 0.72rem;
 		font-weight: 600;
 		border-radius: 0.375rem;
-		border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
-		background: color-mix(in oklch, currentColor 8%, transparent);
-		color: color-mix(in oklch, currentColor 88%, transparent);
+		border: 1px solid color-mix(in oklab, currentColor 22%, transparent);
+		background: color-mix(in oklab, currentColor 8%, transparent);
+		color: color-mix(in oklab, currentColor 88%, transparent);
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
@@ -277,20 +277,20 @@
 
 		@media (hover: hover) {
 			&:hover {
-				background: color-mix(in oklch, currentColor 14%, transparent);
-				border-color: color-mix(in oklch, currentColor 38%, transparent);
+				background: color-mix(in oklab, currentColor 14%, transparent);
+				border-color: color-mix(in oklab, currentColor 38%, transparent);
 			}
 		}
 	}
 
 	.btn-mini-open {
-		border-color: color-mix(in oklch, var(--color-interactive) 48%, transparent);
-		background: color-mix(in oklch, var(--color-interactive) 14%, transparent);
+		border-color: color-mix(in oklab, var(--color-interactive) 48%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 14%, transparent);
 		color: currentColor;
 
 		@media (hover: hover) {
 			&:hover {
-				background: color-mix(in oklch, var(--color-interactive) 24%, transparent);
+				background: color-mix(in oklab, var(--color-interactive) 24%, transparent);
 				border-color: var(--color-interactive);
 			}
 		}
@@ -308,7 +308,7 @@
 	font-family: ui-monospace, monospace;
 	font-size: 0.72rem;
 	font-weight: 700;
-	color: color-mix(in oklch, currentColor 74%, transparent);
+	color: color-mix(in oklab, currentColor 74%, transparent);
 	white-space: nowrap;
 }
 
@@ -346,7 +346,7 @@
 
 .editor-field-hint {
 	font-size: 0.7rem;
-	color: color-mix(in oklch, currentColor 58%, transparent);
+	color: color-mix(in oklab, currentColor 58%, transparent);
 	display: block;
 	margin-top: 0.2rem;
 	margin-bottom: 0.35rem;
@@ -357,7 +357,7 @@
 	font-family: var(--font-primary);
 	font-size: 0.69rem;
 	font-weight: 600;
-	color: color-mix(in oklch, currentColor 62%, transparent);
+	color: color-mix(in oklab, currentColor 62%, transparent);
 	display: block;
 	margin-bottom: 0.2rem;
 }
@@ -370,8 +370,8 @@
 	padding: 0 0 0 0.48rem;
 	min-height: 1.9rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
-	background: color-mix(in oklch, currentColor 5%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+	background: color-mix(in oklab, currentColor 5%, transparent);
 	cursor: pointer;
 
 	@media (prefers-reduced-motion: no-preference) {
@@ -382,8 +382,8 @@
 
 	@media (hover: hover) {
 		&:hover {
-			border-color: color-mix(in oklch, currentColor 34%, transparent);
-			background: color-mix(in oklch, currentColor 9%, transparent);
+			border-color: color-mix(in oklab, currentColor 34%, transparent);
+			background: color-mix(in oklab, currentColor 9%, transparent);
 		}
 	}
 
@@ -398,7 +398,7 @@
 		font-family: var(--font-primary);
 		font-size: 0.74rem;
 		font-weight: 600;
-		color: color-mix(in oklch, currentColor 80%, transparent);
+		color: color-mix(in oklab, currentColor 80%, transparent);
 		margin: 0;
 		padding: 0.3rem 0.55rem 0.3rem 0.38rem;
 		line-height: 1.2;
@@ -407,8 +407,8 @@
 	}
 
 	&:has(input:checked) {
-		background: color-mix(in oklch, var(--color-interactive) 16%, transparent);
-		border-color: color-mix(in oklch, var(--color-interactive) 68%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 16%, transparent);
+		border-color: color-mix(in oklab, var(--color-interactive) 68%, transparent);
 
 		label {
 			color: currentColor;
@@ -452,24 +452,24 @@
 
 .editor-watermark-preview-box {
 	margin-top: 0.4rem;
-	border: 1px solid rgba(255, 255, 255, 0.15);
+	border: 1px solid var(--studio-border);
 	border-radius: 4px;
 	padding: 0.5rem;
-	background: rgba(0, 0, 0, 0.2);
+	background: color-mix(in oklab, black 20%, transparent);
 }
 
 .editor-watermark-preview-img {
 	max-width: 100%;
 	max-height: 120px;
 	object-fit: contain;
-	border: 1px solid color-mix(in oklch, currentColor 14%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
 	border-radius: 0.375rem;
-	background: color-mix(in oklch, currentColor 5%, transparent);
+	background: color-mix(in oklab, currentColor 5%, transparent);
 }
 
 .editor-card-compact {
 	padding: 0.4rem;
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	border: 1px solid color-mix(in oklab, var(--studio-text) 20%, transparent);
 	border-radius: 4px;
 }
 
@@ -494,7 +494,7 @@
 	justify-content: space-between;
 	font-size: 0.7rem;
 	font-weight: 700;
-	color: #cbd5e1;
+	color: var(--studio-text-secondary);
 	margin-bottom: 0.2rem;
 }
 
@@ -504,35 +504,35 @@
 	align-items: center;
 	gap: 0.4rem;
 	cursor: pointer;
-	color: #f1f5f9;
+	color: var(--studio-text);
 }
 
 .editor-radio-hint {
 	font-size: 0.7rem;
-	color: #94a3b8;
+	color: var(--studio-text-muted);
 	margin: 0 0 0 1.4rem;
 	line-height: 1.3;
 }
 
 .editor-full-btn {
 	width: 100%;
-	border: 1px solid rgba(255, 255, 255, 0.25);
+	border: 1px solid color-mix(in oklab, var(--studio-text) 25%, transparent);
 	text-align: center;
 }
 
 .editor-box-inset {
-	background: rgba(255, 255, 255, 0.05);
+	background: color-mix(in oklab, var(--studio-text) 5%, transparent);
 	padding: 0.6rem;
 	border-radius: 4px;
-	border: 1px solid rgba(255, 255, 255, 0.15);
+	border: 1px solid var(--studio-border);
 }
 
 .editor-border-subtle {
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	border: 1px solid color-mix(in oklab, var(--studio-text) 20%, transparent);
 }
 
 .text-dark {
-	color: #1e293b;
+	color: var(--paper-die-outline);
 }
 
 .font-bold {
@@ -618,21 +618,21 @@
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	color: color-mix(in oklch, currentColor 72%, transparent);
+	color: color-mix(in oklab, currentColor 72%, transparent);
 	font-size: 0.82rem;
 	line-height: 1;
 	padding: 0.18rem 0.28rem;
 	border-radius: 0.25rem;
 
 	&.off {
-		color: color-mix(in oklch, currentColor 36%, transparent);
+		color: color-mix(in oklab, currentColor 36%, transparent);
 		opacity: 1;
 	}
 
 	@media (hover: hover) {
 		&:hover {
 			color: currentColor;
-			background: color-mix(in oklch, currentColor 10%, transparent);
+			background: color-mix(in oklab, currentColor 10%, transparent);
 		}
 	}
 
@@ -677,7 +677,7 @@
 .editor-group {
 	background: transparent;
 	border: none;
-	border-top: 1px solid color-mix(in oklch, currentColor 12%, transparent);
+	border-top: 1px solid color-mix(in oklab, currentColor 12%, transparent);
 	border-radius: 0;
 	padding: 0.75rem 0 0.15rem;
 	margin-bottom: 0.25rem;
@@ -693,7 +693,7 @@
 		gap: 0.45rem;
 		cursor: pointer;
 		font-family: var(--font-primary);
-		color: color-mix(in oklch, currentColor 62%, transparent);
+		color: color-mix(in oklab, currentColor 62%, transparent);
 		font-size: 0.7rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
@@ -748,8 +748,8 @@
 .place-mini {
 	position: relative;
 	width: 100%;
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: color-mix(in oklab, var(--studio-text) 4%, transparent);
+	border: 1px solid var(--studio-border);
 	border-radius: 4px;
 	overflow: hidden;
 	margin-bottom: 0.4rem;
@@ -760,20 +760,20 @@
 		left: 0;
 		right: 0;
 		height: 1px;
-		background: rgba(255, 255, 255, 0.08);
+		background: color-mix(in oklab, var(--studio-text) 8%, transparent);
 		pointer-events: none;
 	}
 
 	.place-mini-ghost {
 		position: absolute;
-		background: rgba(255, 255, 255, 0.07);
-		border: 1px solid rgba(255, 255, 255, 0.14);
+		background: color-mix(in oklab, var(--studio-text) 7%, transparent);
+		border: 1px solid color-mix(in oklab, var(--studio-text) 14%, transparent);
 		border-radius: 2px;
 		pointer-events: none;
 		overflow: hidden;
 
 		&:focus {
-			outline: 2px solid #38bdf8;
+			outline: 2px solid var(--studio-accent);
 			outline-offset: 1px;
 		}
 	}
@@ -784,7 +784,11 @@
 	}
 
 	.place-mini-band {
-		background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 5px, transparent 5px 10px);
+		background: repeating-linear-gradient(
+			135deg,
+			color-mix(in oklab, var(--studio-text) 5%, transparent) 0 5px,
+			transparent 5px 10px
+		);
 		border-style: dashed;
 	}
 
@@ -795,7 +799,7 @@
 		right: 3px;
 		font-size: 0.62rem;
 		font-weight: 700;
-		color: #94a3b8;
+		color: var(--studio-text-muted);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -804,8 +808,8 @@
 
 	.place-mini-block {
 		position: absolute;
-		background: rgba(2, 132, 199, 0.3);
-		border: 1px solid #0284c7;
+		background: color-mix(in oklab, var(--studio-accent-strong) 30%, transparent);
+		border: 1px solid var(--studio-accent-strong);
 		border-radius: 2px;
 		cursor: move;
 		min-width: 12px;
@@ -824,7 +828,7 @@
 		right: 3px;
 		font-size: 0.62rem;
 		font-weight: 700;
-		color: #e0f2fe;
+		color: var(--studio-accent-text);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -841,9 +845,9 @@
 		right: 2px;
 		height: 3px;
 		border-radius: 2px;
-		background: #38bdf8;
+		background: var(--studio-accent);
 		pointer-events: none;
-		z-index: 3; /* small local stacking literal */
+		z-index: var(--z-local-insert);
 	}
 
 	.place-mini-edge {
@@ -865,7 +869,7 @@
 				left: 3px;
 				width: 4px;
 				border-radius: 2px;
-				background: #0284c7;
+				background: var(--studio-accent-strong);
 			}
 		}
 
@@ -884,7 +888,7 @@
 				left: 3px;
 				width: 4px;
 				border-radius: 2px;
-				background: #0284c7;
+				background: var(--studio-accent-strong);
 			}
 		}
 
@@ -903,7 +907,7 @@
 				top: 3px;
 				height: 4px;
 				border-radius: 2px;
-				background: #0284c7;
+				background: var(--studio-accent-strong);
 			}
 		}
 	}
@@ -931,10 +935,10 @@
 	}
 
 	.row-mini-restore-header {
-		background: rgba(197, 8, 82, 0.14);
+		background: color-mix(in oklab, var(--color-primary) 14%, transparent);
 		border: 1px dashed var(--color-primary);
 		border-radius: 3px;
-		color: #fbcfe8;
+		color: var(--studio-text);
 		font-size: 0.65rem;
 		font-weight: 700;
 		letter-spacing: 0.04em;
@@ -942,7 +946,7 @@
 		cursor: pointer;
 
 		&:hover {
-			background: rgba(197, 8, 82, 0.28);
+			background: color-mix(in oklab, var(--color-primary) 28%, transparent);
 		}
 	}
 
@@ -972,8 +976,8 @@
 		top: 0;
 		bottom: 0;
 		width: 38px;
-		background: rgba(255, 255, 255, 0.04);
-		border: 1px solid rgba(255, 255, 255, 0.12);
+		background: color-mix(in oklab, var(--studio-text) 4%, transparent);
+		border: 1px solid var(--studio-border);
 		border-radius: 4px;
 		padding: 3px;
 		box-sizing: border-box;
@@ -988,10 +992,10 @@
 
 	.row-mini-norows {
 		font-size: 0.72rem;
-		color: #94a3b8;
+		color: var(--studio-text-muted);
 		padding: 0.45rem 0.55rem;
-		background: rgba(255, 255, 255, 0.04);
-		border: 1px dashed rgba(255, 255, 255, 0.18);
+		background: color-mix(in oklab, var(--studio-text) 4%, transparent);
+		border: 1px dashed color-mix(in oklab, var(--studio-text) 18%, transparent);
 		border-radius: 4px;
 		box-sizing: border-box;
 	}
@@ -1003,8 +1007,8 @@
 		display: flex;
 		align-items: stretch;
 		width: 100%;
-		background: rgba(255, 255, 255, 0.04);
-		border: 1px solid rgba(255, 255, 255, 0.12);
+		background: color-mix(in oklab, var(--studio-text) 4%, transparent);
+		border: 1px solid var(--studio-border);
 		border-radius: 4px;
 		padding: 4px;
 		box-sizing: border-box;
@@ -1014,8 +1018,8 @@
 	.branch-box {
 		position: relative;
 		flex: none;
-		background: rgba(2, 132, 199, 0.28);
-		border: 1px solid #0284c7;
+		background: color-mix(in oklab, var(--studio-accent-strong) 28%, transparent);
+		border: 1px solid var(--studio-accent-strong);
 		border-radius: 2px;
 		overflow: hidden;
 		min-width: 0;
@@ -1029,7 +1033,7 @@
 		right: 4px;
 		font-size: 0.62rem;
 		font-weight: 700;
-		color: #e0f2fe;
+		color: var(--studio-accent-text);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1041,7 +1045,7 @@
 		left: 4px;
 		bottom: 1px;
 		font-size: 0.6rem;
-		color: #7dd3fc;
+		color: var(--studio-accent-tint);
 		pointer-events: none;
 	}
 
@@ -1060,7 +1064,7 @@
 			bottom: 3px;
 			width: 3px;
 			border-radius: 2px;
-			background: #38bdf8;
+			background: var(--studio-accent);
 		}
 	}
 
@@ -1070,10 +1074,10 @@
 		display: flex;
 		align-items: center;
 		gap: 0.25rem;
-		background: rgba(197, 8, 82, 0.22);
+		background: color-mix(in oklab, var(--color-primary) 22%, transparent);
 		border: 1px solid var(--color-primary);
 		border-radius: 2px;
-		color: #fbcfe8;
+		color: var(--studio-text);
 		font-family: var(--font-secondary);
 		font-size: 0.62rem;
 		font-weight: 700;
@@ -1125,14 +1129,14 @@
 		right: 0.35rem;
 		background: transparent;
 		border: none;
-		color: #cbd5e1;
+		color: var(--studio-text-secondary);
 		font-size: 0.85rem;
 		line-height: 1;
 		padding: 0 0.15rem;
 		cursor: pointer;
 
 		&:hover {
-			color: #f87171;
+			color: var(--studio-status-danger);
 		}
 	}
 
@@ -1152,7 +1156,7 @@
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		z-index: 4; /* small local stacking literal */
+		z-index: var(--z-local-slots);
 	}
 
 	.row-mini-slot-top,
@@ -1166,11 +1170,11 @@
 
 		.row-mini-third {
 			flex: 1;
-			border: 1px dashed rgba(56, 189, 248, 0.55);
+			border: 1px dashed color-mix(in oklab, var(--studio-accent) 55%, transparent);
 			border-radius: 2px;
 
 			&.active {
-				background: rgba(56, 189, 248, 0.28);
+				background: color-mix(in oklab, var(--studio-accent) 28%, transparent);
 				border-style: solid;
 			}
 		}
@@ -1190,11 +1194,11 @@
 		bottom: 0;
 		left: 0;
 		width: 44px;
-		border: 1px dashed rgba(56, 189, 248, 0.55);
+		border: 1px dashed color-mix(in oklab, var(--studio-accent) 55%, transparent);
 		border-radius: 2px;
 
 		&.active {
-			background: rgba(56, 189, 248, 0.22);
+			background: color-mix(in oklab, var(--studio-accent) 22%, transparent);
 			border-style: solid;
 		}
 	}
@@ -1206,22 +1210,22 @@
 	position: fixed;
 	z-index: var(--z-modal-close);
 	pointer-events: none;
-	background: rgba(2, 132, 199, 0.92);
-	border: 1px solid #7dd3fc;
+	background: color-mix(in oklab, var(--studio-accent-strong) 92%, transparent);
+	border: 1px solid var(--studio-accent-tint);
 	border-radius: 4px;
-	color: white;
+	color: var(--die-active-text);
 	font-size: 0.7rem;
 	font-weight: 700;
 	padding: 0.2rem 0.5rem;
 	white-space: nowrap;
-	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+	box-shadow: 0 4px 14px color-mix(in oklab, black 45%, transparent);
 }
 .row-mini {
 	display: grid;
 	grid-auto-rows: 1.875rem;
 	gap: 0.1875rem;
 	width: 100%;
-	background: color-mix(in oklch, var(--studio-text) 4%, transparent);
+	background: color-mix(in oklab, var(--studio-text) 4%, transparent);
 	border: 1px solid var(--studio-border);
 	border-radius: 0.25rem;
 	padding: 0.25rem;
@@ -1232,7 +1236,7 @@
 
 .row-mini-imagehost {
 	width: 100%;
-	background: color-mix(in oklch, var(--studio-text) 4%, transparent);
+	background: color-mix(in oklab, var(--studio-text) 4%, transparent);
 	border: 1px solid var(--studio-border);
 	border-radius: 0.25rem;
 	padding: 0.25rem;
@@ -1268,7 +1272,7 @@
 			justify-self: center;
 			align-self: center;
 			margin-block: 1.25rem 1.15rem;
-			background: color-mix(in oklch, var(--studio-bg) 72%, transparent);
+			background: color-mix(in oklab, var(--studio-bg) 72%, transparent);
 			pointer-events: none;
 
 			.row-mini-box {
@@ -1281,7 +1285,7 @@
 :is(.row-mini, .row-mini-imagehost) {
 	.row-mini-box {
 		position: relative;
-		background: color-mix(in oklch, var(--color-interactive) 28%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 28%, transparent);
 		border: 1px solid var(--color-interactive);
 		border-radius: 2px;
 		cursor: move;
@@ -1294,7 +1298,7 @@
 
 	.row-mini-implicit {
 		border-style: dashed;
-		background: color-mix(in oklch, var(--color-interactive) 12%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 12%, transparent);
 	}
 
 	.row-mini-selected {
@@ -1307,7 +1311,7 @@
 		margin-right: 0.25rem;
 		padding: 0 0.2rem;
 		border-radius: 2px;
-		background: color-mix(in oklch, var(--studio-text) 18%, transparent);
+		background: color-mix(in oklab, var(--studio-text) 18%, transparent);
 		color: var(--studio-text);
 		font-size: 0.56rem;
 		font-weight: 700;
@@ -1384,7 +1388,7 @@
 		cursor: default;
 		margin-inline: auto;
 		overflow: visible;
-		background: color-mix(in oklch, var(--color-accent, var(--color-primary)) 18%, transparent);
+		background: color-mix(in oklab, var(--color-accent, var(--color-primary)) 18%, transparent);
 		border: 1px solid var(--color-accent, var(--color-primary));
 
 		.row-mini-edge::after {
@@ -1402,9 +1406,9 @@
 
 .row-mini-part-chip {
 	appearance: none;
-	background: color-mix(in oklch, currentColor 8%, transparent);
-	color: color-mix(in oklch, currentColor 84%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
+	background: color-mix(in oklab, currentColor 8%, transparent);
+	color: color-mix(in oklab, currentColor 84%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 22%, transparent);
 	border-radius: 999px;
 	padding: 0.2rem 0.55rem;
 	font-family: var(--font-primary);
@@ -1415,16 +1419,16 @@
 
 	@media (hover: hover) {
 		&:hover {
-			background: color-mix(in oklch, currentColor 14%, transparent);
-			border-color: color-mix(in oklch, currentColor 38%, transparent);
+			background: color-mix(in oklab, currentColor 14%, transparent);
+			border-color: color-mix(in oklab, currentColor 38%, transparent);
 			color: currentColor;
 		}
 	}
 
 	&.active,
 	&[aria-pressed='true'] {
-		background: color-mix(in oklch, var(--color-interactive) 26%, transparent);
-		border-color: color-mix(in oklch, var(--color-interactive) 75%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 26%, transparent);
+		border-color: color-mix(in oklab, var(--color-interactive) 75%, transparent);
 		color: currentColor;
 	}
 }
@@ -1436,9 +1440,9 @@
 	gap: 0.35rem;
 	margin-bottom: 0.5rem;
 	padding: 0.45rem;
-	border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
 	border-radius: 0.35rem;
-	background: color-mix(in oklch, currentColor 6%, transparent);
+	background: color-mix(in oklab, currentColor 6%, transparent);
 
 	input,
 	select {
@@ -1457,7 +1461,7 @@
 
 .row-mini-behavior-label {
 	font-size: 0.75rem;
-	color: color-mix(in oklch, currentColor 84%, transparent);
+	color: color-mix(in oklab, currentColor 84%, transparent);
 	font-weight: 600;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -1471,21 +1475,21 @@
 		font-family: ui-monospace, monospace;
 		font-size: 0.72rem;
 		border-radius: 0.25rem;
-		border: 1px solid #334155;
+		border: 1px solid var(--studio-border-strong);
 		outline: none;
 		padding: 0.5rem;
-		background: #0f172a;
-		color: #f8fafc;
+		background: var(--studio-surface-input);
+		color: var(--studio-text);
 		white-space: pre;
 
 		&:focus {
-			border-color: #38bdf8;
+			border-color: var(--studio-accent);
 		}
 	}
 
 	.json-error {
 		font-size: 0.75rem;
-		color: #f87171;
+		color: var(--studio-status-danger);
 		margin-bottom: 0.4rem;
 	}
 }
@@ -1493,7 +1497,7 @@
 .editor-hint {
 	font-size: 0.7rem;
 	line-height: 1.35;
-	color: color-mix(in oklch, currentColor 58%, transparent);
+	color: color-mix(in oklab, currentColor 58%, transparent);
 	margin-top: 0.3rem;
 }
 
@@ -1506,13 +1510,13 @@
 	height: 1.95rem;
 	gap: 0;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 20%, transparent);
-	background: color-mix(in oklch, currentColor 6%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+	background: color-mix(in oklab, currentColor 6%, transparent);
 	overflow: clip;
 
 	&:focus-within {
 		border-color: var(--color-interactive);
-		outline: 2px solid color-mix(in oklch, var(--color-interactive) 45%, transparent);
+		outline: 2px solid color-mix(in oklab, var(--color-interactive) 45%, transparent);
 		outline-offset: 1px;
 	}
 
@@ -1522,7 +1526,7 @@
 		height: auto;
 		padding: 0 0.2rem;
 		border: none;
-		border-inline: 1px solid color-mix(in oklch, currentColor 14%, transparent);
+		border-inline: 1px solid color-mix(in oklab, currentColor 14%, transparent);
 		border-radius: 0;
 		background: transparent;
 		font-size: 0.78rem;
@@ -1545,7 +1549,7 @@
 	}
 
 	.btn-step {
-		background: color-mix(in oklch, currentColor 5%, transparent);
+		background: color-mix(in oklab, currentColor 5%, transparent);
 		border: none;
 		color: currentColor;
 		width: 1.8rem;
@@ -1561,7 +1565,7 @@
 
 		@media (hover: hover) {
 			&:hover:not(:disabled) {
-				background: color-mix(in oklch, var(--color-interactive) 28%, transparent);
+				background: color-mix(in oklab, var(--color-interactive) 28%, transparent);
 			}
 		}
 
@@ -1583,7 +1587,7 @@
 		align-items: center;
 		gap: 0.35rem;
 		background: var(--color-input);
-		border: 1px solid rgba(255, 255, 255, 0.15);
+		border: 1px solid var(--studio-border);
 		border-radius: 4px;
 		padding: 0.25rem 0.6rem;
 		min-width: 4rem;
@@ -1599,14 +1603,14 @@
 		.die-rating-text {
 			font-size: 0.85rem;
 			font-weight: bold;
-			color: white;
+			color: var(--studio-text);
 		}
 	}
 
 	.btn-step {
-		background: rgba(255, 255, 255, 0.18);
+		background: color-mix(in oklab, var(--studio-text) 18%, transparent);
 		border: none;
-		color: white;
+		color: var(--studio-text);
 		width: 1.5rem;
 		height: 1.5rem;
 		border-radius: 2px;
@@ -1629,9 +1633,9 @@
 	}
 
 	.btn-unset-rating {
-		background: rgba(255, 255, 255, 0.12);
+		background: color-mix(in oklab, var(--studio-text) 12%, transparent);
 		border: none;
-		color: rgba(255, 255, 255, 0.7);
+		color: var(--studio-text-secondary);
 		width: 1.5rem;
 		height: 1.5rem;
 		border-radius: 2px;
@@ -1643,8 +1647,8 @@
 		margin-left: 0.25rem;
 
 		&:hover {
-			background: var(--color-danger, #d9534f);
-			color: white;
+			background: var(--paper-status-danger);
+			color: var(--die-active-text);
 		}
 	}
 }
@@ -1674,12 +1678,12 @@
 			margin-left: 0.25rem;
 			padding: 0.22rem 0.5rem;
 			border-radius: 4px;
-			border: 1px solid rgba(255, 255, 255, 0.25);
-			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid color-mix(in oklab, var(--studio-text) 25%, transparent);
+			background: color-mix(in oklab, var(--studio-text) 8%, transparent);
 			font-size: 0.72rem;
 			font-weight: 800;
 			letter-spacing: 0.04em;
-			color: var(--color-inactive);
+			color: var(--studio-text-secondary);
 			display: flex;
 			align-items: center;
 			column-gap: 0.25rem;
@@ -1687,15 +1691,15 @@
 			transition: all 0.15s ease;
 
 			&:hover {
-				border-color: #ef4444;
-				color: #ef4444;
+				border-color: var(--studio-status-danger);
+				color: var(--studio-status-danger);
 			}
 
 			&.active {
-				background: #ef4444;
-				border-color: #dc2626;
-				color: white;
-				box-shadow: 0 0 8px rgba(239, 68, 68, 0.45);
+				background: var(--paper-status-danger);
+				border-color: var(--paper-status-danger);
+				color: var(--die-active-text);
+				box-shadow: 0 0 8px color-mix(in oklab, var(--studio-status-danger) 45%, transparent);
 			}
 		}
 	}
@@ -1714,8 +1718,8 @@
 }
 
 .die-stepper-item {
-	background: color-mix(in oklch, currentColor 5%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
+	background: color-mix(in oklab, currentColor 5%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
 	border-radius: 0.375rem;
 	padding: 0;
 	overflow: clip;
@@ -1730,7 +1734,7 @@
 	}
 
 	&.active {
-		background: color-mix(in oklch, var(--color-interactive) 16%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 16%, transparent);
 		border-color: var(--color-interactive);
 	}
 
@@ -1759,8 +1763,8 @@
 		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
 		width: 100%;
-		border-top: 1px solid color-mix(in oklch, currentColor 12%, transparent);
-		background: color-mix(in oklch, currentColor 4%, transparent);
+		border-top: 1px solid color-mix(in oklab, currentColor 12%, transparent);
+		background: color-mix(in oklab, currentColor 4%, transparent);
 	}
 
 	.btn-step {
@@ -1780,7 +1784,7 @@
 
 		@media (hover: hover) {
 			&:hover:not(:disabled) {
-				background: color-mix(in oklch, var(--color-interactive) 28%, transparent);
+				background: color-mix(in oklab, var(--color-interactive) 28%, transparent);
 			}
 		}
 
@@ -1807,7 +1811,7 @@
 	.sub-label {
 		font-size: 0.69rem;
 		font-weight: 600;
-		color: color-mix(in oklch, currentColor 62%, transparent);
+		color: color-mix(in oklab, currentColor 62%, transparent);
 	}
 
 	.multidie-chips {
@@ -1818,8 +1822,8 @@
 }
 
 .multidie-chip {
-	background: color-mix(in oklch, currentColor 6%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
+	background: color-mix(in oklab, currentColor 6%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
 	border-radius: 0.375rem;
 	padding: 0.16rem 0.32rem;
 	display: inline-flex;
@@ -1848,7 +1852,7 @@
 	.btn-remove-die {
 		background: transparent;
 		border: none;
-		color: color-mix(in oklch, currentColor 62%, transparent);
+		color: color-mix(in oklab, currentColor 62%, transparent);
 		cursor: pointer;
 		padding: 0.08rem 0.18rem;
 		border-radius: 0.2rem;
@@ -1859,7 +1863,7 @@
 		@media (hover: hover) {
 			&:hover {
 				color: currentColor;
-				background: color-mix(in oklch, currentColor 10%, transparent);
+				background: color-mix(in oklab, currentColor 10%, transparent);
 			}
 		}
 	}
@@ -1873,7 +1877,7 @@
 	}
 
 	.btn-step-play {
-		background: color-mix(in oklch, currentColor 16%, transparent);
+		background: color-mix(in oklab, currentColor 16%, transparent);
 		border: none;
 		color: currentColor;
 		width: 1.1rem;
@@ -1908,7 +1912,7 @@
 	gap: 0.65rem;
 	margin-block-start: 0.55rem;
 	padding-inline-start: 0.65rem;
-	border-inline-start: 2px solid color-mix(in oklch, var(--color-interactive) 35%, transparent);
+	border-inline-start: 2px solid color-mix(in oklab, var(--color-interactive) 35%, transparent);
 }
 
 .rating-connected-sub {
@@ -1964,7 +1968,7 @@
 
 	.pip-editor-count {
 		font-size: 0.68rem;
-		color: color-mix(in oklch, currentColor 65%, transparent);
+		color: color-mix(in oklab, currentColor 65%, transparent);
 		font-style: italic;
 	}
 
@@ -2042,8 +2046,8 @@
 	gap: 0.5rem;
 	min-height: 2rem;
 	padding: 0.35rem 0.6rem;
-	background: color-mix(in oklch, currentColor 6%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 14%, transparent);
+	background: color-mix(in oklab, currentColor 6%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
 	border-radius: 0.375rem;
 	color: currentColor;
 	font-size: 0.8125rem;
@@ -2059,7 +2063,7 @@
 	@media (hover: hover) {
 		&:hover {
 			border-color: var(--color-interactive);
-			background: color-mix(in oklch, currentColor 10%, transparent);
+			background: color-mix(in oklab, currentColor 10%, transparent);
 		}
 	}
 }
@@ -2098,10 +2102,10 @@
 	justify-content: center;
 	min-height: 2rem;
 	padding: 0 0.55rem;
-	background: color-mix(in oklch, currentColor 6%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 14%, transparent);
+	background: color-mix(in oklab, currentColor 6%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
 	border-radius: 0.375rem;
-	color: color-mix(in oklch, var(--color-primary) 75%, currentColor);
+	color: color-mix(in oklab, var(--color-primary) 75%, currentColor);
 	font-size: 0.75rem;
 	cursor: pointer;
 
@@ -2114,7 +2118,7 @@
 	@media (hover: hover) {
 		&:hover {
 			border-color: var(--color-primary);
-			background: color-mix(in oklch, var(--color-primary) 16%, transparent);
+			background: color-mix(in oklab, var(--color-primary) 16%, transparent);
 		}
 	}
 }
@@ -2175,8 +2179,8 @@
 	gap: 0.2rem;
 	div,
 	button {
-		background-color: color-mix(in oklch, currentColor 18%, transparent);
-		border: 1px solid color-mix(in oklch, currentColor 16%, transparent);
+		background-color: color-mix(in oklab, currentColor 18%, transparent);
+		border: 1px solid color-mix(in oklab, currentColor 16%, transparent);
 		border-radius: 0.25rem;
 		padding: 0;
 		width: 1.35rem;
@@ -2191,7 +2195,7 @@
 
 		@media (hover: hover) {
 			&:hover:not(.active):not([aria-pressed='true']) {
-				background-color: color-mix(in oklch, var(--color-interactive) 45%, transparent);
+				background-color: color-mix(in oklab, var(--color-interactive) 45%, transparent);
 				border-color: var(--color-interactive);
 			}
 		}
@@ -2214,8 +2218,8 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.25rem;
-	background: color-mix(in oklch, currentColor 6%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 12%, transparent);
+	background: color-mix(in oklab, currentColor 6%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 12%, transparent);
 	padding: 0.2rem;
 	border-radius: 0.375rem;
 
@@ -2225,7 +2229,7 @@
 		background: transparent;
 		border: none;
 		border-radius: 0.25rem;
-		color: color-mix(in oklch, currentColor 82%, transparent);
+		color: color-mix(in oklab, currentColor 82%, transparent);
 		padding: 0.3rem 0.45rem;
 		font-family: var(--font-primary);
 		font-size: 0.75rem;
@@ -2245,14 +2249,14 @@
 
 		&.active,
 		&[aria-pressed='true'] {
-			background: color-mix(in oklch, var(--color-interactive) 24%, transparent);
-			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-interactive) 70%, transparent);
+			background: color-mix(in oklab, var(--color-interactive) 24%, transparent);
+			box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-interactive) 70%, transparent);
 			color: inherit;
 		}
 
 		@media (hover: hover) {
 			&:hover:not(.active):not([aria-pressed='true']) {
-				background: color-mix(in oklch, currentColor 10%, transparent);
+				background: color-mix(in oklab, currentColor 10%, transparent);
 				color: inherit;
 			}
 		}
@@ -2265,9 +2269,9 @@
 
 	.editor-step-btn {
 		flex: 1;
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		color: white;
+		background: color-mix(in oklab, var(--studio-text) 10%, transparent);
+		border: 1px solid color-mix(in oklab, var(--studio-text) 20%, transparent);
+		color: var(--studio-text);
 		padding: 0.4rem 0.5rem;
 		font-size: 0.75rem;
 		border-radius: 0.25rem;
@@ -2281,8 +2285,8 @@
 			opacity 0.15s;
 
 		&:hover:not(:disabled) {
-			background: rgba(255, 255, 255, 0.2);
-			border-color: rgba(255, 255, 255, 0.4);
+			background: color-mix(in oklab, var(--studio-text) 20%, transparent);
+			border-color: color-mix(in oklab, var(--studio-text) 40%, transparent);
 		}
 
 		&:disabled {
@@ -2319,7 +2323,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		font-size: 0.75rem;
-		color: color-mix(in oklch, currentColor 82%, transparent);
+		color: color-mix(in oklab, currentColor 82%, transparent);
 
 		.slider-val {
 			font-family: var(--font-primary);
@@ -2345,8 +2349,8 @@
 		gap: 0.25rem;
 		padding: 0.2rem;
 		border-radius: 0.375rem;
-		background: color-mix(in oklch, currentColor 6%, transparent);
-		border: 1px solid color-mix(in oklch, currentColor 12%, transparent);
+		background: color-mix(in oklab, currentColor 6%, transparent);
+		border: 1px solid color-mix(in oklab, currentColor 12%, transparent);
 
 		.btn-preset {
 			flex: 1;
@@ -2372,14 +2376,14 @@
 			@media (hover: hover) {
 				&:hover:not(.active):not([aria-pressed='true']) {
 					color: inherit;
-					background: color-mix(in oklch, currentColor 10%, transparent);
+					background: color-mix(in oklab, currentColor 10%, transparent);
 				}
 			}
 
 			&.active,
 			&[aria-pressed='true'] {
-				background: color-mix(in oklch, var(--color-interactive) 24%, transparent);
-				box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-interactive) 70%, transparent);
+				background: color-mix(in oklab, var(--color-interactive) 24%, transparent);
+				box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-interactive) 70%, transparent);
 				color: inherit;
 			}
 		}
@@ -2391,8 +2395,8 @@
 		margin-top: 0.1rem;
 
 		.btn-reset-ring {
-			background: color-mix(in oklch, currentColor 6%, transparent);
-			border: 1px solid color-mix(in oklch, currentColor 14%, transparent);
+			background: color-mix(in oklab, currentColor 6%, transparent);
+			border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
 			color: var(--text-muted);
 			font-family: var(--font-primary);
 			font-size: 0.75rem;
@@ -2415,7 +2419,7 @@
 				&:hover {
 					color: currentColor;
 					border-color: var(--color-interactive);
-					background: color-mix(in oklch, var(--color-interactive) 16%, transparent);
+					background: color-mix(in oklab, var(--color-interactive) 16%, transparent);
 				}
 			}
 		}
@@ -2439,8 +2443,8 @@
 			flex: 1 1 2.75rem;
 			min-width: 2.75rem;
 			min-height: 2.75rem;
-			background: color-mix(in oklch, currentColor 6%, transparent);
-			border: 1px solid color-mix(in oklch, currentColor 14%, transparent);
+			background: color-mix(in oklab, currentColor 6%, transparent);
+			border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
 			border-radius: 0.375rem;
 			padding: 0.25rem 0.2rem;
 			display: flex;
@@ -2473,7 +2477,7 @@
 			.chip-label {
 				font-size: 0.65rem;
 				font-weight: 600;
-				color: var(--text-muted);
+				color: var(--studio-text-secondary);
 
 				@media (prefers-reduced-motion: no-preference) {
 					transition: color 0.15s ease;
@@ -2482,16 +2486,16 @@
 
 			@media (hover: hover) {
 				&:hover:not(.active):not([aria-pressed='true']) {
-					background: color-mix(in oklch, currentColor 12%, transparent);
-					border-color: color-mix(in oklch, currentColor 32%, transparent);
+					background: color-mix(in oklab, currentColor 12%, transparent);
+					border-color: color-mix(in oklab, currentColor 32%, transparent);
 				}
 			}
 
 			&.active,
 			&[aria-pressed='true'] {
-				background: color-mix(in oklch, var(--color-interactive) 22%, transparent);
+				background: color-mix(in oklab, var(--color-interactive) 22%, transparent);
 				border-color: var(--color-interactive);
-				box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-interactive) 55%, transparent);
+				box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-interactive) 55%, transparent);
 
 				.chip-label {
 					color: inherit;
@@ -2513,22 +2517,22 @@
 .editor-section-divider {
 	margin: 1rem 0 0.75rem;
 	padding-top: 0.6rem;
-	border-top: 1px solid rgba(255, 255, 255, 0.15);
+	border-top: 1px solid var(--studio-border);
 	font-size: 0.7rem;
 	font-weight: 700;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.6);
+	color: var(--studio-text-muted);
 }
 
 .column-offset-group {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-	background: rgba(255, 255, 255, 0.04);
+	background: color-mix(in oklab, var(--studio-text) 4%, transparent);
 	padding: 0.6rem;
 	border-radius: 4px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid var(--studio-border);
 	margin-top: 0.4rem;
 }
 
@@ -2544,8 +2548,8 @@
 	gap: 0.45rem;
 	padding: 0.25rem 0.35rem 0.25rem 0.6rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
-	background: color-mix(in oklch, currentColor 8%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 22%, transparent);
+	background: color-mix(in oklab, currentColor 8%, transparent);
 	color: inherit;
 	transition:
 		border-color 0.15s ease,
@@ -2553,7 +2557,7 @@
 }
 
 .font-picker-control:hover {
-	border-color: color-mix(in oklch, currentColor 40%, transparent);
+	border-color: color-mix(in oklab, currentColor 40%, transparent);
 }
 
 .font-picker-control:focus-within,
@@ -2604,7 +2608,7 @@
 
 .font-picker-icon-btn:hover {
 	opacity: 1;
-	background: color-mix(in oklch, currentColor 14%, transparent);
+	background: color-mix(in oklab, currentColor 14%, transparent);
 }
 
 .font-picker-icon-btn:focus-visible {
@@ -2635,10 +2639,10 @@
 	padding: 0.25rem;
 	list-style: none;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 26%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 26%, transparent);
 	background: var(--color-input);
 	color: white;
-	box-shadow: 0 0.625rem 1.5rem color-mix(in oklch, black 55%, transparent);
+	box-shadow: 0 0.625rem 1.5rem color-mix(in oklab, black 55%, transparent);
 }
 
 .font-picker-listbox[hidden] {
@@ -2656,16 +2660,16 @@
 }
 
 .font-picker-option.is-active {
-	background: color-mix(in oklch, currentColor 14%, transparent);
+	background: color-mix(in oklab, currentColor 14%, transparent);
 }
 
 .font-picker-option.is-selected {
-	background: color-mix(in oklch, var(--color-interactive) 24%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 24%, transparent);
 	font-weight: 600;
 }
 
 .font-picker-option.is-selected.is-active {
-	background: color-mix(in oklch, var(--color-interactive) 34%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 34%, transparent);
 	outline: 1px solid var(--color-interactive);
 }
 
@@ -2713,8 +2717,8 @@
 	gap: 0.5rem;
 	padding: 0.3rem 0.4rem 0.3rem 0.55rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 18%, transparent);
-	background: color-mix(in oklch, currentColor 7%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+	background: color-mix(in oklab, currentColor 7%, transparent);
 }
 
 .external-font-ag {
@@ -2762,8 +2766,8 @@
 	box-sizing: border-box;
 	padding: 0.35rem 0.55rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
-	background: color-mix(in oklch, currentColor 8%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 22%, transparent);
+	background: color-mix(in oklab, currentColor 8%, transparent);
 	color: inherit;
 	font-size: 0.8125rem;
 	line-height: 1.3;
@@ -2800,7 +2804,7 @@
 
 .editor-upload-error {
 	font-size: 0.72rem;
-	color: #fca5a5;
+	color: var(--studio-status-danger);
 	margin-top: 0.35rem;
 	line-height: 1.35;
 }
@@ -2819,7 +2823,7 @@ dialog.trait-set-mini-dialog {
 	color-scheme: dark;
 	border: 1px solid var(--studio-border);
 	border-radius: 0.625rem;
-	box-shadow: 0 20px 45px color-mix(in oklch, black 55%, transparent);
+	box-shadow: 0 20px 45px color-mix(in oklab, black 55%, transparent);
 	overflow: hidden;
 	overscroll-behavior: contain;
 
@@ -2829,7 +2833,7 @@ dialog.trait-set-mini-dialog {
 	}
 
 	&::backdrop {
-		background: color-mix(in oklch, var(--bg-app-canvas) 72%, transparent);
+		background: color-mix(in oklab, var(--bg-app-canvas) 72%, transparent);
 		overflow: hidden;
 		overscroll-behavior: contain;
 	}
@@ -2875,10 +2879,10 @@ dialog.trait-set-mini-dialog {
 		flex: 0 0 auto;
 		width: 1.75rem;
 		height: 1.75rem;
-		border: 1px solid color-mix(in oklch, var(--color-interactive) 70%, white);
+		border: 1px solid color-mix(in oklab, var(--color-interactive) 70%, white);
 		border-radius: 0.375rem;
-		background: color-mix(in oklch, var(--color-interactive) 20%, transparent);
-		color: color-mix(in oklch, var(--color-interactive) 70%, white);
+		background: color-mix(in oklab, var(--color-interactive) 20%, transparent);
+		color: color-mix(in oklab, var(--color-interactive) 70%, white);
 		font-size: 0.82rem;
 	}
 
@@ -2893,12 +2897,12 @@ dialog.trait-set-mini-dialog {
 	.mini-header-actions {
 		display: flex;
 		align-items: center;
-		gap: 0.45rem;
+		gap: 0.5rem;
 		flex: 0 0 auto;
 	}
 
 	.mini-header-apply-btn {
-		background: color-mix(in oklch, var(--color-interactive) 70%, black);
+		background: color-mix(in oklab, var(--color-interactive) 70%, black);
 		border: 1px solid var(--color-interactive);
 		color: var(--die-active-text);
 		border-radius: 0.375rem;
@@ -2908,8 +2912,16 @@ dialog.trait-set-mini-dialog {
 		cursor: pointer;
 		white-space: nowrap;
 
+		@media (pointer: coarse) {
+			min-block-size: 2.75rem;
+			min-inline-size: 2.75rem;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
 		&:hover {
-			background: color-mix(in oklch, var(--color-interactive) 82%, black);
+			background: color-mix(in oklab, var(--color-interactive) 82%, black);
 		}
 	}
 
@@ -2928,7 +2940,7 @@ dialog.trait-set-mini-dialog {
 		line-height: 1;
 
 		&:hover {
-			background: color-mix(in oklch, currentColor 10%, transparent);
+			background: color-mix(in oklab, currentColor 10%, transparent);
 		}
 
 		@media (pointer: coarse) {
@@ -2986,7 +2998,7 @@ dialog.trait-set-mini-dialog {
 	.mini-breadcrumb {
 		padding: 0.55rem 0.75rem;
 		border-bottom: 1px solid var(--studio-border);
-		background: color-mix(in oklch, currentColor 4%, transparent);
+		background: color-mix(in oklab, currentColor 4%, transparent);
 	}
 
 	.mini-card-preview-section,
@@ -3013,7 +3025,7 @@ dialog.trait-set-mini-dialog {
 			border-inline: none;
 			border-bottom: 1px solid var(--studio-border);
 			background: var(--studio-header-bg);
-			box-shadow: 0 0.375rem 1rem color-mix(in oklch, black 35%, transparent);
+			box-shadow: 0 0.375rem 1rem color-mix(in oklab, black 35%, transparent);
 
 			&.is-collapsed {
 				padding-block: 0.3rem;
@@ -3104,7 +3116,7 @@ dialog.trait-set-mini-dialog {
 
 		&.active {
 			border-color: var(--color-interactive);
-			background: color-mix(in oklch, var(--color-interactive) 22%, transparent);
+			background: color-mix(in oklab, var(--color-interactive) 22%, transparent);
 			color: var(--studio-text);
 		}
 
@@ -3204,7 +3216,7 @@ dialog.trait-set-mini-dialog {
 		width: 100%;
 		min-height: 2rem;
 		background: var(--studio-bg);
-		border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
+		border: 1px solid color-mix(in oklab, currentColor 22%, transparent);
 		border-radius: 0.375rem;
 		color: var(--studio-text);
 		padding: 0.34rem 0.5rem;
@@ -3217,7 +3229,7 @@ dialog.trait-set-mini-dialog {
 	}
 
 	.mini-collision-alert {
-		background: color-mix(in oklch, var(--status-danger) 18%, transparent);
+		background: color-mix(in oklab, var(--status-danger) 18%, transparent);
 		border: 1px solid var(--status-danger);
 		color: var(--studio-text);
 		border-radius: 0.375rem;
@@ -3234,12 +3246,12 @@ dialog.trait-set-mini-dialog {
 		color: var(--studio-text);
 
 		&.success {
-			background: color-mix(in oklch, var(--color-interactive) 18%, transparent);
+			background: color-mix(in oklab, var(--color-interactive) 18%, transparent);
 			border: 1px solid var(--color-interactive);
 		}
 
 		&.error {
-			background: color-mix(in oklch, var(--status-danger) 18%, transparent);
+			background: color-mix(in oklab, var(--status-danger) 18%, transparent);
 			border: 1px solid var(--status-danger);
 		}
 	}
@@ -3261,7 +3273,7 @@ dialog.trait-set-mini-dialog {
 		}
 
 		.btn-save-preset {
-			background: color-mix(in oklch, var(--color-interactive) 70%, black);
+			background: color-mix(in oklab, var(--color-interactive) 70%, black);
 			border: 1px solid var(--color-interactive);
 			color: var(--die-active-text);
 
@@ -3277,7 +3289,7 @@ dialog.trait-set-mini-dialog {
 			color: var(--studio-text);
 
 			&:hover {
-				background: color-mix(in oklch, currentColor 10%, transparent);
+				background: color-mix(in oklab, currentColor 10%, transparent);
 			}
 		}
 	}
@@ -3291,7 +3303,7 @@ dialog.trait-set-mini-dialog {
 
 	.btn-json-action {
 		flex: 1;
-		background: color-mix(in oklch, currentColor 6%, transparent);
+		background: color-mix(in oklab, currentColor 6%, transparent);
 		border: 1px solid var(--studio-border);
 		color: var(--studio-text-secondary);
 		border-radius: 0.25rem;
@@ -3305,7 +3317,7 @@ dialog.trait-set-mini-dialog {
 		gap: 0.35rem;
 
 		&:hover {
-			background: color-mix(in oklch, currentColor 12%, transparent);
+			background: color-mix(in oklab, currentColor 12%, transparent);
 			color: var(--studio-text);
 		}
 	}
@@ -3332,8 +3344,8 @@ dialog.trait-set-mini-dialog {
 	gap: 0.35rem;
 	padding: 0.2rem 0.5rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, var(--color-interactive) 55%, transparent);
-	background: color-mix(in oklch, var(--color-interactive) 16%, transparent);
+	border: 1px solid color-mix(in oklab, var(--color-interactive) 55%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 16%, transparent);
 	color: currentColor;
 	font-size: 0.75rem;
 }
@@ -3402,8 +3414,8 @@ dialog.trait-set-mini-dialog {
 	gap: 0.35rem;
 	padding: 0.25rem 0.5rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 24%, transparent);
-	background: color-mix(in oklch, currentColor 9%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 24%, transparent);
+	background: color-mix(in oklab, currentColor 9%, transparent);
 	color: inherit;
 	font-size: 0.8125rem;
 	font-weight: 600;
@@ -3416,13 +3428,13 @@ dialog.trait-set-mini-dialog {
 }
 
 .color-token-chip:hover {
-	border-color: color-mix(in oklch, currentColor 45%, transparent);
-	background: color-mix(in oklch, currentColor 15%, transparent);
+	border-color: color-mix(in oklab, currentColor 45%, transparent);
+	background: color-mix(in oklab, currentColor 15%, transparent);
 }
 
 .color-token-chip.active {
 	border-color: var(--color-interactive);
-	background: color-mix(in oklch, var(--color-interactive) 18%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 18%, transparent);
 	box-shadow: 0 0 0 1px var(--color-interactive);
 }
 
@@ -3437,7 +3449,7 @@ dialog.trait-set-mini-dialog {
 	border-radius: 50%;
 	flex-shrink: 0;
 	background-color: var(--swatch-color);
-	box-shadow: inset 0 0 0 1px color-mix(in oklch, currentColor 35%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 35%, transparent);
 	forced-color-adjust: none;
 }
 
@@ -3453,7 +3465,7 @@ dialog.trait-set-mini-dialog {
 	height: 1.4375rem;
 	padding: 0;
 	border-radius: 50%;
-	border: 1px solid color-mix(in oklch, currentColor 38%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 38%, transparent);
 	background-color: var(--swatch-color);
 	color: white;
 	display: inline-flex;
@@ -3520,8 +3532,8 @@ dialog.trait-set-mini-dialog {
 	gap: 0.45rem;
 	padding: 0.35rem 0.5rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 24%, transparent);
-	background: color-mix(in oklch, currentColor 9%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 24%, transparent);
+	background: color-mix(in oklab, currentColor 9%, transparent);
 	color: inherit;
 	font-size: 0.8125rem;
 	font-weight: 600;
@@ -3530,13 +3542,13 @@ dialog.trait-set-mini-dialog {
 }
 
 .sheet-palette-btn:hover {
-	border-color: color-mix(in oklch, currentColor 45%, transparent);
-	background: color-mix(in oklch, currentColor 15%, transparent);
+	border-color: color-mix(in oklab, currentColor 45%, transparent);
+	background: color-mix(in oklab, currentColor 15%, transparent);
 }
 
 .sheet-palette-btn.active {
 	border-color: var(--color-interactive);
-	background: color-mix(in oklch, var(--color-interactive) 18%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 18%, transparent);
 	box-shadow: 0 0 0 1px var(--color-interactive);
 }
 
@@ -3551,7 +3563,7 @@ dialog.trait-set-mini-dialog {
 	height: 0.75rem;
 	border-radius: 50%;
 	background-color: var(--swatch-color);
-	box-shadow: inset 0 0 0 1px color-mix(in oklch, currentColor 35%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 35%, transparent);
 	forced-color-adjust: none;
 }
 
@@ -3573,8 +3585,8 @@ dialog.trait-set-mini-dialog {
 .editor-tab-btn {
 	padding: 0.35rem 0.65rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 24%, transparent);
-	background: color-mix(in oklch, currentColor 9%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 24%, transparent);
+	background: color-mix(in oklab, currentColor 9%, transparent);
 	color: inherit;
 	font-size: 0.8125rem;
 	font-weight: 600;
@@ -3582,8 +3594,8 @@ dialog.trait-set-mini-dialog {
 }
 
 .editor-tab-btn:hover:not(:disabled) {
-	border-color: color-mix(in oklch, currentColor 45%, transparent);
-	background: color-mix(in oklch, currentColor 15%, transparent);
+	border-color: color-mix(in oklab, currentColor 45%, transparent);
+	background: color-mix(in oklab, currentColor 15%, transparent);
 }
 
 .editor-tab-btn:disabled {
@@ -3595,8 +3607,8 @@ dialog.trait-set-mini-dialog {
 	display: inline-flex;
 	border-radius: 0.375rem;
 	padding: 0.125rem;
-	background: color-mix(in oklch, currentColor 9%, transparent);
-	border: 1px solid color-mix(in oklch, currentColor 20%, transparent);
+	background: color-mix(in oklab, currentColor 9%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 20%, transparent);
 	gap: 0.125rem;
 }
 
@@ -3635,21 +3647,21 @@ dialog.trait-set-mini-dialog {
 	gap: 0.2rem;
 	padding: 0.4rem 0.35rem;
 	border-radius: 0.375rem;
-	border: 1px solid color-mix(in oklch, currentColor 24%, transparent);
-	background: color-mix(in oklch, currentColor 9%, transparent);
+	border: 1px solid color-mix(in oklab, currentColor 24%, transparent);
+	background: color-mix(in oklab, currentColor 9%, transparent);
 	color: inherit;
 	cursor: pointer;
 	forced-color-adjust: none;
 }
 
 .editor-dice-preset-btn:hover {
-	border-color: color-mix(in oklch, currentColor 45%, transparent);
-	background: color-mix(in oklch, currentColor 15%, transparent);
+	border-color: color-mix(in oklab, currentColor 45%, transparent);
+	background: color-mix(in oklab, currentColor 15%, transparent);
 }
 
 .editor-dice-preset-btn.active {
 	border-color: var(--color-interactive);
-	background: color-mix(in oklch, var(--color-interactive) 18%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 18%, transparent);
 	box-shadow: 0 0 0 1px var(--color-interactive);
 }
 
@@ -3694,9 +3706,9 @@ dialog.trait-set-mini-dialog {
 
 .btn-unset-rating {
 	background: transparent;
-	border: 1px dashed color-mix(in oklch, currentColor 28%, transparent);
+	border: 1px dashed color-mix(in oklab, currentColor 28%, transparent);
 	border-radius: 0.35rem;
-	color: color-mix(in oklch, currentColor 72%, transparent);
+	color: color-mix(in oklab, currentColor 72%, transparent);
 	font-family: var(--font-primary);
 	font-size: 0.72rem;
 	font-weight: 700;

@@ -567,7 +567,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	it('TraitSetMini (Phase 3a): standalone authoring, companion track range, keyboard nudge, and preset round-trip', async () => {
-		window.localStorage.removeItem('characterCurioCustomSetPresets');
+		characterCurioFunctions.setCustomSetPresets([], { notify: false });
 
 		const wrapper = mount(TraitSetMini, { attachTo: document.body });
 		await runAxeAudit(wrapper.element as HTMLElement);
@@ -647,7 +647,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		}
 
 		wrapper.unmount();
-		window.localStorage.removeItem('characterCurioCustomSetPresets');
+		characterCurioFunctions.setCustomSetPresets([], { notify: false });
 	});
 
 	it('TraitSetMini mobile sticky preview: manual disclosure, text-input keyboard auto-collapse, peek override, and WCAG 2.2 AA audit', async () => {

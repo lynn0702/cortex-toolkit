@@ -1,6 +1,6 @@
 # Component Inventory & UI Token Budget Census — Character Curio
 
-> Static CSS box-model & source-template audit across all **39 Vue SFCs** (`js/*.vue`) and **11 source CSS partials** (`css/*.css`, totaling **19,053 lines / 373,676 B / 364.9 KB** excluding generated `css/app.min.css`, `css/fonts.css`, and `css/fontawesome.css`) for **Character Curio** (`characters.lynnjones.rocks`).
+> Static CSS box-model & source-template audit across all **46 Vue SFCs** (`js/*.vue`) and **12 source CSS partials** (`css/*.css`, totaling **22,931 lines / 471,413 B / 460.4 KB** excluding generated `css/app.min.css`, `css/fonts.css`, and `css/fontawesome.css`) for **Character Curio** (`characters.lynnjones.rocks`).
 >
 > **Provenance Key:** Every architectural rule, budget tier, consolidation candidate, and open question below is tagged `[DECIDED]` (ratified in `design/DECISIONS.md` or this census charter), `[SUGGESTION]` (proposed scoring or cleanup slice for ratification), or `[OPEN]` (trade-off needing author decision).
 >
@@ -36,13 +36,13 @@
   - Play jump chrome target envelope: `3rem` header + `2.5rem` jump strip (`--jump-strip-h: 2.5rem` in `css/app.css`, ratified `[DECIDED]` in `design/DECISIONS.md` 2026-11-13).
   - Three-state mobile Play drawer (`data-state="staged" | "split" | "full"`): `staged: 3.5rem` (`--roller-footer-h`), `split: 38.2dvh` (`--split-roller-h`), `full: 100dvh` (auto-collapses `.header`).
 
-### 1.3 Macro Budget Inversion Finding
+### 1.3 Macro Budget Evolution & Cleanup Status
 
-Comparing actual stylesheet mass (`19,053` lines) against the `70% / 25% / 5%` rule exposes three structural inversions:
+Subsequent refactoring and tokenization passes resolved several initial structural inversions (`12` source CSS partials totaling `22,931` lines):
 
-1. **`css/print.css` bloat (`4,583` lines / `24.05%` of all CSS):** Houses non-print runtime systems including the **Tier 1** 2D Pillar & Stack Deck (`L3561–3999`, `439` lines), **Tier 2** Template Library Modal (`L2111–2534`, `424` lines), and **dead** `.sheet-toolbar` / `.edit-toolbar` rules (`L4002–4046`).
-2. **`TraitSetMini` over-budget (`2,460` Vue lines + `1,109` CSS lines in `css/editor.css:L2948–4056`):** Now a rare **Tier 3** modal (`DECISIONS.md` 2026-11-13 moved live `view.parts` authoring inline into `TraitSetEditorRowMini`), yet its CSS alone equals **`5.82%` of the entire repository's CSS** — exceeding the whole `5%` Tier 3 budget.
-3. **Unconditional fixed `.footer` on mobile:** `<AppFooter>` (`3rem` / `48px`) remains mounted and fixed at `bottom: 0` across all non-print screen modes, consuming `5.69%` of Mobile Create (`StudioPanel` closed) and Mobile Roster height while being covered by `.mobile-roller-pill-bar` (`z-index: 950`) in Mobile Play.
+1. **`css/print.css` trimmed (`4,076` lines / `17.78%` of all CSS):** The **Tier 1** 2D Pillar & Stack Deck (`css/character.css`), **Tier 2** Template Library Modal (`css/modal.css`), **screen-only dark-mode sheet rules** (`css/sheet-dark.css`, `430` lines), and obsolete `.edit-toolbar` / `.sheet-toolbar` selectors have all been extracted or retired.
+2. **`TraitSetMini` refactored (`js/trait-set-mini.vue`, `733` Vue lines):** Now delegates live preview and editing directly to `<TraitSetBlock>`, `<TraitSetEditor>`, and `<TraitEditor>` rather than duplicating editor UI, serving as the Set Builder / custom preset editor dialog (including in-place editing of saved IndexedDB custom presets).
+3. **Mobile footer reclaimed below `48rem`:** `<AppFooter>` hides below `48rem` outside `About` / `Roster`, reclaiming the bottom viewport row in Mobile Create and avoiding `.mobile-roller-pill-bar` occlusion in Mobile Play, while `About` is exposed in `#mobile-sheet-menu`.
 
 ---
 
@@ -98,26 +98,27 @@ Sorted descending by `Weight (F × L = W)` from **Tier 1 (`W = 25`)** down to **
 | 42 | **Shared Native Modal Dialog & Confirmations** (`dialog.modal`, `.modal-confirm`) | `js/modal-dialog.vue` (`65L`), `js/trait-set-editor-confirm.vue` (`39L`), `js/app.vue` (`L2324–2356`), `js/roster.vue` (`L895–927`); `css/modal.css` (`L1–138`) | All modes \| `Responsive` | `max-width: clamp(0px, 100% - 2rem, 36rem)` (`576px` desktop; `358px` mobile) × `~12rem–18rem` H | **Ephemeral** (`2 × 1 = 2`) | **Tier 3** (`5%`) `[SUGGESTION]` | Clean native `<dialog>` primitive (`@starting-style`, `overscroll-behavior: contain`). **Freeze custom CSS.** |
 | 43 | **Template Preview/Update Banners, Toast & About Page** (`.template-update-banner`, `.toast-notification`, `article.about`) | `js/app.vue` (`L2059–2075`, `L2200–2206`, `L2358–2364`); `css/app.css` (`L365–396`), `css/roller.css` (`L1753–1790`), `css/frame.css` (`L491–520`) | `Create`/`Play` (banners/toast), `About` (`article.about`) \| `Responsive` | Banners: `max-width: 60rem × ~2.5rem`; Toast: `~16rem × 2.5rem`; `About`: `max-width: 36rem` prose | **Ephemeral** (`1 × 1 = 1`) | **Tier 3** (`5%`) `[SUGGESTION]` | `.template-update-banner` (`app.css:L369–395`) uses light-only hexes (`#fef9c3`, `#713f12`); `.toast-notification` resides in `roller.css:L1753` despite being an app-level surface in `app.vue`. |
 
-> **39/39 Vue SFC Coverage Check:** Every `.vue` file in `js/` (`add-character-modal`, `app-footer`, `app-header`, `app`, `character`, `color-picker`, `command-palette`, `dice-roller`, `font-picker`, `json-editor`, `modal-dialog`, `name-editor`, `page-layout-mini`, `portrait-ring`, `print-toolbar`, `roller-outcome`, `roster`, `session-nav`, `studio-panel`, `tag-editor`, `trait-editor`, `trait-set-block`, `trait-set-dice-count`, `trait-set-die-rows`, `trait-set-editor-confirm`, `trait-set-editor-dice`, `trait-set-editor-image`, `trait-set-editor-layout`, `trait-set-editor-ring`, `trait-set-editor-row-mini`, `trait-set-editor`, `trait-set-frame`, `trait-set-image`, `trait-set-list`, `trait-set-mini`, `trait-set-name`, `trait-set-pips`, `trait-set-subtrait-columns`, `visibility-eye`) is accounted for above.
+> **46/46 Vue SFC & 12/12 CSS Partial Check:** Every `.vue` component in `js/` (`add-character-modal`, `app-footer`, `app-header`, `app`, `character`, `color-picker`, `command-palette`, `curiosity-web-bar`, `dice-roller`, `font-picker`, `inline-rating-bar`, `json-editor`, `modal-dialog`, `name-editor`, `page-layout-mini`, `portrait-ring`, `preset-gallery-card`, `print-toolbar`, `roller-outcome`, `roster`, `session-nav`, `studio-panel`, `tag-editor`, `trait-editor`, `trait-row-part`, `trait-row-rating`, `trait-row-title`, `trait-set-block`, `trait-set-curiosity`, `trait-set-dice-count`, `trait-set-die-rows`, `trait-set-editor-confirm`, `trait-set-editor-dice`, `trait-set-editor-image`, `trait-set-editor-layout`, `trait-set-editor-ring`, `trait-set-editor-row-mini`, `trait-set-editor`, `trait-set-frame`, `trait-set-image`, `trait-set-list`, `trait-set-mini`, `trait-set-name`, `trait-set-pips`, `trait-set-subtrait-columns`, `visibility-eye`) is shipped and active.
 
-### 2B. Source CSS Partial Health Rollup (`11/11` Partials)
+### 2B. Source CSS Partial Health Rollup (`12/12` Partials)
 
-Measured statically across all `11` imported partials in `css/app.css`:
+Measured statically across all `12` imported partials in `css/app.css`:
 
-| Partial | Lines (`%` of CSS) | Bytes | `!important` | Numeric `z-index` | `px > 2px` Props/MQs | Raw Colors (non-`:root`) | Breakpoints Used |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `css/print.css` | 4,583 (`24.05%`) | 100,467 | 0 | 9 (`0`, `1`, `12`) | 51 | 343 | `48rem`, `769px`, `768px`, `600px`, `520px` |
-| `css/editor.css` | 4,438 (`23.29%`) | 85,486 | 0 | 4 (`2`, `3`, `4`) | 70 | 251 | `1560px`, `900px`, `768px`, `600px` |
-| `css/character.css` | 2,469 (`12.96%`) | 44,031 | 0 | 1 (`0`) | 34 | 123 | `48rem`, `768px` |
-| `css/roller.css` | 2,074 (`10.89%`) | 44,176 | 0 | 0 | 1 | 25 | `48rem`, `768px`, `@container < 340px` |
-| `css/variants.css` | 2,053 (`10.78%`) | 38,161 | 4 *(print B&W)* | 2 (`-1`) | 20 | 37 | — |
-| `css/studio-panel.css` | 725 (`3.81%`) | 11,798 | 0 | 0 | 4 | 30 | `1400px`, `1399px`, `48rem` |
-| `css/multi-character.css` | 643 (`3.37%`) | 11,542 | 0 | 0 | 13 | 98 | `1399px`, `1200px`, `48rem` |
-| `css/modal.css` | 566 (`2.97%`) | 9,788 | 0 | 0 | 0 | 36 | — |
-| `css/frame.css` | 555 (`2.91%`) | 10,726 | 0 | 0 | 2 | 32 | `48rem`, `768px`, `600px` |
-| `css/roster.css` | 513 (`2.69%`) | 9,106 | 0 | 0 | 2 | 10 | `600px` *(duplicated)* |
-| `css/app.css` | 434 (`2.28%`) | 8,395 | 0 | 0 | 2 *(root `16px`/`13px`)* | 8 | — |
-| **Total** | **19,053 (`100%`)** | **373,676 (`364.9 KB`)** | **4** | **16** | **199** | **993** | `48rem` + `520/600/768/900/1200/1399/1400/1560px` |
+| Partial | Lines (`%` of CSS) | Bytes | `!important` | Numeric `z-index` | Raw Colors (non-`:root`) |
+| --- | --- | --- | --- | --- | --- |
+| `css/character.css` | 4,961 (`21.63%`) | 97,755 | 0 | 1 | 0 |
+| `css/print.css` | 4,076 (`17.78%`) | 89,318 | 0 | 7 *(print layout)* | 203 *(print rules)* |
+| `css/editor.css` | 3,744 (`16.33%`) | 76,410 | 0 | 2 | 0 |
+| `css/variants.css` | 2,882 (`12.57%`) | 58,287 | 4 *(@media print)* | 0 | 4 *(@media print)* |
+| `css/roller.css` | 2,216 (`9.66%`) | 47,170 | 0 | 0 | 0 |
+| `css/roster.css` | 1,083 (`4.72%`) | 22,359 | 0 | 0 | 0 |
+| `css/modal.css` | 1,024 (`4.47%`) | 19,027 | 0 | 0 | 0 |
+| `css/studio-panel.css` | 766 (`3.34%`) | 13,330 | 0 | 0 | 0 |
+| `css/frame.css` | 613 (`2.67%`) | 12,983 | 0 | 0 | 0 |
+| `css/multi-character.css` | 600 (`2.62%`) | 13,843 | 0 | 0 | 0 |
+| `css/app.css` | 536 (`2.34%`) | 11,218 | 0 | 0 | 0 |
+| `css/sheet-dark.css` | 430 (`1.88%`) | 9,713 | 0 | 0 | 0 |
+| **Total** | **22,931 (`100%`)** | **471,413 (`460.4 KB`)** | **4** | **10** *(3 screen)* | **207** *(0 screen component literals)* |
 
 ---
 
@@ -179,31 +180,16 @@ At `1440×900`, `StudioPanel` (`--studio-panel-width: 23rem` = `368px`, `top: 3r
 
 ## 4. Deprecation / Consolidation Candidates & Open Questions
 
-### 4.1 Prioritized Surgical Cleanup & Freeze Candidates
+### 4.1 Completed Cleanup & Remaining Candidates
 
-1. **`[SUGGESTION]` Delete `100%` Dead Legacy Toolbar, Sidebar & Duplicate CSS (`~200+` CSS lines, zero behavior risk):**
-   - `css/character.css:L1514–1619` (`106` lines): dead `.edit-toolbar` / `.btn-toolbar-theme` / `.toolbar-segmented` — `0` `.vue`/`.ts` consumers.
-   - `css/print.css:L4002–4046`: `.sheet-toolbar, .sheet-toolbar, .character-toolbar, .edit-toolbar` duplicate selector list overriding `.print-toolbar` (`L3–112`). Consolidate `.print-toolbar` into `L3–112`.
-   - `css/frame.css:L522–541` + `L66` + `css/app.css:L23–24,112` + `js/app.vue:L1593,1607`: dead `.sidebar` / `--sidebar-size: 0px`.
-   - `css/roster.css:L470–487`: `18` lines verbatim duplicate of `L454–468` (`@media screen and (max-width: 600px)`).
-   - `css/roller.css:L197–225` + `js/dice-roller.vue`: `.roller-header` is unconditionally hidden by `studio-panel.css:L689`. Remove dead DOM + `DiceRoller` unused import in `js/app.vue:L9`.
+1. **`[DECIDED]` Shipped CSS & Component Consolidations (verified in current tree):**
+   - Dead legacy selectors (`.edit-toolbar`, `.sheet-toolbar`, `.sidebar`, duplicate `roster.css` `max-width: 600px`, hidden `.roller-header`) removed.
+   - `PresetGalleryCard` (`js/preset-gallery-card.vue`) unified inline Add-Set and Play preset galleries, surfaces `preset.blurb`, and supports editing saved custom presets in place via `TraitSetMini` plus Delete + Undo toasts.
+   - Screen-only `css/character.css`, `css/roller.css`, `css/modal.css`, `css/frame.css`, `css/editor.css`, `css/variants.css`, and `css/sheet-dark.css` (extracted out of `css/print.css`) are tokenized to semantic CSS custom properties with `48rem` breakpoints on `character.css` / `roller.css` / `character.vue`.
+   - `studio-panel.css` and `multi-character.css` normalized to `rem` (`48rem` / `75rem` / `87.5rem`) and palette tokens.
 
-2. **`[SUGGESTION]` Freeze `TraitSetMini` (`js/trait-set-mini.vue` `2,460L` + `css/editor.css:L2948–4056` `1,109L`) & Evaluate Replacement:**
-   - Demoted to Tier 3 when `DECISIONS.md` (`2026-11-13`) moved inline `view.parts` editing into `TraitSetEditorRowMini`. Immediately **freeze all CSS/polish work** (`5.82%` of all CSS in one Tier 3 dialog violates the `5%` Tier 3 budget). Long-term, replace with a thin `<ModalDialog>` hosting `TraitSetEditor` + live `<TraitSetBlock>` preview to retire `~3,500` duplicate lines.
-
-3. **`[SUGGESTION]` Merge Duplicate Preset Galleries (`.inline-add-set-area` + `.modal-style-gallery`, `~360` CSS lines -> `~150` lines):**
-   - `js/character.vue:L984–1100` maintains two independent preset card templates and dark-mode overrides (`css/character.css:L2172–2383` vs. `css/modal.css:L139–286`) rendering the same built-in and custom preset catalog. Consolidate into a single shared preset grid component using semantic `--bg-surface-*` tokens.
-
-4. **`[SUGGESTION]` Retire Last Floating `.editor` Popover (`.scale-die-editor` in `js/portrait-ring.vue:L653–701`):**
-   - Route `['scaleDie']` selection into docked `<StudioPanel>` alongside all other editors, then delete dead `<div class="editor-arrow">` / `<button class="editor-close">` DOM from `NameEditor`, `TraitSetEditor`, `TraitEditor`, and `PortraitRing` along with `~180` lines of legacy floating-popover positioning/chevron CSS in `css/editor.css:L1–265` and `css/studio-panel.css:L566–675`.
-
-5. **`[SUGGESTION]` Extract Non-Print Features Out of `css/print.css` & Fix Library Card Button Clipping:**
-   - Move **Tier 1** 2D Pillar & Stack Deck (`css/print.css:L3561–3999`, `439` lines) into `css/character.css` (or `css/pillar-deck.css`).
-   - Move **Tier 2** Library Modal (`css/print.css:L2111–2534`, `424` lines) into `css/roster.css` / `css/modal.css` and add `flex-wrap: wrap` to `.library-card-actions` (`L2335`) so the 4th button (`Print`) stops clipping on narrow cards.
-
-6. **`[SUGGESTION]` Standardize Breakpoints (`48rem` / `87.5rem`) & Retire Hardcoded Slate Hexes:**
-   - Normalize `768px` (19 sites), `600px` (5 sites), `520px` (2 sites), and `1399px/1400px` (4 sites) onto consistent `rem` breakpoints (`48rem`, `87.5rem`).
-   - Replace raw `#0f172a`/`#1e293b`/`#94a3b8` literals in `css/studio-panel.css`, `css/multi-character.css`, and `css/print.css` with `--bg-surface-*` / `--text-*` tokens, add dark-mode rules for `.multi-character-column`, and fix `.footer-nav .nav-icon` (`css/frame.css:L478` `color: black` invisible in dark mode).
+2. **`[SUGGESTION]` Retire Remaining `px` Media Queries Inside `css/print.css` & Legacy `.scale-die-editor`:**
+   - Normalize remaining screen media queries in `css/print.css` (`768px` ×3, `600px`, `520px`) to `rem`, and route `['scaleDie']` selection in `js/portrait-ring.vue` into docked `<StudioPanel>` if desired.
 
 ### 4.2 Ratified Decisions (`[OPEN 1–3]` Resolved `2026-11-13`)
 

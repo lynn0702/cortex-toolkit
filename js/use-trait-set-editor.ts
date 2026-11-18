@@ -1222,11 +1222,20 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const resolvedPillar = computed<string>(() => resolveSetPillar(traitSet.value));
 
+	const showToast = inject<((msg: string, options?: any) => void) | null>('showToast', null);
 	const presetSaved = ref(false);
 	function saveSetAsPreset() {
 		if (!traitSet.value) return;
-		characterCurioFunctions.saveCustomSetPreset(toRaw(traitSet.value));
+		const saved = characterCurioFunctions.saveCustomSetPreset(toRaw(traitSet.value), {
+			overwriteExistingCustom: true,
+			disambiguateBuiltIn: true,
+		});
+		if (!saved) {
+			showToast?.('Could not save preset', { tone: 'error' });
+			return;
+		}
 		presetSaved.value = true;
+		showToast?.(`Saved preset "${saved.label}"`);
 		setTimeout(() => {
 			presetSaved.value = false;
 		}, 1600);

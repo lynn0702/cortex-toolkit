@@ -7,6 +7,7 @@
 @import './roller.css';
 @import './studio-panel.css';
 @import './print.css';
+@import './sheet-dark.css';
 @import './multi-character.css';
 @import './fontawesome.css';
 
@@ -73,6 +74,9 @@
 	--diecon-scale-size: 1.5rem;
 	/* Rating scale die buttons ([4] [6] [8] [10] [12]) */
 
+	--z-base: 0;
+	--z-local-insert: 3;
+	--z-local-slots: 4;
 	--z-chip-drag: 5;
 	--z-beneath-editor: 10;
 	--z-elevated-card: 12;
@@ -153,7 +157,7 @@ html {
 	@media print {
 		width: 100%;
 		height: auto;
-		background: #ffffff;
+		background: var(--paper-surface-card);
 	}
 }
 
@@ -282,7 +286,7 @@ textarea:focus-visible {
 	border: none;
 	outline: none;
 	--button-color: var(--color-interactive);
-	background: color-mix(in oklch, var(--button-color) 65%, black);
+	background: color-mix(in oklab, var(--button-color) 65%, black);
 	border-radius: calc(var(--button-container-height) / 2);
 	color: var(--die-active-text);
 	font-family: var(--font-heading);
@@ -304,7 +308,7 @@ textarea:focus-visible {
 	}
 
 	&:hover {
-		background: color-mix(in oklch, var(--button-color) 75%, black);
+		background: color-mix(in oklab, var(--button-color) 75%, black);
 	}
 }
 
@@ -394,7 +398,7 @@ textarea:focus-visible {
 	flex-wrap: wrap;
 
 	.btn-update-primary {
-		background: color-mix(in oklch, var(--color-interactive) 70%, black);
+		background: color-mix(in oklab, var(--color-interactive) 70%, black);
 		color: var(--die-active-text);
 		border: none;
 		border-radius: 4px;
@@ -481,6 +485,23 @@ textarea:focus-visible {
 		color: var(--color-secondary);
 	}
 
+	&.toast-warn {
+		border-color: color-mix(in oklab, var(--studio-status-warn) 55%, var(--studio-border));
+
+		i {
+			color: var(--studio-status-warn);
+		}
+	}
+
+	&.toast-error {
+		border-color: color-mix(in oklab, var(--studio-status-danger) 60%, var(--studio-border));
+		background: color-mix(in oklab, var(--studio-status-danger) 14%, var(--studio-header-bg));
+
+		i {
+			color: var(--studio-status-danger);
+		}
+	}
+
 	&.toast-enter-active,
 	&.toast-leave-active {
 		transition:
@@ -497,7 +518,7 @@ textarea:focus-visible {
 
 .toast-action-btn {
 	border: 1px solid var(--color-interactive);
-	background: color-mix(in oklch, var(--color-interactive) 22%, transparent);
+	background: color-mix(in oklab, var(--color-interactive) 22%, transparent);
 	color: var(--studio-text);
 	border-radius: 999rem;
 	padding: 0.22rem 0.65rem;
@@ -508,7 +529,7 @@ textarea:focus-visible {
 	cursor: pointer;
 
 	&:hover {
-		background: color-mix(in oklch, var(--color-interactive) 36%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 36%, transparent);
 	}
 }
 

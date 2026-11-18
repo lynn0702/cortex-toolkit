@@ -2174,6 +2174,11 @@ export const characterCurioFunctions = {
 		},
 	} as Record<string, { id: string; label: string; blurb?: string; preset: any }>,
 
+	_customSetPresets: [] as { id: string; label: string; blurb?: string; preset: any }[],
+	_customSetPresetsListeners: new Set<
+		(presets: { id: string; label: string; blurb?: string; preset: any }[]) => void
+	>(),
+
 	derivePresetId: function (label: string): string {
 		return String(label || '')
 			.trim()
@@ -2182,7 +2187,7 @@ export const characterCurioFunctions = {
 			.replace(/^-+|-+$/g, '');
 	},
 
-	hasPresetCollision: function (labelOrId: string): boolean {
+	isBuiltInPresetCollision: function (labelOrId: string): boolean {
 		const id = this.derivePresetId(labelOrId);
 		if (!id) return false;
 		if (this.characterCurioSetPresets && Object.prototype.hasOwnProperty.call(this.characterCurioSetPresets, id)) {
@@ -2191,27 +2196,39 @@ export const characterCurioFunctions = {
 		for (const b of Object.values(this.characterCurioSetPresets || {})) {
 			if (b.id === id || this.derivePresetId(b.label) === id) return true;
 		}
-		const customs = this.getCustomSetPresets();
-		return customs.some((p) => p.id === id || this.derivePresetId(p.label) === id);
+		return false;
 	},
 
-	getCustomSetPresets: function (): { id: string; label: string; blurb?: string; preset: any }[] {
-		if (typeof localStorage === 'undefined') return [];
-		try {
-			const raw = localStorage.getItem('characterCurioCustomSetPresets');
-			if (!raw) return [];
-			const parsed = JSON.parse(raw);
-			return Array.isArray(parsed) ? parsed.filter((p: any) => p && typeof p === 'object' && p.preset) : [];
-		} catch (_e) {
-			return [];
+	hasPresetCollision: function (labelOrId: string, ignoreCustomId?: string): boolean {
+		const id = this.derivePresetId(labelOrId);
+		if (!id) return false;
+		if (this.isBuiltInPresetCollision(id)) return true;
+		const ignored = ignoreCustomId ? this.derivePresetId(ignoreCustomId) : '';
+		return this._customSetPresets.some((p) => {
+			if (ignored && p.id === ignored) return false;
+			return p.id === id || this.derivePresetId(p.label) === id;
+		});
+	},
+
+	onCustomSetPresetsChange: function (
+		listener: (presets: { id: string; label: string; blurb?: string; preset: any }[]) => void,
+	): () => void {
+		this._customSetPresetsListeners.add(listener);
+		return () => {
+			this._customSetPresetsListeners.delete(listener);
+		};
+	},
+
+	_notifyCustomSetPresets: function (): void {
+		if (!this._customSetPresetsListeners.size) return;
+		const snapshot = this.getCustomSetPresets();
+		for (const listener of [...this._customSetPresetsListeners]) {
+			listener(cloneDeep(snapshot));
 		}
 	},
 
-	saveCustomSetPreset: function (
-		traitSet: any,
-		options?: { label?: string; blurb?: string },
-	): { id: string; label: string; blurb?: string; preset: any } | null {
-		if (!traitSet || typeof traitSet !== 'object') return null;
+	_sanitizeCustomPresetPayload: function (traitSet: any): any | null {
+		if (!traitSet || typeof traitSet !== 'object' || Array.isArray(traitSet)) return null;
 		const cloned = cloneDeep(traitSet);
 		this.stripInternalIds(cloned);
 		delete cloned.id;
@@ -2220,44 +2237,177 @@ export const characterCurioFunctions = {
 		if (v.pillar === 'play') {
 			delete v.pillar;
 		}
-		const rawLabel =
+		return cloned;
+	},
+
+	setCustomSetPresets: function (
+		presets: any[],
+		options?: { notify?: boolean },
+	): { id: string; label: string; blurb?: string; preset: any }[] {
+		const next: { id: string; label: string; blurb?: string; preset: any }[] = [];
+		const seen = new Set<string>();
+		for (const entry of Array.isArray(presets) ? presets : []) {
+			if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+			const rawLabel = typeof entry.label === 'string' ? entry.label.trim() : '';
+			const rawId = typeof entry.id === 'string' && entry.id.trim().length ? entry.id : rawLabel;
+			const id = this.derivePresetId(rawId);
+			if (!id || !rawLabel.length || seen.has(id) || this.isBuiltInPresetCollision(id)) continue;
+			const sanitized = this._sanitizeCustomPresetPayload(entry.preset);
+			if (!sanitized) continue;
+			seen.add(id);
+			const rawBlurb = typeof entry.blurb === 'string' ? entry.blurb.trim() : '';
+			next.push({
+				id,
+				label: rawLabel,
+				...(rawBlurb.length ? { blurb: rawBlurb } : {}),
+				preset: sanitized,
+			});
+		}
+		this._customSetPresets = next;
+		if (options?.notify !== false) {
+			this._notifyCustomSetPresets();
+		}
+		return this.getCustomSetPresets();
+	},
+
+	getCustomSetPresets: function (): { id: string; label: string; blurb?: string; preset: any }[] {
+		return cloneDeep(this._customSetPresets);
+	},
+
+	saveCustomSetPreset: function (
+		traitSet: any,
+		options?: {
+			label?: string;
+			blurb?: string;
+			replaceId?: string;
+			overwriteExistingCustom?: boolean;
+			disambiguateBuiltIn?: boolean;
+		},
+	): { id: string; label: string; blurb?: string; preset: any } | null {
+		const cloned = this._sanitizeCustomPresetPayload(traitSet);
+		if (!cloned) return null;
+		let rawLabel =
 			options?.label !== undefined
 				? String(options.label).trim()
 				: typeof cloned.name === 'string'
 					? cloned.name.trim()
 					: '';
 		if (!rawLabel.length) return null;
+		if (options?.disambiguateBuiltIn && this.isBuiltInPresetCollision(rawLabel)) {
+			rawLabel = `Custom ${rawLabel}`;
+		}
 		const id = this.derivePresetId(rawLabel);
-		if (!id || this.hasPresetCollision(id)) return null;
-		const rawBlurb = options?.blurb !== undefined ? String(options.blurb).trim() : '';
+		if (!id || this.isBuiltInPresetCollision(id)) return null;
+
+		let existingIdx = -1;
+		if (options?.replaceId) {
+			const replaceSlug = this.derivePresetId(options.replaceId);
+			if (this.hasPresetCollision(id, replaceSlug)) return null;
+			existingIdx = this._customSetPresets.findIndex((p) => p.id === replaceSlug);
+		} else if (options?.overwriteExistingCustom) {
+			existingIdx = this._customSetPresets.findIndex((p) => p.id === id);
+		} else if (this.hasPresetCollision(id)) {
+			return null;
+		}
+
+		const rawBlurb =
+			options?.blurb !== undefined
+				? String(options.blurb).trim()
+				: existingIdx !== -1
+					? this._customSetPresets[existingIdx].blurb || ''
+					: '';
+
+		const clonedView = ensureView(cloned);
+		clonedView.presetId = id;
+		clonedView.presetLabel = rawLabel;
+		if (rawBlurb.length) {
+			clonedView.presetBlurb = rawBlurb;
+		} else {
+			delete clonedView.presetBlurb;
+		}
+
 		const entry: { id: string; label: string; blurb?: string; preset: any } = {
 			id,
 			label: rawLabel,
 			...(rawBlurb.length ? { blurb: rawBlurb } : {}),
 			preset: cloned,
 		};
-		const list = this.getCustomSetPresets();
-		list.push(entry);
-		if (typeof localStorage !== 'undefined') {
-			try {
-				localStorage.setItem('characterCurioCustomSetPresets', JSON.stringify(list));
-			} catch (_e) {
-				/* ignore storage quota in headless environments */
-			}
+		if (existingIdx !== -1) {
+			this._customSetPresets[existingIdx] = entry;
+		} else {
+			this._customSetPresets.push(entry);
 		}
-		return entry;
+		this._notifyCustomSetPresets();
+		return cloneDeep(entry);
+	},
+
+	upsertCustomSetPresets: function (
+		entries: any[],
+		options?: { notify?: boolean },
+	): { presets: { id: string; label: string; blurb?: string; preset: any }[]; importedCount: number } {
+		let importedCount = 0;
+		for (const item of Array.isArray(entries) ? entries : []) {
+			if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+			const rawSet =
+				item.traitSet && typeof item.traitSet === 'object' && !Array.isArray(item.traitSet)
+					? item.traitSet
+					: item.preset && typeof item.preset === 'object' && !Array.isArray(item.preset)
+						? item.preset
+						: null;
+			if (!rawSet) continue;
+			const rawView = getView(rawSet);
+			const rawLabel =
+				typeof item.label === 'string' && item.label.trim().length
+					? item.label.trim()
+					: typeof rawView?.presetLabel === 'string' && rawView.presetLabel.trim().length
+						? rawView.presetLabel.trim()
+						: typeof rawSet.name === 'string'
+							? rawSet.name.trim()
+							: '';
+			if (!rawLabel.length) continue;
+			const rawId =
+				typeof item.id === 'string' && item.id.trim().length
+					? item.id
+					: typeof rawView?.presetId === 'string' && rawView.presetId.trim().length
+						? rawView.presetId
+						: rawLabel;
+			const id = this.derivePresetId(rawId);
+			if (!id || this.isBuiltInPresetCollision(id)) continue;
+			const sanitized = this._sanitizeCustomPresetPayload(rawSet);
+			if (!sanitized) continue;
+			const rawBlurb =
+				typeof item.blurb === 'string'
+					? item.blurb.trim()
+					: typeof rawView?.presetBlurb === 'string'
+						? rawView.presetBlurb.trim()
+						: '';
+			const cleanEntry: { id: string; label: string; blurb?: string; preset: any } = {
+				id,
+				label: rawLabel,
+				...(rawBlurb.length ? { blurb: rawBlurb } : {}),
+				preset: sanitized,
+			};
+			const existingIdx = this._customSetPresets.findIndex((p) => p.id === id);
+			if (existingIdx === -1) {
+				this._customSetPresets.push(cleanEntry);
+			} else {
+				this._customSetPresets[existingIdx] = cleanEntry;
+			}
+			importedCount++;
+		}
+		if (importedCount > 0 && options?.notify !== false) {
+			this._notifyCustomSetPresets();
+		}
+		return { presets: this.getCustomSetPresets(), importedCount };
 	},
 
 	deleteCustomSetPreset: function (presetId: string): { id: string; label: string; blurb?: string; preset: any }[] {
-		const list = this.getCustomSetPresets().filter((p) => p.id !== presetId);
-		if (typeof localStorage !== 'undefined') {
-			try {
-				localStorage.setItem('characterCurioCustomSetPresets', JSON.stringify(list));
-			} catch (_e) {
-				/* ignore */
-			}
+		const prevLen = this._customSetPresets.length;
+		this._customSetPresets = this._customSetPresets.filter((p) => p.id !== presetId);
+		if (this._customSetPresets.length !== prevLen) {
+			this._notifyCustomSetPresets();
 		}
-		return list;
+		return this.getCustomSetPresets();
 	},
 
 	instantiateSetPreset: function (presetOrEntry: any, character: any, page = 1): any {

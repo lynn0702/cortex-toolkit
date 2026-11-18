@@ -1,11 +1,11 @@
 # Feature State Graph & User Interaction Map — Character Curio
 
-> Companion to [COMPONENT_CENSUS.md](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/design/COMPONENT_CENSUS.md) (`43` surfaces across `39` Vue SFCs), backed by the executable solver and Playwright journey counter in [interaction-map.cjs](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/scripts/interaction-map.cjs).
+> Companion to [COMPONENT_CENSUS.md](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/design/COMPONENT_CENSUS.md) (`46` Vue SFCs / `12` CSS partials), backed by the executable solver and Playwright journey counter in [interaction-map.cjs](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/scripts/interaction-map.cjs).
 >
 > **Provenance Key (`provenance-labels`):** Every architectural baseline, scoring model, friction finding, and candidate improvement is tagged `[DECIDED]` (ratified in [DECISIONS.md](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/design/DECISIONS.md) or [COMPONENT_CENSUS.md](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/design/COMPONENT_CENSUS.md)), `[SUGGESTION]` (proposed metric, budget, or UX refinement), or `[OPEN]` (trade-off requiring author decision).
 >
 > **Verdict Separation (`mobile-verdict-separation`):**
-> - **Static Graph Tier:** Exact Dijkstra shortest-path hop/cost calculations across `24` canonical state nodes and `282` directed edges.
+> - **Static Graph Tier:** Exact Dijkstra shortest-path hop/cost calculations across `24` canonical state nodes and `288` directed edges.
 > - **Runtime Telemetry Tier:** Empirical Playwright execution (`npm run interaction-map:live`) in headless Chromium at Desktop (`1440×900`) and Mobile (`390×844`) verifying real DOM click/keypress counts, viewport reachability, scroll travel (`px`), `0` JS/console errors, and `0` remote base-font requests.
 > - **Visual Verdict Tier:** Neither tier above substitutes for human visual inspection of typography, alignment, or aesthetics (`npm run smoke -- --shots`).
 
@@ -105,6 +105,7 @@ flowchart LR
     MobileMenu -->|"1"| Print
     MobileMenu -->|"1"| SheetTab
     MobileMenu -->|"1"| AddModal
+    MobileMenu -->|"1"| About
     Palette -->|"1-2"| PlayId
     Palette -->|"1-2"| CreateCanvas
     Palette -->|"1-2"| Print
@@ -152,17 +153,17 @@ Cells show **`Desktop Pointer / Mobile Touch`** minimum interaction counts compu
 
 | From \ To | `Roster` | `Library` | `Create` | `Theme` | `SetEd` | `TraitEd` | `PlayId` | `PlayTr` | `Roller` | `Print` | `About` |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **`Roster`** (`roster`) | — | `1 / 1` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `1 / 1` | `1 / 2` | `1 / 3` | `2 / 2` | `1 / 1` |
-| **`Library`** (`roster_library`) | `1 / 1` | — | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `2 / 2` | `2 / 3` | `2 / 4` | `1 / 1` | `2 / 2` |
-| **`Create`** (`create_canvas`) | `1 / 1` | `2 / 2` | — | `1 / 2` | `1 / 1` | `1 / 1` | `1 / 1` | `1 / 2` | `1 / 3` | `1 / 2` | `1 / 1` |
-| **`Theme`** (`create_theme_tab`) | `1 / 1` | `2 / 2` | `0 / 1` | — | `1 / 2` | `1 / 2` | `1 / 1` | `1 / 2` | `1 / 3` | `1 / 2` | `1 / 2` |
-| **`SetEd`** (`create_set_inspector`) | `1 / 1` | `2 / 2` | `0 / 1` | `1 / 2` | — | `1 / 2` | `1 / 1` | `1 / 2` | `1 / 3` | `1 / 2` | `1 / 2` |
-| **`TraitEd`** (`create_trait_inspector`) | `1 / 1` | `2 / 2` | `0 / 1` | `1 / 2` | `1 / 1` | — | `1 / 1` | `1 / 2` | `1 / 3` | `1 / 2` | `1 / 2` |
-| **`PlayId`** (`play_identity`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | — | `0 / 1` | `0 / 2` | `1 / 2` | `1 / 2` |
-| **`PlayTr`** (`play_traits`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `0 / 1` | — | `0 / 2` | `1 / 2` | `1 / 2` |
-| **`Roller`** (`play_roller_full`) | `1 / 2` | `2 / 3` | `1 / 2` | `2 / 4` | `2 / 3` | `2 / 3` | `0 / 2` | `0 / 1` | — | `1 / 3` | `1 / 3` |
-| **`Print`** (`print_preview`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `1 / 1` | `1 / 2` | `1 / 3` | — | `1 / 1` |
-| **`About`** (`about`) | `1 / 1` | `2 / 2` | `2 / 2` | `3 / 4` | `3 / 3` | `3 / 3` | `2 / 2` | `2 / 3` | `2 / 4` | `2 / 2` | — |
+| **`Roster`** (`roster`) | — | `1 / 1` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `1 / 1` | `1 / 1` | `1 / 3` | `2 / 2` | `1 / 1` |
+| **`Library`** (`roster_library`) | `1 / 1` | — | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `2 / 2` | `2 / 2` | `2 / 4` | `1 / 1` | `2 / 2` |
+| **`Create`** (`create_canvas`) | `1 / 1` | `2 / 2` | — | `1 / 2` | `1 / 1` | `1 / 1` | `1 / 1` | `1 / 1` | `1 / 3` | `1 / 2` | `1 / 1` |
+| **`Theme`** (`create_theme_tab`) | `1 / 1` | `2 / 2` | `0 / 1` | — | `1 / 2` | `1 / 2` | `1 / 1` | `1 / 1` | `1 / 3` | `1 / 2` | `1 / 2` |
+| **`SetEd`** (`create_set_inspector`) | `1 / 1` | `2 / 2` | `0 / 1` | `1 / 2` | — | `1 / 2` | `1 / 1` | `1 / 1` | `1 / 3` | `1 / 2` | `1 / 2` |
+| **`TraitEd`** (`create_trait_inspector`) | `1 / 1` | `2 / 2` | `0 / 1` | `1 / 2` | `1 / 1` | — | `1 / 1` | `1 / 1` | `1 / 3` | `1 / 2` | `1 / 2` |
+| **`PlayId`** (`play_identity`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | — | `0 / 0` | `0 / 2` | `1 / 2` | `1 / 2` |
+| **`PlayTr`** (`play_traits`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `0 / 0` | — | `0 / 2` | `1 / 2` | `1 / 2` |
+| **`Roller`** (`play_roller_full`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `0 / 1` | `0 / 1` | — | `1 / 2` | `1 / 2` |
+| **`Print`** (`print_preview`) | `1 / 1` | `2 / 2` | `1 / 1` | `2 / 3` | `2 / 2` | `2 / 2` | `1 / 1` | `1 / 1` | `1 / 3` | — | `1 / 1` |
+| **`About`** (`about`) | `1 / 1` | `2 / 2` | `2 / 2` | `3 / 4` | `3 / 3` | `3 / 3` | `2 / 2` | `2 / 2` | `2 / 4` | `2 / 2` | — |
 
 > [!TIP]
 > Query any exact pair's step-by-step selector chain from the terminal:
@@ -178,15 +179,15 @@ Cells show **`Desktop Pointer / Mobile Touch`** minimum interaction counts compu
 | --- | --- | :---: | :---: | :---: | :---: |
 | `T01` | Materialize showcase preview into an editable sheet (`splash_preview -> create_canvas`) | `1` | `1` | `1` | `0` |
 | `T02` | Create character from Template Library (`roster -> roster_library + "+ Character"`) | `2` | `2` | `2` | `0` |
-| `T03` | Change sheet Theme or Dice preset (`create_canvas -> create_theme_tab + pick`) | `2` | `2` | `3–4`* | `+1` to `+2` |
-| `T04` | Switch from inspecting Set A to Set B (`create_set_inspector -> create_canvas + click Set B`) | `1` | `1` | `2` | `+1` |
+| `T03` | Change sheet Theme or Dice style (`create_canvas -> create_theme_tab + pick`) | `2` | `2` | `3`* | `+1` |
+| `T04` | Switch from inspecting Set A to Set B (`create_set_inspector -> create_canvas + click Set B`) | `1` | `1` | `1` | `0` |
 | `T05` | Change a Trait Set's border from Play and return (`play_traits -> create_set_inspector -> play`) | `4` | `4` | `4` | `0` |
 | `T06` | Open Raw JSON from Set Inspector and return to sheet (`create_set_inspector -> create_json_tab -> sheet`) | `2` | `2` | `2` | `0` |
-| `T07` | Enter Play from Create, stage a rated trait die, and roll (`create_canvas -> play_outcome`) | `3` | `3` | `3–4`† | `0` to `+1` |
+| `T07` | Enter Play from Create, stage a rated trait die, and roll (`create_canvas -> play_outcome`) | `3` | `3` | `3`† | `0` |
 | `T08` | Quick-add a raw `d8` in Roller and roll (`play_identity -> play_roller_split + d8 + Roll`) | `2` | `2` | `3` | `+1` |
-| `T09` | Step Plot Points (`+1 PP`) on arrival in Play (`play_identity`) | `1` | `1` | `1` | `0` |
+| `T09` | Step Plot Points (`+1 PP`) on arrival in Play mode (`play_identity`) | `1` | `1` | `1` | `0` |
 | `T10` | Leave dirty Play session back to Create (`play_identity -> Save confirm -> create_canvas`) | `2` | `2` | `2` | `0` |
-| `T11` | From Full `100dvh` Roller, open Print Preview & trigger Print (`play_roller_full -> print_preview + Print`) | `2` | `2` | `4` | **`+2`** |
+| `T11` | From Full `100dvh` Roller, open Print Preview & trigger Print (`play_roller_full -> print_preview + Print`) | `2` | `2` | `3` | `+1` |
 | `T12` | Export character JSON from Play mode (`play_traits -> print_preview + Export JSON`) | `2` | `2` | `3` | `+1` |
 | `T13` | Open a second sheet alongside active Play sheet (`play_traits -> session_add_modal + pick`) | `2` | `2` | `3` | `+1` |
 | `T14` | Jump from Print Preview directly to editing a Trait (`print_preview -> create_trait_inspector`) | `2` | `2`‡ | `2` | `0` |
@@ -205,17 +206,17 @@ Measured live in headless Chromium across `13` sequential end-to-end journeys (`
 | Live ID | Executed Browser Journey | Desktop `1440×900` Steps (`Static`) | Desktop Scroll | Mobile `390×844` Steps (`Static`) | Mobile Scroll | Key Mechanism Verified |
 | --- | --- | :---: | :---: | :---: | :---: | --- |
 | `J01` | Splash Preview → Materialize Editable Sheet | `1 (1)` | `0px` | `1 (1)` | `0px` | `.btn-update-primary` materializes layered showcase directly into `submode-edit`. |
-| `J02` | Create Canvas → Sheet Theme & Dice Tab | `1 (1)` | `0px` | `3 (3)` | `0px` | Desktop `StudioPanel` starts docked open; Mobile starts closed (`#mobile-sheet-menu` → `Sheet Settings` → `Theme`). |
-| `J03` | Create Canvas → Inspect Set A → Inspect Set B | `2 (2)` | `0px` | `3 (3)` | `0px` | Mobile full-width `.studio-panel` requires `+1` tap on `Collapse panel` to uncover canvas between set selections. |
+| `J02` | Create Canvas → Sheet Theme & Dice Tab | `1 (1)` | `0px` | `2 (2)` | `0px` | Desktop `StudioPanel` starts docked open; Mobile switches directly via sheet settings (`Theme`). |
+| `J03` | Create Canvas → Inspect Set A → Inspect Set B | `2 (2)` | `0px` | `2 (2)` | `0px` | Mobile inline canvas controls select sets directly via set header settings trigger. |
 | `J04` | Set Inspector → Raw JSON → Uncovered Sheet | `2 (2)` | `0px` | `2 (2)` | `0px` | `button[aria-label="Raw JSON Editor"]` toggles inline on Desktop; `Collapse panel` exits directly on Mobile. |
 | `J05` | Create → Play → Stage Sheet Trait Die → Roll (Single-Col) | `3 (3)` | `0px` | `3 (3)` | `0px` | `.mobile-roller-pill-bar` exposes `.btn-pill-roll` as soon as `1` die is staged — **zero drawer expansion needed**! |
 | `J06` | Play Sheet → Quick-Add Raw `d8` → Roll | `2 (2)` | `0px` | `3 (3)` | `0px` | Mobile `split` (`38.2dvh`) keeps `Player/Opposition` tabs, `PP`, `Quick Add`, and `44px` `.roller-roll-btn` co-visible (`0px` scroll). |
 | `J07` | Active Split/Docked Roller → Print Preview | `1 (1)` | `0px` | `2 (2)` | `0px` | Staying in `split` (`38.2dvh`) keeps `.header` unobstructed (`#mobile-sheet-menu` → `Print` in `2` taps). |
 | `J08` | Print → Roster → Template Library → Preview | `3 (3)` | `0px` | `3 (3)` | `0px` | Symmetric modal + header flow across viewports. |
 | `J09` | Play (`+1 PP` Dirty) → Save Gate → Create | `3 (3)` | `0px` | `3 (3)` | `0px` | Uncommitted Play mutations trigger `dialog.modal-confirm` (`+1` explicit Save/Discard click on mode exit). |
-| `J10` | Create → Command Palette → Play Mode | `2 (2)` | `0px` | `2 (2)` | `0px` | `/` shortcut on Desktop and `.header-btn-search` on Mobile both jump modes in `2` interactions. |
-| `J11` | Multi-Pillar Play (`Identity` Col 0) → Stage Die → Roll | `2 (2)` | `0px` | `3 (3)` | `355px` | `identity` occupies column `0` (`355px` horizontal scroll to `plus`/`prime` column via `.jump-pill` before staging). |
-| `J12` | Play Sheet → Add Play Session Card | `2 (2)` | `0px` | `2 (2)` | `232px` | `.session-nav .sheet-bar-add-card` (`+ Card`) on Desktop and `.jump-pill-add-card` on Mobile achieve `2 / 2` parity. |
+| `J10` | Create → Command Palette → Play Mode | `2 (2)` | `0px` | `2 (2)` | `1px` | `/` shortcut on Desktop and `.header-btn-search` on Mobile both jump modes in `2` interactions. |
+| `J11` | Multi-Pillar Play (Prime Arrival) → Stage Die → Roll | `2 (2)` | `0px` | `2 (2)` | `0px` | Play lands directly on the `prime` column with rated traits immediately stageable (`0px` scroll). |
+| `J12` | Play Sheet → Add Play Set | `2 (2)` | `0px` | `2 (2)` | `0px` | `.session-nav .sheet-bar-add-card` (`+ Card`) on Desktop and `.jump-pill-add-card` on Mobile achieve `2 / 2` parity. |
 | `J13` | Roster → Direct Play Mode | `1 (1)` | `0px` | `1 (1)` | `0px` | `.roster-button-play` (`Play`) jumps straight from `Roster` into `submode-play` in `1` click/tap. |
 
 ---
@@ -234,12 +235,11 @@ Measured live in headless Chromium across `13` sequential end-to-end journeys (`
 4. **Desktop `<SessionNav>` `+ Card` Trigger (`T15` / `J12`, `3 → 2` Clicks & Zero Hidden Precondition) `[SUGGESTION]` — Implemented**
    - `<SessionNav>` ([session-nav.vue](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/js/session-nav.vue#L127-L137)) now exposes `.sheet-bar-add-card` (`+ Card`) in `submode === 'play'`, opening `openPlayPresetPicker()` on the focused `<Character>` in both single-sheet and side-by-side multi-character Desktop Play (`2` clicks Desktop / `2` taps Mobile).
 
-5. **Character JSON Export from Play/Create Requires Routing Through `Print` or `Roster` (`T12`) `[OPEN]`**
-   - Exporting a single character's `.json` from active `Play` or `Create` requires switching to `Print` (`.print-toolbar` → `Export JSON`: `2` clicks Desktop / `3` taps Mobile) or `Roster` (`.roster-button-export`).
-   - `[OPEN]` Should `<CommandPalette>` include an `Export Character JSON` action (`action-export`) and/or `#mobile-sheet-menu` include `Export` alongside `Print`?
+5. **Character JSON Export from Play/Create (`T12`) `[DECIDED]` — Shipped on Mobile Menu & Command Palette**
+   - Exporting a single character's `.json` from active `Play` or `Create` works via `Export JSON` inside `#mobile-sheet-menu` (`js/app-header.vue`), the `export-json` action inside `<CommandPalette>` (`js/command-palette.vue`), or `Export JSON` on the `Print` toolbar (`2` clicks Desktop / `3` taps Mobile).
 
-6. **Mobile Play Occludes `<AppFooter>` (`About` Unreachable Directly from Play, `T16`) `[SUGGESTION]`**
-   - Consistent with Macro Finding `#3` in [COMPONENT_CENSUS.md](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/design/COMPONENT_CENSUS.md#L45), `.mobile-roller-pill-bar` (`z-index: 950`) covers `footer.footer` (`z-index: 900`) across Mobile Play, requiring users to exit Play to `Roster` or `Create` (`2` taps) to reach `About`.
+6. **`#mobile-sheet-menu` `About` Entry Resolves Mobile Play Reachability (`T16`) `[DECIDED]` — Implemented**
+   - `#mobile-sheet-menu` ([app-header.vue](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/js/app-header.vue)) now includes `About`, enabling direct navigation from Mobile Play to `About` in `2` taps without leaving Play for `Roster`.
 
 ---
 

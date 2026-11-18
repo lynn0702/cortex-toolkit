@@ -35,6 +35,7 @@ import CuriosityWebBar from './curiosity-web-bar.vue';
 import ModalDialog from './modal-dialog.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
+import { usePersistence } from './use-persistence.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
 
 const Roster = defineAsyncComponent(() => import('./roster.vue'));
@@ -62,6 +63,7 @@ const previewTemplateEntry = ref<any>(null);
 const isPreview = computed(() => Boolean(previewCharacter.value));
 const previewDismissed = ref<boolean>(false);
 const sheetTemplates = ref<any[]>([]);
+const customSetPresets = ref<any[]>(characterCurioFunctions.getCustomSetPresets());
 const prefs = ref<any>({ version: 1, global: {}, characters: {} });
 const playViewMode = ref('split');
 const isAddCharacterModalOpen = ref(false);
@@ -106,7 +108,9 @@ const historyIndex = ref(-1);
 const isNavigatingHistory = ref(false);
 const isHandlingHash = ref(false);
 
-const { toastMessage, toastActionLabel, showToast, triggerToastAction, pauseToast, resumeToast } = useToast();
+const { toastMessage, toastActionLabel, toastTone, showToast, triggerToastAction, pauseToast, resumeToast } =
+	useToast();
+provide('showToast', showToast);
 
 const main = ref<HTMLElement | null>(null);
 
@@ -313,7 +317,7 @@ const {
 	history,
 	historyIndex,
 	showToast,
-	saveLocalData,
+	saveLocalData: () => saveLocalData(),
 });
 
 const openCharacters = computed(() => {
@@ -570,6 +574,12 @@ function handleBeforeUnload() {
 
 let mobileViewportMql: MediaQueryList | null = null;
 let mobileViewportHandler: ((e: MediaQueryListEvent) => void) | null = null;
+const unsubscribeCustomPresets = characterCurioFunctions.onCustomSetPresetsChange((next) => {
+	customSetPresets.value = cloneDeep(next);
+	if (storeReady.value) {
+		void persist({ allowSessionOnlyInPreview: true });
+	}
+});
 
 onMounted(async () => {
 	setViewY();
@@ -618,6 +628,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
 	cancelDeferredSave();
+	unsubscribeCustomPresets();
 	if (mobileViewportMql && mobileViewportHandler) {
 		mobileViewportMql.removeEventListener('change', mobileViewportHandler);
 	}
@@ -816,7 +827,7 @@ function updateRouteHash() {
 }
 
 function isMobilePlayViewport() {
-	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 48rem)').matches);
 }
 
 function setMobileDrawerState(next: 'staged' | 'split' | 'full') {
@@ -1879,7 +1890,7 @@ function loadCharacter(id: string, targetSubmode?: string | null) {
 function importSheetTemplate(entry: any) {
 	if (!entry || !entry.id) return;
 	if (!characterCurioFunctions.isValidCurrentCharacter(entry)) {
-		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE);
+		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE, { tone: 'error' });
 		return;
 	}
 	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
@@ -1892,9 +1903,21 @@ function importSheetTemplate(entry: any) {
 
 function deleteSheetTemplate(id: string) {
 	if (!id) return;
+	const removed = (sheetTemplates.value || []).find((t: any) => t?.id === id);
 	sheetTemplates.value = (sheetTemplates.value || []).filter((t: any) => t?.id !== id);
 	saveLocalData();
-	showToast('Removed saved template');
+	showToast(
+		'Removed saved template',
+		removed
+			? {
+					actionLabel: 'Undo',
+					onAction: () => {
+						sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, removed);
+						saveLocalData();
+					},
+				}
+			: undefined,
+	);
 }
 
 // D16 switch: rebase pure overrides (strip vs pinned snapshot)
@@ -1933,7 +1956,7 @@ function stayOnTemplateSnapshot() {
 
 function importCharacter(characterData: any) {
 	if (!characterCurioFunctions.isValidCurrentCharacter(characterData)) {
-		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE);
+		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE, { tone: 'error' });
 		return;
 	}
 	// Embedded template travels with the file: upsert by static
@@ -2139,6 +2162,13 @@ function exportSheetTemplate() {
 	downloadJson(`${slug}.curio-template.json`, entry);
 }
 
+function importSetPresets(entries: any[]) {
+	const { importedCount } = characterCurioFunctions.upsertCustomSetPresets(entries);
+	if (importedCount > 0) {
+		showToast(`Imported ${importedCount} ${importedCount === 1 ? 'preset' : 'presets'}`);
+	}
+}
+
 async function exportAllCharacters() {
 	await ensureLibraryTemplates();
 	const out = (characters.value || []).map((c: any) => {
@@ -2151,6 +2181,7 @@ async function exportAllCharacters() {
 		if (filePrefs) o.prefs = filePrefs;
 		return characterCurioFunctions.orderCharacterKeys(o);
 	});
+	const exportedPresets = characterCurioStorage.normalizePresets(customSetPresets.value);
 
 	const bundle = {
 		version: '0.2',
@@ -2158,13 +2189,18 @@ async function exportAllCharacters() {
 		dateExported: new Date().toISOString(),
 		count: out.length,
 		characters: out,
+		presets: cloneDeep(exportedPresets),
 	};
 
 	const timestamp = new Date().getTime();
 	const filename = `Character_Curio_Bundle_${timestamp}.json`;
 
 	downloadJson(filename, bundle);
-	showToast(`Exported ${out.length} curiosities`);
+	showToast(
+		exportedPresets.length > 0
+			? `Exported ${out.length} curiosities and ${exportedPresets.length} ${exportedPresets.length === 1 ? 'preset' : 'presets'}`
+			: `Exported ${out.length} curiosities`,
+	);
 }
 
 function updateCharacter(characterData: any) {
@@ -2339,7 +2375,7 @@ function selectElement(selector: any) {
 		mode.value === 'character' &&
 		submode.value !== 'print' &&
 		window.matchMedia &&
-		window.matchMedia('(max-width: 768px)').matches
+		window.matchMedia('(max-width: 48rem)').matches
 	) {
 		nextTick(() => {
 			const open =
@@ -2424,7 +2460,7 @@ function removeTraitSet(traitSetID: number) {
 // Mobile: when the on-screen keyboard opens on an editor field,
 // re-assert the focused field into view after the animation.
 function handleEditorFocusIn(event: Event) {
-	if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+	if (!window.matchMedia || !window.matchMedia('(max-width: 48rem)').matches) return;
 	const t = event && (event.target as HTMLElement);
 	if (!t || !t.closest) return;
 	if (t.tagName !== 'INPUT' && t.tagName !== 'TEXTAREA' && t.tagName !== 'SELECT') return;
@@ -2441,175 +2477,28 @@ function handleEditorFocusIn(event: Event) {
 	}, 350);
 }
 
-async function bootFromStorage() {
-	storeReady.value = false;
-	storeError.value = null;
-
-	try {
-		const stored = await characterCurioStorage.load();
-		sheetTemplates.value = characterCurioStorage.normalizeTemplates(stored.templates);
-		prefs.value = characterCurioStorage.normalizePreferences(stored.preferences);
-		await ensureLibraryTemplates();
-		characters.value = (stored.characters || []).map((c: any) => resolveStoredCharacter(c));
-		initBaseline(characters.value);
-		lastSavedCharacters = {};
-		(stored.characters || []).forEach((c: any) => {
-			if (c && c.id != null) {
-				lastSavedCharacters![String(c.id)] = JSON.stringify(c);
-			}
-		});
-		playViewMode.value = stored.playViewMode || 'split';
-		panelPosition.value =
-			stored.rollerPosition === 'left' || stored.rollerPosition === 'right' ? stored.rollerPosition : 'right';
-		openCharacterIDs.value = (stored.openCharacterIDs || []).filter((id: string) =>
-			characters.value.some((c: any) => c.id === id),
-		);
-		if (characterID.value && !openCharacterIDs.value.includes(characterID.value)) {
-			openCharacterIDs.value.push(characterID.value);
-		}
-		lastSavedSession = JSON.stringify({
-			openCharacterIDs: openCharacterIDs.value,
-			playViewMode: playViewMode.value,
-			rollerPosition: panelPosition.value,
-			templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
-			preferences: prefs.value,
-		});
-		if (stored.loadError) {
-			storeError.value = stored.loadError;
-			showToast('Saved data was damaged — starting fresh. Export backups regularly.');
-		}
-	} catch (err) {
-		storeError.value = err;
-		showToast('Could not open the local library — starting empty.');
-	}
-
-	characterCurioStorage.requestPersistence();
-}
-
-// Last successful save: characters keyed by id (storage form as JSON) and
-// the session JSON. The next save skips no-ops and upserts only what changed.
-let lastSavedCharacters: Record<string, string> | null = null;
-let lastSavedSession: string | null = null;
-
-async function persist(options?: { allowSessionCharacterSave?: boolean }) {
-	if (isPreview.value) return;
-	let upsert: any[] = [];
-	let remove: string[] = [];
-	let session: any;
-	let snapshot: Record<string, string> | null = null;
-	let sessionJson: string | null = null;
-	try {
-		await ensureLibraryTemplates();
-		const sparse = (characters.value || []).map((c: any) => {
-			const ct = c.sheet && c.sheet.template;
-			const ref = ct && typeof ct === 'object' ? { id: ct.id, version: ct.version || null } : null;
-			// Strip against the PINNED version (the base this
-			// character was merged from), never the newer bundle.
-			const entry = ref ? resolveTemplateEntry(ref.id, ref.version) : null;
-			const templateChar = entry ? characterCurioFunctions.findTemplateCharacter(entry) : null;
-			let out;
-			if (entry && templateChar) {
-				// Layered storage: lossless content + per-entity
-				// override entity (presentation is preserved), pinned ref.
-				const delta = characterCurioFunctions.stripCharacterToDeltas(c, entry);
-				out = characterCurioFunctions.toLayeredEntity(delta);
-			} else {
-				// Standalone / no template: keep the array form.
-				out = cloneDeep(c);
-			}
-			// Storage form keeps a pinned { id, version } reference —
-			// the full template object lives in the template store
-			// (embedded only on file export).
-			if (ref && ref.id) {
-				out.sheet = ref.version ? { template: { id: ref.id, version: ref.version } } : { template: { id: ref.id } };
-			} else delete out.sheet;
-			return characterCurioFunctions.orderCharacterKeys(out);
-		});
-		session = cloneDeep({
-			openCharacterIDs: openCharacterIDs.value,
-			playViewMode: playViewMode.value,
-			rollerPosition: panelPosition.value,
-			templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
-			preferences: prefs.value,
-		});
-		// Dirty diff against the last save: whole entries by id, never
-		// field-merged. New ids are upserts; vanished ids are deletes.
-		const curr: Record<string, string> = {};
-		const currObj: Record<string, any> = {};
-		sparse.forEach((c: any) => {
-			if (c && c.id != null) {
-				const id = String(c.id);
-				curr[id] = JSON.stringify(c);
-				currObj[id] = c;
-			}
-		});
-		if (lastSavedCharacters) {
-			for (const id of Object.keys(curr)) {
-				if (lastSavedCharacters[id] !== curr[id]) upsert.push(currObj[id]);
-			}
-			for (const id of Object.keys(lastSavedCharacters)) {
-				if (curr[id] === undefined) remove.push(id);
-			}
-		} else {
-			// No baseline yet (first save since boot): upsert the roster,
-			// then the merge keeps anything this tab does not know about.
-			upsert = sparse.filter((c: any) => c && c.id != null);
-		}
-
-		// Persist gating in Play:
-		const isGatedPlay = submode.value === 'play' && !options?.allowSessionCharacterSave;
-		if (isGatedPlay) {
-			upsert = [];
-			remove = [];
-		}
-
-		sessionJson = JSON.stringify(session);
-		// No-op gate: nothing changed since the last save, no write.
-		if (!upsert.length && !remove.length && lastSavedSession === sessionJson) return;
-		snapshot = isGatedPlay ? lastSavedCharacters || {} : curr;
-	} catch (err) {
-		showToast('Could not save changes.');
-		return;
-	}
-
-	try {
-		const result = await characterCurioStorage.saveChanges({ upsert, remove, session });
-		lastSavedCharacters = snapshot;
-		lastSavedSession = sessionJson;
-		if (submode.value !== 'play' || options?.allowSessionCharacterSave) {
-			const changedIds = new Set(upsert.filter((u: any) => u && u.id != null).map((u: any) => String(u.id)));
-			for (const c of characters.value) {
-				if (c && c.id != null) {
-					const id = String(c.id);
-					if (changedIds.has(id) || !baselineCharacters.has(id)) {
-						baselineCharacters.set(id, JSON.stringify(toRaw(c)));
-					}
-				}
-			}
-		}
-		if (result.merged) showToast('Merged changes from another tab.');
-	} catch (err: any) {
-		if (err && (err.name === 'QuotaExceededError' || err.code === 22)) {
-			showToast('Local storage is full — export a backup, then remove large images.');
-		} else if (
-			err &&
-			/blocked|unavailable|security|denied|invalidstate/i.test((err.name || '') + ' ' + (err.message || ''))
-		) {
-			showToast('Browser storage is blocked — check site settings, then export a backup.');
-		} else {
-			showToast('Could not save changes. Export a backup to be safe.');
-		}
-	}
-}
-
-function saveLocalData() {
-	cancelDeferredSave();
-	if (submode.value === 'play') {
-		showPlaySaveConfirm.value = true;
-		return Promise.resolve();
-	}
-	return persist();
-}
+const { bootFromStorage, persist, saveLocalData } = usePersistence({
+	characters,
+	characterID,
+	openCharacterIDs,
+	isPreview,
+	submode,
+	sheetTemplates,
+	customSetPresets,
+	prefs,
+	playViewMode,
+	panelPosition,
+	storeReady,
+	storeError,
+	showPlaySaveConfirm,
+	baselineCharacters,
+	ensureLibraryTemplates,
+	resolveTemplateEntry,
+	resolveStoredCharacter,
+	initBaseline,
+	cancelDeferredSave,
+	showToast,
+});
 
 // The mounted proxy is the documented debug/test handle. With
 // `<script setup>` bindings are closed by default, so expose them explicitly.
@@ -2624,6 +2513,7 @@ defineExpose({
 	usePreviewTemplate,
 	openCharacterIDs,
 	sheetTemplates,
+	customSetPresets,
 	prefs,
 	playViewMode,
 	isAddCharacterModalOpen,
@@ -2702,6 +2592,7 @@ defineExpose({
 	exportCharacter,
 	saveSheetTemplate,
 	exportSheetTemplate,
+	importSetPresets,
 	exportAllCharacters,
 	updateCharacter,
 	initHistory,
@@ -2886,6 +2777,7 @@ defineExpose({
 					v-if="mode === 'roster' && storeReady"
 					:characters="characters"
 					:sheetTemplates="sheetTemplates"
+					:customPresets="customSetPresets"
 					@createCharacter="createCharacter"
 					@createFromTemplate="createFromTemplate"
 					@toggleTemplate="toggleTemplate"
@@ -2898,6 +2790,7 @@ defineExpose({
 					@deleteAllCharacters="deleteAllCharacters"
 					@importCharacter="importCharacter"
 					@importSheetTemplate="importSheetTemplate"
+					@importSetPresets="importSetPresets"
 					@deleteSheetTemplate="deleteSheetTemplate"
 					@createFromLibrary="createFromLibrary"
 					@previewTemplate="openPreview"
@@ -3220,20 +3113,46 @@ defineExpose({
 
 	<!-- TOAST NOTIFICATION -->
 	<div class="sr-only" role="status" aria-live="polite">
-		{{ toastMessage ? (toastActionLabel ? `${toastMessage} — Actions available` : toastMessage) : '' }}
+		{{
+			toastMessage && toastTone !== 'error'
+				? toastActionLabel
+					? `${toastMessage} — Actions available`
+					: toastMessage
+				: ''
+		}}
+	</div>
+	<div class="sr-only" role="alert" aria-live="assertive">
+		{{
+			toastMessage && toastTone === 'error'
+				? toastActionLabel
+					? `${toastMessage} — Actions available`
+					: toastMessage
+				: ''
+		}}
 	</div>
 	<transition name="toast">
 		<div
 			v-if="toastMessage"
 			class="toast-notification"
-			:class="{ 'has-action': Boolean(toastActionLabel) }"
+			:class="['toast-' + toastTone, { 'has-action': Boolean(toastActionLabel) }]"
 			:aria-hidden="toastActionLabel ? undefined : 'true'"
 			@mouseenter="pauseToast"
 			@mouseleave="resumeToast()"
 			@focusin="pauseToast"
 			@focusout="resumeToast($event)"
 		>
-			<i class="fas fa-check-circle" aria-hidden="true"></i> <span>{{ toastMessage }}</span>
+			<i
+				class="fas"
+				:class="
+					toastTone === 'error'
+						? 'fa-exclamation-circle'
+						: toastTone === 'warn'
+							? 'fa-exclamation-triangle'
+							: 'fa-check-circle'
+				"
+				aria-hidden="true"
+			></i>
+			<span>{{ toastMessage }}</span>
 			<button v-if="toastActionLabel" type="button" class="toast-action-btn" @click.stop="triggerToastAction">
 				{{ toastActionLabel }}
 			</button>

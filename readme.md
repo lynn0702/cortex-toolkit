@@ -16,11 +16,11 @@ Requires Node.js >= 24.
 ```bash
 npm install
 npm run dev        # Vite dev server
-npm run build      # Prettier format, generated model types, Vite bundle, template chunk, asset versioning
+npm run build      # Self-hosted font check, generated model types, Vite bundle, template chunk, asset versioning
 npm run check      # vue-tsc --noEmit
 npm test           # Vitest unit/component specs + 8 Node logic suites
 npm run validate   # Schema and template corpus validation
-npm run gate       # Full verification gate (build, style, types, tests, validate, v-html scan, icon subset)
+npm run gate       # Full 8-step gate (build, Prettier check, types, tests, validate, v-html scan, icon subset, CSS/budgets)
 npm run smoke      # Playwright headless browser smoke check
 ```
 
@@ -28,7 +28,7 @@ npm run smoke      # Playwright headless browser smoke check
 
 - `js/` — Vue 3 SFCs (`*.vue`) and TypeScript modules (`*.ts`), with `js/app.js` as the Vite entry.
 - `css/` — Stylesheets compiled into `css/app.min.css`.
-- `schema/0.1/` — JSON Schemas (`character.schema.json`, `sheet-template.schema.json`).
+- `schema/0.2/` — JSON Schemas (`curiosity.schema.json`, `sheet-template.schema.json`).
 - `data/templates/` — Bundled character and template corpus (`*.curio.json`, `*.template.layered.json`).
 - `scripts/` — Build, validation, Node test suites, and Playwright smoke runner.
 - `tests/` — Vitest component and geometry test suites.

@@ -169,16 +169,11 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	);
 
 	// ---- Phase 3a: derivePresetId, collision check, saveCustomSetPreset, getTrackScale, renderDieGeometrySVG
-	const mockStore = {};
-	global.localStorage = {
-		getItem: (k) => (k in mockStore ? mockStore[k] : null),
-		setItem: (k, v) => {
-			mockStore[k] = String(v);
-		},
-		removeItem: (k) => {
-			delete mockStore[k];
-		},
-	};
+	F.setCustomSetPresets([], { notify: false });
+	let presetNotifications = 0;
+	const unsubPresets = F.onCustomSetPresetsChange(() => {
+		presetNotifications++;
+	});
 
 	ok(
 		F.derivePresetId('  Doom Pool & Stress! ') === 'doom-pool-stress',
@@ -248,6 +243,76 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 		F.saveCustomSetPreset(customCard, { label: 'Starship Systems' }) === null,
 		'saveCustomSetPreset rejects collision without overwriting',
 	);
+
+	// TraitSetEditor quick-save options: disambiguateBuiltIn + overwriteExistingCustom + replaceId
+	const builtInNamedSave = F.saveCustomSetPreset(
+		{ ...customCard, name: 'Pool' },
+		{ disambiguateBuiltIn: true, overwriteExistingCustom: true },
+	);
+	ok(
+		builtInNamedSave && builtInNamedSave.id === 'custom-pool' && builtInNamedSave.label === 'Custom Pool',
+		'saveCustomSetPreset disambiguates built-in collision when disambiguateBuiltIn is true',
+		builtInNamedSave,
+	);
+	const overwrittenCustomSave = F.saveCustomSetPreset(
+		{ ...customCard, name: 'Custom Pool', noun: 'SysMk2' },
+		{ overwriteExistingCustom: true, disambiguateBuiltIn: true },
+	);
+	ok(
+		overwrittenCustomSave &&
+			overwrittenCustomSave.id === 'custom-pool' &&
+			overwrittenCustomSave.preset.noun === 'SysMk2',
+		'saveCustomSetPreset updates existing custom preset in place when overwriteExistingCustom is true',
+	);
+	const renamedCustomSave = F.saveCustomSetPreset(
+		{ ...customCard, name: 'Custom Pool Mk II' },
+		{ label: 'Custom Pool Mk II', blurb: 'Renamed blurb', replaceId: 'custom-pool' },
+	);
+	ok(
+		renamedCustomSave &&
+			renamedCustomSave.id === 'custom-pool-mk-ii' &&
+			renamedCustomSave.blurb === 'Renamed blurb' &&
+			!F.getCustomSetPresets().some((p) => p.id === 'custom-pool'),
+		'saveCustomSetPreset replaceId renames custom preset in place without self-collision',
+	);
+	F.deleteCustomSetPreset('custom-pool-mk-ii');
+
+	// Upsert bundle / .card.json entries by static id and skip built-in collisions
+	const upserted = F.upsertCustomSetPresets([
+		{ id: 'pool', label: 'Pool', preset: customCard },
+		{
+			id: 'starship-systems',
+			label: 'Starship Systems Mk II',
+			blurb: 'Updated deck',
+			preset: { ...customCard, name: 'Ship Damage Mk II' },
+		},
+		{
+			format: 'character-curio-set',
+			version: '0.2',
+			traitSet: { name: 'Alien Relic', view: { presetId: 'alien-relic', presetLabel: 'Alien Relic' }, traits: [] },
+		},
+	]);
+	ok(
+		upserted.importedCount === 2 && upserted.presets.length === 2,
+		'upsertCustomSetPresets upserts non-built-in presets',
+		upserted,
+	);
+	ok(
+		upserted.presets.find((p) => p.id === 'starship-systems')?.label === 'Starship Systems Mk II',
+		'upsertCustomSetPresets replaces matching static id without duplicating',
+	);
+	ok(
+		upserted.presets.some((p) => p.id === 'alien-relic' && p.label === 'Alien Relic'),
+		'upsertCustomSetPresets accepts standalone .card.json export shape',
+	);
+	const afterDelete = F.deleteCustomSetPreset('alien-relic');
+	ok(
+		afterDelete.length === 1 && afterDelete[0].id === 'starship-systems',
+		'deleteCustomSetPreset removes target entry',
+	);
+	ok(presetNotifications >= 3, 'onCustomSetPresetsChange fires for save, upsert, and delete', presetNotifications);
+	unsubPresets();
+	F.setCustomSetPresets([], { notify: false });
 
 	const targetChar = { name: 'Capt. Kirk', traitSets: [] };
 	const addedSet = F.instantiateSetPreset(savedEntry, targetChar, 1);

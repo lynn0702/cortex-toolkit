@@ -18,6 +18,7 @@ import TraitEditor from './trait-editor.vue';
 
 const props = defineProps<{
 	initialSet?: any;
+	editingPreset?: { id: string; label: string; blurb?: string; preset: any } | null;
 	character?: Character;
 	applyLabel?: string;
 }>();
@@ -67,19 +68,9 @@ function buildWorkingCharacter(sourceSet?: any): any {
 	};
 }
 
-const workingCharacter = ref<any>(buildWorkingCharacter(props.initialSet));
+const workingCharacter = ref<any>(buildWorkingCharacter(props.editingPreset?.preset ?? props.initialSet));
 const editing = ref<any[]>(['traitSet', 0]);
 const previewSubmode = ref<'edit' | 'play' | 'print'>('edit');
-
-watch(
-	() => props.initialSet,
-	(next) => {
-		if (next) {
-			workingCharacter.value = buildWorkingCharacter(next);
-			editing.value = ['traitSet', 0];
-		}
-	},
-);
 
 const workingSet = computed(() => workingCharacter.value?.traitSets?.[0] ?? null);
 
@@ -240,18 +231,42 @@ function onRemoveTrait(_setIdx: number, tIdx: number) {
 }
 
 // Preset saving & standalone .card.json state
-const presetLabel = ref<string>('');
-const presetBlurb = ref<string>('');
+const activeReplaceId = ref<string | undefined>(props.editingPreset?.id || undefined);
+const presetLabel = ref<string>(props.editingPreset?.label || '');
+const presetBlurb = ref<string>(props.editingPreset?.blurb || '');
 const saveStatusMessage = ref<string>('');
 const saveErrorMessage = ref<string>('');
 const savedVersion = ref<number>(0);
 const fileImportInput = ref<HTMLInputElement | null>(null);
 
+watch(
+	() => [props.editingPreset, props.initialSet] as const,
+	([nextPreset, nextSet]) => {
+		if (nextPreset) {
+			activeReplaceId.value = nextPreset.id;
+			presetLabel.value = nextPreset.label || '';
+			presetBlurb.value = nextPreset.blurb || '';
+			workingCharacter.value = buildWorkingCharacter(nextPreset.preset);
+			editing.value = ['traitSet', 0];
+			saveStatusMessage.value = '';
+			saveErrorMessage.value = '';
+		} else if (nextSet) {
+			activeReplaceId.value = undefined;
+			presetLabel.value = '';
+			presetBlurb.value = '';
+			workingCharacter.value = buildWorkingCharacter(nextSet);
+			editing.value = ['traitSet', 0];
+			saveStatusMessage.value = '';
+			saveErrorMessage.value = '';
+		}
+	},
+);
+
 const derivedId = computed(() => characterCurioFunctions.derivePresetId(presetLabel.value));
 const hasCollision = computed(() => {
 	void savedVersion.value;
 	if (!derivedId.value) return false;
-	return characterCurioFunctions.hasPresetCollision(derivedId.value);
+	return characterCurioFunctions.hasPresetCollision(derivedId.value, activeReplaceId.value);
 });
 
 function saveAsPresetCard() {
@@ -271,19 +286,16 @@ function saveAsPresetCard() {
 	}
 
 	const cardPayload = characterCurioFunctions.cloneDeep(workingSet.value);
-	const v = ensureView(cardPayload);
-	v.presetId = id;
-	v.presetLabel = label;
-	if (presetBlurb.value.trim()) {
-		v.presetBlurb = presetBlurb.value.trim();
-	}
-
 	const saved = characterCurioFunctions.saveCustomSetPreset(cardPayload, {
 		label,
-		blurb: presetBlurb.value.trim() || undefined,
+		blurb: presetBlurb.value.trim(),
+		replaceId: activeReplaceId.value,
 	});
 
 	if (saved) {
+		if (props.editingPreset) {
+			activeReplaceId.value = saved.id;
+		}
 		savedVersion.value++;
 		saveStatusMessage.value = `Saved "${label}" into preset library.`;
 		emit('saved', saved);

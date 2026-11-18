@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { nextTick, reactive } from 'vue';
 import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
@@ -6,11 +6,14 @@ import CharacterView from '../js/character.vue';
 import NameEditor from '../js/name-editor.vue';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetEditor from '../js/trait-set-editor.vue';
+import TraitSetMini from '../js/trait-set-mini.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import JsonEditor from '../js/json-editor.vue';
 import PresetGalleryCard from '../js/preset-gallery-card.vue';
 import StudioPanel from '../js/studio-panel.vue';
+import AppHeader from '../js/app-header.vue';
 import App from '../js/app.vue';
+import { useToast } from '../js/use-toast.ts';
 import { characterCurioFunctions, characterCurioSetPresets } from '../js/functions.ts';
 import {
 	getRating,
@@ -1037,5 +1040,126 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		await populatedEditor.find('button.editor-delete').trigger('click');
 		expect(populatedEditor.emitted('removeTraitSet')).toBeUndefined();
 		populatedEditor.unmount();
+	});
+
+	it('saves built-in-named sets cleanly, displays preset blurb + edit-in-place via TraitSetMini, and exposes About in #mobile-sheet-menu', async () => {
+		characterCurioFunctions.setCustomSetPresets([], { notify: false });
+		const ch = freshBlankCharacter('preset-qol-1');
+		ch.traitSets.push({
+			name: 'Pool',
+			noun: 'Pool',
+			traits: [{ name: 'Agility', rating: { type: 'Die', value: [8] } }],
+			view: { header: 'top', style: { header: 'default', body: 'default' } },
+		} as any);
+
+		const edWrap = mount(TraitSetEditor, {
+			attachTo: document.body,
+			props: { character: ch, traitSetID: 1, open: true },
+		});
+		const saveBtn = edWrap.find('button[aria-label="Save Set Preset"]');
+		expect(saveBtn.exists()).toBe(true);
+		await saveBtn.trigger('click');
+		await nextTick();
+
+		const savedList = characterCurioFunctions.getCustomSetPresets();
+		expect(savedList).toHaveLength(1);
+		expect(savedList[0].id).toBe('custom-pool');
+		expect(savedList[0].label).toBe('Custom Pool');
+		expect(saveBtn.text()).toContain('Saved');
+		edWrap.unmount();
+
+		const editablePreset = characterCurioFunctions.saveCustomSetPreset(ch.traitSets[1], {
+			label: 'Custom Pool',
+			blurb: 'Core physical trio',
+			overwriteExistingCustom: true,
+		})!;
+		expect(editablePreset.blurb).toBe('Core physical trio');
+
+		const cardHost = document.createElement('div');
+		document.body.appendChild(cardHost);
+		const cardWrap = mount(PresetGalleryCard, {
+			attachTo: cardHost,
+			props: {
+				preset: editablePreset,
+				editable: true,
+				deletable: true,
+			},
+		});
+		expect(cardWrap.find('.preset-gallery-blurb').text().trim()).toBe('Core physical trio');
+		expect(cardWrap.find('.btn-preset-edit').exists()).toBe(true);
+		await cardWrap.find('.btn-preset-edit').trigger('click');
+		expect(cardWrap.emitted('edit')).toHaveLength(1);
+		expect(cardWrap.emitted('add')).toBeUndefined();
+		expect((await axe.run(cardWrap.element)).violations).toHaveLength(0);
+		cardWrap.unmount();
+		cardHost.remove();
+
+		const miniWrap = mount(TraitSetMini, {
+			attachTo: document.body,
+			props: { editingPreset: editablePreset },
+		});
+		const labelInput = miniWrap.find('input[aria-label="Preset Label"]');
+		expect((labelInput.element as HTMLInputElement).value).toBe('Custom Pool');
+		expect((miniWrap.find('input[aria-label="Preset Blurb"]').element as HTMLInputElement).value).toBe(
+			'Core physical trio',
+		);
+		expect(miniWrap.find('.mini-collision-alert').exists()).toBe(false);
+		expect(miniWrap.find('.mini-save-preset-btn').attributes('disabled')).toBeUndefined();
+
+		await labelInput.setValue('Hero Core Stats');
+		await miniWrap.find('input[aria-label="Preset Blurb"]').setValue('Updated blurb');
+		await miniWrap.find('.mini-save-preset-btn').trigger('click');
+		await nextTick();
+		expect(miniWrap.find('.mini-save-status.success').exists()).toBe(true);
+		const updatedList = characterCurioFunctions.getCustomSetPresets();
+		expect(updatedList).toHaveLength(1);
+		expect(updatedList[0].id).toBe('hero-core-stats');
+		expect(updatedList[0].blurb).toBe('Updated blurb');
+		miniWrap.unmount();
+		characterCurioFunctions.setCustomSetPresets([], { notify: false });
+
+		const headerWrap = mount(AppHeader, {
+			attachTo: document.body,
+			props: {
+				mode: 'character',
+				submode: 'play',
+				hasCharacter: true,
+				canUndo: false,
+				canRedo: false,
+				activeCharacterName: 'Jimmy',
+			},
+		});
+		const aboutBtn = headerWrap.find('#mobile-sheet-menu button[aria-label="About"]');
+		expect(aboutBtn.exists()).toBe(true);
+		await aboutBtn.trigger('click');
+		expect(headerWrap.emitted('navigate')?.some((args) => args[0] === 'about')).toBe(true);
+		headerWrap.unmount();
+	});
+
+	it('defaults warning and error toasts to 5000ms dwell while info stays 2500ms', () => {
+		vi.useFakeTimers();
+		try {
+			const toast = useToast();
+			toast.showToast('Info saved');
+			expect(toast.toastTone.value).toBe('info');
+			vi.advanceTimersByTime(2500);
+			expect(toast.toastMessage.value).toBeNull();
+
+			toast.showToast('Damaged backup', { tone: 'warn' });
+			expect(toast.toastTone.value).toBe('warn');
+			vi.advanceTimersByTime(3000);
+			expect(toast.toastMessage.value).toBe('Damaged backup');
+			vi.advanceTimersByTime(2000);
+			expect(toast.toastMessage.value).toBeNull();
+
+			toast.showToast('Storage full', { tone: 'error' });
+			expect(toast.toastTone.value).toBe('error');
+			vi.advanceTimersByTime(4999);
+			expect(toast.toastMessage.value).toBe('Storage full');
+			vi.advanceTimersByTime(1);
+			expect(toast.toastMessage.value).toBeNull();
+		} finally {
+			vi.useRealTimers();
+		}
 	});
 });

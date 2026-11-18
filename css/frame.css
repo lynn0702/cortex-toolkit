@@ -37,11 +37,19 @@
 	--status-danger: var(--paper-status-danger);
 	--pp-badge-ink: #0f172a;
 	--studio-bg: #0f172a;
+	--studio-surface-input: #0f172a;
 	--studio-header-bg: #1e293b;
 	--studio-text: #f8fafc;
 	--studio-text-secondary: #cbd5e1;
 	--studio-text-muted: #94a3b8;
 	--studio-border: rgba(255, 255, 255, 0.12);
+	--studio-border-strong: #334155;
+	--studio-accent: #38bdf8;
+	--studio-accent-strong: #0284c7;
+	--studio-accent-tint: #7dd3fc;
+	--studio-accent-text: #e0f2fe;
+	--studio-status-warn: #fbbf24;
+	--studio-status-danger: #f87171;
 }
 
 @media screen {
@@ -99,9 +107,9 @@
 	user-select: none;
 	border-style: solid;
 	border-color: var(--border-subtle, var(--color-separator));
-	background: var(--bg-sticky-glass, hsla(0, 0%, 100%, 0.9));
+	background: var(--bg-sticky-glass);
 	backdrop-filter: blur(0.5rem);
-	box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 0.125rem color-mix(in oklab, var(--paper-text-main) 10%, transparent);
 	color: var(--text-main);
 	& > * {
 		display: flex;
@@ -238,7 +246,7 @@
 
 .header-btn-studio.active,
 .header-btn-studio.active:hover {
-	background: color-mix(in oklch, var(--color-interactive) 70%, black);
+	background: color-mix(in oklab, var(--color-interactive) 70%, black);
 	border-color: var(--color-interactive);
 	color: var(--die-active-text);
 }
@@ -328,7 +336,7 @@
 		border-radius: 0.75rem;
 		background: var(--bg-surface-card);
 		color: var(--text-main);
-		box-shadow: 0 8px 24px color-mix(in oklch, var(--text-main) 18%, transparent);
+		box-shadow: 0 8px 24px color-mix(in oklab, var(--text-main) 18%, transparent);
 		min-inline-size: 14rem;
 		max-inline-size: calc(100vw - var(--space-sm));
 	}
@@ -419,7 +427,7 @@
 	}
 
 	.mobile-sheet-item.active {
-		background: color-mix(in oklch, var(--color-interactive) 14%, transparent);
+		background: color-mix(in oklab, var(--color-interactive) 14%, transparent);
 		border-color: var(--color-interactive);
 		color: var(--color-interactive);
 	}
@@ -462,7 +470,7 @@
 		font-weight: 700;
 		padding: 0.1rem 0.4rem;
 		border-radius: 999px;
-		background: color-mix(in oklch, var(--color-primary) 16%, transparent);
+		background: color-mix(in oklab, var(--color-primary) 16%, transparent);
 		color: var(--color-primary);
 	}
 }

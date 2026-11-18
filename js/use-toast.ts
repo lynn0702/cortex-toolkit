@@ -1,14 +1,18 @@
 import { ref } from 'vue';
 
+export type ToastTone = 'info' | 'warn' | 'error';
+
 export interface ToastOptions {
 	actionLabel?: string;
 	onAction?: () => void;
 	durationMs?: number;
+	tone?: ToastTone;
 }
 
 export function useToast() {
 	const toastMessage = ref<string | null>(null);
 	const toastActionLabel = ref<string | null>(null);
+	const toastTone = ref<ToastTone>('info');
 	const toastTimeout = ref<any>(null);
 	let pendingAction: (() => void) | null = null;
 	let currentDurationMs = 2500;
@@ -33,16 +37,20 @@ export function useToast() {
 		clearTimer();
 		toastMessage.value = null;
 		toastActionLabel.value = null;
+		toastTone.value = 'info';
 		pendingAction = null;
 		isPaused = false;
 	}
 
 	function showToast(msg: string, options?: ToastOptions) {
 		isPaused = false;
+		const tone: ToastTone = options?.tone ?? 'info';
 		toastMessage.value = msg;
 		toastActionLabel.value = options?.actionLabel || null;
+		toastTone.value = tone;
 		pendingAction = typeof options?.onAction === 'function' ? options.onAction : null;
-		currentDurationMs = options?.durationMs ?? 2500;
+		const defaultMs = tone === 'info' ? 2500 : 5000;
+		currentDurationMs = options?.durationMs ?? defaultMs;
 		scheduleDismiss();
 	}
 
@@ -72,6 +80,7 @@ export function useToast() {
 	return {
 		toastMessage,
 		toastActionLabel,
+		toastTone,
 		toastTimeout,
 		showToast,
 		triggerToastAction,

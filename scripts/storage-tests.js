@@ -142,6 +142,7 @@ function freshStore() {
 	S._useIDB = typeof indexedDB !== 'undefined';
 	S._lastSavedAt = null;
 	S._lastTemplates = null;
+	S._lastPresets = null;
 	return S;
 }
 
@@ -483,6 +484,122 @@ async function scenario(name, fn) {
 		const loaded = await S.load();
 		const keys = loaded.templates.map((t) => S.templateKey(t));
 		ok(keys.indexOf('ty@1') === -1, 'deleted template Y is gone', keys);
+	});
+
+	// 13. Custom set presets round-trip across IDB/fallback, omit-preserve, and non-destructive merge.
+	await scenario('custom set presets persistence and merge', async () => {
+		globalThis.indexedDB = makeIDB({ open: 'ok', put: 'ok' });
+		globalThis.localStorage = makeLS(5 * 1024 * 1024);
+		globalThis.navigator = {};
+		const S = freshStore();
+
+		const presetA = {
+			id: 'alpha-set',
+			label: 'Alpha Set',
+			blurb: 'First custom set',
+			preset: { name: 'Alpha', traits: [] },
+		};
+		const presetB = {
+			id: 'beta-set',
+			label: 'Beta Set',
+			preset: { name: 'Beta', traits: [] },
+		};
+
+		// IDB round-trip via save() + load()
+		await S.save({
+			characters: [],
+			openCharacterIDs: [],
+			playViewMode: 'split',
+			rollerPosition: 'left',
+			templates: [],
+			presets: [presetA],
+			preferences: {},
+		});
+		let loaded = await S.load();
+		ok(
+			loaded.presets.length === 1 && loaded.presets[0].id === 'alpha-set',
+			'IDB save/load keeps presets',
+			loaded.presets,
+		);
+		ok(loaded.presets[0].blurb === 'First custom set', 'IDB save/load keeps preset blurb');
+
+		// saveChanges() preserves existing presets when session.presets is omitted
+		await S.saveChanges({
+			upsert: [],
+			remove: [],
+			session: { openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: {} },
+		});
+		loaded = await S.load();
+		ok(
+			loaded.presets.length === 1 && loaded.presets[0].id === 'alpha-set',
+			'omitted session.presets preserves stored presets',
+		);
+
+		// Fallback path round-trip
+		S._useIDB = false;
+		await S.saveChanges({
+			upsert: [],
+			remove: [],
+			session: {
+				openCharacterIDs: [],
+				playViewMode: 'split',
+				rollerPosition: 'left',
+				templates: [],
+				presets: [presetA, presetB],
+				preferences: {},
+			},
+		});
+		loaded = await S.load();
+		ok(loaded.presets.length === 2, 'fallback path persists presets', loaded.presets);
+
+		// Cross-tab merge: Tab B adds B while stale Tab A (baseline [A]) updates A -> both survive
+		S._useIDB = true;
+		await S.save({
+			characters: [],
+			openCharacterIDs: [],
+			playViewMode: 'split',
+			rollerPosition: 'left',
+			templates: [],
+			presets: [presetA, presetB],
+			preferences: {},
+		});
+		S._lastPresets = [presetA];
+		const presetAUpdated = { ...presetA, label: 'Alpha Set v2' };
+		await S.saveChanges({
+			upsert: [],
+			remove: [],
+			session: {
+				openCharacterIDs: [],
+				playViewMode: 'split',
+				rollerPosition: 'left',
+				templates: [],
+				presets: [presetAUpdated],
+				preferences: {},
+			},
+		});
+		loaded = await S.load();
+		ok(loaded.presets.length === 2, 'cross-tab merge keeps Tab B addition alongside Tab A update', loaded.presets);
+		ok(loaded.presets.find((p) => p.id === 'alpha-set')?.label === 'Alpha Set v2', 'Tab A in-place update wins');
+
+		// Deleting A in Tab A removes A while keeping Tab B's B
+		await S.saveChanges({
+			upsert: [],
+			remove: [],
+			session: {
+				openCharacterIDs: [],
+				playViewMode: 'split',
+				rollerPosition: 'left',
+				templates: [],
+				presets: [presetB],
+				preferences: {},
+			},
+		});
+		loaded = await S.load();
+		ok(
+			loaded.presets.length === 1 && loaded.presets[0].id === 'beta-set',
+			'merge deletes locally removed preset without losing others',
+			loaded.presets,
+		);
 	});
 
 	console.log(`storage-tests: ${pass} passed, ${fail} failed`);

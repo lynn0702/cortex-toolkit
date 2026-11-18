@@ -3,6 +3,7 @@ import {
 	computed,
 	defineAsyncComponent,
 	getCurrentInstance,
+	inject,
 	nextTick,
 	onMounted,
 	onUnmounted,
@@ -10,6 +11,7 @@ import {
 	ref,
 	watch,
 } from 'vue';
+import type { ToastOptions } from './use-toast.ts';
 import { characterCurioFunctions, characterCurioSetPresets, type SetPresetEntry } from './functions.ts';
 import {
 	DIE_LADDER,
@@ -65,6 +67,7 @@ const emit = defineEmits<{
 
 const instance = getCurrentInstance();
 const rootTemplates = () => (instance?.proxy as any)?.$root?.sheetTemplates ?? null;
+const showToast = inject<((msg: string, options?: ToastOptions) => void) | null>('showToast', null);
 
 const rootEl = ref<HTMLElement | null>(null);
 
@@ -225,23 +228,51 @@ function toggleInlineAdd(page = 1, triggerEl?: HTMLElement | null) {
 	}
 }
 
-function removeInlineCustomPreset(id: string) {
-	inlineCustomPresets.value = characterCurioFunctions.deleteCustomSetPreset(id);
+function removeCustomPreset(id: string) {
+	const removed = characterCurioFunctions.getCustomSetPresets().find((p) => p.id === id);
+	const next = characterCurioFunctions.deleteCustomSetPreset(id);
+	inlineCustomPresets.value = next;
+	playCustomPresets.value = next;
+	if (removed && showToast) {
+		showToast(`Removed preset "${removed.label}"`, {
+			actionLabel: 'Undo',
+			onAction: () => {
+				characterCurioFunctions.upsertCustomSetPresets([removed]);
+			},
+		});
+	}
+}
+
+function editCustomPreset(preset: SetPresetEntry, origin: 'edit' | 'play') {
+	editingCustomPreset.value = preset;
+	miniOrigin.value = origin;
+	showInlineAddSet.value = false;
+	showPlayPresetPicker.value = false;
+	showPlayMini.value = true;
 }
 
 function openMiniFromInline() {
+	editingCustomPreset.value = null;
 	miniOrigin.value = 'edit';
 	showInlineAddSet.value = false;
 	showPlayMini.value = true;
 }
 
 function openPlayMini() {
+	editingCustomPreset.value = null;
 	miniOrigin.value = 'play';
 	showPlayPresetPicker.value = false;
 	showPlayMini.value = true;
 }
+
+function closePlayMini() {
+	showPlayMini.value = false;
+	editingCustomPreset.value = null;
+}
+
 const showPlayPresetPicker = ref(false);
 const showPlayMini = ref(false);
+const editingCustomPreset = ref<SetPresetEntry | null>(null);
 const miniOrigin = ref<'edit' | 'play'>('play');
 const targetPlayPillar = ref<string | null>(null);
 const isAddingPillar = ref(false);
@@ -251,7 +282,7 @@ const PLAY_EXCLUDED_PRESET_IDS = new Set(['framed-ring', 'divider-line']);
 const playBuiltInPresets = Object.values(characterCurioSetPresets).filter((p) => !PLAY_EXCLUDED_PRESET_IDS.has(p.id));
 const playCustomPresets = ref<SetPresetEntry[]>([]);
 const isMobileViewport = ref(
-	typeof window !== 'undefined' && Boolean(window.matchMedia && window.matchMedia('(max-width: 768px)').matches),
+	typeof window !== 'undefined' && Boolean(window.matchMedia && window.matchMedia('(max-width: 48rem)').matches),
 );
 const internalDesktopPillars = ref<boolean>(
 	typeof localStorage !== 'undefined' ? localStorage.getItem('characterCurioPlayPillars') === 'true' : false,
@@ -675,10 +706,6 @@ function confirmAddPillar() {
 	}
 }
 
-function removePlayCustomPreset(id: string) {
-	playCustomPresets.value = characterCurioFunctions.deleteCustomSetPreset(id);
-}
-
 function getTraitSetRatings(traitSet: TraitSet) {
 	return characterCurioFunctions.getTraitSetRatings(traitSet);
 }
@@ -1095,10 +1122,18 @@ function setupCarouselObserver() {
 	});
 }
 
+let unsubscribeCustomPresets: (() => void) | null = null;
+
 onMounted(() => {
 	applyFonts();
+	inlineCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
+	playCustomPresets.value = inlineCustomPresets.value;
+	unsubscribeCustomPresets = characterCurioFunctions.onCustomSetPresetsChange((next) => {
+		inlineCustomPresets.value = next;
+		playCustomPresets.value = next;
+	});
 	if (typeof window !== 'undefined' && window.matchMedia) {
-		mediaQuery = window.matchMedia('(max-width: 768px)');
+		mediaQuery = window.matchMedia('(max-width: 48rem)');
 		isMobileViewport.value = mediaQuery.matches;
 		handleMediaChange = () => {
 			isMobileViewport.value = Boolean(mediaQuery && mediaQuery.matches);
@@ -1110,6 +1145,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+	if (unsubscribeCustomPresets) {
+		unsubscribeCustomPresets();
+		unsubscribeCustomPresets = null;
+	}
 	if (mediaQuery && handleMediaChange) {
 		mediaQuery.removeEventListener('change', handleMediaChange);
 	}
@@ -1490,10 +1529,13 @@ defineExpose({
 											:key="'custom-' + preset.id"
 											:preset="preset"
 											:dice-config="getView(character)?.diceConfig"
+											editable
+											edit-label="Edit saved preset"
 											deletable
 											delete-label="Delete saved preset"
 											@add="addPresetSet(preset, pageIndex)"
-											@delete="removeInlineCustomPreset(preset.id)"
+											@edit="editCustomPreset(preset, 'edit')"
+											@delete="removeCustomPreset(preset.id)"
 										/>
 									</div>
 								</div>
@@ -1543,20 +1585,24 @@ defineExpose({
 							:key="'play-custom-' + preset.id"
 							:preset="preset"
 							:dice-config="getView(character)?.diceConfig"
+							editable
+							edit-label="Edit saved preset"
 							deletable
 							delete-label="Delete saved preset"
 							@add="addPresetSet(preset)"
-							@delete="removePlayCustomPreset(preset.id)"
+							@edit="editCustomPreset(preset, 'play')"
+							@delete="removeCustomPreset(preset.id)"
 						/>
 					</div>
 				</div>
 			</ModalDialog>
 			<TraitSetMini
 				v-if="showPlayMini"
+				:editing-preset="editingCustomPreset"
 				:character="props.character"
 				:apply-label="miniOrigin === 'play' ? 'Add Set' : 'Add to Sheet'"
 				@apply-to-set="applyMiniSet"
-				@close="showPlayMini = false"
+				@close="closePlayMini"
 				@saved="playCustomPresets = characterCurioFunctions.getCustomSetPresets()"
 			/>
 		</teleport>

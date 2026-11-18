@@ -320,7 +320,7 @@ function buildEdges() {
 		add(loc, 'mobile_sheet_menu', 1, ['mobileTouch'], 'Tap .mobile-sheet-trigger');
 	}
 
-	// Mobile #mobile-sheet-menu Popover actions (Print, Open Sheet, Sheet Settings):
+	// Mobile #mobile-sheet-menu Popover actions (Print, Open Sheet, Sheet Settings, About):
 	add('mobile_sheet_menu', 'print_preview', 1, ['mobileTouch'], 'Tap #mobile-sheet-menu button[aria-label="Print"]');
 	add('mobile_sheet_menu', 'session_add_modal', 1, ['mobileTouch'], 'Tap #mobile-sheet-menu "Open Sheet"');
 	add(
@@ -330,6 +330,14 @@ function buildEdges() {
 		['mobileTouch'],
 		'Tap #mobile-sheet-menu "Sheet Settings" (in Create)',
 		'inEditSubmode',
+	);
+	add(
+		'mobile_sheet_menu',
+		'about',
+		1,
+		['mobileTouch'],
+		'Tap #mobile-sheet-menu button[aria-label="About"]',
+		'cleanSession',
 	);
 
 	// Desktop SessionNav actions:

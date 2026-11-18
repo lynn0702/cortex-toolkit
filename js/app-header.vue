@@ -318,6 +318,16 @@ onUnmounted(() => {
 							<span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
 						</button>
 
+						<button
+							type="button"
+							class="mobile-sheet-action-btn"
+							aria-label="About"
+							@click="onAction(() => emit('navigate', 'about', null))"
+						>
+							<i class="fas fa-question-circle" aria-hidden="true"></i>
+							<span>About</span>
+						</button>
+
 						<a
 							class="mobile-sheet-action-btn"
 							href="https://github.com/lynn0702/cortex-toolkit"

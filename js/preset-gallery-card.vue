@@ -6,12 +6,15 @@ import { characterCurioFunctions } from './functions.ts';
 const props = defineProps<{
 	preset: { id: string; label: string; blurb?: string; preset?: any };
 	diceConfig?: DiceConfig | null;
+	editable?: boolean;
+	editLabel?: string;
 	deletable?: boolean;
 	deleteLabel?: string;
 }>();
 
 const emit = defineEmits<{
 	(e: 'add'): void;
+	(e: 'edit'): void;
 	(e: 'delete'): void;
 }>();
 
@@ -124,19 +127,32 @@ function renderDieValue(size: number, filled: boolean): string {
 				</div>
 			</template>
 		</div>
+		<p v-if="preset.blurb" class="preset-gallery-blurb">{{ preset.blurb }}</p>
 		<button type="button" class="btn-preset-add preset-card-action" @click.stop="emit('add')">
 			<i class="fas fa-plus" aria-hidden="true"></i>
 			<span class="preset-gallery-name">{{ preset.label }}</span>
 		</button>
-		<button
-			v-if="deletable"
-			type="button"
-			class="btn-preset-delete"
-			:title="deleteLabel || 'Delete saved preset'"
-			:aria-label="deleteLabel || 'Delete saved preset'"
-			@click.stop="emit('delete')"
-		>
-			<i class="fas fa-trash-alt" aria-hidden="true"></i>
-		</button>
+		<div v-if="editable || deletable" class="preset-card-overlay-actions">
+			<button
+				v-if="editable"
+				type="button"
+				class="btn-preset-edit"
+				:title="editLabel || 'Edit saved preset'"
+				:aria-label="editLabel || `Edit ${preset.label}`"
+				@click.stop="emit('edit')"
+			>
+				<i class="fas fa-pencil-alt" aria-hidden="true"></i>
+			</button>
+			<button
+				v-if="deletable"
+				type="button"
+				class="btn-preset-delete"
+				:title="deleteLabel || 'Delete saved preset'"
+				:aria-label="deleteLabel || `Delete ${preset.label}`"
+				@click.stop="emit('delete')"
+			>
+				<i class="fas fa-trash-alt" aria-hidden="true"></i>
+			</button>
+		</div>
 	</div>
 </template>

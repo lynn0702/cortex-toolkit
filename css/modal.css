@@ -13,6 +13,7 @@ dialog.modal:not([open]) {
 
 .modal {
 	position: fixed;
+	z-index: var(--z-modal-close);
 	top: calc(var(--header-size) + 2rem);
 	bottom: auto;
 	left: 50%;
@@ -22,13 +23,13 @@ dialog.modal:not([open]) {
 	overflow-y: auto;
 	transform: translateX(-50%) scale(1);
 	opacity: 0;
-	background: hsla(0, 0%, 0%, 0.95);
+	background: color-mix(in oklab, var(--studio-bg) 95%, transparent);
 	backdrop-filter: blur(0.75rem);
-	border: 1px solid rgba(255, 255, 255, 0.15);
+	border: 1px solid var(--studio-border);
 	border-radius: 0.5rem;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+	box-shadow: 0 10px 40px color-mix(in oklab, black 60%, transparent);
 	font-size: 1rem;
-	color: white;
+	color: var(--studio-text);
 	transition:
 		opacity 0.2s ease,
 		transform 0.2s ease;
@@ -127,7 +128,7 @@ dialog.modal::backdrop {
 }
 
 .modal-warning-text {
-	color: #ffaa00;
+	color: var(--studio-status-warn);
 	font-size: 0.85rem;
 	margin-top: 0.5rem;
 	margin-bottom: 1.25rem;
@@ -188,7 +189,7 @@ dialog.modal::backdrop {
 [data-theme='dark'],
 .theme-dark {
 	.modal::backdrop {
-		background: rgba(0, 0, 0, 0.75);
+		background: color-mix(in oklab, black 75%, transparent);
 	}
 }
 
@@ -203,7 +204,7 @@ dialog.modal-command-palette {
 	border-radius: 10px;
 	background: var(--bg-surface-card);
 	color: var(--text-main);
-	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+	box-shadow: 0 20px 50px color-mix(in oklab, black 28%, transparent);
 	overflow: hidden;
 }
 
@@ -393,7 +394,7 @@ dialog.modal-command-palette {
 	padding: 0.15rem 0.5rem;
 	border-radius: 4px;
 	background: var(--color-primary);
-	color: #fff;
+	color: var(--die-active-text);
 }
 
 .palette-badge-kind {
@@ -450,7 +451,7 @@ dialog.modal-command-palette {
 .palette-action-primary {
 	background: var(--color-interactive);
 	border-color: var(--color-interactive);
-	color: #fff;
+	color: var(--die-active-text);
 }
 
 .palette-hints {

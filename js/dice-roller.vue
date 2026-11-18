@@ -1391,7 +1391,7 @@ const rollButtonLabel = computed(() => {
 const hasAnyDiceToRoll = computed(() => nonEmptyPools.value.length > 0);
 
 function isMobileViewport(): boolean {
-	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 48rem)').matches);
 }
 
 function openOutcomeDialog() {

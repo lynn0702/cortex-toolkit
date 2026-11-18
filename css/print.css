@@ -848,7 +848,7 @@
 			}
 		}
 
-		@media (max-width: 600px) {
+		@media (max-width: 37.5rem) {
 			display: flex;
 			flex-direction: column;
 			gap: 0.5rem;
@@ -1379,7 +1379,7 @@
 					position: relative;
 					align-self: stretch;
 					padding: 0.45rem 0.6rem;
-					background: color-mix(in oklch, var(--bg-surface-card, #ffffff) 48%, transparent);
+					background: color-mix(in oklab, var(--bg-surface-card, #ffffff) 48%, transparent);
 				}
 
 				& > .image-set-caption {
@@ -2257,7 +2257,7 @@
 /* placement is neutralized ( beats inline styles); the -2px seam */
 /* between stacked bands is preserved. Print/designer-preview paper layout */
 /* is untouched (this block is screen-only). */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
 	.character-sheet .page-inner,
 	.character-sheet .pages,
 	.character-sheet .page {
@@ -2876,13 +2876,13 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 /* Mobile print preview: scale the A4 zoom so the full page fits narrow screens */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
 	.character-sheet.submode-print .pages {
 		zoom: 0.62;
 	}
 }
 
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 32.5rem) {
 	.character-sheet.submode-print .pages {
 		zoom: 0.45;
 	}
@@ -3214,13 +3214,13 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 /* 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
 	.character-sheet.submode-print .pages {
 		zoom: 0.58;
 	}
 }
 
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 32.5rem) {
 	.character-sheet.submode-print .pages {
 		zoom: 0.44;
 	}
@@ -3998,436 +3998,6 @@ body:has(.character-sheet.submode-print) .main {
 	border-radius: 0;
 	margin-left: 1.5px;
 	color: var(--color-primary);
-}
-
-/* LATE-NIGHT DARK MODE FOR SHEETS (Print-Immune: screen only, non-print submodes only) */
-@media screen {
-	:is([data-theme='dark'], .theme-dark) .character-sheet:not(.submode-print) {
-		/* Name & Header Block */
-		.page-header-inner.sheet-header-card {
-			display: grid;
-			background: var(--bg-surface-card);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-
-			&.is-border-none {
-				border-color: transparent;
-				background: transparent;
-			}
-
-			&.is-border-line {
-				border-top-color: transparent;
-				border-inline-color: transparent;
-				border-radius: 0;
-				background: transparent;
-			}
-		}
-
-		.sheet-header-meta-box,
-		.sheet-header-desc-box {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-
-			.sheet-cell-label {
-				color: var(--text-secondary);
-			}
-
-			.sheet-cell-sublabel {
-				color: var(--text-muted);
-			}
-
-			.name-content,
-			.desc-content,
-			.sheet-nickname-val,
-			.sheet-pronoun-val {
-				color: var(--text-main);
-
-				&.placeholder-dim {
-					color: var(--text-muted);
-				}
-			}
-
-			.sheet-blank-line,
-			.desc-blank-line,
-			.sheet-meta-divider {
-				border-color: var(--border-subtle);
-			}
-
-			.sheet-name-inline-input,
-			.sheet-part-inline-input {
-				color: var(--text-main);
-
-				&::placeholder {
-					color: var(--text-muted);
-				}
-			}
-
-			.sheet-header-settings-btn,
-			.btn-hide-identity-part {
-				color: var(--text-muted);
-
-				&:hover {
-					color: var(--text-main);
-				}
-			}
-		}
-
-		.page-header-inner.sheet-header-card.is-compact-header .sheet-header-meta-box {
-			background: transparent;
-			border-color: transparent;
-		}
-
-		.sheet-header-portrait-box {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-
-			.portrait-small-placeholder {
-				color: var(--text-muted);
-			}
-
-			.portrait-placeholder-logo {
-				filter: invert(0.85);
-			}
-		}
-
-		/* Trait Sets & Inner Boxes */
-		.trait-set:not(.trait-set-style-name):not(.trait-set-borderless),
-		.trait-set.trait-set-framed:not(.trait-set-frame-line):not(.trait-set-borderless),
-		.trait-set.trait-set-framed.trait-set-frame-ring:not(.trait-set-borderless),
-		.trait-set.trait-set-framed.trait-set-frame-arc:not(.trait-set-borderless) {
-			background: var(--bg-surface-card);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-
-			.trait-set-header {
-				background: var(--bg-surface-elevated);
-				border-color: var(--border-strong);
-				color: var(--text-main);
-			}
-
-			.trait-pip-box {
-				background: var(--bg-surface-elevated);
-				border-color: var(--border-strong);
-				color: var(--text-main);
-			}
-
-			.attached-stress-label {
-				color: var(--text-secondary);
-			}
-
-			.pip:not(.questioned) {
-				background-color: transparent;
-				border-color: var(--border-strong);
-			}
-
-			.trait-asset-box,
-			.trait-asset-card {
-				background: var(--bg-surface-elevated);
-				border-color: var(--border-strong);
-				color: var(--text-main);
-			}
-		}
-
-		.trait-set.trait-set-framed.trait-set-frame-block {
-			background: transparent;
-
-			.trait-set-header {
-				background: transparent;
-			}
-		}
-
-		/* Trait Names, Titles, and Labels across all Set Styles */
-		.trait-title {
-			color: var(--text-main);
-		}
-
-		.trait-name,
-		.trait-title-name,
-		.ladder-name,
-		.subtrait-name,
-		.die-row-name,
-		.branch-slot-name,
-		.ring-trait-name,
-		.scale-name {
-			color: var(--text-main);
-
-			.trait-name-hint {
-				color: var(--text-muted);
-			}
-		}
-
-		/* Distinctions Bordered Title (Heritage, Destiny, Camp Reputation) */
-		.trait-set-style-sfx-rows .trait-title {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-		}
-
-		.trait-set-style-sfx-rows :is(.trait-name, .trait-title-name) {
-			color: var(--text-main);
-		}
-
-		/* General SFX lists */
-		.trait-sfx {
-			li {
-				color: var(--text-secondary);
-			}
-
-			.trait-sfx-name {
-				background: var(--bg-surface-elevated);
-				border: 1px solid var(--border-strong);
-				color: var(--text-main);
-			}
-		}
-
-		/* Trait Descriptions & Body Text */
-		.trait-description {
-			color: var(--text-secondary);
-
-			&.placeholder-dim,
-			.placeholder-dim {
-				color: var(--text-muted);
-			}
-		}
-
-		.sheet-desc-textarea {
-			background: var(--bg-surface-elevated);
-			color: var(--text-main);
-			border-color: var(--border-subtle);
-
-			&::placeholder {
-				color: var(--text-muted);
-			}
-		}
-
-		/* Paired Slots (Standing, Relationships) */
-		.trait-paired-slots {
-			.paired-slot-name-box {
-				background: var(--bg-surface-elevated);
-				border-color: var(--border-strong);
-				color: var(--text-main);
-			}
-
-			.paired-slot-placeholder-hint {
-				color: var(--text-muted);
-			}
-
-			.paired-slot-blank-line {
-				border-color: var(--border-subtle);
-			}
-
-			.paired-slot-pip-box {
-				background: var(--bg-surface-elevated);
-				border-color: var(--border-strong);
-				color: var(--text-secondary);
-			}
-
-			.paired-slot-sub-label {
-				color: var(--text-secondary);
-			}
-		}
-
-		/* Continuation Page Header */
-		.page-2-header-inner {
-			background: var(--bg-surface-card);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-		}
-
-		.page-2-title {
-			color: var(--text-main);
-		}
-
-		.page-2-badge {
-			background: var(--bg-surface-elevated);
-			border: 1px solid var(--border-subtle);
-			color: var(--text-secondary);
-		}
-
-		/* Sheet Dividers, Buttons & Pips */
-		.trait {
-			border-bottom-color: var(--border-subtle);
-		}
-
-		.btn-sheet-add {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-secondary);
-
-			&:hover,
-			&.active {
-				background: var(--bg-surface-hover);
-				border-color: var(--color-primary);
-				color: var(--text-main);
-			}
-
-			&.btn-sheet-add-primary {
-				border-style: solid;
-				border-color: color-mix(in oklab, var(--color-primary) 65%, var(--border-strong));
-				color: var(--text-main);
-			}
-		}
-
-		.trait-title.trait-title-pip .pip.questioned {
-			background-color: var(--text-main);
-			border-color: var(--text-main);
-		}
-
-		.pip-bubble,
-		.pip-value .pip-bubble:not(.filled) {
-			background: transparent;
-			border-color: var(--border-strong);
-		}
-
-		.pip-bubble.filled,
-		.pip-value .pip-bubble.filled {
-			background: var(--text-main);
-			border-color: var(--text-main);
-		}
-
-		/* Subtrait Columns & Branched Grids */
-		.trait-set-style-subtrait-columns {
-			--branch-conn-color: var(--color-primary);
-			--branch-ink-color: var(--text-main);
-			--branch-divider-color: var(--border-subtle);
-			--branch-head-color: var(--color-primary);
-			--branch-scale-mask: var(--bg-surface-card);
-			--branch-box-bg: var(--bg-surface-elevated);
-			--branch-box-border: var(--color-primary);
-		}
-
-		/* Die Rows & Ladders */
-		.trait-die-rows:not(.ladder) {
-			background: var(--bg-surface-card);
-			border-color: var(--border-strong);
-		}
-
-		.die-rows-head {
-			border-bottom-color: var(--border-strong);
-			color: var(--text-main);
-		}
-
-		.die-row,
-		.trait-set-style-die-rows .die-row:not(:last-child) {
-			border-top-color: var(--border-subtle);
-			border-bottom-color: var(--border-subtle);
-		}
-
-		.die-row-counter {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-		}
-
-		.trait-die-rows.ladder::before {
-			background: var(--color-primary);
-		}
-
-		.ladder-rung {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-		}
-
-		/* Die Track, Attached Stress & Out Badges */
-		.stress-value::after {
-			background-color: var(--border-strong);
-		}
-
-		.stress-value > span:not(.out-badge) {
-			background-color: var(--bg-surface-card);
-		}
-
-		.out-badge:not(.active) {
-			background: var(--bg-surface-elevated);
-			color: var(--text-muted);
-			border-color: var(--border-strong);
-		}
-
-		.attached-stress-block {
-			border-color: var(--border-strong);
-		}
-
-		.attached-stress-divider {
-			border-top-color: var(--border-subtle);
-		}
-
-		/* Dice Count Pools */
-		.trait-set-style-dice-count .dice-count-rating-label,
-		.trait-set-style-dice-count .dice-count-count-label {
-			color: var(--color-primary);
-		}
-
-		.dice-count-pip:not(.filled) {
-			background: var(--bg-surface-elevated);
-			border-color: var(--color-primary);
-			color: var(--color-primary);
-		}
-
-		.dice-count-pip.filled {
-			background: var(--color-primary);
-			border-color: var(--color-primary);
-			color: var(--die-active-text);
-		}
-
-		/* Image Set, Tables, Labeled Fields & Write-In Boxes */
-		.image-set-container {
-			background: var(--bg-surface-elevated);
-		}
-
-		.image-set-placeholder,
-		.image-set-placeholder i {
-			color: var(--text-muted);
-		}
-
-		.image-set-caption {
-			background: var(--bg-surface-card);
-			color: var(--text-secondary);
-			border-top-color: var(--border-subtle);
-		}
-
-		.three-col-row {
-			background: var(--bg-surface-card);
-			border-top-color: var(--border-subtle);
-		}
-
-		.paired-slot-main {
-			background: var(--bg-surface-elevated);
-			border-color: var(--color-primary);
-		}
-
-		.field-block {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-		}
-
-		.field-label {
-			color: var(--color-primary);
-		}
-
-		.three-col-activation,
-		.three-col-effect,
-		.field-text {
-			color: var(--text-secondary);
-		}
-
-		.trait-title-stacked > .trait-name,
-		.trait-title-stacked > .trait-title-btn,
-		.trait-set-has-feature-description .trait-name.trait-name-blank {
-			background: var(--bg-surface-elevated);
-			border-color: var(--border-strong);
-			color: var(--text-main);
-		}
-
-		/* Write-in blank lines & dividers */
-		.die-blank-line,
-		.trait-blank-line,
-		.desc-blank-line {
-			border-color: var(--border-subtle);
-		}
-	}
 }
 
 /* CLASSIC PLACED (GRID) SETS - companion rule */

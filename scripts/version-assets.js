@@ -45,7 +45,10 @@ function rewrite(targetDir, relPath, replacements) {
 }
 
 function discoverSplashPreloadImage(targetDir) {
-	const jsonPath = path.join(targetDir, 'data', 'templates', 'Dreamer_Architect.curio.json');
+	const siteJson = path.join(targetDir, 'data', 'templates', 'Dreamer_Architect.curio.json');
+	const jsonPath = fs.existsSync(siteJson)
+		? siteJson
+		: path.join(root, 'data', 'templates', 'Dreamer_Architect.curio.json');
 	if (!fs.existsSync(jsonPath)) return null;
 	try {
 		const doc = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));

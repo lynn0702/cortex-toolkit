@@ -222,7 +222,7 @@ describe('subtrait-columns layout, connectors & print parity', () => {
 		const desktopGridRule = '.classic-grid-sections .columns.sheet-columns.sheet-grid';
 		const mobileOverrideRule =
 			'.character-sheet:not(.submode-print) .classic-grid-sections > .columns.sheet-columns.sheet-grid';
-		const desktopIdx = printCss.indexOf(desktopGridRule, 90000);
+		const desktopIdx = printCss.lastIndexOf(desktopGridRule);
 		const mobileIdx = printCss.indexOf(mobileOverrideRule);
 		expect(desktopIdx).toBeGreaterThan(0);
 		expect(mobileIdx).toBeGreaterThan(desktopIdx);

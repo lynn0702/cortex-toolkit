@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import { characterCurioFunctions } from '../js/functions.ts';
 import { characterCurioStorage } from '../js/storage.ts';
@@ -571,5 +571,77 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		const populatedAxe = await axe.run(populatedWrapper.element);
 		expect(populatedAxe.violations).toHaveLength(0);
 		populatedWrapper.unmount();
+	});
+
+	it('persists custom set presets in storage, includes them in Export All bundle, and restores via Roster import', async () => {
+		await characterCurioStorage.clear();
+		characterCurioFunctions.setCustomSetPresets([], { notify: false });
+		let capturedBundle: any = null;
+		const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+			this: HTMLAnchorElement,
+		) {
+			const href = this.getAttribute('href') || '';
+			const prefix = 'data:application/json;charset=utf-8,';
+			if (href.startsWith(prefix)) {
+				capturedBundle = JSON.parse(decodeURI(href.slice(prefix.length)).replaceAll('%23', '#'));
+			}
+		});
+
+		const appWrapper = mount(App, { attachTo: document.body });
+		try {
+			await flushPromises();
+			const vm = appWrapper.vm as any;
+			expect(vm.customSetPresets).toEqual([]);
+
+			const saved = characterCurioFunctions.saveCustomSetPreset(
+				{ name: 'Voidcraft Systems', noun: 'System', traits: [] },
+				{ label: 'Voidcraft Systems', blurb: 'Ship subsystems' },
+			);
+			expect(saved).not.toBeNull();
+			await flushPromises();
+
+			// Persisted automatically into characterCurioStorage
+			const stored = await characterCurioStorage.load();
+			expect(stored.presets).toHaveLength(1);
+			expect(stored.presets[0].id).toBe('voidcraft-systems');
+			expect(stored.presets[0].blurb).toBe('Ship subsystems');
+
+			// Export All emits 0.2 bundle carrying presets even with 0 characters
+			await vm.exportAllCharacters();
+			expect(capturedBundle).not.toBeNull();
+			expect(capturedBundle.version).toBe('0.2');
+			expect(capturedBundle.type).toBe('bundle');
+			expect(capturedBundle.characters).toEqual([]);
+			expect(capturedBundle.presets).toHaveLength(1);
+			expect(capturedBundle.presets[0].id).toBe('voidcraft-systems');
+
+			// Roster shows Export All when customPresets is populated with 0 characters
+			const emptyRoster = mount(Roster, {
+				attachTo: document.body,
+				props: { characters: [], customPresets: capturedBundle.presets },
+			});
+			const exportBtn = emptyRoster.find('.roster-button-export');
+			expect(exportBtn.exists()).toBe(true);
+			const rosterAxe = await axe.run(emptyRoster.element);
+			expect(rosterAxe.violations).toHaveLength(0);
+			emptyRoster.unmount();
+
+			// Reset presets and verify bundle import restores them via App handler + storage
+			characterCurioFunctions.setCustomSetPresets([], { notify: false });
+			await flushPromises();
+			vm.importSetPresets(capturedBundle.presets);
+			await flushPromises();
+
+			expect(vm.customSetPresets).toHaveLength(1);
+			expect(vm.customSetPresets[0].id).toBe('voidcraft-systems');
+			const reloaded = await characterCurioStorage.load();
+			expect(reloaded.presets).toHaveLength(1);
+			expect(reloaded.presets[0].label).toBe('Voidcraft Systems');
+		} finally {
+			clickSpy.mockRestore();
+			appWrapper.unmount();
+			await characterCurioStorage.clear();
+			characterCurioFunctions.setCustomSetPresets([], { notify: false });
+		}
 	});
 });
