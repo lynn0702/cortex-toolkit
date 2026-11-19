@@ -234,6 +234,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 					{
 						id: 'hero-1',
 						name: 'My Hero',
+						traitSets: [],
 						dateCreated: '2026-11-13T00:00:00Z',
 						dateModified: '2026-11-13T00:00:00Z',
 						dateTouched: '2026-11-13T00:00:00Z',
@@ -555,10 +556,11 @@ describe('Character Curio Branding & Resolution Suite', () => {
 						game: 'Solar Drift',
 						description: 'Courier on the outer ring.',
 						tags: ['pilot'],
+						traitSets: [],
 						dateCreated: '2026-11-14T00:00:00Z',
 						dateModified: '2026-11-14T00:00:00Z',
 						dateTouched: '2026-11-14T00:00:00Z',
-					},
+					} as any,
 				],
 			},
 		});

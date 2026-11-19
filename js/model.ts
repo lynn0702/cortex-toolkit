@@ -760,6 +760,7 @@ export interface PartCell {
 	top: number;
 	width: string;
 	height: number;
+	marker?: string;
 }
 
 /** Library catalog metadata carried under `character.view.listing`. */
@@ -1064,18 +1065,28 @@ export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'view' | 'traits' | 'p
 	removedTraits?: string[];
 };
 
-export type Curiosity = Omit<GeneratedCuriosity, 'custom' | 'view' | 'traitSets' | 'curiosities'> & {
+export interface SheetRef {
+	id: string;
+	version?: number | null;
+	character?: Curiosity;
+	[k: string]: unknown;
+}
+
+export type Curiosity = Omit<GeneratedCuriosity, 'custom' | 'view' | 'traitSets' | 'curiosities' | 'sheet'> & {
 	view?: ViewBag;
 	custom?: Custom;
 	traitSets: TraitSet[];
 	curiosities?: Record<string, Curiosity> | null;
+	sheet?: { template?: SheetRef | SheetTemplate | null; [k: string]: unknown } | null;
 	/** App-only: template set ids removed from this curiosity. */
 	removedSets?: string[];
 };
 
 export type Character = Curiosity;
 
-export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
+export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character' | 'id' | 'version'> & {
+	id: string;
+	version?: number;
 	character: Curiosity;
 	userSaved?: boolean;
 };

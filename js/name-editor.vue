@@ -23,7 +23,10 @@ import {
 	getIdentityText,
 	setIdentityText,
 	type Character,
+	type DiceConfig,
+	type IdentityFieldKey,
 	type TemplateListing,
+	type TraitSet,
 	type Visibility,
 } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
@@ -58,8 +61,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(e: 'selectElement', selector: any[]): void;
-	(e: 'updateCharacter', character: any): void;
+	(e: 'selectElement', selector: Array<string | number>): void;
+	(e: 'updateCharacter', character: Character): void;
 	(e: 'saveSheetTemplate'): void;
 	(e: 'exportSheetTemplate'): void;
 }>();
@@ -179,7 +182,7 @@ function nameTraitVisibility(key: string) {
 		const hasValue =
 			key === 'portrait'
 				? Boolean(getCuriosityPortrait(props.character)?.url)
-				: Boolean(getIdentityText(props.character, key as any));
+				: Boolean(getIdentityText(props.character, key as IdentityFieldKey));
 		if (!hasValue) return 'hidden';
 	}
 	const v = getView(t) as Record<string, unknown> | undefined;
@@ -210,9 +213,9 @@ function toggleNameVisibility(key: string) {
 function ensureNameSet() {
 	if (!props.character) return { set: null, index: -1 };
 	if (!Array.isArray(props.character.traitSets)) props.character.traitSets = [];
-	let idx = props.character.traitSets.findIndex((s: any) => isNameSet(s));
+	let idx = props.character.traitSets.findIndex((s) => isNameSet(s));
 	if (idx === -1) {
-		const set: any = { id: 'name', name: 'Name', traits: [] };
+		const set: TraitSet = { id: 'name', name: 'Name', traits: [] };
 		props.character.traitSets.unshift(set);
 		idx = 0;
 	}
@@ -220,7 +223,7 @@ function ensureNameSet() {
 }
 
 function nameSetVisibility(): Visibility {
-	const set = (props.character?.traitSets || []).find((s: any) => isNameSet(s));
+	const set = (props.character?.traitSets || []).find((s) => isNameSet(s));
 	return resolveVisibility(set);
 }
 
@@ -235,7 +238,7 @@ function toggleNameSetVisibility() {
 	updateCharacter(props.character);
 }
 
-const sheetRatingSet = computed(() => (props.character?.traitSets || []).find((s: any) => isNameSet(s)));
+const sheetRatingSet = computed(() => (props.character?.traitSets || []).find((s) => isNameSet(s)));
 const sheetRating = computed(() => getRating(sheetRatingSet.value));
 const sheetRatingDice = computed(() => ratingDice(sheetRating.value));
 const sheetRatingRange = computed(() => {
@@ -254,7 +257,7 @@ function setSheetRatingDie(size: number | null) {
 		delete set.rating;
 	} else {
 		const prevRange = Array.isArray(sheetRating.value?.range) ? [...(sheetRating.value!.range as number[])] : undefined;
-		setRatingDie(set as Record<string, any>, size, prevRange);
+		setRatingDie(set, size, prevRange);
 	}
 	updateCharacter(props.character);
 }
@@ -275,10 +278,10 @@ function setSheetRatingMode(mode: NameRatingMode) {
 	} else if (mode === 'Die') {
 		const prevRange = Array.isArray(sheetRating.value?.range) ? [...(sheetRating.value!.range as number[])] : undefined;
 		const existingSize = sheetRatingDice.value[0] || 8;
-		setRatingDie(set as Record<string, any>, existingSize, prevRange);
+		setRatingDie(set, existingSize, prevRange);
 	} else if (mode === 'Dice') {
 		const curDice = sheetRatingDice.value;
-		setRatingDice(set as Record<string, any>, curDice.length > 1 ? curDice : [8, 8]);
+		setRatingDice(set, curDice.length > 1 ? curDice : [8, 8]);
 		if (set.rating) set.rating.type = 'Dice';
 	} else if (mode === 'Pip') {
 		const prev =
@@ -291,7 +294,7 @@ function setSheetRatingMode(mode: NameRatingMode) {
 			sheetRating.value?.type === 'Counter' && typeof sheetRating.value?.value?.[0] === 'number'
 				? sheetRating.value.value[0]
 				: 0;
-		set.rating = { type: 'Counter', value: [curVal], min: 0, max: 10 } as any;
+		set.rating = { type: 'Counter', value: [curVal], min: 0, max: 10 } as TraitSet['rating'];
 	}
 	updateCharacter(props.character);
 }
@@ -304,7 +307,7 @@ function addNamePoolDie(size: number) {
 	const { set } = ensureNameSet();
 	if (!set) return;
 	const next = [...sheetRatingDice.value, size];
-	setRatingDice(set as Record<string, any>, next);
+	setRatingDice(set, next);
 	if (set.rating) set.rating.type = 'Dice';
 	updateCharacter(props.character);
 }
@@ -315,7 +318,7 @@ function removeNamePoolDie(idx: number) {
 	const cur = [...sheetRatingDice.value];
 	if (cur.length <= 1) return;
 	cur.splice(idx, 1);
-	setRatingDice(set as Record<string, any>, cur);
+	setRatingDice(set, cur);
 	if (set.rating) set.rating.type = 'Dice';
 	updateCharacter(props.character);
 }
@@ -364,7 +367,7 @@ function stepNameSetPipCount(delta: number) {
 }
 
 function getNameCounterField(field: 'value' | 'min' | 'max'): number {
-	const r = sheetRating.value as any;
+	const r = sheetRating.value as (typeof sheetRating.value & { min?: number; max?: number }) | undefined;
 	if (r?.type !== 'Counter') return field === 'max' ? 10 : 0;
 	if (field === 'value') return typeof r.value?.[0] === 'number' ? r.value[0] : 0;
 	if (field === 'min') return typeof r.min === 'number' ? r.min : 0;
@@ -376,7 +379,7 @@ function setNameCounterField(field: 'value' | 'min' | 'max', rawVal: string) {
 	if (!set) return;
 	const num = parseInt(rawVal, 10);
 	const clean = Number.isFinite(num) ? num : 0;
-	const cur = getRating(set) as any;
+	const cur = getRating(set) as (ReturnType<typeof getRating> & { min?: number; max?: number }) | undefined;
 	const val = cur?.type === 'Counter' && typeof cur.value?.[0] === 'number' ? cur.value[0] : 0;
 	const min = typeof cur?.min === 'number' ? cur.min : 0;
 	const max = typeof cur?.max === 'number' ? cur.max : 10;
@@ -384,13 +387,14 @@ function setNameCounterField(field: 'value' | 'min' | 'max', rawVal: string) {
 	const nextMax = field === 'max' ? Math.max(nextMin, clean) : Math.max(nextMin, max);
 	const nextVal =
 		field === 'value' ? Math.max(nextMin, Math.min(nextMax, clean)) : Math.max(nextMin, Math.min(nextMax, val));
-	set.rating = { type: 'Counter', value: [nextVal], min: nextMin, max: nextMax } as any;
+	set.rating = { type: 'Counter', value: [nextVal], min: nextMin, max: nextMax } as TraitSet['rating'];
 	updateCharacter(props.character);
 }
 
 const nameBorderShape = computed<'none' | 'block' | 'line'>(() => {
 	const raw = getView(sheetRatingSet.value)?.border;
-	const shape = typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as any).shape : undefined;
+	const shape =
+		typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as { shape?: unknown }).shape : undefined;
 	return shape === 'none' || shape === 'line' ? shape : 'block';
 });
 
@@ -463,7 +467,7 @@ const activePillarKeys = computed<string[]>(() => {
 function isPillarRemovable(key: string): boolean {
 	if (!key || STANDARD_PILLAR_KEYS.has(key) || key === 'sheet') return false;
 	const sets = props.character?.traitSets || [];
-	return !sets.some((ts: any) => ts && resolveSetPillar(ts) === key);
+	return !sets.some((ts) => ts && resolveSetPillar(ts) === key);
 }
 
 function addPillarFromEditor() {
@@ -518,7 +522,7 @@ function removeCustomPillar(key: string) {
 }
 
 function pillarLabelValue(key: string): string {
-	const labels = getView(props.character)?.labels as Record<string, any> | undefined;
+	const labels = getView(props.character)?.labels;
 	return labels?.pillars?.[key] ?? '';
 }
 
@@ -591,8 +595,8 @@ const plotPoints = computed({
 	get() {
 		return resolvePlotPoints(props.character);
 	},
-	set(val: any) {
-		const n = Math.max(0, parseInt(val, 10) || 0);
+	set(val: number | string) {
+		const n = Math.max(0, parseInt(String(val), 10) || 0);
 		setCharacterProperty('plotPoints', n);
 	},
 });
@@ -601,9 +605,9 @@ const pageCount = computed({
 	get() {
 		return Math.max(1, Number(getView(props.character)?.pageCount) || 1);
 	},
-	set(count: any) {
+	set(count: number | string) {
 		if (!props.character) return;
-		ensureView(props.character).pageCount = Math.max(1, parseInt(count, 10) || 1);
+		ensureView(props.character).pageCount = Math.max(1, parseInt(String(count), 10) || 1);
 		emit('updateCharacter', props.character);
 	},
 });
@@ -737,11 +741,13 @@ const diceConfig = computed({
 			}
 		);
 	},
-	set(cfg: any) {
+	set(cfg: DiceConfig) {
 		if (!props.character) return;
 		ensureView(props.character).diceConfig = { ...cfg };
 		if (typeof window !== 'undefined') {
-			(window as any).__characterCurioActiveDiceConfig = { ...cfg };
+			(window as Window & { __characterCurioActiveDiceConfig?: DiceConfig }).__characterCurioActiveDiceConfig = {
+				...cfg,
+			};
 		}
 		emit('updateCharacter', props.character);
 	},
@@ -751,7 +757,7 @@ const watermarkEnabled = computed({
 	get() {
 		return Boolean(getView(props.character)?.watermark?.enabled);
 	},
-	set(val: any) {
+	set(val: boolean) {
 		setWatermarkProperty('enabled', Boolean(val));
 	},
 });
@@ -772,7 +778,7 @@ const watermarkOpacity = computed({
 	get() {
 		return getView(props.character)?.watermark?.opacity ?? 0.08;
 	},
-	set(val: any) {
+	set(val: number | string) {
 		setWatermarkProperty('opacity', Number(val) || 0.08);
 	},
 });
@@ -781,7 +787,7 @@ const watermarkScale = computed({
 	get() {
 		return getView(props.character)?.watermark?.scale ?? 75;
 	},
-	set(val: any) {
+	set(val: number | string) {
 		setWatermarkProperty('scale', Number(val) || 75);
 	},
 });
@@ -806,7 +812,7 @@ watch(
 	},
 );
 
-function selectElement(selector: any[]) {
+function selectElement(selector: Array<string | number>) {
 	emit('selectElement', selector);
 }
 
@@ -817,9 +823,9 @@ async function focusFirstInput() {
 	}
 }
 
-function setCharacterProperty(key: string, val: any) {
+function setCharacterProperty(key: string, val: unknown) {
 	const character = props.character;
-	(character as Record<string, any>)[key] = val;
+	(character as unknown as Record<string, unknown>)[key] = val;
 	updateCharacter(character);
 }
 
@@ -837,9 +843,9 @@ function ensureWatermarkStruct() {
 	}
 }
 
-function setWatermarkProperty(key: string, val: any) {
+function setWatermarkProperty(key: string, val: unknown) {
 	ensureWatermarkStruct();
-	(ensureView(props.character).watermark as any)[key] = val;
+	(ensureView(props.character).watermark as Record<string, unknown>)[key] = val;
 	updateCharacter(props.character);
 }
 
@@ -856,11 +862,11 @@ function handleImageUpload(
 	characterCurioFunctions.processImageFile(input.files[0], maxDimension, quality).then(
 		(dataURL: string) => {
 			onSuccess(dataURL);
-			input.value = null as any;
+			input.value = '';
 		},
-		(error: any) => {
-			errorTarget.value = error?.message || 'Could not process that image.';
-			input.value = null as any;
+		(error: unknown) => {
+			errorTarget.value = error instanceof Error ? error.message : 'Could not process that image.';
+			input.value = '';
 		},
 	);
 }
@@ -900,7 +906,7 @@ function ensureCharacterPortrait() {
 	const c = props.character;
 	if (!c) return null;
 	if (!(c.traitSets || []).some((s) => isNameSet(s))) {
-		c.traitSets = [{ id: 'name', name: 'Name', traits: [] } as any, ...(c.traitSets || [])];
+		c.traitSets = [{ id: 'name', name: 'Name', traits: [] } as TraitSet, ...(c.traitSets || [])];
 	}
 	return ensureCuriosityPortrait(c) ?? null;
 }
@@ -920,7 +926,12 @@ const portraitURL = computed({
 const portraitSafeUrl = computed(() => characterCurioFunctions.safeImageUrl(portraitURL.value));
 
 const portraitAlignment = computed({
-	get: () => getView(activePortrait.value)?.alignment || (activePortrait.value as any)?.alignment || 'top-center',
+	get: () =>
+		String(
+			getView(activePortrait.value)?.alignment ||
+				(activePortrait.value as { alignment?: unknown } | undefined)?.alignment ||
+				'top-center',
+		),
 	set: (val: string) => {
 		const p = ensureCharacterPortrait();
 		if (!p) return;
@@ -1042,12 +1053,12 @@ function resetSheetPalette() {
 	emit('updateCharacter', props.character);
 }
 
-function setThemeFont(target: string, fontName: string) {
+function setThemeFont(target: 'heading' | 'primary' | 'secondary', fontName: string) {
 	if (!props.character) return;
 	const view = ensureView(props.character);
 	if (!view.theme) view.theme = {};
 	if (!view.theme.fonts) view.theme.fonts = {};
-	(view.theme.fonts as any)[target] = fontName;
+	view.theme.fonts[target] = fontName;
 	const isCustom = customFontEntries.value.some((f) => f.name.trim().toLowerCase() === fontName.trim().toLowerCase());
 	if (!isCustom && typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.loadGoogleFont) {
 		characterCurioFunctions.loadGoogleFont(fontName);
@@ -1169,8 +1180,8 @@ function handlePrefillExternalUrl(url: string) {
 	nextTick(() => fontUrlNameInput.value?.focus());
 }
 
-function updateDiceProp(key: string, val: any) {
-	const newCfg = { ...diceConfig.value, style: 'custom', [key]: val };
+function updateDiceProp(key: string, val: unknown) {
+	const newCfg: DiceConfig = { ...diceConfig.value, style: 'custom', [key]: val };
 	diceConfig.value = newCfg;
 }
 
@@ -1219,11 +1230,11 @@ function resetDiceConfig() {
 	diceConfig.value = defaultCfg;
 }
 
-function renderDicePreview(size: any, isFilled: any, cfgOverride?: any) {
+function renderDicePreview(size: number, isFilled: boolean, cfgOverride?: DiceConfig | null) {
 	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.renderDieconSVG) {
 		return characterCurioFunctions.renderDieconSVG(size, isFilled, '', cfgOverride ?? diceConfig.value);
 	}
-	return size;
+	return String(size);
 }
 
 const DICE_PREVIEW_SIZES = [4, 6, 8, 10, 12] as const;
@@ -1244,7 +1255,7 @@ function isDicePresetActive(p: DicePreset): boolean {
 	);
 }
 
-function updateCharacter(character: any) {
+function updateCharacter(character: Character) {
 	emit('updateCharacter', character);
 }
 </script>

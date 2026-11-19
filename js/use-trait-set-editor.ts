@@ -39,14 +39,18 @@ import {
 	normalizeZoom,
 	normalizeRingSize,
 	type BorderShape,
+	type BorderConfig,
 	type PortraitFrameShape,
 	type TraitArrayMode,
 	type FrameConfig,
 } from './frame-geometry.ts';
 import { getCharacterColorTokens } from './color-palette.ts';
+import type { ToastOptions } from './use-toast.ts';
 import type {
 	Character,
+	Trait,
 	TraitSet,
+	SheetTemplate,
 	CharacterCurioCustom,
 	RingConfig,
 	ImageConfig,
@@ -56,6 +60,37 @@ import type {
 } from './model.ts';
 
 export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
+
+export interface SetSubtraitItem {
+	idx: number;
+	sub: Trait;
+	label: string;
+	summary: string;
+}
+
+type PartCellRecord = {
+	left: string;
+	top: number;
+	width: string;
+	height: number;
+	marker?: string;
+	ratingType?: string;
+	range?: number[];
+};
+
+type MutableFrameConfig = Partial<FrameConfig> & {
+	ring?: RingConfig | null;
+	image?: { url?: string; alignment?: string; zoom?: number } | null;
+	[k: string]: unknown;
+};
+
+type MutableBorderConfig = Partial<BorderConfig> & Record<string, unknown>;
+
+export interface TraitSetEditorEmit {
+	(event: 'selectElement', selector: Array<string | number>): void;
+	(event: 'updateCharacter', character: Character): void;
+	(event: 'removeTraitSet', traitSetID: number): void;
+}
 
 // Pure branch-share normalization shared by the editor miniature and the
 // subtrait-columns renderer: finite numbers >= 0 win, else the CSS
@@ -76,12 +111,12 @@ export interface TraitSetEditorProps {
 
 export const TRAIT_SET_EDITOR_KEY: InjectionKey<TraitSetEditorApi> = Symbol('traitSetEditorApi');
 
-export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
+export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEditorEmit) {
 	const inst = getCurrentInstance();
 
-	const rootEl = ref<any>(null);
-	const inputName = ref<any>(null);
-	const imageFileInput = ref<any>(null);
+	const rootEl = ref<HTMLElement | null>(null);
+	const inputName = ref<HTMLInputElement | null>(null);
+	const imageFileInput = ref<HTMLInputElement | null>(null);
 
 	const scrollPosition = ref('none');
 	const anchorPosition = ref('top');
@@ -173,13 +208,14 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				delete (view as Record<string, unknown>).location;
 				(view as Record<string, unknown>).border = 'none';
 				const prev = normalizedFrameBase();
-				(view as any).frame = {
+				const nextFrame: MutableFrameConfig = {
 					...prev,
 					shape: 'circle',
 					array: 'ring',
 					span: [0, 360],
 				};
-				delete (view as any).frame.traitsSpan;
+				delete nextFrame.traitsSpan;
+				view.frame = nextFrame;
 			} else {
 				view.style.body = value;
 				view.style.header = value;
@@ -209,24 +245,21 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// changes and Reset restores exactly what the generator would emit.
 	function partsSpec() {
 		const view = getView(traitSet.value) || {};
-		const scale =
-			Array.isArray((view as any).ratingLadder) && (view as any).ratingLadder.length
-				? (view as any).ratingLadder
-				: [4, 6, 8, 10, 12];
-		const traits = Array.isArray(traitSet.value?.traits)
+		const scale = Array.isArray(view.ratingLadder) && view.ratingLadder.length ? view.ratingLadder : [4, 6, 8, 10, 12];
+		const traits: Trait[] = Array.isArray(traitSet.value?.traits)
 			? traitSet.value.traits
 			: traitSet.value?.traits
-				? Object.values(traitSet.value.traits)
+				? Object.values(traitSet.value.traits as Record<string, Trait>)
 				: [];
 		const configuredTrack = typeof view.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
 		const hasImplicitTrackSub = Boolean(
 			!view.parts &&
 			configuredTrack &&
 			traits.some(
-				(t: any) =>
+				(t) =>
 					Array.isArray(t?.traits) &&
 					t.traits.some(
-						(st: any) =>
+						(st) =>
 							st &&
 							typeof st === 'object' &&
 							String(st.noun || st.name || '')
@@ -239,11 +272,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const trackOn = partsHaveTrack() || hasImplicitTrackSub;
 		const tScale = characterCurioFunctions.getTrackScale(traitSet.value);
 		const rating = currentPartRatingPlacement();
-		const statement = Boolean((traitSet.value as any)?.statement);
-		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
-		const hasSfx = traits.some((t: any) => characterCurioFunctions.blockChildren(t, traitSet.value).length > 0);
-		const hasSub = traits.some((t: any) =>
-			characterCurioFunctions.ratedSubtraits(t, traitSet.value).some((st: any) => {
+		const statement = Boolean((traitSet.value as { statement?: unknown } | null)?.statement);
+		const hasDesc = traits.some((t) => typeof t?.description === 'string' && t.description.trim().length > 0);
+		const hasSfx = traits.some((t) => characterCurioFunctions.blockChildren(t, traitSet.value).length > 0);
+		const hasSub = traits.some((t) =>
+			characterCurioFunctions.ratedSubtraits(t, traitSet.value).some((st) => {
 				const key = String(st?.noun || st?.name || '')
 					.trim()
 					.toLowerCase();
@@ -269,13 +302,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function normalizeEffectiveParts(
-		rawParts: Record<string, any> | null | undefined,
-	): Record<string, { left: string; top: number; width: string; height: number }> {
+		rawParts: Record<string, PartCellRecord> | null | undefined,
+	): Record<string, PartCellRecord> {
 		const spec = partsSpec();
-		const base =
+		const base: Record<string, PartCellRecord> =
 			rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts)
-				? (structuredClone(toRaw(rawParts)) as Record<string, any>)
-				: buildParts(spec);
+				? (structuredClone(toRaw(rawParts)) as Record<string, PartCellRecord>)
+				: (buildParts(spec) as Record<string, PartCellRecord>);
 		if (!spec.subtraits && base.subtraits) {
 			delete base.subtraits;
 		}
@@ -302,7 +335,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		let pipChildNoun = '';
 		for (const t of traits) {
 			if (!Array.isArray(t?.traits)) continue;
-			const match = t.traits.find((sub: any) => {
+			const match = t.traits.find((sub) => {
 				const r = resolveRating(sub, [t, traitSet.value]);
 				return r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
 			});
@@ -350,7 +383,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			...Object.keys(parts).filter((k) => !(KNOWN_PARTS as readonly string[]).includes(k)),
 		];
 		for (const key of orderedKeys) {
-			const cell = (parts as Record<string, any>)[key];
+			const cell = parts[key];
 			if (!cell || typeof cell !== 'object') continue;
 			const left = parsePct(cell.left);
 			const width = parsePct(cell.width);
@@ -413,7 +446,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			...Object.keys(gen).filter((k) => !(KNOWN_PARTS as readonly string[]).includes(k)),
 		];
 		for (const key of orderedKeys) {
-			const cell = (gen as Record<string, any>)[key];
+			const cell = gen[key];
 			if (!cell || typeof cell !== 'object') continue;
 			const left = parsePct(cell.left);
 			const width = parsePct(cell.width);
@@ -456,11 +489,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return canon(parts as Record<string, unknown>) !== canon(buildParts(partsSpec()) as Record<string, unknown>);
 	});
 
-	function editablePartCells(seedEmptyOnBlankImage = false): Record<string, any> {
+	function editablePartCells(seedEmptyOnBlankImage = false): Record<string, PartCellRecord> {
 		const blankImage = seedEmptyOnBlankImage && styleBody.value === 'image' && !isPartsDriven();
 		const view = ensureView(traitSet.value);
-		view.parts = blankImage ? {} : normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
-		return view.parts as Record<string, any>;
+		view.parts = blankImage ? {} : normalizeEffectiveParts(view.parts as Record<string, PartCellRecord> | undefined);
+		return view.parts as Record<string, PartCellRecord>;
 	}
 
 	function setPartCell(key: string, field: 'left' | 'width' | 'top' | 'height', val: number) {
@@ -516,7 +549,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			updateCharacter(props.character);
 			return;
 		}
-		const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+		const maxTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1);
 		if (partKey === 'rating' && cells.name && Number(cells.name.top || 0) === 0 && parsePct(cells.name.width) === 100) {
 			cells.name.width = '65%';
 			cells.rating = {
@@ -528,7 +561,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				range: ratingLadder.value,
 			};
 		} else {
-			const cell: Record<string, unknown> = { left: '0%', top: maxTop + 1, width: '100%', height: 1 };
+			const cell: PartCellRecord = { left: '0%', top: maxTop + 1, width: '100%', height: 1 };
 			if (partKey === 'name' || partKey === 'badge') {
 				cell.marker = 'L';
 			} else if (partKey === 'description' || partKey === 'block') {
@@ -552,7 +585,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			key === 'trackLabel' ||
 			(key.startsWith('child:') && !key.endsWith(':rating'));
 		if (!textCapable) return null;
-		const rawParts = getView(traitSet.value)?.parts as Record<string, any> | undefined;
+		const rawParts = getView(traitSet.value)?.parts as Record<string, PartCellRecord> | undefined;
 		const cell = rawParts?.[key];
 		if (cell?.marker === 'L' || cell?.marker === 'T') return cell.marker;
 		return key === 'description' || key === 'block' || key.startsWith('child:') ? 'T' : 'L';
@@ -577,7 +610,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			.replace(/:/g, '');
 		if (!noun) return;
 		const cells = editablePartCells(true);
-		const nextTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1) + 1;
+		const nextTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1) + 1;
 		if (kind === 'both') {
 			cells[`child:${noun}:label`] = { left: '0%', top: nextTop, width: '75%', height: 1, marker: 'T' };
 			cells[`child:${noun}:rating`] = { left: '75%', top: nextTop, width: '25%', height: 1, ratingType };
@@ -588,11 +621,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 		if (Array.isArray(traitSet.value.traits)) {
 			const lower = noun.toLowerCase();
-			for (const tr of traitSet.value.traits as any[]) {
+			for (const tr of traitSet.value.traits) {
 				if (!tr || typeof tr !== 'object') continue;
 				if (!Array.isArray(tr.traits)) tr.traits = [];
 				const hasMatch = tr.traits.some(
-					(st: any) =>
+					(st) =>
 						st &&
 						typeof st === 'object' &&
 						(String(st.noun || '')
@@ -603,7 +636,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 								.toLowerCase() === lower),
 				);
 				if (!hasMatch) {
-					const defaultRating =
+					const defaultRating: Trait['rating'] =
 						ratingType === 'Pip'
 							? { type: 'Pip', value: [false] }
 							: ratingType === 'Counter'
@@ -672,13 +705,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 		rebuildParts(currentPartRatingPlacement());
 		const refreshed = ensureView(traitSet.value);
-		refreshed.parts = normalizeEffectiveParts(refreshed.parts as Record<string, any> | undefined);
+		refreshed.parts = normalizeEffectiveParts(refreshed.parts as Record<string, PartCellRecord> | undefined);
 		updateCharacter(props.character);
 	}
 
 	const templateEntry = computed(() => {
-		const root = inst?.proxy?.$root as any;
-		return characterCurioFunctions.resolveTemplateFor(props.character, root ? root.sheetTemplates : null);
+		const root = inst?.proxy?.$root as { sheetTemplates?: SheetTemplate[] } | null | undefined;
+		return characterCurioFunctions.resolveTemplateFor(props.character, root?.sheetTemplates ?? null);
 	});
 
 	// Template traits by name not currently on this sheet (D19 restore menu).
@@ -686,8 +719,14 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		characterCurioFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID),
 	);
 
+	function getFrameRing(view: CharacterCurioCustom | undefined): RingConfig | null {
+		const f = view?.frame;
+		if (!f || typeof f !== 'object') return null;
+		return f.ring ?? null;
+	}
+
 	function syncArcTraitsSpan(ctk: CharacterCurioCustom, angle: number, spread: number) {
-		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : null;
+		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as MutableFrameConfig) : null;
 		if (!frameObj || frameObj.array !== 'arc') return;
 		const centerClock = angle + 180;
 		const totalSpan = Math.max(15, (spread / 100) * 360);
@@ -708,8 +747,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				const raw = ((res.traitsSpan[1] - res.traitsSpan[0]) / 360) * 100;
 				return Math.max(10, Math.min(100, Math.round(raw)));
 			}
-			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.arcSpread ?? 100;
+			return getFrameRing(getView(traitSet.value))?.arcSpread ?? 100;
 		},
 		set: (val: number) => {
 			const num = Number(val);
@@ -721,10 +759,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const ringDistance = computed({
-		get: () => {
-			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.arcDistance ?? 0;
-		},
+		get: () => getFrameRing(getView(traitSet.value))?.arcDistance ?? 0,
 		set: (val: number) => {
 			setRingConfig('arcDistance', Number(val));
 		},
@@ -739,8 +774,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				while (a < -180) a += 360;
 				return a;
 			}
-			const view = getView(traitSet.value);
-			const cfg = (view?.frame as any)?.ring;
+			const cfg = getFrameRing(getView(traitSet.value));
 			return cfg?.arcAngle ?? -90;
 		},
 		set: (val: number) => {
@@ -762,10 +796,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const scaleAngle = computed({
-		get: () => {
-			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleAngle ?? 0;
-		},
+		get: () => getFrameRing(getView(traitSet.value))?.scaleAngle ?? 0,
 		set: (val: number) => {
 			setRingConfig('scaleAngle', Number(val));
 		},
@@ -781,30 +812,21 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const scaleDistance = computed({
-		get: () => {
-			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleDistance ?? 0;
-		},
+		get: () => getFrameRing(getView(traitSet.value))?.scaleDistance ?? 0,
 		set: (val: number) => {
 			setRingConfig('scaleDistance', Number(val));
 		},
 	});
 
 	const ringScaleY = computed({
-		get: () => {
-			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleDieY ?? 0;
-		},
+		get: () => getFrameRing(getView(traitSet.value))?.scaleDieY ?? 0,
 		set: (val: number) => {
 			setRingConfig('scaleDieY', Number(val));
 		},
 	});
 
 	const ringScaleX = computed({
-		get: () => {
-			const view = getView(traitSet.value);
-			return (view?.frame as any)?.ring?.scaleDieX ?? 0;
-		},
+		get: () => getFrameRing(getView(traitSet.value))?.scaleDieX ?? 0,
 		set: (val: number) => {
 			setRingConfig('scaleDieX', Number(val));
 		},
@@ -878,14 +900,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ts = traitSet.value;
 		if (!ts) return;
 		const n = ts.noun && ts.noun.length ? ts.noun : 'Trait';
-		const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
+		const trait = structuredClone(characterCurioFunctions.defaultTrait) as Trait;
 		trait.name = characterCurioFunctions.nextUniqueName(
-			(Array.isArray(ts.traits) ? ts.traits : []).map((tr: any) => tr?.name),
+			(Array.isArray(ts.traits) ? ts.traits : []).map((tr) => tr?.name ?? ''),
 			'New ' + n,
 		);
 		const allowed = characterCurioFunctions.getTraitSetRatings(ts);
 		const cur =
-			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
+			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value)
+				? Number(trait.rating.value[0])
+				: 0;
 		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
 		if (allowed.length > 0 && !allowed.includes(cur)) {
 			trait.rating = isDefaultLadder
@@ -903,11 +927,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		selectElement(['trait', props.traitSetID, ts.traits.length - 1]);
 	}
 
-	function normalizedFrameBase(): Record<string, any> {
+	function normalizedFrameBase(): MutableFrameConfig {
 		const raw = getView(traitSet.value)?.frame;
 		const res = resolveFrame(traitSet.value);
 		if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
-			const copy = structuredClone(toRaw(raw)) as Record<string, any>;
+			const copy = structuredClone(toRaw(raw)) as MutableFrameConfig;
 			if (res) {
 				copy.shape = res.portraitShape;
 				copy.array = res.array;
@@ -968,7 +992,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
-	function setFrameImage(key: 'url' | 'alignment' | 'zoom', value: any) {
+	function setFrameImage(key: 'url' | 'alignment' | 'zoom', value: string | number | undefined) {
 		const s = props.traitSetID;
 		const ctk = ctkFor(s);
 		const frameObj = normalizedFrameBase();
@@ -985,24 +1009,25 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				delete frameObj.image;
 			}
 		} else {
-			frameObj.image[key] = value;
+			(frameObj.image as Record<string, unknown>)[key] = value;
 		}
-		ctk.frame = frameObj as any;
+		ctk.frame = frameObj;
 		updateCharacter(props.character);
 	}
 
-	function uploadPortraitImageProcess(event: any) {
+	function uploadPortraitImageProcess(event: Event) {
 		uploadError.value = '';
-		const files = event?.target?.files;
+		const input = event.target as HTMLInputElement | null;
+		const files = input?.files;
 		if (!files || !files.length) return;
 		characterCurioFunctions.processImageFile(files[0], 1280, 0.85).then(
 			(dataURL: string) => {
 				frameImageUrl.value = dataURL;
-				event.target.value = null;
+				if (input) input.value = '';
 			},
-			(error: any) => {
-				uploadError.value = error?.message || 'Could not process that image.';
-				event.target.value = null;
+			(error: unknown) => {
+				uploadError.value = error instanceof Error ? error.message : 'Could not process that image.';
+				if (input) input.value = '';
 			},
 		);
 	}
@@ -1038,7 +1063,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const hasCounterTrait = computed(() => {
 		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
-		return traits.some((t: any) => resolveRating(t, [traitSet.value])?.type === 'Counter');
+		return traits.some((t) => resolveRating(t, [traitSet.value])?.type === 'Counter');
 	});
 
 	const ratingLadder = computed({
@@ -1059,7 +1084,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return ts !== null && ts.pool === true;
 		},
 		set: (value: boolean) => {
-			const ts = traitSet.value as unknown as Record<string, any>;
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
 			if (!ts) return;
 			const next = Boolean(value);
 			ts.pool = next;
@@ -1074,12 +1099,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 						type: 'Dice',
 						value: dice.length ? dice : [defaultDie],
 						...(ownRange ? { range: ownRange } : {}),
-						...((cur as any).out === true ? { out: true } : {}),
+						...((cur as { out?: unknown }).out === true ? { out: true } : {}),
 					};
 				}
 				let hasRatedTrait = false;
 				if (Array.isArray(ts.traits)) {
-					ts.traits.forEach((ct: any) => {
+					(ts.traits as Trait[]).forEach((ct) => {
 						if (!ct || typeof ct !== 'object' || !ct.rating || typeof ct.rating !== 'object') return;
 						hasRatedTrait = true;
 						const trCur = getRating(ct);
@@ -1091,8 +1116,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 									type: 'Dice',
 									value: dice.length ? dice : [defaultDie],
 									...(ownRange ? { range: ownRange } : {}),
-									...((trCur as any).out === true ? { out: true } : {}),
-								};
+									...((trCur as { out?: unknown }).out === true ? { out: true } : {}),
+								} as Trait['rating'];
 							}
 						} else {
 							const rawVals = Array.isArray(ct.rating.value)
@@ -1119,7 +1144,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return null;
 		},
 		set: (value: number | null) => {
-			const ts = traitSet.value as unknown as Record<string, any>;
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
 			if (!ts) return;
 			if (Number(value) > 0) {
 				setRatingDie(ts, Number(value));
@@ -1143,7 +1168,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return false;
 		},
 		set: (value: boolean) => {
-			const ts = traitSet.value as unknown as Record<string, any>;
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
 			if (!ts) return;
 			ts.spendable = Boolean(value);
 			updateCharacter(structuredClone(toRaw(props.character)));
@@ -1157,7 +1182,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return ts && typeof ts.hitches === 'number' ? ts.hitches : null;
 		},
 		set: (value: number | null) => {
-			const ts = traitSet.value as unknown as Record<string, any>;
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
 			if (!ts) return;
 			if (value === null || value === undefined || value === ('' as unknown as number)) {
 				delete ts.hitches;
@@ -1222,7 +1247,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const resolvedPillar = computed<string>(() => resolveSetPillar(traitSet.value));
 
-	const showToast = inject<((msg: string, options?: any) => void) | null>('showToast', null);
+	const showToast = inject<((msg: string, options?: ToastOptions) => void) | null>('showToast', null);
 	const presetSaved = ref(false);
 	function saveSetAsPreset() {
 		if (!traitSet.value) return;
@@ -1318,21 +1343,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
-	const setSubtraits = computed(() => {
+	const setSubtraits = computed<SetSubtraitItem[]>(() => {
 		const traits = traitSet.value?.traits;
 		if (!Array.isArray(traits) || traits.length === 0) return [];
 		const firstTrait =
-			traits.find((tr: any) => tr && typeof tr === 'object' && Array.isArray(tr.traits) && tr.traits.length > 0) ||
+			traits.find((tr) => tr && typeof tr === 'object' && Array.isArray(tr.traits) && tr.traits.length > 0) ||
 			traits[0];
 		const subs = firstTrait?.traits;
 		if (!Array.isArray(subs)) return [];
-		const result: Array<{
-			idx: number;
-			sub: any;
-			label: string;
-			summary: string;
-		}> = [];
-		subs.forEach((sub: any, idx: number) => {
+		const result: SetSubtraitItem[] = [];
+		subs.forEach((sub, idx: number) => {
 			if (!sub || typeof sub !== 'object') return;
 			const r = resolveRating(sub, [firstTrait, traitSet.value]);
 			const isBlockOrMod = resolvePpDelta(sub) !== 0 || !r || getView(sub)?.part === 'block';
@@ -1346,19 +1366,19 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return result;
 	});
 
-	function openSetSubtrait(item: any) {
+	function openSetSubtrait(item: number | SetSubtraitItem | { idx?: number }) {
 		const targetItem = typeof item === 'number' ? setSubtraits.value[item] || { idx: item } : item;
 		const subIdx = targetItem?.idx ?? 0;
 		selectElement(['subtrait', props.traitSetID, 0, subIdx]);
 	}
 
-	function removeSetSubtrait(item: any) {
+	function removeSetSubtrait(item: number | SetSubtraitItem | { idx?: number }) {
 		if (!traitSet.value || !Array.isArray(traitSet.value.traits)) return;
 		const targetItem = typeof item === 'number' ? setSubtraits.value[item] || { idx: item } : item;
 		const subIdx = targetItem?.idx ?? 0;
 		const firstTrait = traitSet.value.traits[0];
 		const firstSubs = firstTrait?.traits;
-		const target: any = Array.isArray(firstSubs) ? firstSubs[subIdx] : null;
+		const target: Trait | null = Array.isArray(firstSubs) ? (firstSubs[subIdx] ?? null) : null;
 		const targetRating = target ? resolveRating(target, [firstTrait, traitSet.value]) : undefined;
 		const targetIsBlock = Boolean(
 			target && (resolvePpDelta(target) !== 0 || !targetRating || getView(target)?.part === 'block'),
@@ -1369,11 +1389,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const targetKey = String(target?.noun || target?.name || '')
 			.trim()
 			.toLowerCase();
-		traitSet.value.traits.forEach((tr: any) => {
+		traitSet.value.traits.forEach((tr) => {
 			if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
 			if (targetIsBlock && targetNameKey) {
 				const nameHit = tr.traits.findIndex(
-					(st: any) =>
+					(st) =>
 						st &&
 						typeof st === 'object' &&
 						String(st.name || '')
@@ -1387,7 +1407,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			if (targetKey) {
 				const matchIdx = tr.traits.findIndex(
-					(st: any) =>
+					(st) =>
 						st &&
 						typeof st === 'object' &&
 						(String(st.noun || '')
@@ -1407,7 +1427,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 		});
 		const hasRemainingBlock = traitSet.value.traits.some(
-			(tr: any) => characterCurioFunctions.blockChildren(tr, traitSet.value).length > 0,
+			(tr) => characterCurioFunctions.blockChildren(tr, traitSet.value).length > 0,
 		);
 		if (!hasRemainingBlock) {
 			const v = getView(traitSet.value);
@@ -1431,7 +1451,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			traitSet.value.traits = [];
 		}
 		if (traitSet.value.traits.length === 0) {
-			const baseTrait: any = structuredClone(characterCurioFunctions.defaultTrait);
+			const baseTrait = structuredClone(characterCurioFunctions.defaultTrait) as Trait;
 			baseTrait.name = 'New ' + (traitSet.value.noun || 'Trait');
 			traitSet.value.traits.push(baseTrait);
 		}
@@ -1445,7 +1465,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			subNoun = `Subtrait ${n}`;
 			while (
 				existingSubs.some(
-					(st: any) =>
+					(st) =>
 						st &&
 						typeof st === 'object' &&
 						(String(st.name || '')
@@ -1461,10 +1481,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 		}
 		let targetSubIdx = 0;
-		traitSet.value.traits.forEach((tr: any, tIdx: number) => {
+		traitSet.value.traits.forEach((tr, tIdx: number) => {
 			if (!tr || typeof tr !== 'object') return;
 			if (!Array.isArray(tr.traits)) tr.traits = [];
-			const sub: any = {
+			const sub: Trait = {
 				name: subNoun,
 				noun: subNoun,
 				description: '',
@@ -1503,12 +1523,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			// Keep track companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
 			const next = typeof val === 'string' ? val : '';
-			if (prev.length > 0 && next.length > 0 && next !== prev && Array.isArray((traitSet.value as any)?.traits)) {
-				(traitSet.value as any).traits.forEach((tr: any) => {
+			if (prev.length > 0 && next.length > 0 && next !== prev && Array.isArray(traitSet.value?.traits)) {
+				traitSet.value.traits.forEach((tr) => {
 					if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
-					const hit = tr.traits.findIndex((st: any) => st && typeof st === 'object' && st.name === prev);
+					const hit = tr.traits.findIndex((st) => st && typeof st === 'object' && st.name === prev);
 					if (hit === -1) return;
-					const occupied = tr.traits.some((st: any) => st && typeof st === 'object' && st.name === next);
+					const occupied = tr.traits.some((st) => st && typeof st === 'object' && st.name === next);
 					if (!occupied) tr.traits[hit].name = next;
 				});
 			}
@@ -1519,14 +1539,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const ratingDisplay = computed<'track' | 'rating'>({
 		get: () => {
 			const v = getView(traitSet.value);
-			const raw = (v?.ratingDisplay as 'track' | 'rating') || (traitSet.value as any)?.ratingDisplay;
+			const raw =
+				(v?.ratingDisplay as 'track' | 'rating') ||
+				(traitSet.value as { ratingDisplay?: unknown } | null)?.ratingDisplay;
 			return raw === 'track' ? 'track' : 'rating';
 		},
 		set: (val: 'track' | 'rating') => {
 			const view = ensureView(traitSet.value);
 			view.ratingDisplay = val === 'track' ? 'track' : 'rating';
 			if (traitSet.value && typeof traitSet.value === 'object') {
-				delete (traitSet.value as any).ratingDisplay;
+				delete (traitSet.value as Record<string, unknown>).ratingDisplay;
 			}
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
@@ -1592,14 +1614,14 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const pipsConnected = computed({
 		get: () => getView(traitSet.value)?.pips?.connected !== false,
-		set: (val: any) => {
+		set: (val: boolean) => {
 			setPipProperty('connected', Boolean(val));
 		},
 	});
 
 	const pipLabels = computed({
 		get: () => getView(traitSet.value)?.pips?.labels === true,
-		set: (val: any) => {
+		set: (val: boolean) => {
 			setPipProperty('labels', Boolean(val));
 		},
 	});
@@ -1620,9 +1642,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (shape: BorderShape) => setBorderShape(shape),
 	});
 
-	function normalizedBorderObj(defaultShape: BorderShape): Record<string, any> {
+	function normalizedBorderObj(defaultShape: BorderShape): MutableBorderConfig {
 		const cur = resolveBorder(props.character.traitSets[props.traitSetID]);
-		const obj: Record<string, any> = {
+		const obj: MutableBorderConfig = {
 			shape: defaultShape,
 			color: cur.color || (defaultShape === 'line' ? 'strong' : 'primary'),
 			stroke: cur.stroke || '2px',
@@ -1638,7 +1660,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function setBorderShape(shape: BorderShape) {
 		const ctk = ctkFor(props.traitSetID);
-		ctk.border = shape === 'none' ? 'none' : (normalizedBorderObj(shape) as any);
+		ctk.border = shape === 'none' ? 'none' : normalizedBorderObj(shape);
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1670,7 +1692,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (dash: string) => setBorderProp('dash', dash.trim() || undefined),
 	});
 
-	function setBorderProp(key: string, value: any) {
+	function setBorderProp(key: string, value: unknown) {
 		const ctk = ctkFor(props.traitSetID);
 		const shape = resolvedBorder.value.shape === 'none' ? 'block' : resolvedBorder.value.shape;
 		const obj = normalizedBorderObj(shape);
@@ -1679,7 +1701,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			obj[key] = value;
 		}
-		ctk.border = obj as any;
+		ctk.border = obj;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1726,7 +1748,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const f = normalizedFrameBase();
 			f.shape = shape;
 			if (!f.array) f.array = 'none';
-			ctk.frame = f as any;
+			ctk.frame = f;
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
@@ -1738,13 +1760,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const f = normalizedFrameBase();
 			f.array = mode;
 			if (mode === 'ring') {
-				if (!f.shape || f.shape === 'block' || f.shape === 'line') {
+				if (!f.shape || (f.shape as string) === 'block' || (f.shape as string) === 'line') {
 					f.shape = 'circle';
 				}
 				f.span = [0, 360];
 				delete f.traitsSpan;
 			} else if (mode === 'arc') {
-				if (!f.shape || f.shape === 'block' || f.shape === 'line') {
+				if (!f.shape || (f.shape as string) === 'block' || (f.shape as string) === 'line') {
 					f.shape = 'circle';
 				}
 				if (!Array.isArray(f.traitsSpan) || f.traitsSpan.length < 2) {
@@ -1762,7 +1784,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 					f.shape = 'circle';
 				}
 			}
-			ctk.frame = f as any;
+			ctk.frame = f;
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
@@ -1781,7 +1803,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			} else {
 				f.span = [0, 360];
 			}
-			ctk.frame = f as any;
+			ctk.frame = f;
 			updateCharacter(structuredClone(toRaw(props.character)));
 		},
 	});
@@ -1799,7 +1821,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			delete f.stroke;
 		}
-		ctk.frame = f as any;
+		ctk.frame = f;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1816,7 +1838,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			delete f.color;
 		}
-		ctk.frame = f as any;
+		ctk.frame = f;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1833,7 +1855,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			delete f.dash;
 		}
-		ctk.frame = f as any;
+		ctk.frame = f;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1854,7 +1876,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			delete f.size;
 		}
-		ctk.frame = f as any;
+		ctk.frame = f;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1874,7 +1896,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			delete f.position;
 		}
-		ctk.frame = f as any;
+		ctk.frame = f;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -1979,12 +2001,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return css;
 	});
 
-	function selectElement(selector: any) {
+	function selectElement(selector: Array<string | number>) {
 		emit('selectElement', selector);
 	}
 
-	function targetValue(event: any) {
-		return (event?.target as any)?.value;
+	function targetValue(event: Event): string {
+		const el = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+		return el?.value ?? '';
 	}
 
 	async function focusFirstInput() {
@@ -2002,11 +2025,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return ensureView(props.character.traitSets[s]);
 	}
 
-	function setProperty(key: keyof TraitSet, value: any) {
+	function setProperty<K extends keyof TraitSet>(key: K, value: TraitSet[K]) {
 		let character = props.character;
 		let s = props.traitSetID;
 
-		character.traitSets[s][key] = value as never;
+		character.traitSets[s][key] = value;
 
 		updateCharacter(character);
 	}
@@ -2015,7 +2038,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (isName.value) return;
 		const setNode = traitSet.value;
 		const hasPopulatedTraits = (setNode?.traits || []).some(
-			(t: any) =>
+			(t) =>
 				(typeof t?.name === 'string' && t.name.trim().length > 0) ||
 				(typeof t?.description === 'string' && t.description.trim().length > 0),
 		);
@@ -2050,7 +2073,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 	}
 
-	function setRingConfig(key: keyof RingConfig, value: any) {
+	function setRingConfig<K extends keyof RingConfig>(key: K, value: RingConfig[K]) {
 		const ctk = ctkFor(props.traitSetID);
 		const frameObj = normalizedFrameBase();
 		const existingRing = frameObj.ring;
@@ -2064,7 +2087,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			scaleDieY: existingRing?.scaleDieY ?? 0,
 		};
 		frameObj.ring[key] = value;
-		ctk.frame = frameObj as any;
+		ctk.frame = frameObj;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
@@ -2080,11 +2103,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			scaleDieX: 0,
 			scaleDieY: 0,
 		};
-		ctk.frame = frameObj as any;
+		ctk.frame = frameObj;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
-	function setCustomProperty(key: string, value: any) {
+	function setCustomProperty(key: string, value: unknown) {
 		let s = props.traitSetID;
 		ctkFor(s)[key] = value;
 		updateCharacter(props.character);
@@ -2105,7 +2128,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return characterCurioFunctions.labelDefaultForStyle(styleBody.value, key);
 	}
 
-	function setStyleLabel(key: string, value: any) {
+	function setStyleLabel(key: string, value: unknown) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
 		ctk.labels ??= {};
@@ -2133,7 +2156,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return body !== 'pips' && body !== 'name';
 	});
 
-	function setImageConfig(key: keyof ImageConfig, value: any) {
+	function setImageConfig<K extends keyof ImageConfig>(key: K, value: ImageConfig[K]) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
 		ctk.imageConfig ??= {};
@@ -2151,20 +2174,21 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 	}
 
-	function uploadImageProcess(event: any) {
+	function uploadImageProcess(event: Event) {
 		uploadError.value = '';
-		if (!event.target.files || !event.target.files.length) {
+		const input = event.target as HTMLInputElement | null;
+		if (!input?.files || !input.files.length) {
 			imageURL.value = '';
 			return;
 		}
-		characterCurioFunctions.processImageFile(event.target.files[0], 1280, 0.85).then(
+		characterCurioFunctions.processImageFile(input.files[0], 1280, 0.85).then(
 			(dataURL: string) => {
 				imageURL.value = dataURL;
-				event.target.value = null;
+				input.value = '';
 			},
-			(error: any) => {
-				uploadError.value = error?.message || 'Could not process that image.';
-				event.target.value = null;
+			(error: unknown) => {
+				uploadError.value = error instanceof Error ? error.message : 'Could not process that image.';
+				input.value = '';
 			},
 		);
 	}
@@ -2173,11 +2197,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		imageURL.value = '';
 	}
 
-	function isRatingIncluded(size: any) {
+	function isRatingIncluded(size: number) {
 		return ratingLadder.value.includes(size);
 	}
 
-	function toggleRatingOption(size: any) {
+	function toggleRatingOption(size: number) {
 		let current = [...ratingLadder.value];
 		if (current.includes(size)) {
 			if (current.length > 1) {
@@ -2190,12 +2214,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		ratingLadder.value = current;
 	}
 
-	function getDieDisplayValue(value: any, isFilled = false) {
+	function getDieDisplayValue(value: number, isFilled = false) {
 		return characterCurioFunctions.renderDieconSVG(value, isFilled, '', getView(props.character)?.diceConfig);
 	}
 
-	function updateCharacter(character?: any) {
-		emit('updateCharacter', character);
+	function updateCharacter(character?: Character) {
+		if (character) emit('updateCharacter', character);
 	}
 
 	function commitCharacter() {
@@ -2208,8 +2232,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			perRow: 5,
 			connected: true,
 		};
-		const ts = traitSet.value as unknown as Record<string, any>;
-		if (ts && (!ts.rating || typeof ts.rating !== 'object' || (ts.rating as any).type !== 'Pip')) {
+		const ts = traitSet.value;
+		if (ts && (!ts.rating || typeof ts.rating !== 'object' || ts.rating.type !== 'Pip')) {
 			ts.rating = { type: 'Pip', value: Array.from({ length: 25 }, () => false) };
 		}
 	}
@@ -2217,7 +2241,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// The track count and fill live on the set node's Pip rating;
 	// perRow/connected/labels stay presentation in view.pips.
 	function setPipTrack(count: number, filled: number) {
-		const ts = traitSet.value as unknown as Record<string, any>;
+		const ts = traitSet.value;
 		if (!ts) return;
 		const bubbles: boolean[] = [];
 		for (let i = 0; i < count; i++) bubbles.push(i < filled);
@@ -2225,7 +2249,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function setPipProperty(key: keyof PipsConfig, value: any) {
+	function setPipProperty<K extends keyof PipsConfig>(key: K, value: PipsConfig[K]) {
 		ensurePipStruct();
 		let s = props.traitSetID;
 		ctkFor(s).pips![key] = value;

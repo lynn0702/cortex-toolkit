@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getView } from './model.ts';
+import { getView, type Trait } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
@@ -68,11 +68,11 @@ const TRAIT_QUICK_PARTS: ReadonlyArray<{
 	{ key: 'badge', label: 'Badge' },
 ];
 
-function childTraitFor(trait: any, partKey: string) {
-	return getChildTraitByNoun(trait, parseChildPartKey(partKey).noun);
+function childTraitFor(trait: Trait | null | undefined, partKey: string) {
+	return getChildTraitByNoun(trait ?? undefined, parseChildPartKey(partKey).noun);
 }
 
-function childRatingFor(trait: any, partKey: string) {
+function childRatingFor(trait: Trait | null | undefined, partKey: string) {
 	return resolveTraitRating(childTraitFor(trait, partKey), [trait]);
 }
 </script>
@@ -178,7 +178,7 @@ function childRatingFor(trait: any, partKey: string) {
 
 							<!-- BADGE -->
 							<div
-								v-if="partsGridFor(traitSet)?.cells.badge && (getView(item.trait) as any)?.badge"
+								v-if="partsGridFor(traitSet)?.cells.badge && getView(item.trait)?.badge"
 								class="trait-part trait-part-badge"
 								:style="partCellStyle(partsGridFor(traitSet), 'badge')"
 							>
@@ -216,10 +216,7 @@ function childRatingFor(trait: any, partKey: string) {
 									<template v-if="parseChildPartKey(partKey).kind === 'label'">
 										<TraitRowTitle v-if="isPipChildPart(partKey)" :item="item" mode="pip-box" in-parts-grid />
 										<template v-else>
-											<span
-												class="child-part-label"
-												v-if="(getView(traitSet)?.parts?.[partKey] as any)?.marker === 'L'"
-											>
+											<span class="child-part-label" v-if="getView(traitSet)?.parts?.[partKey]?.marker === 'L'">
 												{{ childTraitFor(item.trait, partKey)?.name || parseChildPartKey(partKey).noun }}
 											</span>
 											<span class="child-part-text" v-else>
@@ -320,10 +317,7 @@ function childRatingFor(trait: any, partKey: string) {
 								<TraitRowPart :item="item" part="track" />
 							</div>
 
-							<span
-								v-if="(getView(item.trait) as any)?.badge"
-								class="trait-part trait-part-badge trait-part-badge-fallback"
-							>
+							<span v-if="getView(item.trait)?.badge" class="trait-part trait-part-badge trait-part-badge-fallback">
 								<TraitRowPart :item="item" part="badge" />
 							</span>
 
@@ -349,7 +343,7 @@ function childRatingFor(trait: any, partKey: string) {
 						"
 						@delete="
 							closeCanvasTrait();
-							removeTrait(s, item.originalIndex);
+							if (item.originalIndex !== null) removeTrait(s, item.originalIndex);
 						"
 					/>
 					<div
@@ -363,7 +357,8 @@ function childRatingFor(trait: any, partKey: string) {
 							:class="{ active: isTraitPartMenuOpen(s, item.originalIndex) }"
 							:aria-expanded="isTraitPartMenuOpen(s, item.originalIndex)"
 							:aria-label="
-								'Part options for ' + (item.trait.name || (traitSet.noun || 'Trait') + ' ' + (item.originalIndex + 1))
+								'Part options for ' +
+								(item.trait.name || (traitSet.noun || 'Trait') + ' ' + ((item.originalIndex ?? 0) + 1))
 							"
 							@click.stop="toggleTraitPartMenu(s, item.originalIndex, $event.currentTarget as HTMLElement)"
 						>

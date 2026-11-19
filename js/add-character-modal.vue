@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import ModalDialog from './modal-dialog.vue';
 import { characterCurioFunctions } from './functions.ts';
-import { getCuriosityGame, getCuriosityThumbnailUrl, getIdentityText } from './model.ts';
+import { getCuriosityGame, getCuriosityThumbnailUrl, getIdentityText, type Character } from './model.ts';
 
 defineProps<{
 	open: boolean;
-	items: any[];
+	items: Character[];
 	search: string;
 }>();
 
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 	(e: 'gotoRoster'): void;
 }>();
 
-function safeImageUrl(url: any) {
+function safeImageUrl(url: string | null | undefined) {
 	return characterCurioFunctions.safeImageUrl(url);
 }
 

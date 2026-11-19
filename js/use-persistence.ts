@@ -1,7 +1,7 @@
 import { toRaw, type ComputedRef, type Ref } from 'vue';
 import { cloneDeep } from './clone-deep.ts';
 import { characterCurioFunctions, type SetPresetEntry } from './functions.ts';
-import type { SheetTemplate } from './model.ts';
+import type { Character, SheetTemplate } from './model.ts';
 import { characterCurioStorage, type CustomSetPresetRecord, type PreferencesRecord } from './storage.ts';
 import type { ToastOptions } from './use-toast.ts';
 
@@ -11,12 +11,12 @@ export interface PersistOptions {
 }
 
 export interface PersistenceDeps {
-	characters: Ref<Record<string, unknown>[]>;
+	characters: Ref<Character[]>;
 	characterID: Ref<string | null>;
 	openCharacterIDs: Ref<string[]>;
 	isPreview: ComputedRef<boolean>;
 	submode: Ref<string | null>;
-	sheetTemplates: Ref<Record<string, unknown>[]>;
+	sheetTemplates: Ref<SheetTemplate[]>;
 	customSetPresets: Ref<SetPresetEntry[]>;
 	prefs: Ref<PreferencesRecord>;
 	playViewMode: Ref<string>;
@@ -27,8 +27,8 @@ export interface PersistenceDeps {
 	baselineCharacters: Map<string, string>;
 	ensureLibraryTemplates: () => Promise<boolean>;
 	resolveTemplateEntry: (id: string | null, version?: number | null) => SheetTemplate | null;
-	resolveStoredCharacter: (raw: unknown) => Record<string, unknown>;
-	initBaseline: (chars: Record<string, unknown>[]) => void;
+	resolveStoredCharacter: (raw: unknown) => Character;
+	initBaseline: (chars: Character[]) => void;
 	cancelDeferredSave: () => void;
 	showToast: (msg: string, options?: ToastOptions) => void;
 }
@@ -72,7 +72,7 @@ export function usePersistence(deps: PersistenceDeps) {
 
 		try {
 			const stored = await characterCurioStorage.load();
-			sheetTemplates.value = characterCurioStorage.normalizeTemplates(stored.templates) as Record<string, unknown>[];
+			sheetTemplates.value = characterCurioStorage.normalizeTemplates(stored.templates) as unknown as SheetTemplate[];
 			const loadedPresets: CustomSetPresetRecord[] = characterCurioStorage.normalizePresets(stored.presets);
 			customSetPresets.value = cloneDeep(loadedPresets);
 			characterCurioFunctions.setCustomSetPresets(loadedPresets, { notify: false });

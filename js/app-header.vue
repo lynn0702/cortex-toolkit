@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue';
+import type { Character } from './model.ts';
 
 defineProps<{
 	mode: string;
@@ -9,7 +10,7 @@ defineProps<{
 	canUndo: boolean;
 	canRedo: boolean;
 	isDarkMode?: boolean;
-	openCharacters?: any[];
+	openCharacters?: Character[];
 	characterID?: string | null;
 	activeCharacterName?: string;
 	sessionDirty?: boolean;
@@ -40,7 +41,7 @@ const isFallbackPopoverOpen = ref(false);
 
 function closeSheetPopover() {
 	isFallbackPopoverOpen.value = false;
-	const el = sheetPopoverRef.value as any;
+	const el = sheetPopoverRef.value as (HTMLElement & { hidePopover?: () => void }) | null;
 	if (el && typeof el.hidePopover === 'function') {
 		try {
 			el.hidePopover();

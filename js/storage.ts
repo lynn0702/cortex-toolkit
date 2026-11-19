@@ -26,6 +26,7 @@ export interface CharacterPreferences {
 	setOrder?: string[];
 	traitOrders?: Record<string, string[]>;
 	declinedTemplateVersions?: Record<string, number>;
+	[k: string]: unknown;
 }
 
 export interface PreferencesRecord {

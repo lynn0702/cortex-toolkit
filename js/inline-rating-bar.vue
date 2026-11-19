@@ -11,14 +11,17 @@ import {
 	resolveRange,
 	resolveRating,
 	setRatingDie,
+	type DiceConfig,
+	type Trait,
+	type TraitSet,
 } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 
 const props = withDefaults(
 	defineProps<{
-		node: Record<string, any>;
-		parentSet?: Record<string, any> | null;
-		diceConfig?: Record<string, any> | null;
+		node: Trait | TraitSet;
+		parentSet?: TraitSet | null;
+		diceConfig?: DiceConfig | null;
 		subjectLabel?: string;
 		showMore?: boolean;
 		showDelete?: boolean;
@@ -185,7 +188,7 @@ function selectMode(mode: ModeOption) {
 		if ('isOut' in props.node) props.node.isOut = false;
 		setRatingDie(props.node, size, ownRange);
 		if (hadOwnOut && props.node.rating && typeof props.node.rating === 'object') {
-			props.node.rating.out = true;
+			(props.node.rating as unknown as Record<string, unknown>).out = true;
 		}
 	} else if (mode === 'Dice') {
 		const prevDice = cur && !isNodeOut.value ? ratingDice(cur) : [];
@@ -234,7 +237,7 @@ function pickSingleDie(size: number) {
 function pickOut() {
 	if (!props.node) return;
 	const ownRange = ownRangeIfPresent();
-	props.node.isOut = true;
+	(props.node as { isOut?: boolean }).isOut = true;
 	setRatingDie(props.node, rangeTop(props.node, fallbacks.value) + 2, ownRange);
 	emit('change');
 }

@@ -9,29 +9,32 @@ import {
 	resolvePpDelta,
 	resolveSubtraitNoun,
 	type Character,
+	type Trait,
+	type TraitSet,
 } from './model.ts';
-import { characterCurioFunctions } from './functions.ts';
+import { characterCurioFunctions, type SetPresetEntry } from './functions.ts';
+import type { EditingPath } from './use-history.ts';
 import ModalDialog from './modal-dialog.vue';
 import TraitSetBlock from './trait-set-block.vue';
 import TraitSetEditor from './trait-set-editor.vue';
 import TraitEditor from './trait-editor.vue';
 
 const props = defineProps<{
-	initialSet?: any;
-	editingPreset?: { id: string; label: string; blurb?: string; preset: any } | null;
+	initialSet?: TraitSet | null;
+	editingPreset?: SetPresetEntry | null;
 	character?: Character;
 	applyLabel?: string;
 }>();
 
 const emit = defineEmits<{
 	(e: 'close'): void;
-	(e: 'saved', preset: any): void;
-	(e: 'applyToSet', updatedSet: any): void;
+	(e: 'saved', preset: SetPresetEntry): void;
+	(e: 'applyToSet', updatedSet: TraitSet): void;
 }>();
 
-function createWorkingSet(source?: any): any {
+function createWorkingSet(source?: Partial<TraitSet> | Record<string, unknown> | null): TraitSet {
 	if (source) {
-		const copy = characterCurioFunctions.cloneDeep(source);
+		const copy = characterCurioFunctions.cloneDeep(source) as TraitSet;
 		if (!copy.id) copy.id = characterCurioFunctions.generateUUID();
 		ensureView(copy);
 		if (!Array.isArray(copy.traits)) copy.traits = [];
@@ -56,7 +59,7 @@ function createWorkingSet(source?: any): any {
 	};
 }
 
-function buildWorkingCharacter(sourceSet?: any): any {
+function buildWorkingCharacter(sourceSet?: Partial<TraitSet> | Record<string, unknown> | null): Character {
 	const hostView = props.character ? getView(props.character) : undefined;
 	return {
 		id: 'mini-preview-character',
@@ -68,8 +71,8 @@ function buildWorkingCharacter(sourceSet?: any): any {
 	};
 }
 
-const workingCharacter = ref<any>(buildWorkingCharacter(props.editingPreset?.preset ?? props.initialSet));
-const editing = ref<any[]>(['traitSet', 0]);
+const workingCharacter = ref<Character>(buildWorkingCharacter(props.editingPreset?.preset ?? props.initialSet));
+const editing = ref<EditingPath>(['traitSet', 0]);
 const previewSubmode = ref<'edit' | 'play' | 'print'>('edit');
 
 const workingSet = computed(() => workingCharacter.value?.traitSets?.[0] ?? null);
@@ -107,14 +110,14 @@ const traitPath = computed<number[]>(() => {
 const traitID = computed(() => (traitPath.value.length >= 1 ? traitPath.value[0] : -1));
 const subtraitID = computed(() => (traitPath.value.length >= 2 ? traitPath.value[1] : -1));
 
-const resolvedTraitChain = computed<any[]>(() => {
+const resolvedTraitChain = computed<Trait[]>(() => {
 	const ts = workingSet.value;
 	if (!ts || !Array.isArray(ts.traits) || !traitPath.value.length) return [];
-	const chain: any[] = [];
-	let currentList: any[] | undefined = ts.traits;
+	const chain: Trait[] = [];
+	let currentList: Trait[] | undefined = ts.traits;
 	for (const idx of traitPath.value) {
 		if (!Array.isArray(currentList) || !currentList[idx]) return [];
-		const node = currentList[idx];
+		const node: Trait = currentList[idx];
 		chain.push(node);
 		currentList = node.traits;
 	}
@@ -127,7 +130,7 @@ const activeTraitNode = computed(() =>
 
 interface Crumb {
 	label: string;
-	selector: any[] | null;
+	selector: EditingPath | null;
 }
 
 const crumbs = computed<Crumb[]>(() => {
@@ -161,7 +164,7 @@ const crumbs = computed<Crumb[]>(() => {
 	return list;
 });
 
-function onSelectElement(sel: any[]) {
+function onSelectElement(sel: EditingPath) {
 	if (Array.isArray(sel) && (sel[0] === 'trait' || sel[0] === 'subtrait') && sel.length >= 3) {
 		editing.value = [sel[0], 0, ...sel.slice(2)];
 		return;
@@ -169,7 +172,7 @@ function onSelectElement(sel: any[]) {
 	editing.value = ['traitSet', 0];
 }
 
-function onUpdateCharacter(nextChar: any) {
+function onUpdateCharacter(nextChar: Character) {
 	if (nextChar) {
 		workingCharacter.value = nextChar;
 	}
@@ -179,9 +182,9 @@ function onAddTrait() {
 	const ts = workingSet.value;
 	if (!ts) return;
 	const noun = ts.noun && ts.noun.length ? ts.noun : 'Trait';
-	const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
+	const trait = structuredClone(characterCurioFunctions.defaultTrait) as unknown as Trait;
 	trait.name = characterCurioFunctions.nextUniqueName(
-		(Array.isArray(ts.traits) ? ts.traits : []).map((tr: any) => tr?.name),
+		(Array.isArray(ts.traits) ? ts.traits : []).map((tr) => tr?.name),
 		'New ' + noun,
 	);
 	const setR = getRating(ts);
@@ -198,7 +201,9 @@ function onAddTrait() {
 	} else {
 		const allowed = characterCurioFunctions.getTraitSetRatings(ts);
 		const cur =
-			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
+			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value)
+				? Number(trait.rating.value[0]) || 0
+				: 0;
 		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
 		if (allowed.length > 0 && !allowed.includes(cur)) {
 			trait.rating = isDefaultLadder
@@ -210,6 +215,7 @@ function onAddTrait() {
 	}
 
 	const templateSubs = Array.isArray(ts.traits?.[0]?.traits) ? ts.traits[0].traits : [];
+	if (!Array.isArray(trait.traits)) trait.traits = [];
 	for (const st of templateSubs) {
 		if (!st || typeof st !== 'object' || resolvePpDelta(st) !== 0 || getView(st)?.part === 'block') continue;
 		const copySub = characterCurioFunctions.cloneDeep(st);

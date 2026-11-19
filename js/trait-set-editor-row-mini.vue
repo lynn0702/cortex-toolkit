@@ -77,7 +77,7 @@ const PART_TITLES: Record<string, string> = {
 };
 
 function partOwnerNoun(key: string): string {
-	const setNoun = (traitSet.value as any)?.noun || (traitSet.value as any)?.name || 'Trait';
+	const setNoun = traitSet.value?.noun || traitSet.value?.name || 'Trait';
 	const trackNoun = characterCurioFunctions.getTrackLabel(traitSet.value);
 	if (key === 'trackLabel' || key === 'track') return trackNoun;
 	if (key.startsWith('child:')) {
@@ -86,7 +86,7 @@ function partOwnerNoun(key: string): string {
 	}
 	if (key === 'subtraits') {
 		let sNoun = 'Subtrait';
-		for (const t of (traitSet.value as any)?.traits || []) {
+		for (const t of traitSet.value?.traits || []) {
 			for (const sub of characterCurioFunctions.ratedSubtraits(t, traitSet.value)) {
 				const cand = (sub?.noun || sub?.name || '').trim();
 				if (cand && cand.toLowerCase() !== trackNoun.toLowerCase()) {
@@ -151,9 +151,9 @@ function startImageDrag(event: MouseEvent | TouchEvent, mode: 'w' | 'h') {
 	const baseH = imageHeightPx.value;
 	let moved = false;
 
-	const onMove = (e: any) => {
-		const cx = e.clientX ?? e.touches?.[0]?.clientX;
-		const cy = e.clientY ?? e.touches?.[0]?.clientY;
+	const onMove = (e: MouseEvent | TouchEvent) => {
+		const cx = 'clientX' in e ? e.clientX : e.touches?.[0]?.clientX;
+		const cy = 'clientY' in e ? e.clientY : e.touches?.[0]?.clientY;
 		if (cx === undefined || cy === undefined) return;
 		moved = true;
 		const w = mode === 'w' ? Math.round((baseW + ((cx - startX) / hostW) * 100) / 5) * 5 : baseW;
@@ -224,8 +224,8 @@ function startBranchDivider(event: MouseEvent | TouchEvent, leftKey: 'left' | 'c
 	let moved = false;
 
 	const toFr = (pct: number) => Math.round((pct / 100) * sum * 10) / 10;
-	const onMove = (e: any) => {
-		const cx = e.clientX ?? e.touches?.[0]?.clientX;
+	const onMove = (e: MouseEvent | TouchEvent) => {
+		const cx = 'clientX' in e ? e.clientX : e.touches?.[0]?.clientX;
 		if (cx === undefined) return;
 		if (Math.abs(cx - startX) < 3 && !moved) return;
 		moved = true;
@@ -270,7 +270,7 @@ const isBottom = computed(() => headerMode.value === 'bottom');
 const isSidebar = computed(() => headerMode.value === 'sidebar');
 const isNone = computed(() => headerMode.value === 'none');
 const align = computed(() => headerAlign.value);
-const setName = computed(() => (traitSet.value as any)?.name || '');
+const setName = computed(() => traitSet.value?.name || '');
 
 // Shared hinder banner (distinctions sets): section chrome with no
 
@@ -282,7 +282,7 @@ function cycleAlign() {
 // grid math (columns from part edges, rows from top/height) the renderer
 // uses, so the miniature's arrangement and the rendered row agree.
 const boxes = computed(() => {
-	const eff = effectivePartCells.value.map((c: any) => {
+	const eff = effectivePartCells.value.map((c) => {
 		if (partPreview.value && partPreview.value.key === c.key) {
 			const p = partPreview.value;
 			return { key: c.key, left: p.left, width: p.width, top: p.top, height: p.height, implicit: false };
@@ -326,14 +326,14 @@ function startBoxDrag(event: MouseEvent | TouchEvent, key: string, mode: 'move' 
 	const rect = host.getBoundingClientRect();
 	const startX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
 	const startY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
-	const cell = effectivePartCells.value.find((c: any) => c.key === key);
+	const cell = effectivePartCells.value.find((c) => c.key === key);
 	if (!cell) return;
 	const base = { left: cell.left, width: cell.width, top: cell.top, height: cell.height };
 	let moved = false;
 
-	const onMove = (e: any) => {
-		const cx = e.clientX ?? e.touches?.[0]?.clientX;
-		const cy = e.clientY ?? e.touches?.[0]?.clientY;
+	const onMove = (e: MouseEvent | TouchEvent) => {
+		const cx = 'clientX' in e ? e.clientX : e.touches?.[0]?.clientX;
+		const cy = 'clientY' in e ? e.clientY : e.touches?.[0]?.clientY;
 		if (cx === undefined || cy === undefined) return;
 		if (Math.hypot(cx - startX, cy - startY) < 3 && !moved) return;
 		moved = true;
@@ -425,9 +425,9 @@ function startHeaderDrag(event: MouseEvent | TouchEvent) {
 	const startY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
 	let moved = false;
 
-	const onMove = (e: any) => {
-		const cx = e.clientX ?? e.touches?.[0]?.clientX;
-		const cy = e.clientY ?? e.touches?.[0]?.clientY;
+	const onMove = (e: MouseEvent | TouchEvent) => {
+		const cx = 'clientX' in e ? e.clientX : e.touches?.[0]?.clientX;
+		const cy = 'clientY' in e ? e.clientY : e.touches?.[0]?.clientY;
 		if (cx === undefined || cy === undefined) return;
 		if (Math.hypot(cx - startX, cy - startY) < 3 && !moved) return;
 		moved = true;

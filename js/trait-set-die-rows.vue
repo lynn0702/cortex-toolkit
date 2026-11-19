@@ -118,7 +118,7 @@ const {
 					</div>
 					<span
 						class="die-row-counter"
-						v-if="hasTraitCounter(item.trait) || traitSet.traits?.some((t: any) => hasTraitCounter(t))"
+						v-if="hasTraitCounter(item.trait) || traitSet.traits?.some((t) => hasTraitCounter(t))"
 					>
 						{{ !printBlank && !item.isPlaceholder ? getTraitCounter(item.trait) : '' }}
 					</span>

@@ -14,6 +14,8 @@ import {
 	resolveVisibility,
 	setIdentityText,
 	setRatingDie,
+	type IdentityFieldKey,
+	type TraitSet,
 } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { normalizeZoom } from './frame-geometry.ts';
@@ -46,7 +48,7 @@ const {
 const pillarCtx = inject<{
 	sheetUsesPillars: { value: boolean };
 	pillarOptions: { value: ReadonlyArray<{ key: string; label: string }> };
-	setSetPillar: (ts: any, val: string) => void;
+	setSetPillar: (ts: TraitSet | null | undefined, val: string) => void;
 } | null>('curioPillarContext', null);
 
 type NameQuickPartKey =
@@ -103,14 +105,14 @@ function isNameIdentityPartActive(key: NameQuickPartKey): boolean {
 				(Boolean(t) && !isNameIdentityPartActive('description')))
 		);
 	}
-	return shown && (Boolean(getIdentityText(ch, key as any, traitSet.value)) || Boolean(t));
+	return shown && (Boolean(getIdentityText(ch, key as IdentityFieldKey, traitSet.value)) || Boolean(t));
 }
 
 function toggleNameIdentityPart(key: NameQuickPartKey) {
-	const ch = character.value as any;
+	const ch = character.value;
 	if (!ch) return;
 	if (key === 'rating') {
-		let ns: any = traitSet.value || (ch.traitSets || []).find((st: any) => isNameSet(st));
+		let ns: TraitSet | undefined = traitSet.value || (ch.traitSets || []).find((st) => isNameSet(st));
 		if (!ns) {
 			ns = { id: 'name', name: 'Name', traits: [] };
 			if (!Array.isArray(ch.traitSets)) ch.traitSets = [];
@@ -282,12 +284,12 @@ function hideIdentityPart(key: string) {
 	const hasVal =
 		key === 'portrait'
 			? Boolean(getCuriosityPortrait(character.value, traitSet.value)?.url)
-			: Boolean(getIdentityText(character.value, key as any, traitSet.value));
+			: Boolean(getIdentityText(character.value, key as IdentityFieldKey, traitSet.value));
 	const existing = characterCurioFunctions.getNameTrait(character.value, key);
 	if (!hasTemplate && !hasVal && !existing?.label) {
-		const ns = (character.value.traitSets || []).find((st: any) => isNameSet(st));
+		const ns = (character.value.traitSets || []).find((st) => isNameSet(st));
 		if (ns && Array.isArray(ns.traits)) {
-			ns.traits = ns.traits.filter((tr: any) => !(tr && tr.name === key));
+			ns.traits = ns.traits.filter((tr) => !(tr && tr.name === key));
 		}
 		updateCharacter(character.value);
 		return;
@@ -386,7 +388,7 @@ const nameSetCounter = computed<number>(() => {
 });
 
 function toggleNamePip(index: number) {
-	const ts = traitSet.value as Record<string, any> | undefined;
+	const ts = traitSet.value;
 	if (!ts || !character.value || submode.value === 'print') return;
 	const next = [...nameSetPips.value];
 	if (index < 0 || index >= next.length) return;
@@ -396,7 +398,7 @@ function toggleNamePip(index: number) {
 }
 
 function stepNameCounter(delta: number) {
-	const ts = traitSet.value as Record<string, any> | undefined;
+	const ts = traitSet.value;
 	if (!ts || !character.value || submode.value === 'print') return;
 	const r = nameSetRating.value;
 	if (r?.type !== 'Counter') return;
@@ -410,7 +412,10 @@ function stepNameCounter(delta: number) {
 }
 
 const portraitAlignment = computed(
-	() => getView(portrait.value)?.alignment || (portrait.value as any)?.alignment || 'top-center',
+	() =>
+		getView(portrait.value)?.alignment ||
+		(portrait.value as { alignment?: string } | null | undefined)?.alignment ||
+		'top-center',
 );
 
 const portraitAlignmentClass = computed(() => {
@@ -485,7 +490,8 @@ const descriptionText = computed({
 
 const nameBorderShape = computed<'none' | 'block' | 'line'>(() => {
 	const raw = getView(traitSet.value)?.border;
-	const shape = typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as any).shape : undefined;
+	const shape =
+		typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as { shape?: string }).shape : undefined;
 	return shape === 'none' || shape === 'line' ? shape : 'block';
 });
 </script>

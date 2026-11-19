@@ -2,7 +2,7 @@
 defineProps<{
 	printBlank: boolean;
 	printBW: boolean;
-	printPageView: any;
+	printPageView: 'all' | number;
 	pageCount: number;
 }>();
 
@@ -11,7 +11,7 @@ const emit = defineEmits<{
 	(e: 'export'): void;
 	(e: 'update:printBlank', value: boolean): void;
 	(e: 'update:printBW', value: boolean): void;
-	(e: 'update:printPageView', value: any): void;
+	(e: 'update:printPageView', value: 'all' | number): void;
 }>();
 
 function toggleBlank(e: Event) {

@@ -174,7 +174,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			for (let s = 0; s < character.traitSets.length; s++) {
 				const wrapper = mount(TraitSetBlock, {
 					props: {
-						character,
+						character: character as any,
 						traitSetID: s,
 						submode,
 						editing: [],
@@ -195,7 +195,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		const character = createTestCharacter();
 		const wrapper = mount(TraitSetBlock, {
 			props: {
-				character,
+				character: character as any,
 				traitSetID: 3, // XP Milestone pips set
 				submode: 'play',
 				editing: [],
@@ -223,7 +223,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		const wrapper = mount(DiceRoller, {
 			props: {
 				open: true,
-				pool: mockPool,
+				pool: mockPool as any,
 				position: 'right',
 			},
 		});
@@ -399,7 +399,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			props: {
 				open: true,
 				pool,
-				character: { name: 'Log Tester', traits: [] },
+				character: { id: 'log-tester', name: 'Log Tester', traitSets: [] },
 			},
 		});
 
@@ -432,7 +432,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			props: {
 				open: true,
 				pool: new dicePool.DicePool(),
-				character: { name: 'Log Tester', traits: [] },
+				character: { id: 'log-tester', name: 'Log Tester', traitSets: [] },
 			},
 		});
 		expect(reloaded.findAll('.roller-log-entry').length).toBe(1);
@@ -508,7 +508,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		// 3. Verify SessionNav does NOT render theme toggle (per spec: toggle is header-only)
 		const sessionNav = mount(SessionNav, {
 			props: {
-				openCharacters: [{ id: 'char1', name: 'Test' }],
+				openCharacters: [{ id: 'char1', name: 'Test', traitSets: [] }],
 				characterID: 'char1',
 				submode: 'play',
 				playViewMode: 'split',
@@ -1279,7 +1279,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				...set,
 				view: { ...set.view, frame: { shape: 'ellipse', span: [0, 360], stroke: 'accent', corner: 8 } },
 			};
-			await wrapper.setProps({ character: { name: 'Morph Hero', traitSets: [ellipseSet] } });
+			await wrapper.setProps({ character: { id: 'morph-hero', name: 'Morph Hero', traitSets: [ellipseSet] } as any });
 			await wrapper.vm.$nextTick();
 			expect(wrapper.find('.trait-list').exists()).toBe(true);
 			names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name') || '');
@@ -1294,7 +1294,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					frame: { shape: 'none', array: 'none' },
 				},
 			};
-			await wrapper.setProps({ character: { name: 'Morph Hero', traitSets: [blockSet] } });
+			await wrapper.setProps({ character: { id: 'morph-hero', name: 'Morph Hero', traitSets: [blockSet] } as any });
 			await wrapper.vm.$nextTick();
 			expect(wrapper.find('.trait-set-body-framed').exists()).toBe(true);
 			expect(wrapper.find('.frame-block-svg').exists()).toBe(true);
@@ -1379,7 +1379,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			// 1. User selects "none" (or deletes frame in editor): turns frame off cleanly to view.parts
 			const unframedSet = structuredClone(set);
 			delete unframedSet.view.frame;
-			await wrapper.setProps({ character: { name: 'Fallback Hero', traitSets: [unframedSet] } });
+			await wrapper.setProps({
+				character: { id: 'fallback-hero', name: 'Fallback Hero', traitSets: [unframedSet] } as any,
+			});
 			expect(wrapper.find('.portrait').exists()).toBe(false);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(false);
 
@@ -1391,7 +1393,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			// 2. User re-enables frame: restores frame cleanly
 			const reframedSet = structuredClone(set);
 			reframedSet.view.frame = { shape: 'ring', span: [0, 360] };
-			await wrapper.setProps({ character: { name: 'Fallback Hero', traitSets: [reframedSet] } });
+			await wrapper.setProps({
+				character: { id: 'fallback-hero', name: 'Fallback Hero', traitSets: [reframedSet] } as any,
+			});
 			expect(wrapper.find('.portrait').exists()).toBe(true);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(true);
 
@@ -1754,6 +1758,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const mini = mount(TraitSetMini, {
 				props: {
 					initialSet: {
+						id: 'values',
 						name: 'Values',
 						noun: 'Value',
 						view: { labels: { track: 'Stress' } },
@@ -2013,7 +2018,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// 5. Card Builder modal also supports bottom header, none header, and removing all parts
 			const modalMini = mount(TraitSetMini, {
-				props: { initialSet: { name: 'Distinctions', noun: 'Distinction', traits: [] } },
+				props: { initialSet: { id: 'dist', name: 'Distinctions', noun: 'Distinction', traits: [] } },
 			});
 			const modalBottomBtn = modalMini.find('button[title="Bottom bar header"]');
 			const noneHeaderBtn = modalMini.find('.row-mini-header-remove');
@@ -2882,8 +2887,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					canUndo: false,
 					canRedo: false,
 					openCharacters: [
-						{ id: 'c1', name: 'Ariadne' },
-						{ id: 'c2', name: 'Mal' },
+						{ id: 'c1', name: 'Ariadne', traitSets: [] },
+						{ id: 'c2', name: 'Mal', traitSets: [] },
 					],
 					characterID: 'c1',
 					activeCharacterName: 'Ariadne',
@@ -2938,7 +2943,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					mode: 'character',
 					submode: 'edit',
 					hasCharacter: true,
-					openCharacters: [{ id: 'c1', name: 'Ariadne' }],
+					openCharacters: [{ id: 'c1', name: 'Ariadne', traitSets: [] }],
 					characterID: 'c1',
 					activeCharacterName: 'Ariadne',
 					canUndo: true,
@@ -2990,8 +2995,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					isOpen: true,
 					panelTab: 'roller',
 					drawerState: 'split',
-					dicePool: pool,
-					oppositionPool: oppPool,
+					dicePool: pool as any,
+					oppositionPool: oppPool as any,
 					activePoolSide: 'player',
 				},
 				attachTo: document.body,
@@ -3727,8 +3732,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			const webBar = mount(CuriosityWebBar, {
 				props: {
-					activeNode: { id: 'n5', name: 'Inner Sanctum' },
-					hostRoot: { id: 'n1', name: 'Sunken Citadel' },
+					activeNode: { id: 'n5', name: 'Inner Sanctum', traitSets: [] },
+					hostRoot: { id: 'n1', name: 'Sunken Citadel', traitSets: [] },
 					trail: [
 						{ id: 'n1', name: 'Sunken Citadel' },
 						{ id: 'n2', name: 'Outer Gate' },
@@ -3738,7 +3743,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					],
 					incomingBacklinks: [{ id: 'n4', name: 'Vault Door', via: 'trait' }],
 					outgoingLinks: [{ id: 'n6', name: 'Oracle Core', via: 'wiki' }],
-					pullableCuriosities: [{ id: 'ext-1', name: 'Wandering Knight' }],
+					pullableCuriosities: [{ id: 'ext-1', name: 'Wandering Knight', traitSets: [] }],
 					submode: 'play',
 				},
 				attrs: {

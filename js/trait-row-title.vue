@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { getView, resolveSubtraitNoun } from './model.ts';
+import { getView, resolveSubtraitNoun, type Trait } from './model.ts';
 import { useCuriosityGraph } from './curiosity-graph.ts';
-import { injectTraitSet } from './use-trait-set.ts';
+import { injectTraitSet, type RenderedTraitItem } from './use-trait-set.ts';
 
 const props = withDefaults(
 	defineProps<{
-		item: any;
+		item: RenderedTraitItem;
 		inPartsGrid?: boolean;
 		mode?: 'auto' | 'asset' | 'pip-box' | 'pip-checkbox';
 	}>(),
@@ -43,11 +43,11 @@ const graph = useCuriosityGraph(
 	(ch) => updateCharacter(ch),
 );
 
-function resolveTraitRefTitle(tr: any): string {
+function resolveTraitRefTitle(tr: Trait | null | undefined): string {
 	return graph.resolveCuriosity(tr?.ref)?.name || tr?.name || 'Curiosity';
 }
 
-function onTraitNameInlineInput(trait: any, event: Event) {
+function onTraitNameInlineInput(trait: Trait | null | undefined, event: Event) {
 	if (!trait) return;
 	trait.name = (event.target as HTMLInputElement).value;
 	updateCharacter(character.value);
@@ -58,13 +58,13 @@ function onTraitNameInlineEnter(event: KeyboardEvent) {
 	(event.target as HTMLElement | null)?.blur?.();
 }
 
-function pipPlaceholder(trait: any): string {
+function pipPlaceholder(trait: Trait): string {
 	const child = getPipChild(trait);
 	const noun = child ? resolveSubtraitNoun(child, traitSet.value) : 'Detail';
 	return `${noun || 'Detail'}...`;
 }
 
-function titleAriaLabel(item: any, assetFallback = false): string {
+function titleAriaLabel(item: RenderedTraitItem, assetFallback = false): string {
 	if (!item.isPlaceholder && item.trait.name) {
 		return item.trait.name + (submode.value === 'play' ? ' options' : ' edit');
 	}

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { nextTick } from 'vue';
-import { getView, resolveSubtraitNoun } from './model.ts';
+import { getView, resolveSubtraitNoun, type Trait, type TraitSet } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
-import { injectTraitSet } from './use-trait-set.ts';
+import { injectTraitSet, type RenderedTraitItem } from './use-trait-set.ts';
 
 const props = withDefaults(
 	defineProps<{
-		item: any;
+		item: RenderedTraitItem;
 		part: 'track-label' | 'track' | 'description' | 'badge' | 'block' | 'subtraits';
 		inPartsGrid?: boolean;
 	}>(),
@@ -59,19 +59,19 @@ function startInlineTrackLabel(tIdx: number | null | undefined, ev: Event) {
 	});
 }
 
-function onTraitDescInlineInput(trait: any, event: Event) {
+function onTraitDescInlineInput(trait: Trait | null | undefined, event: Event) {
 	if (!trait) return;
 	trait.description = (event.target as HTMLInputElement).value;
 	updateCharacter(character.value);
 }
 
-function onSubtraitNameInlineInput(subtrait: any, event: Event) {
+function onSubtraitNameInlineInput(subtrait: Trait | null | undefined, event: Event) {
 	if (!subtrait) return;
 	subtrait.name = (event.target as HTMLInputElement).value;
 	updateCharacter(character.value);
 }
 
-function onSfxFieldInlineInput(sfx: any, field: 'name' | 'description', event: Event) {
+function onSfxFieldInlineInput(sfx: Trait | null | undefined, field: 'name' | 'description', event: Event) {
 	if (!sfx) return;
 	sfx[field] = (event.target as HTMLInputElement).value;
 	updateCharacter(character.value);
@@ -82,23 +82,23 @@ function onInlineEnter(event: KeyboardEvent) {
 	(event.target as HTMLElement | null)?.blur?.();
 }
 
-function hasTraitSetDescription(ts: any) {
+function hasTraitSetDescription(ts: TraitSet | null | undefined) {
 	const list = Array.isArray(ts?.traits) ? ts.traits : [];
-	return list.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
+	return list.some((t) => typeof t?.description === 'string' && t.description.trim().length > 0);
 }
 
-function activateTrack(item: any, size: number) {
-	if (printBlank.value) return;
+function activateTrack(item: RenderedTraitItem, size: number) {
+	if (printBlank.value || item.originalIndex === null) return;
 	handleTrackClick(s.value, item.originalIndex, size);
 }
 
-function activateTrackOut(item: any) {
-	if (printBlank.value) return;
+function activateTrackOut(item: RenderedTraitItem) {
+	if (printBlank.value || item.originalIndex === null) return;
 	handleTrackOutClick(s.value, item.originalIndex);
 }
 
-function activateSubtrait(subtrait: any, size: number | null, parentOriginalIndex: number) {
-	if (printBlank.value) return;
+function activateSubtrait(subtrait: Trait, size: number | null, parentOriginalIndex: number | null) {
+	if (printBlank.value || parentOriginalIndex === null) return;
 	handleSingleDieClick(subtrait, size, traitSet.value, s.value, parentOriginalIndex);
 }
 </script>
@@ -240,19 +240,15 @@ function activateSubtrait(subtrait: any, size: number | null, parentOriginalInde
 	</div>
 
 	<span
-		v-else-if="props.part === 'badge' && (getView(item.trait) as any)?.badge"
+		v-else-if="props.part === 'badge' && getView(item.trait)?.badge"
 		class="badge"
 		:class="[
-			'badge--' + ((getView(item.trait) as any)?.badge?.shape || 'vertical-bar'),
-			'badge--' + ((getView(item.trait) as any)?.badge?.color || 'black'),
+			'badge--' + (getView(item.trait)?.badge?.shape || 'vertical-bar'),
+			'badge--' + (getView(item.trait)?.badge?.color || 'black'),
 		]"
 	>
-		<i
-			v-if="(getView(item.trait) as any)?.badge?.icon"
-			:class="['fa', (getView(item.trait) as any).badge.icon]"
-			aria-hidden="true"
-		></i>
-		<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
+		<i v-if="getView(item.trait)?.badge?.icon" :class="['fa', getView(item.trait)?.badge?.icon]" aria-hidden="true"></i>
+		<span class="badge-label">{{ getView(item.trait)?.badge?.text }}</span>
 	</span>
 
 	<ul
@@ -263,8 +259,8 @@ function activateSubtrait(subtrait: any, size: number | null, parentOriginalInde
 			v-for="(sfx, sfIdx) in characterCurioFunctions.blockChildren(item.trait, traitSet)"
 			:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 		>
-			<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
-				>{{ (getView(item.trait) as any).prefix.text }}
+			<span class="block-prefix" v-if="getView(item.trait)?.prefix?.text"
+				>{{ getView(item.trait)?.prefix?.text }}
 			</span>
 			<template
 				v-if="submode === 'edit' && !printBlank && !item.isPlaceholder && isCanvasTraitActive(s, item.originalIndex)"

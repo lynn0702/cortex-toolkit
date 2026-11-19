@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getRating, getView, type DiceConfig } from './model.ts';
+import { getRating, getView, type DiceConfig, type TraitSet, type ViewBag } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 
 const props = defineProps<{
-	preset: { id: string; label: string; blurb?: string; preset?: any };
+	preset: { id: string; label: string; blurb?: string; preset?: Partial<TraitSet> | Record<string, unknown> };
 	diceConfig?: DiceConfig | null;
 	editable?: boolean;
 	editLabel?: string;
@@ -22,7 +22,7 @@ type PreviewKind = 'ring' | 'divider' | 'pips' | 'pool' | 'track' | 'notes' | 'c
 
 const previewKind = computed<PreviewKind>(() => {
 	const raw = props.preset?.preset;
-	const v = getView(raw) || raw?.view || {};
+	const v: ViewBag = getView(raw) || ((raw as { view?: ViewBag } | undefined)?.view ?? {});
 	const frame = v?.frame && typeof v.frame === 'object' ? v.frame : null;
 	const border = v?.border;
 	const parts = v?.parts && typeof v.parts === 'object' ? v.parts : null;
@@ -32,7 +32,12 @@ const previewKind = computed<PreviewKind>(() => {
 	if (frame?.array === 'ring' || frame?.array === 'arc' || body === 'portrait-ring') return 'ring';
 	if (border === 'line' || (border && typeof border === 'object' && border.shape === 'line')) return 'divider';
 	if (body === 'pips' || rating?.type === 'Pip') return 'pips';
-	if (raw?.pool === true || rating?.type === 'Dice' || parts?.rating?.ratingType === 'Dice') return 'pool';
+	if (
+		raw?.pool === true ||
+		rating?.type === 'Dice' ||
+		(parts?.rating as { ratingType?: string } | undefined)?.ratingType === 'Dice'
+	)
+		return 'pool';
 	if (parts?.track || body === 'die-track') return 'track';
 	if (v?.notesMarkdown === true) return 'notes';
 	if (body === 'curiosity' || (raw && 'ref' in raw)) return 'curiosity';

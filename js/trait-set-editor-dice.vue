@@ -47,7 +47,7 @@ const effectiveRatingType = computed<'Die' | 'Dice' | 'Counter' | 'Pip' | null>(
 	if (own) return own;
 	const ts = traitSet.value;
 	const traits = Array.isArray(ts?.traits) ? ts.traits : [];
-	const childTypes = traits.map((t: any) => resolveRating(t, ts ? [ts] : [])?.type).filter(Boolean);
+	const childTypes = traits.map((t) => resolveRating(t, ts ? [ts] : [])?.type).filter(Boolean);
 	if (childTypes.length > 0 && childTypes.every((t) => t === childTypes[0])) {
 		return childTypes[0] as 'Die' | 'Dice' | 'Counter' | 'Pip';
 	}
@@ -75,14 +75,14 @@ const setOutLabel = computed(() => {
 });
 
 function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	const cur = getRating(ts);
 	if ((cur?.type ?? effectiveRatingType.value) === type) return;
 	const hasChildValues =
 		Array.isArray(ts.traits) &&
 		ts.traits.some(
-			(ct: any) => resolveRating(ct, [ts]) !== undefined || (Array.isArray(ct?.traits) && ct.traits.length > 0),
+			(ct) => resolveRating(ct, [ts]) !== undefined || (Array.isArray(ct?.traits) && ct.traits.length > 0),
 		);
 	if (hasChildValues) {
 		confirmRatingChange.value = type;
@@ -93,14 +93,14 @@ function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 
 function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	confirmRatingChange.value = null;
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	const cur = getRating(ts);
 	if (cur?.type === type) return;
 	const scale = ratingLadder.value;
 	const size = Array.isArray(scale) && scale.length ? scale[0] : 8;
 	if (Array.isArray(ts.traits)) {
-		ts.traits.forEach((ct: any) => {
+		ts.traits.forEach((ct) => {
 			if (ct && typeof ct === 'object') {
 				if (ct.rating && typeof ct.rating === 'object') {
 					ct.rating = {
@@ -124,7 +124,7 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 				type: 'Dice',
 				value: list,
 				...(ownPrevRange ? { range: ownPrevRange } : {}),
-				...(cur && (cur as any).out === true ? { out: true } : {}),
+				...(cur && (cur as unknown as Record<string, unknown>).out === true ? { out: true } : {}),
 			};
 			ts.pool = true;
 		}
@@ -145,7 +145,7 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 }
 
 function clearSetRating() {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	preserveInheritedTraitTypes(ts);
 	delete ts.rating;
@@ -162,7 +162,7 @@ function toggleSetRating(size: number | null) {
 }
 
 function toggleSetOutValue() {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	if (isSetOut.value) {
 		preserveInheritedTraitTypes(ts);
@@ -170,7 +170,7 @@ function toggleSetOutValue() {
 	} else {
 		setRatingDie(ts, rangeTop(ts, [ts]) + 2);
 		if (ts.rating && typeof ts.rating === 'object') {
-			ts.rating.out = true;
+			(ts.rating as unknown as Record<string, unknown>).out = true;
 		}
 	}
 	commitCharacter();
@@ -182,7 +182,7 @@ const setDiceList = computed(() => {
 });
 
 function writeSetDice(next: number[]) {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	const prev = ts.rating && typeof ts.rating === 'object' && !Array.isArray(ts.rating) ? ts.rating : {};
 	ts.rating = {
@@ -262,8 +262,8 @@ const setCounterNumber = computed({
 		if (r && r.type === 'Counter' && typeof r.value[0] === 'number') return r.value[0];
 		return 0;
 	},
-	set(val: any) {
-		const ts = traitSet.value as unknown as Record<string, any> | null;
+	set(val: number | string) {
+		const ts = traitSet.value;
 		if (!ts) return;
 		const [lo, hi] = counterBounds();
 		let n = Math.floor(Number(val));
@@ -275,7 +275,7 @@ const setCounterNumber = computed({
 });
 
 function commitCounterBound(which: 0 | 1, event: Event) {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	const el = event && (event.target as HTMLInputElement | null);
 	let [lo, hi] = counterBounds();
@@ -309,7 +309,7 @@ function pipBubbleAt(index: number): boolean {
 }
 
 function togglePipBubble(index: number) {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	const n = Math.max(setPipBubbleCount.value, index + 1);
 	const cur = getRating(ts) ?? firstInheritedChildRating('Pip');
@@ -323,7 +323,7 @@ function togglePipBubble(index: number) {
 }
 
 function updatePipBubbleCount(count: number) {
-	const ts = traitSet.value as unknown as Record<string, any> | null;
+	const ts = traitSet.value;
 	if (!ts) return;
 	const clamped = Math.max(1, Math.min(100, Math.floor(Number(count)) || 1));
 	const cur = getRating(ts) ?? firstInheritedChildRating('Pip');
@@ -333,7 +333,7 @@ function updatePipBubbleCount(count: number) {
 	}
 	ts.rating = { type: 'Pip', value: list };
 	if (Array.isArray(ts.traits)) {
-		ts.traits.forEach((ct: any) => {
+		ts.traits.forEach((ct) => {
 			if (!ct || typeof ct !== 'object' || !ct.rating || typeof ct.rating !== 'object') return;
 			const resolvedChild = resolveRating(ct, [ts]);
 			if (resolvedChild?.type === 'Pip' && ct.rating.type === 'Pip') {

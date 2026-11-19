@@ -11,10 +11,10 @@ import {
 	toRaw,
 	watch,
 } from 'vue';
-import { characterCurioFunctions } from './functions.ts';
-import { characterCurioStorage } from './storage.ts';
+import { characterCurioFunctions, type SetPresetEntry } from './functions.ts';
+import { characterCurioStorage, type PreferencesRecord } from './storage.ts';
 import { cloneDeep } from './clone-deep.ts';
-import { dicePool as dicePoolModel, type NamedPool } from './dice-pool.ts';
+import { dicePool as dicePoolModel, type DiceItem, type NamedPool } from './dice-pool.ts';
 import {
 	CURIOSITY_GRAPH_KEY,
 	collectAllGraphNodes,
@@ -34,7 +34,7 @@ import SessionNav from './session-nav.vue';
 import CuriosityWebBar from './curiosity-web-bar.vue';
 import ModalDialog from './modal-dialog.vue';
 import { useToast } from './use-toast.ts';
-import { useHistory } from './use-history.ts';
+import { useHistory, type EditingPath } from './use-history.ts';
 import { usePersistence } from './use-persistence.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
 
@@ -49,22 +49,31 @@ import {
 	resolvePlotPoints,
 	getCuriosityGame,
 	getCuriosityThumbnailUrl,
+	type Character as CharacterModel,
+	type SheetTemplate,
+	type Trait,
+	type TraitSet,
 } from './model.ts';
 
-declare const characterCurioLibraryTemplates: any;
+declare const characterCurioLibraryTemplates: SheetTemplate[] | undefined;
+
+type CharacterComponentInstance = InstanceType<typeof Character> & {
+	openPlayPresetPicker?: () => void;
+};
+type StudioPanelInstance = InstanceType<typeof StudioPanel>;
 
 // ---- state ----
-const localData = ref<any>({});
-const characters = ref<any[]>([]);
+const localData = ref<Record<string, unknown>>({});
+const characters = ref<CharacterModel[]>([]);
 const characterID = ref<string | null>(null);
 const openCharacterIDs = ref<string[]>([]);
-const previewCharacter = ref<any>(null);
-const previewTemplateEntry = ref<any>(null);
+const previewCharacter = ref<CharacterModel | null>(null);
+const previewTemplateEntry = ref<SheetTemplate | null>(null);
 const isPreview = computed(() => Boolean(previewCharacter.value));
 const previewDismissed = ref<boolean>(false);
-const sheetTemplates = ref<any[]>([]);
-const customSetPresets = ref<any[]>(characterCurioFunctions.getCustomSetPresets());
-const prefs = ref<any>({ version: 1, global: {}, characters: {} });
+const sheetTemplates = ref<SheetTemplate[]>([]);
+const customSetPresets = ref<SetPresetEntry[]>(characterCurioFunctions.getCustomSetPresets());
+const prefs = ref<PreferencesRecord>({ version: 1, global: {}, characters: {} });
 const playViewMode = ref('split');
 const isAddCharacterModalOpen = ref(false);
 const hasOpenedAddModal = ref(false);
@@ -79,7 +88,7 @@ watch(isPaletteOpen, (v) => {
 const sessionCharacterSearch = ref('');
 const mode = ref('roster');
 const submode = ref<string | null>(null);
-const editing = ref<any>(null);
+const editing = ref<EditingPath>([]);
 const viewY = ref<number | null>(null);
 const fallbackDicePool = ref(new dicePoolModel.DicePool());
 const oppositionPool = ref(new dicePoolModel.DicePool());
@@ -100,7 +109,7 @@ watch(submode, (sub) => {
 });
 const panelPosition = ref<'left' | 'right'>('right');
 const storeReady = ref(false);
-const storeError = ref<any>(null);
+const storeError = ref<unknown>(null);
 const mouseDownInsideEditor = ref(false);
 
 const history = ref<string[]>([]);
@@ -114,11 +123,15 @@ provide('showToast', showToast);
 
 const main = ref<HTMLElement | null>(null);
 
-let _libraryLoading: any = null;
+let _libraryLoading: Promise<boolean> | null = null;
 
 // ---- dark mode state ----
+const storedColorScheme =
+	typeof localStorage !== 'undefined' ? localStorage.getItem('characterCurioColorScheme') : null;
 const colorSchemePref = ref<'light' | 'dark' | 'system'>(
-	(typeof localStorage !== 'undefined' && (localStorage.getItem('characterCurioColorScheme') as any)) || 'system',
+	storedColorScheme === 'light' || storedColorScheme === 'dark' || storedColorScheme === 'system'
+		? storedColorScheme
+		: 'system',
 );
 const systemPrefersDark = ref(
 	Boolean(
@@ -156,12 +169,12 @@ function toggleDesktopPillars() {
 	} catch (_e) {}
 }
 
-const characterRef = ref<any>(null);
-const splitCharacterRefs = new Map<string, any>();
+const characterRef = ref<CharacterComponentInstance | null>(null);
+const splitCharacterRefs = new Map<string, CharacterComponentInstance>();
 
-function setSplitCharacterRef(id: string, el: any) {
+function setSplitCharacterRef(id: string, el: unknown) {
 	if (el) {
-		splitCharacterRefs.set(id, el);
+		splitCharacterRefs.set(id, el as CharacterComponentInstance);
 	} else {
 		splitCharacterRefs.delete(id);
 	}
@@ -197,17 +210,15 @@ const webTrailIds = ref<string[]>([]);
 const activeFound = computed(() =>
 	findCuriosityEverywhere(characterID.value, characters.value, previewCharacter.value, false),
 );
-const characterIndex = computed(() =>
-	characters.value.findIndex((character: any) => character.id === characterID.value),
-);
-const character = computed(() => {
+const characterIndex = computed(() => characters.value.findIndex((character) => character.id === characterID.value));
+const character = computed<CharacterModel | null>(() => {
 	if (previewCharacter.value) return activeFound.value?.node ?? previewCharacter.value;
-	return activeFound.value?.node ?? characters.value[characterIndex.value];
+	return activeFound.value?.node ?? characters.value[characterIndex.value] ?? null;
 });
 const activeHostRoot = computed(() => activeFound.value?.hostRoot ?? null);
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
 
-function resolveOwnerCuriosity(ownerId: string | null | undefined): any | null {
+function resolveOwnerCuriosity(ownerId: string | null | undefined): CharacterModel | null {
 	if (!ownerId) return null;
 	const targetId = String(ownerId);
 	if (previewCharacter.value) {
@@ -248,7 +259,7 @@ const activePlayPlotPoints = computed(() => {
 	return character.value ? resolvePlotPoints(character.value) : 0;
 });
 
-function resolveEntityPpBaseLabel(entity: any): string {
+function resolveEntityPpBaseLabel(entity: CharacterModel | null | undefined): string {
 	return resolveCurrencyLabel(entity);
 }
 
@@ -283,7 +294,7 @@ const showPlayPlotPoints = computed(() => {
 	return Boolean(character.value && hasPlotPoints(character.value));
 });
 
-function restoreCharacterForHistory(restored: any) {
+function restoreCharacterForHistory(restored: CharacterModel) {
 	if (!restored || !restored.id) return;
 	if (characterIndex.value !== -1) {
 		characters.value[characterIndex.value] = restored;
@@ -320,16 +331,16 @@ const {
 	saveLocalData: () => saveLocalData(),
 });
 
-const openCharacters = computed(() => {
+const openCharacters = computed<CharacterModel[]>(() => {
 	if (previewCharacter.value) return [character.value || previewCharacter.value];
-	const list: any[] = [];
+	const list: CharacterModel[] = [];
 	for (const id of openCharacterIDs.value) {
 		const found = findCuriosityEverywhere(id, characters.value, null, false);
 		if (found?.node) list.push(found.node);
 	}
-	if (character.value && !list.some((c: any) => String(c.id) === String(character.value.id))) {
+	if (character.value && !list.some((c) => String(c.id) === String(character.value?.id))) {
 		const host = activeHostRoot.value;
-		const hostIdx = host ? list.findIndex((c: any) => String(c.id) === String(host.id)) : -1;
+		const hostIdx = host ? list.findIndex((c) => String(c.id) === String(host.id)) : -1;
 		if (hostIdx !== -1) {
 			list[hostIdx] = character.value;
 		} else {
@@ -342,7 +353,7 @@ const openCharacters = computed(() => {
 	return list;
 });
 
-function resolveCuriosity(refOrName: string | null | undefined): any | null {
+function resolveCuriosity(refOrName: string | null | undefined): CharacterModel | null {
 	if (!refOrName) return null;
 	const bundleRoot = activeHostRoot.value || character.value;
 	const searchRoots = bundleRoot ? [bundleRoot, ...characters.value] : characters.value;
@@ -367,8 +378,7 @@ const pullableCuriosities = computed(() => {
 	if (!bundleRoot || isPreview.value) return [];
 	const rootId = String(bundleRoot.id || '');
 	return characters.value.filter(
-		(c: any) =>
-			c && !c.isTemplate && String(c.id) !== rootId && !(bundleRoot.curiosities && bundleRoot.curiosities[c.id]),
+		(c) => c && !c.isTemplate && String(c.id) !== rootId && !(bundleRoot.curiosities && bundleRoot.curiosities[c.id]),
 	);
 });
 
@@ -403,8 +413,8 @@ const showCuriosityWebBar = computed(() => {
 
 const rollerCuriosities = computed(() => {
 	const seen = new Set<string>();
-	const list: any[] = [];
-	const add = (c: any) => {
+	const list: CharacterModel[] = [];
+	const add = (c: CharacterModel | null | undefined) => {
 		if (!c || typeof c !== 'object' || c.isTemplate) return;
 		const id = String(c.id || '');
 		if (id && seen.has(id)) return;
@@ -421,7 +431,7 @@ const rollerCuriosities = computed(() => {
 
 function syncSessionPools(preferCharacterId?: string | null) {
 	const targets = openCharacters.value;
-	const targetIds = new Set(targets.map((c: any) => String(c?.id || '')).filter(Boolean));
+	const targetIds = new Set(targets.map((c) => String(c?.id || '')).filter(Boolean));
 	const next: NamedPool[] = [];
 
 	// Keep existing pools unless they are empty session pools for closed sheets
@@ -488,7 +498,7 @@ function syncSessionPools(preferCharacterId?: string | null) {
 
 	if (!activePoolId.value || !next.some((p) => p.id === activePoolId.value)) {
 		const forCurrent =
-			character.value && next.find((p) => p.ownerId && String(p.ownerId) === String(character.value.id));
+			character.value && next.find((p) => p.ownerId && String(p.ownerId) === String(character.value?.id));
 		const chosen = forCurrent || next[0];
 		activePoolId.value = chosen?.id || '';
 		activeRollerSide.value = chosen?.id === 'opposition' ? 'opposition' : 'player';
@@ -505,7 +515,7 @@ watch(
 
 const availableToOpen = computed(() => {
 	const q = (sessionCharacterSearch.value || '').toLowerCase().trim();
-	return characters.value.filter((c: any) => {
+	return characters.value.filter((c) => {
 		if (c.isTemplate) return false;
 		if (openCharacterIDs.value.includes(c.id)) return false;
 		if (
@@ -526,7 +536,7 @@ const pendingTemplateUpdate = computed(() => {
 	const t = character.value.sheet && character.value.sheet.template;
 	const id = t && typeof t === 'object' ? t.id : null;
 	if (!id) return null;
-	const pinned = (typeof t === 'object' && t.version) || 1;
+	const pinned = (t && typeof t === 'object' && t.version) || 1;
 	if (typeof characterCurioLibraryTemplates === 'undefined') return null;
 	const builtin = characterCurioFunctions.findLibraryTemplate(id);
 	if (!builtin) return null;
@@ -641,7 +651,7 @@ onUnmounted(() => {
 });
 
 // ---- methods: view ----
-function openPreview(showcase: any = DREAMER_ARCHITECT_SHOWCASE) {
+function openPreview(showcase: SheetTemplate = DREAMER_ARCHITECT_SHOWCASE as SheetTemplate) {
 	try {
 		if (!showcase || !showcase.character) {
 			console.warn('Dreamer & Architect template missing or invalid — falling back to roster');
@@ -653,7 +663,7 @@ function openPreview(showcase: any = DREAMER_ARCHITECT_SHOWCASE) {
 		}
 		previewTemplateEntry.value = showcase;
 		previewCharacter.value = structuredClone(toRaw(showcase.character));
-		characterID.value = previewCharacter.value.id;
+		characterID.value = previewCharacter.value?.id ?? null;
 		setMode('character', 'play', false);
 	} catch (err) {
 		console.warn('Failed to load Dreamer & Architect template preview:', err);
@@ -975,13 +985,13 @@ function handleRemoveNamedPool(poolId: string) {
 	}
 }
 
-function persistOwnerMutation(owner: any) {
+function persistOwnerMutation(owner: CharacterModel | null | undefined) {
 	if (!owner) return;
 	if (character.value && String(character.value.id) === String(owner.id)) {
 		updateCharacter(owner);
 		return;
 	}
-	const topIdx = characters.value.findIndex((c: any) => c && String(c.id) === String(owner.id));
+	const topIdx = characters.value.findIndex((c) => c && String(c.id) === String(owner.id));
 	if (topIdx !== -1) {
 		owner.dateModified = new Date().toISOString();
 		characters.value[topIdx] = characterCurioFunctions.orderCharacterKeys(owner);
@@ -1012,7 +1022,7 @@ function handleTogglePoolPP(poolId: string) {
 	}
 }
 
-function addDieToRoller(dieData: any) {
+function addDieToRoller(dieData: Partial<DiceItem> | Partial<DiceItem>[]) {
 	if (namedPools.value.length === 0) {
 		syncSessionPools();
 	}
@@ -1034,14 +1044,14 @@ function addDieToRoller(dieData: any) {
 	showToast(`Added ${label} to ${ownerTag}`);
 }
 
-const studioPanelRef = ref<any>(null);
+const studioPanelRef = ref<StudioPanelInstance | null>(null);
 const showPlaySaveConfirm = ref(false);
 let pendingNavigation: (() => void) | null = null;
 const baselineCharacters = new Map<string, string>();
 
-function initBaseline(chars: any[]) {
+function initBaseline(chars: CharacterModel[]) {
 	baselineCharacters.clear();
-	(chars || []).forEach((c: any) => {
+	(chars || []).forEach((c) => {
 		if (c && c.id != null) {
 			baselineCharacters.set(String(c.id), JSON.stringify(toRaw(c)));
 		}
@@ -1254,7 +1264,7 @@ function cancelPlaySave() {
 	updateRouteHash();
 }
 
-function safeImageUrl(url: any) {
+function safeImageUrl(url: string | null | undefined) {
 	return characterCurioFunctions.safeImageUrl(url);
 }
 
@@ -1276,20 +1286,20 @@ function ensureLibraryTemplates(): Promise<boolean> {
 	return _libraryLoading;
 }
 
-function resolveTemplateEntry(id: string | null, version?: number | null) {
+function resolveTemplateEntry(id: string | null, version?: number | null): SheetTemplate | null {
 	if (!id) return null;
 	const store = sheetTemplates.value || [];
 	if (version) {
-		const snap = store.find((t: any) => t.id === id && (t.version || 1) === version);
+		const snap = store.find((t) => t.id === id && (t.version || 1) === version);
 		if (snap) return snap;
 		const builtin = characterCurioFunctions.findLibraryTemplate(id);
 		if (builtin && (builtin.version || 1) === version) return builtin;
 		if (builtin) return builtin; // degraded: snapshot lost, use current
-		const any = store.filter((t: any) => t.id === id).sort((a: any, b: any) => (b.version || 1) - (a.version || 1));
-		return any[0] || null;
+		const matches = store.filter((t) => t.id === id).sort((a, b) => (b.version || 1) - (a.version || 1));
+		return matches[0] || null;
 	}
-	const any = store.filter((t: any) => t.id === id).sort((a: any, b: any) => (b.version || 1) - (a.version || 1));
-	if (any.length) return any[0];
+	const matches = store.filter((t) => t.id === id).sort((a, b) => (b.version || 1) - (a.version || 1));
+	if (matches.length) return matches[0];
 	const builtin = characterCurioFunctions.findLibraryTemplate(id);
 	if (builtin) return builtin;
 	return null;
@@ -1303,45 +1313,47 @@ function charPrefs(charId: string) {
 	return prefs.value.characters[charId];
 }
 
-function applyPrefs(characterData: any) {
+function applyPrefs(characterData: CharacterModel): CharacterModel {
 	if (!characterData || !characterData.id) return characterData;
 	const cp = prefs.value && prefs.value.characters ? prefs.value.characters[characterData.id] : null;
 	if (!cp) return characterData;
 	if (Array.isArray(cp.setOrder) && cp.setOrder.length && Array.isArray(characterData.traitSets)) {
-		const byId = new Map();
-		characterData.traitSets.forEach((ts: any) => {
+		const byId = new Map<string, TraitSet>();
+		characterData.traitSets.forEach((ts) => {
 			if (ts && ts.id && !byId.has(ts.id)) byId.set(ts.id, ts);
 		});
-		const ordered: any[] = [];
-		cp.setOrder.forEach((id: any) => {
-			if (byId.has(id)) {
-				ordered.push(byId.get(id));
+		const ordered: TraitSet[] = [];
+		cp.setOrder.forEach((id) => {
+			const match = byId.get(id);
+			if (match) {
+				ordered.push(match);
 				byId.delete(id);
 			}
 		});
-		byId.forEach((ts: any) => ordered.push(ts));
-		characterData.traitSets.forEach((ts: any) => {
+		byId.forEach((ts) => ordered.push(ts));
+		characterData.traitSets.forEach((ts) => {
 			if (!ordered.includes(ts)) ordered.push(ts);
 		});
 		characterData.traitSets = ordered;
 	}
 	if (cp.traitOrders && Array.isArray(characterData.traitSets)) {
-		characterData.traitSets.forEach((ts: any) => {
-			const order = ts && ts.id ? cp.traitOrders[ts.id] : null;
+		characterData.traitSets.forEach((ts) => {
+			const order = ts && ts.id ? cp.traitOrders?.[ts.id] : null;
 			if (!Array.isArray(order) || !order.length || !Array.isArray(ts.traits)) return;
-			const byLid = new Map();
-			ts.traits.forEach((tr: any) => {
+			const byLid = new Map<string, Trait>();
+			ts.traits.forEach((tr) => {
 				if (tr && tr._lid && !byLid.has(tr._lid)) byLid.set(tr._lid, tr);
 			});
-			const ordered: any[] = [];
-			order.forEach((lid: any) => {
-				if (byLid.has(lid)) {
-					ordered.push(byLid.get(lid));
+			const ordered: Trait[] = [];
+			order.forEach((lid) => {
+				const match = byLid.get(lid);
+				if (match) {
+					ordered.push(match);
 					byLid.delete(lid);
 				}
 			});
-			byLid.forEach((tr: any) => ordered.push(tr));
-			ts.traits.forEach((tr: any) => {
+			byLid.forEach((tr) => ordered.push(tr));
+			ts.traits.forEach((tr) => {
 				if (!ordered.includes(tr)) ordered.push(tr);
 			});
 			ts.traits = ordered;
@@ -1350,15 +1362,15 @@ function applyPrefs(characterData: any) {
 	return characterData;
 }
 
-function recordCharOrder(characterData: any) {
+function recordCharOrder(characterData: CharacterModel) {
 	if (!characterData || !characterData.id) return;
 	const cp = charPrefs(characterData.id);
 	if (!Array.isArray(characterData.traitSets)) return;
-	cp.setOrder = characterData.traitSets.map((ts: any) => ts && ts.id).filter(Boolean);
+	cp.setOrder = characterData.traitSets.map((ts) => ts && ts.id).filter((id): id is string => Boolean(id));
 	cp.traitOrders = cp.traitOrders || {};
-	characterData.traitSets.forEach((ts: any) => {
+	characterData.traitSets.forEach((ts) => {
 		if (ts && ts.id && Array.isArray(ts.traits)) {
-			cp.traitOrders[ts.id] = ts.traits.map((tr: any) => tr && tr._lid).filter(Boolean);
+			cp.traitOrders![ts.id] = ts.traits.map((tr) => tr && tr._lid).filter((lid): lid is string => Boolean(lid));
 		}
 	});
 }
@@ -1367,14 +1379,18 @@ function recordCharOrder(characterData: any) {
 // forms (full embed -> upsert + collapse to a pinned { id, version }),
 // snapshot-on-first-see for unversioned refs (D16), then merge +
 // internal ids + preferences.
-function resolveStoredCharacter(c: any) {
-	if (!c || typeof c !== 'object') return c;
+function resolveStoredCharacter(raw: unknown): CharacterModel {
+	if (!raw || typeof raw !== 'object') return raw as CharacterModel;
+	let c = raw as CharacterModel;
 	characterCurioFunctions.ensureTraitSetIds(c);
-	let ref: any = null;
+	let ref: { id: string; version: number | null } | null = null;
 	const t = c.sheet && c.sheet.template;
 	if (t && typeof t === 'object') {
-		if (t.character && t.id) {
-			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, t);
+		if ('character' in t && t.character && t.id) {
+			sheetTemplates.value = characterCurioStorage.upsertTemplate(
+				sheetTemplates.value,
+				t,
+			) as unknown as SheetTemplate[];
 			ref = { id: t.id, version: t.version || 1 };
 			c.sheet = { template: { id: t.id, version: t.version || 1 } };
 		} else if (t.id) {
@@ -1389,9 +1405,12 @@ function resolveStoredCharacter(c: any) {
 			// Snapshot the exact pinned base into the store (D16):
 			// a later bundle update must never move existing
 			// characters until the user accepts the switch.
-			const inStore = (sheetTemplates.value || []).some((s: any) => s.id === entry.id && (s.version || 1) === ver);
+			const inStore = (sheetTemplates.value || []).some((s) => s.id === entry!.id && (s.version || 1) === ver);
 			if (!inStore && characterCurioFunctions.findLibraryTemplate(entry.id) === entry) {
-				sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, entry);
+				sheetTemplates.value = characterCurioStorage.upsertTemplate(
+					sheetTemplates.value,
+					entry,
+				) as unknown as SheetTemplate[];
 			}
 			ref = { id: ref.id, version: ver };
 			c.sheet = { template: { id: ref.id, version: ver } };
@@ -1401,22 +1420,23 @@ function resolveStoredCharacter(c: any) {
 			const templateChar = characterCurioFunctions.findTemplateCharacter(entry);
 			if (templateChar && c.sets) {
 				// Layered storage form: fold content onto the template.
-				c = characterCurioFunctions.materializeCharacter(c, templateChar);
+				c = characterCurioFunctions.materializeCharacter(c, templateChar) as CharacterModel;
 				c.sheet = ref.version ? { template: { id: ref.id, version: ref.version } } : { template: { id: ref.id } };
 			} else {
 				c = characterCurioFunctions.mergeTemplateIntoCharacter(c, entry);
 			}
 		} else if (c.sets) {
-			c = characterCurioFunctions.materializeCharacter(c, null);
+			c = characterCurioFunctions.materializeCharacter(c, null) as CharacterModel;
 		}
 	} else if (c.sets && !Array.isArray(c.traitSets)) {
-		c = characterCurioFunctions.materializeCharacter(c, null);
+		c = characterCurioFunctions.materializeCharacter(c, null) as CharacterModel;
 	}
 	if (c.curiosities && typeof c.curiosities === 'object' && !Array.isArray(c.curiosities)) {
-		for (const [cid, sub] of Object.entries(c.curiosities) as Array<[string, any]>) {
-			if (sub && typeof sub === 'object') {
-				if (sub.sets && !Array.isArray(sub.traitSets)) {
-					c.curiosities[cid] = characterCurioFunctions.materializeCharacter(sub, null);
+		for (const [cid, sub] of Object.entries(c.curiosities)) {
+			const subObj = sub as CharacterModel | null | undefined;
+			if (subObj && typeof subObj === 'object') {
+				if (subObj.sets && !Array.isArray(subObj.traitSets)) {
+					c.curiosities[cid] = characterCurioFunctions.materializeCharacter(subObj, null) as CharacterModel;
 				}
 				if (!c.curiosities[cid].id) c.curiosities[cid].id = cid;
 			}
@@ -1612,7 +1632,7 @@ function openAlongside(id: string) {
 	isAddCharacterModalOpen.value = false;
 	saveOpenCharacterIDs();
 	setMode('character', submode.value || 'play', true);
-	const char = characters.value.find((c: any) => c.id === id);
+	const char = characters.value.find((c) => c.id === id);
 	showToast(`Opened ${char?.name || 'character'} in session`);
 }
 
@@ -1652,7 +1672,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 	}
 
 	if (targetTemplateId) {
-		const template = characters.value.find((c: any) => c.id === targetTemplateId);
+		const template = characters.value.find((c) => c.id === targetTemplateId);
 		if (template) {
 			const currentRef =
 				template.sheet && template.sheet.template && typeof template.sheet.template === 'object'
@@ -1669,7 +1689,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
 				...cloneDeep(entry),
 				userSaved: true,
-			});
+			}) as unknown as SheetTemplate[];
 
 			const now = new Date().toISOString();
 			const entity = {
@@ -1682,7 +1702,10 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 				dateModified: now,
 				dateTouched: now,
 			};
-			let characterData: any = characterCurioFunctions.materializeCharacter(entity, entry.character);
+			let characterData: CharacterModel = characterCurioFunctions.materializeCharacter(
+				entity,
+				entry.character,
+			) as CharacterModel;
 			characterData.sheet = { template: { id: entry.id, version: entry.version || 1 } };
 			characterData = characterCurioFunctions.orderCharacterKeys(characterData);
 			characterCurioFunctions.ensureTraitSetIds(characterData);
@@ -1709,7 +1732,9 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 		}
 	}
 
-	let characterData: any = structuredClone(characterCurioFunctions.defaultCharacter);
+	let characterData: CharacterModel = structuredClone(
+		characterCurioFunctions.defaultCharacter,
+	) as unknown as CharacterModel;
 
 	characterData.id = characterCurioFunctions.generateUUID();
 	if (asTemplate) {
@@ -1751,7 +1776,7 @@ function createFromTemplate(templateId: string) {
 	createCharacter(false, templateId);
 }
 
-function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = false) {
+function createFromLibrary(libraryItem: SheetTemplate | null | undefined, asTemplate = false, openPrint = false) {
 	if (!libraryItem || !libraryItem.character) return;
 
 	const itemTitle = getTemplateTitle(libraryItem);
@@ -1768,12 +1793,18 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 		dateModified: now,
 		dateTouched: now,
 	};
-	const characterData: any = characterCurioFunctions.materializeCharacter(entity, libraryItem.character);
+	const characterData: CharacterModel = characterCurioFunctions.materializeCharacter(
+		entity,
+		libraryItem.character,
+	) as CharacterModel;
 	characterCurioFunctions.ensureTraitSetIds(characterData);
 	characterCurioFunctions.assignLids(characterData);
 	// D16: snapshot the exact pinned base now — a later bundle
 	// update must never move this character unasked.
-	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, cloneDeep(libraryItem));
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(
+		sheetTemplates.value,
+		cloneDeep(libraryItem),
+	) as unknown as SheetTemplate[];
 	recordCharOrder(characterData);
 
 	characters.value.push(characterData);
@@ -1796,7 +1827,7 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 }
 
 function toggleTemplate(characterId: string) {
-	const characterIndex = characters.value.findIndex((c: any) => c.id === characterId);
+	const characterIndex = characters.value.findIndex((c) => c.id === characterId);
 	if (characterIndex === -1) return;
 	const characterData = characters.value[characterIndex];
 	if (characterData.isTemplate) {
@@ -1814,7 +1845,7 @@ function deleteCharacter(id: string) {
 	openCharacterIDs.value = openCharacterIDs.value.filter((x: string) => x !== id);
 	saveOpenCharacterIDs();
 
-	const c = characters.value.findIndex((characterData: any) => characterData.id === id);
+	const c = characters.value.findIndex((characterData) => characterData.id === id);
 	if (c === -1) return;
 
 	characters.value.splice(c, 1);
@@ -1848,7 +1879,7 @@ function deleteAllCharacters() {
 }
 
 function duplicateCharacter(id: string) {
-	const original = characters.value.find((characterData: any) => characterData.id === id);
+	const original = characters.value.find((characterData) => characterData.id === id);
 	if (!original) return;
 
 	const characterData = cloneDeep(original);
@@ -1887,7 +1918,7 @@ function loadCharacter(id: string, targetSubmode?: string | null) {
 	setMode('character', targetSubmode ?? submode.value ?? 'edit', true);
 }
 
-function importSheetTemplate(entry: any) {
+function importSheetTemplate(entry: SheetTemplate | null | undefined) {
 	if (!entry || !entry.id) return;
 	if (!characterCurioFunctions.isValidCurrentCharacter(entry)) {
 		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE, { tone: 'error' });
@@ -1896,15 +1927,15 @@ function importSheetTemplate(entry: any) {
 	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
 		...cloneDeep(entry),
 		userSaved: true,
-	});
+	}) as unknown as SheetTemplate[];
 	saveLocalData();
 	showToast(`Saved layout template “${getTemplateTitle(entry) || entry.id}”`);
 }
 
 function deleteSheetTemplate(id: string) {
 	if (!id) return;
-	const removed = (sheetTemplates.value || []).find((t: any) => t?.id === id);
-	sheetTemplates.value = (sheetTemplates.value || []).filter((t: any) => t?.id !== id);
+	const removed = (sheetTemplates.value || []).find((t) => t?.id === id);
+	sheetTemplates.value = (sheetTemplates.value || []).filter((t) => t?.id !== id);
 	saveLocalData();
 	showToast(
 		'Removed saved template',
@@ -1912,7 +1943,10 @@ function deleteSheetTemplate(id: string) {
 			? {
 					actionLabel: 'Undo',
 					onAction: () => {
-						sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, removed);
+						sheetTemplates.value = characterCurioStorage.upsertTemplate(
+							sheetTemplates.value,
+							removed,
+						) as unknown as SheetTemplate[];
 						saveLocalData();
 					},
 				}
@@ -1954,7 +1988,7 @@ function stayOnTemplateSnapshot() {
 	showToast('Staying on your saved layout version');
 }
 
-function importCharacter(characterData: any) {
+function importCharacter(characterData: unknown) {
 	if (!characterCurioFunctions.isValidCurrentCharacter(characterData)) {
 		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE, { tone: 'error' });
 		return;
@@ -1963,18 +1997,21 @@ function importCharacter(characterData: any) {
 	// (id, version) — replace, never duplicate — then resolve the
 	// sparse overlay. No template link: the file renders exactly
 	// as-is (D17 sacred).
-	let incoming = characterData;
+	let incoming = characterData as CharacterModel & { prefs?: unknown };
 	const tref = incoming && incoming.sheet && incoming.sheet.template;
 	if (tref && typeof tref === 'object') {
-		let tplEntry = null;
-		if (tref.character && tref.id) {
-			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, tref);
-			tplEntry = tref;
+		let tplEntry: SheetTemplate | null = null;
+		if ('character' in tref && tref.character && tref.id) {
+			sheetTemplates.value = characterCurioStorage.upsertTemplate(
+				sheetTemplates.value,
+				tref,
+			) as unknown as SheetTemplate[];
+			tplEntry = tref as SheetTemplate;
 		} else if (tref.id) {
 			tplEntry = resolveTemplateEntry(tref.id, tref.version || null);
 		}
 		const templateChar = tplEntry ? characterCurioFunctions.findTemplateCharacter(tplEntry) : null;
-		if (templateChar) {
+		if (templateChar && tplEntry) {
 			// Layered seam: the file's content + overrides fold onto
 			// the template (lossless — presentation is preserved). Input
 			// already in layered form (JSON tab) folds directly.
@@ -1986,7 +2023,7 @@ function importCharacter(characterData: any) {
 				!Array.isArray(incoming.sets)
 					? incoming
 					: characterCurioFunctions.toLayeredEntity(incoming);
-			incoming = characterCurioFunctions.materializeCharacter(layered, templateChar);
+			incoming = characterCurioFunctions.materializeCharacter(layered, templateChar) as CharacterModel;
 			incoming.sheet = { template: { id: tplEntry.id, version: tplEntry.version || 1 } };
 		} else if (tplEntry) {
 			incoming = characterCurioFunctions.mergeTemplateIntoCharacter(incoming, tplEntry);
@@ -2000,7 +2037,7 @@ function importCharacter(characterData: any) {
 	) {
 		// Layered input with no template link: fold standalone (no
 		// presentation base; entity sets render as custom sets).
-		incoming = characterCurioFunctions.materializeCharacter(incoming);
+		incoming = characterCurioFunctions.materializeCharacter(incoming) as CharacterModel;
 	}
 	if (typeof incoming.id !== 'string' || !incoming.id.length) {
 		incoming.id = characterCurioFunctions.generateUUID();
@@ -2012,12 +2049,11 @@ function importCharacter(characterData: any) {
 	characterCurioFunctions.assignLids(incoming);
 
 	// Save new character (preserve existing dateCreated when updating in-place via JSON editor).
-	const c = characters.value.findIndex((existingCharacter: any) => existingCharacter.id === incoming.id);
+	const c = characters.value.findIndex((existingCharacter) => existingCharacter.id === incoming.id);
 	const embeddedHostIdx =
 		c === -1
 			? characters.value.findIndex(
-					(root: any) =>
-						root?.curiosities && typeof root.curiosities === 'object' && Boolean(root.curiosities[incoming.id]),
+					(root) => root?.curiosities && typeof root.curiosities === 'object' && Boolean(root.curiosities[incoming.id]),
 				)
 			: -1;
 	const now = new Date().toISOString();
@@ -2025,7 +2061,7 @@ function importCharacter(characterData: any) {
 		c !== -1
 			? characters.value[c]
 			: embeddedHostIdx !== -1
-				? characters.value[embeddedHostIdx].curiosities[incoming.id]
+				? characters.value[embeddedHostIdx].curiosities?.[incoming.id]
 				: null;
 	if (!incoming.dateCreated) {
 		incoming.dateCreated = prev?.dateCreated || now;
@@ -2041,8 +2077,11 @@ function importCharacter(characterData: any) {
 	if (c !== -1) {
 		characters.value[c] = incoming;
 	} else if (embeddedHostIdx !== -1) {
-		characters.value[embeddedHostIdx].curiosities[incoming.id] = incoming;
-		characters.value[embeddedHostIdx].dateModified = now;
+		const host = characters.value[embeddedHostIdx];
+		if (host.curiosities) {
+			host.curiosities[incoming.id] = incoming;
+		}
+		host.dateModified = now;
 	} else {
 		characters.value.push(incoming);
 	}
@@ -2050,7 +2089,10 @@ function importCharacter(characterData: any) {
 	// Arrangement: file prefs (name-keyed) convert to live form;
 	// otherwise the file's own order is recorded fresh.
 	if (incoming.prefs && typeof incoming.prefs === 'object') {
-		const live = characterCurioFunctions.prefsFromImport(incoming.prefs, incoming);
+		const live = characterCurioFunctions.prefsFromImport(
+			incoming.prefs as Parameters<typeof characterCurioFunctions.prefsFromImport>[0],
+			incoming,
+		);
 		if (live) {
 			if (!prefs.value) prefs.value = { version: 1, global: {}, characters: {} };
 			prefs.value.characters[incoming.id] = live;
@@ -2067,7 +2109,7 @@ function importCharacter(characterData: any) {
 	showToast(`Imported ${incoming.name || 'character'}`);
 }
 
-function downloadJson(filename: string, payload: any) {
+function downloadJson(filename: string, payload: unknown) {
 	const uri = encodeURI('data:application/json;charset=utf-8,' + JSON.stringify(payload, null, 2)).replace(/#/g, '%23');
 
 	const link = document.createElement('a');
@@ -2078,17 +2120,17 @@ function downloadJson(filename: string, payload: any) {
 	link.remove();
 }
 
-function sheetTemplateForExport(characterData: any) {
+function sheetTemplateForExport(characterData: CharacterModel | null | undefined): SheetTemplate | null {
 	if (!characterData) return null;
 	const t = characterData.sheet && characterData.sheet.template;
 	const ref = t && typeof t === 'object' ? { id: t.id, version: t.version || null } : null;
 	if (!ref || !ref.id) return null;
-	if (t.character) return t;
+	if (t && typeof t === 'object' && 'character' in t && t.character) return t as SheetTemplate;
 	return resolveTemplateEntry(ref.id, ref.version);
 }
 
 async function exportCharacter(id: string) {
-	const characterData = characters.value.find((c: any) => c.id === id);
+	const characterData = characters.value.find((c) => c.id === id);
 	if (!characterData) return;
 
 	await ensureLibraryTemplates();
@@ -2110,7 +2152,7 @@ async function exportCharacter(id: string) {
 	downloadJson(filename, out);
 }
 
-function fallbackTemplateTitle(characterData: any) {
+function fallbackTemplateTitle(characterData: CharacterModel) {
 	return (
 		getView(characterData)?.listing?.title ||
 		(getCuriosityGame(characterData)
@@ -2140,7 +2182,7 @@ function saveSheetTemplate() {
 	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
 		...cloneDeep(entry),
 		userSaved: true,
-	});
+	}) as unknown as SheetTemplate[];
 	characterData.sheet = { template: { id: entry.id, version: entry.version } };
 	saveLocalData();
 	showToast(`Saved layout as reusable template`);
@@ -2162,7 +2204,7 @@ function exportSheetTemplate() {
 	downloadJson(`${slug}.curio-template.json`, entry);
 }
 
-function importSetPresets(entries: any[]) {
+function importSetPresets(entries: SetPresetEntry[]) {
 	const { importedCount } = characterCurioFunctions.upsertCustomSetPresets(entries);
 	if (importedCount > 0) {
 		showToast(`Imported ${importedCount} ${importedCount === 1 ? 'preset' : 'presets'}`);
@@ -2171,7 +2213,7 @@ function importSetPresets(entries: any[]) {
 
 async function exportAllCharacters() {
 	await ensureLibraryTemplates();
-	const out = (characters.value || []).map((c: any) => {
+	const out = (characters.value || []).map((c) => {
 		const entry = sheetTemplateForExport(c);
 		const o = characterCurioFunctions.stripCharacterForExport(c, entry);
 		const filePrefs = characterCurioFunctions.prefsForExport(
@@ -2203,7 +2245,7 @@ async function exportAllCharacters() {
 	);
 }
 
-function updateCharacter(characterData: any) {
+function updateCharacter(characterData: CharacterModel) {
 	if (previewCharacter.value) {
 		if (previewCharacter.value.id === characterData.id) {
 			previewCharacter.value = characterData;
@@ -2213,11 +2255,11 @@ function updateCharacter(characterData: any) {
 		return Promise.resolve();
 	}
 
-	const c = characters.value.findIndex((savedCharacter: any) => savedCharacter.id === characterData.id);
+	const c = characters.value.findIndex((savedCharacter) => savedCharacter.id === characterData.id);
 	let hostIdx = -1;
 	if (c === -1) {
 		hostIdx = characters.value.findIndex(
-			(root: any) =>
+			(root) =>
 				root?.curiosities && typeof root.curiosities === 'object' && Boolean(root.curiosities[characterData.id]),
 		);
 		if (hostIdx === -1) return Promise.resolve();
@@ -2235,7 +2277,9 @@ function updateCharacter(characterData: any) {
 		touchCharacter(characterData.id);
 	} else {
 		const hostRoot = characters.value[hostIdx];
-		hostRoot.curiosities[characterData.id] = characterCurioFunctions.orderCharacterKeys(characterData);
+		if (hostRoot.curiosities) {
+			hostRoot.curiosities[characterData.id] = characterCurioFunctions.orderCharacterKeys(characterData);
+		}
 		hostRoot.dateModified = now;
 		hostRoot.dateTouched = now;
 		recordCharOrder(characterData);
@@ -2309,8 +2353,8 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 		if (isPaletteOpen.value) return;
 		if (editing.value && editing.value.length) {
 			event.preventDefault();
-			if (event.target && typeof (event.target as any).blur === 'function') {
-				(event.target as any).blur();
+			if (event.target instanceof HTMLElement) {
+				event.target.blur();
 			}
 			clearSelected();
 			return;
@@ -2332,7 +2376,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 }
 
 function touchCharacter(id: string) {
-	const c = characters.value.findIndex((savedCharacter: any) => savedCharacter.id === id);
+	const c = characters.value.findIndex((savedCharacter) => savedCharacter.id === id);
 
 	if (c === -1) return;
 
@@ -2343,7 +2387,7 @@ function touchCharacter(id: string) {
 	characters.value[c] = characterData;
 }
 
-function selectElement(selector: any) {
+function selectElement(selector: EditingPath) {
 	// Re-clicking the open element keeps its editor open (it never toggles
 	// shut); deselect via Done, Escape, or clicking empty canvas instead.
 	if (Array.isArray(selector) && selector.length && characterCurioFunctions.arraysMatch(editing.value, selector)) {
@@ -2393,10 +2437,8 @@ function selectElement(selector: any) {
 
 function handleGlobalPointerDown(event: Event) {
 	mouseDownInsideEditor.value = Boolean(
-		event &&
-		event.target &&
-		(event.target as any).closest &&
-		(event.target as any).closest(
+		event?.target instanceof Element &&
+		event.target.closest(
 			'.header, .editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
 		),
 	);
@@ -2418,10 +2460,8 @@ function handleMainClick(event: Event) {
 		return;
 	}
 	if (
-		event &&
-		event.target &&
-		(event.target as any).closest &&
-		(event.target as any).closest(
+		event?.target instanceof Element &&
+		event.target.closest(
 			'.header, .editor, .modal, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar, .curiosity-web-bar',
 		)
 	) {

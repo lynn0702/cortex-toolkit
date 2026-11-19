@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { characterCurioFunctions } from './functions.ts';
-import { getCuriosityThumbnailUrl } from './model.ts';
+import { getCuriosityThumbnailUrl, type Character } from './model.ts';
 
 defineProps<{
-	openCharacters: any[];
+	openCharacters: Character[];
 	characterID: string | null;
 	submode: string | null;
 	playViewMode: string;
@@ -24,7 +24,7 @@ const emit = defineEmits<{
 	(e: 'addPlayCard'): void;
 }>();
 
-function safeImageUrl(url: any) {
+function safeImageUrl(url: string | null | undefined) {
 	return characterCurioFunctions.safeImageUrl(url);
 }
 </script>

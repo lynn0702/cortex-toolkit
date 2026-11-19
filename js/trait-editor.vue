@@ -37,6 +37,9 @@ import {
 	keepsExtraDice,
 	resolvePpDelta,
 	type Character,
+	type SheetTemplate,
+	type Trait,
+	type Visibility,
 } from './model.ts';
 import { buildParts } from './sheet-grid.ts';
 import TagEditor from './tag-editor.vue';
@@ -58,13 +61,14 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(e: 'selectElement', selector: any[]): void;
+	(e: 'selectElement', selector: Array<string | number>): void;
 	(e: 'updateCharacter', character: Character): void;
 	(e: 'removeTrait', traitSetID: number, traitID: number): void;
 }>();
 
 const instance = getCurrentInstance();
-const rootTemplates = () => (instance?.proxy as any)?.$root?.sheetTemplates ?? null;
+const rootTemplates = (): SheetTemplate[] | null =>
+	(instance?.proxy?.$root as { sheetTemplates?: SheetTemplate[] } | null | undefined)?.sheetTemplates ?? null;
 
 const rootEl = ref<HTMLElement | null>(null);
 const inputName = ref<HTMLInputElement | null>(null);
@@ -98,26 +102,26 @@ const isSetSubtraitMode = computed(() => Boolean(props.isSetSubtrait && depth.va
 
 const canCreateSubtrait = computed(() => depth.value < 3);
 
-const traitChain = computed<any[]>(() => {
+const traitChain = computed<Trait[]>(() => {
 	if (!traitSet.value || !Array.isArray(traitSet.value.traits)) return [];
-	const chain: any[] = [];
-	let list: any[] | undefined = traitSet.value.traits;
+	const chain: Trait[] = [];
+	let list: Trait[] | undefined = traitSet.value.traits;
 	for (const idx of resolvedPath.value) {
 		if (!Array.isArray(list) || !list[idx]) return [];
-		const node: any = list[idx];
+		const node: Trait = list[idx];
 		chain.push(node);
 		list = node.traits;
 	}
 	return chain;
 });
 
-const parentTrait = computed(() => traitChain.value[0] ?? null);
+const parentTrait = computed<Trait | null>(() => traitChain.value[0] ?? null);
 
 const parentNode = computed(() =>
 	traitChain.value.length >= 2 ? traitChain.value[traitChain.value.length - 2] : traitSet.value,
 );
 
-const trait = computed<any>(() =>
+const trait = computed<Trait | undefined>(() =>
 	traitChain.value.length > 0 ? traitChain.value[traitChain.value.length - 1] : undefined,
 );
 
@@ -193,7 +197,7 @@ const subtraitNoun = computed({
 		return resolveSubtraitNoun(trait.value);
 	},
 	set(val: string) {
-		const target = trait.value as Record<string, any> | undefined;
+		const target = trait.value;
 		if (!target) return;
 		const prev = resolveSubtraitNoun(target);
 		target.noun = val;
@@ -211,13 +215,13 @@ const subtraitPlural = computed({
 		return resolveSubtraitPlural(trait.value);
 	},
 	set(val: string) {
-		const target = trait.value as Record<string, any> | undefined;
+		const target = trait.value;
 		if (!target) return;
 		target.plural = val;
 		ensureView(target).plural = val;
 		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
 		const path = resolvedPath.value;
-		traits.forEach((tr: any) => {
+		traits.forEach((tr) => {
 			if (!tr || typeof tr !== 'object' || tr === parentTrait.value) return;
 			if (typeof path[1] === 'number' && tr.traits?.[path[1]]) {
 				const sibling = tr.traits[path[1]];
@@ -259,12 +263,12 @@ const isListStyle = computed(() => {
 });
 
 const hasSfxChildren = computed(() => characterCurioFunctions.blockChildren(trait.value, traitSet.value).length > 0);
-const hasBadge = computed(() => Boolean((getView(trait.value) as any)?.badge));
+const hasBadge = computed(() => Boolean(getView(trait.value)?.badge));
 
 const isLabeledPipsSet = computed(() => {
 	if (isSubtraitMode.value) return false;
 	const v = getView(traitSet.value);
-	return v?.style?.body === 'pips' && (v as any)?.pips?.labels === true;
+	return v?.style?.body === 'pips' && v?.pips?.labels === true;
 });
 
 const pipRowChecked = computed({
@@ -275,20 +279,23 @@ const pipRowChecked = computed({
 		}
 		return false;
 	},
-	set(val: any) {
-		const t = trait.value as unknown as Record<string, any>;
+	set(val: boolean) {
+		const t = trait.value;
+		if (!t) return;
 		t.rating = { type: 'Pip', value: [Boolean(val)] };
 		updateCharacter(props.character);
 	},
 });
 
-const dice = computed(() => characterCurioFunctions.getTraitDice(trait.value, ancestorFallbacks.value));
+const dice = computed(() =>
+	trait.value ? characterCurioFunctions.getTraitDice(trait.value, ancestorFallbacks.value) : [],
+);
 
-function firstDieOf(node: any) {
+function firstDieOf(node: unknown) {
 	return ratingDice(resolveRating(node, ancestorFallbacks.value))[0] || 0;
 }
 
-function isDieActiveOf(node: any, size: number) {
+function isDieActiveOf(node: unknown, size: number) {
 	return firstDieOf(node) === size;
 }
 
@@ -301,16 +308,12 @@ function addRating() {
 	if (!trait.value) return;
 	const scale = availableValues.value;
 	const size = Array.isArray(scale) && scale.length ? scale[0] : 8;
-	setRatingDie(
-		trait.value as unknown as Record<string, any>,
-		size,
-		Array.isArray(scale) && scale.length ? [...scale] : undefined,
-	);
+	setRatingDie(trait.value, size, Array.isArray(scale) && scale.length ? [...scale] : undefined);
 	updateCharacter(props.character);
 }
 
 function clearRating() {
-	const t = trait.value as unknown as Record<string, any> | undefined;
+	const t = trait.value;
 	if (!t) return;
 	confirmRatingChange.value = null;
 	delete t.rating;
@@ -336,7 +339,7 @@ const ratingHasOut = computed({
 		return hasOutRange(trait.value, ancestorFallbacks.value);
 	},
 	set(value: boolean) {
-		const t = trait.value as unknown as Record<string, any>;
+		const t = trait.value;
 		if (!t) return;
 		const resolved = resolveRating(t, ancestorFallbacks.value);
 		if (!resolved || (resolved.type !== 'Die' && resolved.type !== 'Dice')) return;
@@ -346,7 +349,7 @@ const ratingHasOut = computed({
 				value: Array.isArray(resolved.value) ? [...resolved.value] : [],
 			};
 		}
-		const r = t.rating;
+		const r = t.rating as unknown as Record<string, unknown>;
 		if (value) {
 			if (!hasOutRange(undefined, ancestorFallbacks.value)) {
 				r.out = true;
@@ -372,14 +375,14 @@ const ratingHasOut = computed({
 const confirmRatingChange = ref<'Counter' | 'Die' | 'Dice' | 'Pip' | null>(null);
 
 function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
-	const t = trait.value as unknown as Record<string, any>;
+	const t = trait.value;
 	if (!t) return;
 	const cur = resolveRating(t, ancestorFallbacks.value);
 	if (cur?.type === type) return;
 	const hasChildValues =
 		Array.isArray(t.traits) &&
 		t.traits.some(
-			(ct: any) =>
+			(ct) =>
 				resolveRating(ct, [t, ...ancestorFallbacks.value]) !== undefined ||
 				(Array.isArray(ct?.traits) && ct.traits.length > 0),
 		);
@@ -392,12 +395,12 @@ function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 
 function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	confirmRatingChange.value = null;
-	const t = trait.value as unknown as Record<string, any>;
+	const t = trait.value;
 	if (!t) return;
 	const cur = resolveRating(t, ancestorFallbacks.value);
 	if (cur?.type === type) return;
 	if (Array.isArray(t.traits)) {
-		t.traits.forEach((ct: any) => {
+		t.traits.forEach((ct) => {
 			if (ct && typeof ct === 'object' && ct.rating) {
 				ct.rating.value = [];
 			}
@@ -421,8 +424,8 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 				type: 'Dice',
 				value: list,
 				...(ownPrevRange ? { range: ownPrevRange } : {}),
-				...(cur && (cur as any).out === true ? { out: true } : {}),
-			};
+				...(cur && (cur as { out?: unknown }).out === true ? { out: true } : {}),
+			} as Trait['rating'];
 			t.pool = true;
 		}
 	} else if (type === 'Die') {
@@ -469,8 +472,8 @@ const counterNumber = computed({
 		if (r && r.type === 'Counter' && typeof r.value[0] === 'number') return r.value[0];
 		return 0;
 	},
-	set(val: any) {
-		const t = trait.value as unknown as Record<string, any>;
+	set(val: number | string) {
+		const t = trait.value;
 		if (!t) return;
 		const [lo, hi] = counterBounds();
 		let n = Math.floor(Number(val));
@@ -481,8 +484,8 @@ const counterNumber = computed({
 	},
 });
 
-function setCounterBound(which: 0 | 1, val: any) {
-	const t = trait.value as unknown as Record<string, any>;
+function setCounterBound(which: 0 | 1, val: number | string) {
+	const t = trait.value;
 	if (!t) return;
 	let [lo, hi] = counterBounds();
 	const n = Math.floor(Number(val));
@@ -531,7 +534,7 @@ const pipBubbleCount = computed(() => {
 					? setR.value.length
 					: 0
 			: 0;
-	if ((trait.value as any)?.rating?.type === 'Pip') {
+	if (trait.value?.rating?.type === 'Pip') {
 		return r.value.length || inheritedSetCount || 1;
 	}
 	return inheritedSetCount || r.value.length || 1;
@@ -543,7 +546,7 @@ function pipBubbleAt(index: number): boolean {
 }
 
 function togglePipBubble(index: number) {
-	const t = trait.value as unknown as Record<string, any>;
+	const t = trait.value;
 	if (!t) return;
 	const n = Math.max(pipBubbleCount.value, index + 1);
 	const cur = resolveRating(t, ancestorFallbacks.value);
@@ -557,7 +560,7 @@ function togglePipBubble(index: number) {
 }
 
 function setPipBubbleCount(count: number) {
-	const t = trait.value as unknown as Record<string, any>;
+	const t = trait.value;
 	if (!t) return;
 	const n = Math.max(1, Math.min(100, Math.floor(Number(count)) || 1));
 	const cur = resolveRating(t, ancestorFallbacks.value);
@@ -570,15 +573,16 @@ function setPipBubbleCount(count: number) {
 }
 
 function setTraitRange(scale: number[]) {
-	const t = trait.value as unknown as Record<string, any>;
+	const t = trait.value;
+	if (!t) return;
 	const rating = resolveRating(t, ancestorFallbacks.value);
 	if (!rating) return;
 	t.rating = {
 		type: rating.type,
 		value: [...rating.value],
 		range: [...scale],
-		...((rating as any).out === true ? { out: true } : {}),
-	};
+		...((rating as { out?: unknown }).out === true ? { out: true } : {}),
+	} as Trait['rating'];
 	if (isSetSubtraitMode.value) {
 		syncCompanionSubtraits(t.noun || t.name);
 	} else if (traitSet.value) {
@@ -606,13 +610,13 @@ function toggleRangeOption(size: number) {
 // Spendable require a rating; hitches shows against the inherited value.
 const traitPool = computed({
 	get() {
-		const t = trait.value as unknown as Record<string, unknown> | undefined;
+		const t = trait.value;
 		if (t && typeof t.pool === 'boolean') return t.pool;
-		return Boolean(!isSubtraitMode.value && traitSet.value && (traitSet.value as any).pool === true);
+		return Boolean(!isSubtraitMode.value && traitSet.value && traitSet.value.pool === true);
 	},
-	set(val: any) {
-		if (!trait.value) return;
-		const t = trait.value as unknown as Record<string, any>;
+	set(val: boolean) {
+		const t = trait.value;
+		if (!t) return;
 		const next = Boolean(val);
 		t.pool = next;
 		if (next) {
@@ -630,8 +634,8 @@ const traitPool = computed({
 					type: 'Dice',
 					value: prevDice.length ? prevDice : [defaultSize],
 					...(ownPrevRange ? { range: ownPrevRange } : {}),
-					...(cur && (cur as any).out === true ? { out: true } : {}),
-				};
+					...(cur && (cur as { out?: unknown }).out === true ? { out: true } : {}),
+				} as Trait['rating'];
 			}
 		}
 		updateCharacter(props.character);
@@ -640,12 +644,12 @@ const traitPool = computed({
 
 const traitSpendable = computed({
 	get() {
-		const t = trait.value as unknown as Record<string, unknown> | undefined;
+		const t = trait.value;
 		return t && typeof t.spendable === 'boolean' ? t.spendable : false;
 	},
-	set(val: any) {
+	set(val: boolean) {
 		if (!trait.value) return;
-		(trait.value as unknown as Record<string, any>).spendable = Boolean(val);
+		trait.value.spendable = Boolean(val);
 		updateCharacter(props.character);
 	},
 });
@@ -661,7 +665,7 @@ const editableOnSheet = computed({
 		if (isSetSubtraitMode.value) {
 			const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
 			const path = resolvedPath.value;
-			traits.forEach((tr: any) => {
+			traits.forEach((tr) => {
 				if (!tr || typeof tr !== 'object') return;
 				if (typeof path[1] === 'number' && tr.traits?.[path[1]]) {
 					const sv = ensureView(tr.traits[path[1]]);
@@ -678,19 +682,19 @@ const inheritedHitches = computed(() => resolveHitches(undefined, [trait.value, 
 
 const traitHitches = computed({
 	get() {
-		const t = trait.value as unknown as Record<string, unknown> | undefined;
+		const t = trait.value;
 		return t && typeof t.hitches === 'number' ? t.hitches : inheritedHitches.value;
 	},
-	set(val: any) {
+	set(val: number | string | null | undefined) {
 		if (!trait.value) return;
 		const n = Number(val);
-		(trait.value as unknown as Record<string, any>).hitches = Number.isFinite(n) && n >= 0 ? Math.floor(n) : undefined;
+		trait.value.hitches = Number.isFinite(n) && n >= 0 ? Math.floor(n) : undefined;
 		updateCharacter(props.character);
 	},
 });
 
 const hitchesDiffers = computed(() => {
-	const t = trait.value as unknown as Record<string, unknown> | undefined;
+	const t = trait.value;
 	return t && typeof t.hitches === 'number' && t.hitches !== resolveHitches(undefined, [traitSet.value]);
 });
 
@@ -703,7 +707,7 @@ const traitLabel = computed({
 		const v = trait.value?.label;
 		return typeof v === 'string' ? v : '';
 	},
-	set(val: any) {
+	set(val: string) {
 		if (!trait.value) return;
 		if (typeof val === 'string' && val.trim().length) trait.value.label = val.trim();
 		else delete trait.value.label;
@@ -713,13 +717,13 @@ const traitLabel = computed({
 
 // Trait visibility (shown | editor-only | hidden): a general trait
 // capability, not a name-set special case.
-const traitVisibility = computed({
+const traitVisibility = computed<Visibility>({
 	get() {
 		return resolveVisibility(trait.value);
 	},
-	set(val: any) {
+	set(val: Visibility) {
 		if (!trait.value) return;
-		const v = ensureView(trait.value) as Record<string, unknown>;
+		const v = ensureView(trait.value);
 		if (val === 'shown') {
 			delete v.visibility;
 		} else {
@@ -747,19 +751,21 @@ const traitTags = computed<string[]>({
 	},
 });
 
+interface ChildSubtraitItem {
+	idx: number;
+	sub: Trait;
+	label: string;
+	summary: string;
+}
+
 // Child subtraits on the current node (`trait.traits[]`). Every child trait
 // (companion track, pip child, specialty, SFX, or nested child) is surfaced
 // as a drill-in row that opens this same TraitEditor at `depth + 1`.
-const childSubtraits = computed(() => {
+const childSubtraits = computed<ChildSubtraitItem[]>(() => {
 	const subs = trait.value?.traits;
 	if (!Array.isArray(subs)) return [];
-	const result: Array<{
-		idx: number;
-		sub: any;
-		label: string;
-		summary: string;
-	}> = [];
-	subs.forEach((sub: any, idx: number) => {
+	const result: ChildSubtraitItem[] = [];
+	subs.forEach((sub, idx: number) => {
 		if (!sub || typeof sub !== 'object') return;
 		const r = resolveRating(sub, [trait.value, ...ancestorFallbacks.value]);
 		const isBlockOrMod = resolvePpDelta(sub) !== 0 || !r || getView(sub)?.part === 'block';
@@ -800,22 +806,22 @@ const threeColPartNoun = computed(() => {
 
 const isThreeColumnTable = computed(() => !isSubtraitMode.value && Boolean(threeColPartNoun.value));
 
-function findThreeColEffectChild(): any {
+function findThreeColEffectChild(): Trait | undefined {
 	const subs = Array.isArray(trait.value?.traits) ? trait.value.traits : [];
 	const nounLower = threeColPartNoun.value.toLowerCase();
 	if (nounLower) {
-		const byNoun = subs.filter((e: any) => {
+		const byNoun = subs.filter((e) => {
 			if (!e || typeof e !== 'object') return false;
 			const eNoun = typeof e.noun === 'string' ? e.noun.trim().toLowerCase() : '';
 			const eName = typeof e.name === 'string' ? e.name.trim().toLowerCase() : '';
 			return eNoun === nounLower || eName === nounLower;
 		});
 		if (byNoun.length) {
-			return byNoun.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || byNoun[0];
+			return byNoun.find((e) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || byNoun[0];
 		}
 	}
 	const blocks = characterCurioFunctions.blockChildren(trait.value, traitSet.value);
-	return blocks.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || blocks[0];
+	return blocks.find((e) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || blocks[0];
 }
 
 const tableCol1Label = computed(() => {
@@ -888,8 +894,8 @@ const traitKeepsExtra = computed({
 		return keepsExtraDice(trait.value);
 	},
 	set(val: number) {
-		if (!trait.value) return;
-		const t = trait.value as unknown as Record<string, any>;
+		const t = trait.value;
+		if (!t) return;
 		const n = Math.max(0, Math.min(4, Math.floor(Number(val) || 0)));
 		if (n > 0) t.keepsExtra = n;
 		else delete t.keepsExtra;
@@ -902,8 +908,8 @@ const traitPpDelta = computed({
 		return resolvePpDelta(trait.value);
 	},
 	set(val: number) {
-		if (!trait.value) return;
-		const t = trait.value as unknown as Record<string, any>;
+		const t = trait.value;
+		if (!t) return;
 		const n = Math.max(-5, Math.min(5, Math.trunc(Number(val) || 0)));
 		if (n !== 0) t.ppDelta = n;
 		else delete t.ppDelta;
@@ -951,7 +957,7 @@ const branchRole = computed({
 	get() {
 		return getView(trait.value)?.branchRole === 'specialty' ? 'specialty' : 'skill';
 	},
-	set(val: any) {
+	set(val: string) {
 		ensureView(trait.value).branchRole = val === 'specialty' ? 'specialty' : 'skill';
 		if (val !== 'specialty') {
 			ensureView(trait.value).linkTo = undefined;
@@ -963,8 +969,8 @@ const branchRole = computed({
 const branchParentOptions = computed(() => {
 	const traits = traitSet.value?.traits || [];
 	const fallbackNoun = traitSet.value?.noun || 'Trait';
-	const opts: any[] = [];
-	traits.forEach((tr: any, idx: number) => {
+	const opts: Array<{ index: number; name: string }> = [];
+	traits.forEach((tr, idx: number) => {
 		if (idx === props.traitID) return;
 		if (getView(tr)?.branchRole === 'specialty') return;
 		opts.push({ index: idx, name: tr?.name?.length ? tr.name : fallbackNoun + ' ' + (idx + 1) });
@@ -977,7 +983,7 @@ const branchLink = computed({
 		const v = getView(trait.value)?.linkTo;
 		return typeof v === 'number' ? v : null;
 	},
-	set(val: any) {
+	set(val: number | string | null | undefined) {
 		ensureView(trait.value).linkTo = val === null || val === undefined || val === '' ? undefined : Number(val);
 		updateCharacter(props.character);
 	},
@@ -987,7 +993,7 @@ const branchSide = computed({
 	get() {
 		return getView(trait.value)?.branchSide === 'left' ? 'left' : 'right';
 	},
-	set(val: any) {
+	set(val: string) {
 		ensureView(trait.value).branchSide = val === 'left' ? 'left' : 'right';
 		updateCharacter(props.character);
 	},
@@ -1022,7 +1028,7 @@ const editorDock = computed({
 	get() {
 		return getView(traitSet.value)?.editorDock === 'right' ? 'right' : 'left';
 	},
-	set(val: any) {
+	set(val: string) {
 		ensureView(traitSet.value).editorDock = val === 'right' ? 'right' : 'left';
 		updateCharacter(props.character);
 	},
@@ -1096,7 +1102,7 @@ onUpdated(() => {
 	}
 });
 
-function selectElement(selector: any[]) {
+function selectElement(selector: Array<string | number>) {
 	emit('selectElement', selector);
 }
 
@@ -1116,7 +1122,7 @@ function targetValue(e: Event) {
 
 function syncCompanionSubtraits(prevName?: string) {
 	if (!isSetSubtraitMode.value || !traitSet.value || !trait.value) return;
-	const src = trait.value as any;
+	const src = trait.value;
 	const targetNoun = resolveSubtraitNoun(src);
 	const targetPlural = resolveSubtraitPlural(src);
 	const prevLower = String(prevName ?? targetNoun)
@@ -1124,11 +1130,11 @@ function syncCompanionSubtraits(prevName?: string) {
 		.toLowerCase();
 	const path = resolvedPath.value;
 	const traits = Array.isArray(traitSet.value.traits) ? traitSet.value.traits : [];
-	traits.forEach((tr: any) => {
+	traits.forEach((tr) => {
 		if (!tr || typeof tr !== 'object' || tr === parentTrait.value) return;
 		if (!Array.isArray(tr.traits)) tr.traits = [];
 		let sibling = tr.traits.find(
-			(st: any) =>
+			(st) =>
 				st &&
 				typeof st === 'object' &&
 				(String(st.name || '')
@@ -1164,13 +1170,14 @@ function syncCompanionSubtraits(prevName?: string) {
 		const body = view.style?.body;
 		if (body !== 'portrait-ring' && body !== 'pips' && body !== 'die-track') {
 			const existingParts = view.parts && typeof view.parts === 'object' ? view.parts : null;
-			if (!existingParts || !(existingParts as any).track) {
+			if (!existingParts || !existingParts.track) {
 				const frameShape = typeof view.frame === 'string' ? view.frame : view.frame?.shape;
+				const features = view.features as { description?: unknown } | undefined;
 				view.parts = buildParts({
 					rating: frameShape === 'ring' ? 'below' : 'inline',
 					ratingDice: characterCurioFunctions.getTraitSetRatings(traitSet.value).length || 5,
 					trackDice: Array.isArray(src.rating?.range) && src.rating.range.length ? src.rating.range.length : 5,
-					description: Boolean((view.features as any)?.description),
+					description: Boolean(features?.description),
 					block: false,
 					subtraits: false,
 				});
@@ -1179,11 +1186,11 @@ function syncCompanionSubtraits(prevName?: string) {
 	}
 }
 
-function setProperty(key: string, val: any) {
+function setProperty(key: string, val: unknown) {
 	const character = props.character;
-	const target = trait.value as Record<string, any> | undefined;
+	const target = trait.value as Record<string, unknown> | undefined;
 	if (!target) return;
-	const prevName = target.name;
+	const prevName = typeof target.name === 'string' ? target.name : undefined;
 	target[key] = val;
 	if (isSetSubtraitMode.value && key === 'name') {
 		target.noun = val;
@@ -1192,36 +1199,39 @@ function setProperty(key: string, val: any) {
 	updateCharacter(character);
 }
 
-function badgeValue(key: string): any {
-	return (getView(trait.value) as any)?.badge?.[key];
+function badgeValue(key: 'text' | 'shape' | 'color' | 'icon'): string {
+	return getView(trait.value)?.badge?.[key] ?? '';
 }
 
-function setBadgeValue(key: string, val: any) {
+function setBadgeValue(key: 'text' | 'shape' | 'color' | 'icon', val: string | null | undefined) {
 	const t = trait.value;
 	if (!t) return;
-	const v = ensureView(t) as Record<string, any>;
-	if (!v.badge || typeof v.badge !== 'object') v.badge = {};
+	const v = ensureView(t);
+	if (!v.badge || typeof v.badge !== 'object') {
+		v.badge = { text: '', shape: '', color: '' };
+	}
+	const badgeRec = v.badge as Record<string, string | undefined>;
 	if (val === '' || val === null || val === undefined) {
-		delete v.badge[key];
-		if (Object.keys(v.badge).length === 0) delete v.badge;
+		delete badgeRec[key];
+		if (Object.keys(badgeRec).length === 0) delete v.badge;
 	} else {
-		v.badge[key] = val;
+		badgeRec[key] = val;
 	}
 	updateCharacter(props.character);
 }
 
 function prefixValue(): string {
-	return (getView(trait.value) as any)?.prefix?.text ?? '';
+	return getView(trait.value)?.prefix?.text ?? '';
 }
 
-function setPrefixValue(val: any) {
+function setPrefixValue(val: string) {
 	const t = trait.value;
 	if (!t) return;
-	const v = ensureView(t) as Record<string, any>;
+	const v = ensureView(t);
 	if (!val) {
 		delete v.prefix;
 	} else {
-		if (!v.prefix || typeof v.prefix !== 'object') v.prefix = {};
+		if (!v.prefix || typeof v.prefix !== 'object') v.prefix = { text: '' };
 		v.prefix.text = val;
 	}
 	updateCharacter(props.character);
@@ -1238,28 +1248,25 @@ function syncPoolCount(count: number) {
 }
 
 function addDieToTrait(size: number) {
+	if (!trait.value) return;
 	const current = [...dice.value, size].sort((a, b) => b - a);
 	characterCurioFunctions.setTraitDice(trait.value, current);
-	if (trait.value && (trait.value as any).rating && typeof (trait.value as any).rating === 'object') {
-		(trait.value as any).rating.type = 'Dice';
+	if (trait.value.rating && typeof trait.value.rating === 'object') {
+		trait.value.rating.type = 'Dice';
 	}
 	syncPoolCount(current.length);
 	updateCharacter(props.character);
 }
 
 function removeDieFromTrait(size: number) {
+	if (!trait.value) return;
 	const current = [...dice.value];
 	const idx = current.indexOf(size);
 	if (idx !== -1) {
 		current.splice(idx, 1);
 		characterCurioFunctions.setTraitDice(trait.value, current);
-		if (
-			current.length > 0 &&
-			trait.value &&
-			(trait.value as any).rating &&
-			typeof (trait.value as any).rating === 'object'
-		) {
-			(trait.value as any).rating.type = 'Dice';
+		if (current.length > 0 && trait.value.rating && typeof trait.value.rating === 'object') {
+			trait.value.rating.type = 'Dice';
 		}
 		const viewBag = getView(trait.value);
 		if (viewBag && Array.isArray(viewBag.spentDice)) {
@@ -1272,17 +1279,13 @@ function removeDieFromTrait(size: number) {
 }
 
 function removeDieAtIndex(index: number) {
+	if (!trait.value) return;
 	const current = [...dice.value];
 	if (index >= 0 && index < current.length) {
 		current.splice(index, 1);
 		characterCurioFunctions.setTraitDice(trait.value, current);
-		if (
-			current.length > 0 &&
-			trait.value &&
-			(trait.value as any).rating &&
-			typeof (trait.value as any).rating === 'object'
-		) {
-			(trait.value as any).rating.type = 'Dice';
+		if (current.length > 0 && trait.value.rating && typeof trait.value.rating === 'object') {
+			trait.value.rating.type = 'Dice';
 		}
 		const viewBag = getView(trait.value);
 		if (viewBag && Array.isArray(viewBag.spentDice)) {
@@ -1297,6 +1300,7 @@ function removeDieAtIndex(index: number) {
 }
 
 function stepDownDieAtIndex(index: number) {
+	if (!trait.value) return;
 	const current = [...dice.value];
 	if (index >= 0 && index < current.length) {
 		const currentSize = current[index];
@@ -1314,28 +1318,30 @@ function stepDownDieAtIndex(index: number) {
 	}
 }
 
-function toggleTraitValue(val: any) {
-	const t = trait.value as unknown as Record<string, any>;
+function toggleTraitValue(val: number) {
+	const t = trait.value;
+	if (!t) return;
 	const cur = ratingDice(resolveRating(t, ancestorFallbacks.value))[0] || 0;
 	if (val === cur && !isOut.value) {
 		t.isOut = false;
-		characterCurioFunctions.setTraitDice(trait.value, []);
+		characterCurioFunctions.setTraitDice(t, []);
 	} else {
 		t.isOut = false;
-		characterCurioFunctions.setTraitDice(trait.value, [val]);
+		characterCurioFunctions.setTraitDice(t, [val]);
 	}
 	updateCharacter(props.character);
 }
 
 function toggleOutValue() {
-	const t = trait.value as unknown as Record<string, any>;
+	const t = trait.value;
+	if (!t) return;
 	if (isOut.value) {
 		t.isOut = false;
-		characterCurioFunctions.setTraitDice(trait.value, []);
+		characterCurioFunctions.setTraitDice(t, []);
 	} else {
 		t.isOut = true;
 		setRatingDie(t, rangeTop(t, ancestorFallbacks.value) + 2);
-		const r = t.rating;
+		const r = t.rating as Record<string, unknown> | null | undefined;
 		if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) r.out = true;
 	}
 	updateCharacter(props.character);
@@ -1347,7 +1353,7 @@ const dieRange = computed(() => resolveRange(trait.value, ancestorFallbacks.valu
 // True when the trait states no Die/Dice range of its own and inherits.
 const isRangeInherited = computed(() => {
 	const resolved = resolveRating(trait.value, ancestorFallbacks.value);
-	const ownRange = (trait.value as any)?.rating?.range;
+	const ownRange = trait.value?.rating?.range;
 	return (
 		!resolved ||
 		(resolved.type !== 'Die' && resolved.type !== 'Dice') ||
@@ -1389,7 +1395,7 @@ const singleDieStepNext = computed<number | 'out' | null>(() => {
 function stepSingleDieDown() {
 	const prev = singleDieStepPrev.value;
 	if (prev !== null && trait.value) {
-		const t = trait.value as unknown as Record<string, any>;
+		const t = trait.value;
 		t.isOut = false;
 		setRatingDie(t, prev);
 		updateCharacter(props.character);
@@ -1399,7 +1405,7 @@ function stepSingleDieDown() {
 function stepSingleDieUp() {
 	const next = singleDieStepNext.value;
 	if (next !== null && trait.value) {
-		const t = trait.value as unknown as Record<string, any>;
+		const t = trait.value;
 		if (next === 'out') {
 			t.isOut = true;
 			setRatingDie(t, rangeTop(t, ancestorFallbacks.value) + 2);
@@ -1418,7 +1424,7 @@ function stepDownDieAtIndexAlongRange(index: number) {
 		const prev = getDieStepPrev(curSize);
 		if (prev !== null) {
 			current[index] = prev;
-			setRatingDice(trait.value as unknown as Record<string, any>, current);
+			setRatingDice(trait.value, current);
 			syncPoolCount(current.length);
 			updateCharacter(props.character);
 		}
@@ -1432,7 +1438,7 @@ function stepUpDieAtIndexAlongRange(index: number) {
 		const next = getDieStepNext(curSize);
 		if (next !== null) {
 			current[index] = next;
-			setRatingDice(trait.value as unknown as Record<string, any>, current);
+			setRatingDice(trait.value, current);
 			syncPoolCount(current.length);
 			updateCharacter(props.character);
 		}
@@ -1495,7 +1501,7 @@ function templateHasTrait(name: string) {
 	const setId = traitSet.value ? traitSet.value.id : null;
 	const entry = templateEntry.value;
 	const base = setId ? characterCurioFunctions.templateSetById(entry, setId) : null;
-	return Boolean(base && Array.isArray(base.traits) && base.traits.some((b: any) => b && b.name === name));
+	return Boolean(base && Array.isArray(base.traits) && base.traits.some((b) => b && b.name === name));
 }
 
 function removeFromSheet() {
@@ -1506,7 +1512,7 @@ function removeFromSheet() {
 	updateCharacter(props.character);
 }
 
-function openChildSubtrait(item: any) {
+function openChildSubtrait(item: number | ChildSubtraitItem | { idx: number }) {
 	const s = props.traitSetID;
 	const path = resolvedPath.value;
 	if (path.length >= 3) return;
@@ -1520,14 +1526,14 @@ function addSubtrait() {
 	if (!tr) return;
 	if (!Array.isArray(tr.traits)) tr.traits = [];
 
-	const subtrait: any = structuredClone(characterCurioFunctions.defaultTrait);
+	const subtrait = structuredClone(characterCurioFunctions.defaultTrait) as Trait;
 	const nextNum = tr.traits.length + 1;
 	subtrait.name = nextNum === 1 ? 'New subtrait' : `New subtrait ${nextNum}`;
 	subtrait.noun = nextNum === 1 ? 'Subtrait' : `Subtrait ${nextNum}`;
 	const allowed = characterCurioFunctions.getSubtraitRatings(traitSet.value);
 	const cur =
 		subtrait.rating && subtrait.rating.type === 'Die' && Array.isArray(subtrait.rating.value)
-			? subtrait.rating.value[0]
+			? Number(subtrait.rating.value[0])
 			: 0;
 	if (allowed.length > 0 && !allowed.includes(cur)) {
 		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
@@ -1542,7 +1548,7 @@ function addSubtrait() {
 
 	if (isSetSubtraitMode.value && depth.value === 2 && traitSet.value && Array.isArray(traitSet.value.traits)) {
 		const u = path[1];
-		traitSet.value.traits.forEach((setTrait: any, tIdx: number) => {
+		traitSet.value.traits.forEach((setTrait, tIdx: number) => {
 			if (tIdx === path[0] || !setTrait || typeof setTrait !== 'object') return;
 			const comp = Array.isArray(setTrait.traits) ? setTrait.traits[u] : null;
 			if (comp && typeof comp === 'object') {
@@ -1565,11 +1571,11 @@ function removeSubtraitAtCurrentParent(targetIdx: number) {
 		const targetKey = String(target?.noun || target?.name || '')
 			.trim()
 			.toLowerCase();
-		traitSet.value.traits.forEach((tr: any) => {
+		traitSet.value.traits.forEach((tr) => {
 			if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
 			if (targetKey) {
 				const hit = tr.traits.findIndex(
-					(st: any) =>
+					(st) =>
 						st &&
 						typeof st === 'object' &&
 						(String(st.noun || '')
@@ -1603,7 +1609,7 @@ function removeSubtraitAtCurrentParent(targetIdx: number) {
 	}
 }
 
-function removeSubtrait(item: any) {
+function removeSubtrait(item: number | ChildSubtraitItem | { idx?: number }) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const path = resolvedPath.value;
@@ -1619,7 +1625,7 @@ function removeSubtrait(item: any) {
 		trait.value.traits.splice(subtraitID, 1);
 		if (isSetSubtraitMode.value && depth.value === 2 && traitSet.value && Array.isArray(traitSet.value.traits)) {
 			const u = path[1];
-			traitSet.value.traits.forEach((setTrait: any, tIdx: number) => {
+			traitSet.value.traits.forEach((setTrait, tIdx: number) => {
 				if (tIdx === path[0] || !setTrait || typeof setTrait !== 'object') return;
 				const comp = Array.isArray(setTrait.traits) ? setTrait.traits[u] : null;
 				if (comp && Array.isArray(comp.traits) && subtraitID < comp.traits.length) {
@@ -1631,7 +1637,7 @@ function removeSubtrait(item: any) {
 	}
 }
 
-function updateCharacter(character: any) {
+function updateCharacter(character: Character) {
 	emit('updateCharacter', character);
 }
 
@@ -1711,7 +1717,7 @@ function checkScrollPosition() {
 	scrollPosition.value = 'middle';
 }
 
-function getDieDisplayValue(val: any, isFilled = false) {
+function getDieDisplayValue(val: number, isFilled = false) {
 	return characterCurioFunctions.renderDieconSVG(val, isFilled, '', getView(props.character)?.diceConfig);
 }
 
@@ -1730,14 +1736,14 @@ const hasAdvancedTraitSettings = computed(() =>
 	Boolean(
 		traitTags.value.length > 0 ||
 		traitVisibility.value !== 'shown' ||
-		(ratingType.value === 'Dice' ? (trait.value as any)?.pool === false : traitPool.value) ||
+		(ratingType.value === 'Dice' ? trait.value?.pool === false : traitPool.value) ||
 		traitSpendable.value ||
 		editableOnSheet.value ||
 		hitchesDiffers.value ||
 		traitKeepsExtra.value !== 0 ||
 		traitPpDelta.value !== 0 ||
 		isCustomTraitRange.value ||
-		Boolean((trait.value?.rating as any)?.out === true) ||
+		Boolean((trait.value?.rating as { out?: unknown } | null | undefined)?.out === true) ||
 		hasBadge.value,
 	),
 );
@@ -2103,8 +2109,10 @@ const hasAdvancedTraitSettings = computed(() =>
 								class="btn-unset-rating"
 								v-if="firstDieOf(trait) > 0"
 								@click.stop="
-									setRatingDie(trait as unknown as Record<string, any>, null);
-									updateCharacter(props.character);
+									if (trait) {
+										setRatingDie(trait, null);
+										updateCharacter(props.character);
+									}
 								"
 								title="Clear rating"
 								aria-label="Clear rating"

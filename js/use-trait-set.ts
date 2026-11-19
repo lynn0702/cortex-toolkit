@@ -41,6 +41,54 @@ import type { Character, Trait, TraitSet } from './model.ts';
 
 export type TraitSetApi = ReturnType<typeof useTraitSet>;
 
+export interface RenderedTraitItem {
+	trait: Trait;
+	originalIndex: number | null;
+	isPlaceholder: boolean;
+}
+
+export type BranchSubEntry =
+	| {
+			kind: 'sub';
+			sub: Trait;
+			u: number;
+			traitIndex?: number | null;
+			traitItem?: RenderedTraitItem | null;
+			_lid?: string;
+	  }
+	| {
+			kind: 'flat';
+			item: RenderedTraitItem;
+			traitIndex?: number | null;
+			traitItem?: RenderedTraitItem | null;
+			_lid?: string;
+	  };
+
+export interface BranchGroup {
+	traitItem: RenderedTraitItem | null;
+	subs: BranchSubEntry[];
+	split?: boolean;
+}
+
+export interface StagedDiePayload {
+	size: number;
+	qty: number;
+	source?: string;
+	hitches?: number;
+	keepsExtra?: number;
+	ppDelta?: number;
+	ppCommitted?: boolean;
+}
+
+export interface TraitSetEmit {
+	(event: 'selectElement', selector: Array<string | number>): void;
+	(event: 'updateCharacter', character: Character): void;
+	(event: 'addTrait', traitSetID: number): void;
+	(event: 'removeTrait', traitSetID: number, traitID: number): void;
+	(event: 'removeTraitSet', traitSetID: number): void;
+	(event: 'addDieToRoller', payload: StagedDiePayload | StagedDiePayload[]): void;
+}
+
 export interface TraitSetProps {
 	character: Character;
 	traitSetID?: number;
@@ -56,8 +104,8 @@ export function isPlayMutableSet(traitSetArg: TraitSet): boolean {
 	return characterCurioFunctions.isPlayMutableSet(traitSetArg);
 }
 
-export function useTraitSet(props: TraitSetProps, emit: any) {
-	const traitSet = computed(() => props.character?.traitSets?.[props.traitSetID as any]);
+export function useTraitSet(props: TraitSetProps, emit: TraitSetEmit) {
+	const traitSet = computed<TraitSet>(() => props.character?.traitSets?.[props.traitSetID ?? 0]);
 	const s = computed<number>(() => props.traitSetID as number);
 
 	const fallbackActiveTrait = ref<[number, number] | null>(null);
@@ -427,25 +475,24 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			classes['rating-pos-' + ratingPos] = true;
 		}
 
-		const hasPip =
-			Array.isArray(traitSetArg?.traits) && traitSetArg.traits.some((t: any) => getPipChild(t) !== undefined);
+		const hasPip = Array.isArray(traitSetArg?.traits) && traitSetArg.traits.some((t) => getPipChild(t) !== undefined);
 		if (hasPip) {
 			classes['trait-set-pip-mode'] = true;
 		}
 
 		const hasCounter = (Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : []).some(
-			(t: any) => resolveRating(t, [traitSetArg])?.type === 'Counter',
+			(t) => resolveRating(t, [traitSetArg])?.type === 'Counter',
 		);
 		if (hasCounter) {
 			classes['trait-set-has-counter'] = true;
 		}
 
-		const traits = Array.isArray(traitSetArg?.traits)
+		const traits: Trait[] = Array.isArray(traitSetArg?.traits)
 			? traitSetArg.traits
 			: traitSetArg?.traits
-				? Object.values(traitSetArg.traits)
+				? Object.values(traitSetArg.traits as Record<string, Trait>)
 				: [];
-		if (traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0)) {
+		if (traits.some((t) => typeof t?.description === 'string' && t.description.trim().length > 0)) {
 			classes['trait-set-has-feature-description'] = true;
 		}
 
@@ -465,7 +512,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		) {
 			classes['trait-set-borderless'] = true;
 		}
-		if ((ctk?.pips as any) === false) {
+		if ((ctk?.pips as unknown) === false) {
 			classes['trait-set-no-pips'] = true;
 		}
 
@@ -531,7 +578,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getRatingDisplay(traitSetArg: TraitSet | null | undefined): 'track' | 'rating' {
-		const raw = (traitSetArg as any)?.ratingDisplay || getView(traitSetArg)?.ratingDisplay;
+		const raw =
+			(traitSetArg as { ratingDisplay?: unknown } | null | undefined)?.ratingDisplay ||
+			getView(traitSetArg)?.ratingDisplay;
 		return raw === 'track' ? 'track' : 'rating';
 	}
 
@@ -560,7 +609,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (Array.isArray(traitSetArg?.traits)) {
 			for (const t of traitSetArg.traits) {
 				if (!Array.isArray(t?.traits)) continue;
-				const match = t.traits.find((sub: any) => resolveRating(sub, [t, traitSetArg])?.type === 'Pip');
+				const match = t.traits.find((sub) => resolveRating(sub, [t, traitSetArg])?.type === 'Pip');
 				if (match) {
 					pipChildNoun = String(match.noun || match.name || 'Pip').trim() || 'Pip';
 					break;
@@ -609,24 +658,26 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return Boolean(grid && name && rating && name.row === 1 && rating.row === 1);
 	}
 
-	function getPipChild(node: any): Trait | undefined {
-		if (!node || !Array.isArray(node.traits)) return undefined;
-		return node.traits.find((ch: any) => {
+	function getPipChild(node: unknown): Trait | undefined {
+		if (!node || typeof node !== 'object') return undefined;
+		const subs = (node as { traits?: Trait[] }).traits;
+		if (!Array.isArray(subs)) return undefined;
+		return subs.find((ch) => {
 			if (!ch || typeof ch !== 'object') return false;
 			const r = resolveTraitRating(ch, [node]);
 			return Boolean(r && r.type === 'Pip');
 		});
 	}
 
-	function isChildPipFilled(node: any): boolean {
+	function isChildPipFilled(node: unknown): boolean {
 		const child = getPipChild(node);
 		const r = child ? resolveTraitRating(child, [node]) : undefined;
 		return Boolean(r?.type === 'Pip' && r.value?.[0] === true);
 	}
 
-	function togglePip(sArg: any, t: any, traitArg?: Trait) {
+	function togglePip(sArg: number, t: number | null | undefined, traitArg?: Trait) {
 		if (props.submode === 'print') return;
-		const trait = traitArg ?? props.character?.traitSets?.[sArg]?.traits?.[t];
+		const trait = traitArg ?? (typeof t === 'number' ? props.character?.traitSets?.[sArg]?.traits?.[t] : undefined);
 		if (!trait) return;
 		let child = getPipChild(trait);
 		if (!child) {
@@ -651,14 +702,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function canEditChildOnSheet(trait: any, traitSetArg: any): boolean {
+	function canEditChildOnSheet(trait: unknown, traitSetArg: unknown): boolean {
 		if (props.submode === 'print') return false;
 		return Boolean(
 			getView(trait)?.editableOnSheet || getView(traitSetArg)?.editableOnSheet || getView(traitSetArg)?.playMutable,
 		);
 	}
 
-	function setPipChildName(trait: any, val: string) {
+	function setPipChildName(trait: Trait, val: string) {
 		let child = getPipChild(trait);
 		if (child) {
 			child.name = val;
@@ -708,8 +759,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return characterCurioFunctions.renderDieconSVG(value, isActive, '', getView(props.character)?.diceConfig);
 	}
 
-	function selectElement(selector: unknown[]) {
-		emit('selectElement', selector);
+	function selectElement(selector: Array<string | number | null | undefined>) {
+		emit(
+			'selectElement',
+			selector.filter((x): x is string | number => x !== null && x !== undefined),
+		);
 	}
 
 	function updateCharacter(character: Character) {
@@ -760,7 +814,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 		if (props.printBlank) {
 			const targetCount = getTraitSetSlotCount(traitSetArg);
-			const list: any[] = [];
+			const list: RenderedTraitItem[] = [];
 			for (let i = 0; i < targetCount; i++) {
 				if (i < visible.length) {
 					list.push(visible[i]);
@@ -777,7 +831,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		// Visibility filters first (hidden traits leave no row), so counts
 		// stay stable. Original indices survive the filter for editor routing.
 		const targetCount = Math.max(getTraitSetSlotCount(traitSetArg), visible.length);
-		const list: any[] = [...visible];
+		const list: RenderedTraitItem[] = [...visible];
 		for (let i = visible.length; i < targetCount; i++) {
 			list.push({ trait: createBlankSlotTrait(traitSetArg), originalIndex: null, isPlaceholder: true });
 		}
@@ -793,7 +847,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	// Open a trait row for editing; a blank placeholder becomes a real
 	// (still unnamed) trait first, so pencil rows fill in place.
-	function openTraitAt(sArg: any, item: any) {
+	function openTraitAt(sArg: number, item: RenderedTraitItem | null | undefined) {
 		if (!item) return;
 		if (item.isPlaceholder) {
 			if (props.submode === 'play' && !isPlayMutableSet(traitSet.value)) {
@@ -803,18 +857,20 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return;
 		}
 		if (props.submode === 'play' && traitSet.value && isPlayMutableSet(traitSet.value)) {
-			canvasInline.setActiveTrait([Number(sArg), item.originalIndex]);
+			if (typeof item.originalIndex === 'number') {
+				canvasInline.setActiveTrait([Number(sArg), item.originalIndex]);
+			}
 			return;
 		}
 		selectElement(['trait', sArg, item.originalIndex]);
 	}
 
-	function fillPlaceholder(sArg: any) {
+	function fillPlaceholder(sArg: number) {
 		const set = props.character.traitSets[sArg];
 		if (!set) return;
 		if (!Array.isArray(set.traits)) set.traits = [];
 		const nextSlot = createBlankSlotTrait(set);
-		if (!getRating(set) && (set as any).rating !== null && getView(set)?.style?.body !== 'list') {
+		if (!getRating(set) && (set as { rating?: unknown }).rating !== null && getView(set)?.style?.body !== 'list') {
 			const scale = characterCurioFunctions.getTraitSetRatings(set);
 			nextSlot.rating = { type: 'Die', value: [scale.includes(8) ? 8 : scale[0] || 8] };
 		}
@@ -828,13 +884,13 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 	}
 
-	function createBlankSlotTrait(traitSetArg: TraitSet): any {
-		const traits = Array.isArray(traitSetArg?.traits)
+	function createBlankSlotTrait(traitSetArg: TraitSet): Trait {
+		const traits: Trait[] = Array.isArray(traitSetArg?.traits)
 			? traitSetArg.traits
 			: traitSetArg?.traits && typeof traitSetArg.traits === 'object'
-				? Object.values(traitSetArg.traits)
+				? Object.values(traitSetArg.traits as Record<string, Trait>)
 				: [];
-		const hasSubtraits = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, traitSetArg).length > 0);
+		const hasSubtraits = traits.some((t) => characterCurioFunctions.ratedSubtraits(t, traitSetArg).length > 0);
 		return {
 			name: '',
 			description: '',
@@ -853,32 +909,43 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 		const templateId = getView(props.character)?.template;
 		if (templateId) {
-			let tpl: any = null;
+			type TemplateLike = {
+				id?: unknown;
+				title?: unknown;
+				template?: unknown;
+				name?: unknown;
+				isTemplate?: unknown;
+				sets?: Record<string, { traits?: Record<string, unknown> }>;
+			};
+			const win = window as unknown as {
+				characterCurioStorage?: { loadData?: () => { templates?: TemplateLike[]; characters?: TemplateLike[] } | null };
+				characterCurioLibraryTemplates?: TemplateLike[];
+			};
+			let tpl: TemplateLike | null = null;
 			// 1. Local first: check user-owned templates & characters
 			try {
-				if (typeof (window as any)?.characterCurioStorage?.loadData === 'function') {
-					const data = (window as any).characterCurioStorage.loadData();
+				if (typeof win?.characterCurioStorage?.loadData === 'function') {
+					const data = win.characterCurioStorage.loadData();
 					if (data) {
 						const localTemplates = data.templates || [];
 						const localChars = data.characters || [];
 						tpl =
 							localTemplates.find(
-								(t: any) =>
+								(t) =>
 									t.id === templateId || t.title === templateId || t.template === templateId || t.name === templateId,
 							) ||
 							localChars.find(
-								(c: any) => (c.isTemplate || c.id === templateId) && (c.id === templateId || c.name === templateId),
+								(c) => (c.isTemplate || c.id === templateId) && (c.id === templateId || c.name === templateId),
 							) ||
 							null;
 					}
 				}
 			} catch {}
 			// 2. Library second
-			if (!tpl && typeof (window as any)?.characterCurioLibraryTemplates !== 'undefined') {
-				const tpls = (window as any).characterCurioLibraryTemplates;
+			if (!tpl && typeof win?.characterCurioLibraryTemplates !== 'undefined') {
+				const tpls = win.characterCurioLibraryTemplates;
 				if (Array.isArray(tpls)) {
-					tpl =
-						tpls.find((t: any) => t.id === templateId || t.title === templateId || t.template === templateId) || null;
+					tpl = tpls.find((t) => t.id === templateId || t.title === templateId || t.template === templateId) || null;
 				}
 			}
 			if (tpl?.sets) {
@@ -932,8 +999,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return Array.isArray(spent) && spent.includes(index);
 	}
 
-	function toggleDieSpentInPlay(sArg: any, t: any, index: number) {
-		const trait = props.character.traitSets[sArg].traits[t];
+	function toggleDieSpentInPlay(sArg: number, t: number | null | undefined, index: number) {
+		if (typeof t !== 'number') return;
+		const trait = props.character.traitSets[sArg]?.traits?.[t];
+		if (!trait) return;
 		const view = ensureView(trait);
 		if (!Array.isArray(view.spentDice)) {
 			view.spentDice = [];
@@ -978,7 +1047,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}));
 	}
 
-	function handleDieClick(trait: Trait, dieSize: number, dIdx: number, traitSetArg: TraitSet, sArg: any, t: any) {
+	function handleDieClick(
+		trait: Trait,
+		dieSize: number,
+		dIdx: number,
+		traitSetArg: TraitSet,
+		sArg: number,
+		t: number | null | undefined,
+	) {
 		if (props.submode === 'play') {
 			if (isDieSpent(trait, dIdx)) {
 				toggleDieSpentInPlay(sArg, t, dIdx);
@@ -1028,7 +1104,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const hi = Math.max(bounds[0], bounds[1]);
 		const cur = typeof resolved.value?.[0] === 'number' ? (resolved.value[0] as number) : lo;
 		const next = Math.max(lo, Math.min(hi, cur + delta));
-		(trait as unknown as Record<string, any>).rating = {
+		trait.rating = {
 			type: 'Counter',
 			value: [next],
 			range: [lo, hi],
@@ -1036,18 +1112,18 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function seedSetParts(ts: TraitSet): Record<string, any> {
+	function seedSetParts(ts: TraitSet): Record<string, Record<string, unknown>> {
 		const view = ensureView(ts);
 		if (view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts) && Object.keys(view.parts).length) {
-			return view.parts as Record<string, any>;
+			return view.parts as unknown as Record<string, Record<string, unknown>>;
 		}
 		const scale = characterCurioFunctions.getTraitSetRatings(ts);
 		const trackOn = characterCurioFunctions.hasTrackPart(ts);
 		const tScale = characterCurioFunctions.getTrackScale(ts);
 		const traits = Array.isArray(ts?.traits) ? ts.traits : [];
-		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
-		const hasSfx = traits.some((t: any) => characterCurioFunctions.blockChildren(t, ts).length > 0);
-		const hasSub = traits.some((t: any) => characterCurioFunctions.ratedSubtraits(t, ts).length > 0);
+		const hasDesc = traits.some((t) => typeof t?.description === 'string' && t.description.trim().length > 0);
+		const hasSfx = traits.some((t) => characterCurioFunctions.blockChildren(t, ts).length > 0);
+		const hasSub = traits.some((t) => characterCurioFunctions.ratedSubtraits(t, ts).length > 0);
 		view.parts = buildParts({
 			rating: getRatingPlacement(ts) as 'inline' | 'above' | 'below' | 'none',
 			ratingDice: getRatingDisplay(ts) === 'rating' ? 1 : scale.length || 5,
@@ -1055,8 +1131,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			description: hasDesc,
 			block: hasSfx,
 			subtraits: hasSub,
-		}) as any;
-		return view.parts as Record<string, any>;
+		}) as unknown as typeof view.parts;
+		return view.parts as unknown as Record<string, Record<string, unknown>>;
 	}
 
 	function isSetPartActive(partKey: 'description' | 'block' | 'track' | 'badge', tsArg?: TraitSet): boolean {
@@ -1069,10 +1145,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 		const traits = Array.isArray(ts.traits) ? ts.traits : [];
 		if (partKey === 'description') {
-			return traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
+			return traits.some((t) => typeof t?.description === 'string' && t.description.trim().length > 0);
 		}
 		if (partKey === 'block') {
-			return traits.some((t: any) => characterCurioFunctions.blockChildren(t, ts).length > 0);
+			return traits.some((t) => characterCurioFunctions.blockChildren(t, ts).length > 0);
 		}
 		return false;
 	}
@@ -1086,7 +1162,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				delete cells.trackLabel;
 				delete cells.track;
 			} else {
-				const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+				const maxTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1);
 				const tScale = characterCurioFunctions.getTrackScale(ts);
 				cells.trackLabel = { left: '0%', top: maxTop + 1, width: '35%', height: 1, marker: 'L' };
 				cells.track = {
@@ -1108,7 +1184,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			}
 			return;
 		}
-		const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+		const maxTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1);
 		cells[partKey] = {
 			left: '0%',
 			top: maxTop + 1,
@@ -1121,21 +1197,21 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	const openInlineDescTraits = ref<Record<string, boolean>>({});
 
-	function traitPartKeyId(trait: Trait, tIdx: number): string {
-		const lid = (trait as any)?._lid;
-		return lid ? String(lid) : `${s.value}:${tIdx}`;
+	function traitPartKeyId(trait: Trait, tIdx: number | null | undefined): string {
+		const lid = trait?._lid;
+		return lid ? String(lid) : `${s.value}:${tIdx ?? 'p'}`;
 	}
 
-	function isTraitDescInlineOpen(trait: Trait, tIdx: number): boolean {
+	function isTraitDescInlineOpen(trait: Trait, tIdx: number | null | undefined): boolean {
 		return Boolean(openInlineDescTraits.value[traitPartKeyId(trait, tIdx)]);
 	}
 
 	function ensureExplicitPartCell(ts: TraitSet, partKey: 'description' | 'block' | 'subtraits' | 'badge') {
 		const view = getView(ts);
 		if (!view?.parts || typeof view.parts !== 'object' || Array.isArray(view.parts)) return;
-		const cells = view.parts as Record<string, any>;
+		const cells = view.parts as unknown as Record<string, Record<string, unknown>>;
 		if (cells[partKey]) return;
-		const maxTop = Object.values(cells).reduce((m: number, c: any) => Math.max(m, Number(c?.top) || 0), -1);
+		const maxTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1);
 		cells[partKey] = {
 			left: '0%',
 			top: maxTop + 1,
@@ -1148,7 +1224,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function hasTraitPartActive(
 		trait: Trait,
 		partKey: 'description' | 'subtraits' | 'block' | 'track' | 'badge',
-		tIdx: number,
+		tIdx: number | null | undefined,
 	): boolean {
 		const ts = traitSet.value;
 		if (!trait || !ts) return false;
@@ -1161,14 +1237,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (partKey === 'subtraits') return visibleSubtraits(ts, trait).length > 0;
 		if (partKey === 'block') return characterCurioFunctions.blockChildren(trait, ts).length > 0;
 		if (partKey === 'track') return hasTrackPart(ts);
-		if (partKey === 'badge') return Boolean((getView(trait) as any)?.badge);
+		if (partKey === 'badge') return Boolean(getView(trait)?.badge);
 		return false;
 	}
 
 	function toggleTraitPart(
 		trait: Trait,
 		partKey: 'description' | 'subtraits' | 'block' | 'track' | 'badge',
-		tIdx: number,
+		tIdx: number | null | undefined,
 	) {
 		const ts = traitSet.value;
 		if (!trait || !ts) return;
@@ -1176,12 +1252,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			toggleSetPart('track', ts);
 			return;
 		}
-		const rec = trait as unknown as Record<string, any>;
 		if (partKey === 'description') {
 			const k = traitPartKeyId(trait, tIdx);
 			if (hasTraitPartActive(trait, 'description', tIdx)) {
 				delete openInlineDescTraits.value[k];
-				rec.description = '';
+				trait.description = '';
 			} else {
 				openInlineDescTraits.value[k] = true;
 				ensureExplicitPartCell(ts, 'description');
@@ -1190,10 +1265,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return;
 		}
 		if (partKey === 'subtraits') {
-			if (!Array.isArray(rec.traits)) rec.traits = [];
-			rec.traits.push({
+			if (!Array.isArray(trait.traits)) trait.traits = [];
+			trait.traits.push({
 				name: characterCurioFunctions.nextUniqueName(
-					rec.traits.map((ct: any) => ct?.name),
+					trait.traits.map((ct) => ct?.name ?? ''),
 					'New Subtrait',
 				),
 				description: '',
@@ -1207,8 +1282,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return;
 		}
 		if (partKey === 'block') {
-			if (!Array.isArray(rec.traits)) rec.traits = [];
-			rec.traits.push({
+			if (!Array.isArray(trait.traits)) trait.traits = [];
+			trait.traits.push({
 				name: 'SFX',
 				description: '',
 				noun: 'SFX',
@@ -1222,7 +1297,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return;
 		}
 		if (partKey === 'badge') {
-			const tv = ensureView(rec) as Record<string, any>;
+			const tv = ensureView(trait);
 			if (tv.badge) {
 				delete tv.badge;
 			} else {
@@ -1237,8 +1312,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		trait: Trait,
 		value: number | null | undefined,
 		traitSetArg: TraitSet,
-		sArg: any,
-		t: any,
+		sArg: number,
+		t: number | null | undefined,
 	) {
 		if (props.submode === 'play') {
 			if (getRatingDisplay(traitSetArg) === 'rating' && isTraitOut(trait, traitSetArg)) {
@@ -1249,7 +1324,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			const targetVal = value || first;
 			if (value !== undefined && value !== null) {
 				if (!first || first !== value) {
-					setRatingDie(trait as unknown as Record<string, any>, value);
+					setRatingDie(trait, value);
 					trait.isOut = false;
 					updateCharacter(props.character);
 				}
@@ -1280,7 +1355,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 					? [...(getRating(trait)!.range as number[])]
 					: undefined;
 				trait.isOut = false;
-				setRatingDie(trait as unknown as Record<string, any>, value, prevRange);
+				setRatingDie(trait, value, prevRange);
 				updateCharacter(props.character);
 			} else {
 				toggleCanvasTrait(Number(sArg), typeof t === 'number' ? t : null);
@@ -1326,15 +1401,17 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 	}
 
-	function handleSteppedDieClick(sArg: any, t: any, value: number) {
+	function handleSteppedDieClick(sArg: number, t: number | null | undefined, value: number) {
 		if (props.submode === 'play') {
+			if (typeof t !== 'number') return;
 			const traitSetArg = props.character.traitSets[sArg];
-			const trait = traitSetArg.traits[t];
+			const trait = traitSetArg?.traits?.[t];
+			if (!trait) return;
 			const cur = ratingDice(resolveRating(trait, [traitSetArg]))[0];
 			if (cur === value && !trait.isOut) {
-				setRatingDie(trait as unknown as Record<string, any>, null);
+				setRatingDie(trait, null);
 			} else {
-				setRatingDie(trait as unknown as Record<string, any>, value);
+				setRatingDie(trait, value);
 				trait.isOut = false;
 			}
 			updateCharacter(props.character);
@@ -1343,17 +1420,19 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		}
 	}
 
-	function handleOutClick(sArg: any, t: any) {
+	function handleOutClick(sArg: number, t: number | null | undefined) {
 		if (props.submode === 'play') {
-			const trait = props.character.traitSets[sArg].traits[t];
+			if (typeof t !== 'number') return;
 			const traitSetArg = props.character.traitSets[sArg];
+			const trait = traitSetArg?.traits?.[t];
+			if (!trait) return;
 			trait.isOut = !trait.isOut;
 			if (trait.isOut) {
-				setRatingDie(trait as unknown as Record<string, any>, rangeTop(trait, [traitSetArg]) + 2);
-				const r = (trait as any).rating;
+				setRatingDie(trait, rangeTop(trait, [traitSetArg]) + 2);
+				const r = trait.rating as Record<string, unknown> | null | undefined;
 				if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) r.out = true;
 			} else {
-				setRatingDie(trait as unknown as Record<string, any>, null);
+				setRatingDie(trait, null);
 			}
 			updateCharacter(props.character);
 		} else {
@@ -1414,7 +1493,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function isTrackCompanion(traitSetArg: TraitSet, sub: unknown, trait?: Trait) {
 		if (trait) return characterCurioFunctions.isTrackCompanion(traitSetArg, sub, trait);
 		if (!hasTrackPart(traitSetArg) || !sub || typeof sub !== 'object') return false;
-		const subName = String((sub as any)?.noun || (sub as any)?.name || '')
+		const subRec = sub as Record<string, unknown>;
+		const subName = String(subRec.noun || subRec.name || '')
 			.trim()
 			.toLowerCase();
 		const explicitLabel = getView(traitSetArg)?.labels?.track;
@@ -1422,12 +1502,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return true;
 		}
 		if (getView(sub)?.part === 'block' || resolvePpDelta(sub) !== 0) return false;
-		const r = (sub as any)?.rating;
+		const r = subRec.rating as { range?: unknown } | null | undefined;
 		return Boolean(r && Array.isArray(r.range));
 	}
 
 	function visibleSubtraits(traitSetArg: TraitSet, trait: Trait) {
-		return characterCurioFunctions.ratedSubtraits(trait, traitSetArg).filter((st: any) => isTraitShown(st));
+		return characterCurioFunctions.ratedSubtraits(trait, traitSetArg).filter((st) => isTraitShown(st));
 	}
 
 	function shouldShowTrackOut(traitSetArg: TraitSet) {
@@ -1440,20 +1520,20 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return isOutDie(companion, traitSetArg ? [traitSetArg] : undefined);
 	}
 
-	function setTraitTrackLabel(sArg: any, t: any, rawName: string) {
-		if (props.submode !== 'play') return;
+	function setTraitTrackLabel(sArg: number, t: number | null | undefined, rawName: string) {
+		if (props.submode !== 'play' || typeof t !== 'number') return;
 		const set = props.character.traitSets[sArg];
 		const trait = set?.traits?.[t];
 		if (!trait) return;
 		if (!Array.isArray(trait.traits)) trait.traits = [];
-		let companion: any = getTrackCompanion(set, trait);
+		let companion = getTrackCompanion(set, trait);
 		if (!companion) {
 			companion = {
 				name: rawName,
 				rating: { type: 'Die', value: [], range: getTrackScale(set).slice() },
 				view: { part: 'track' },
 			};
-			(trait.traits as any[]).push(companion);
+			trait.traits.push(companion);
 		} else {
 			companion.name = rawName;
 			ensureView(companion).part = 'track';
@@ -1461,11 +1541,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function finalizeTraitTrackLabel(sArg: any, t: any) {
+	function finalizeTraitTrackLabel(sArg: number, t: number | null | undefined) {
 		const set = props.character?.traitSets?.[sArg];
-		const trait = set?.traits?.[t];
+		const trait = typeof t === 'number' ? set?.traits?.[t] : undefined;
 		if (trait && Array.isArray(trait.traits)) {
-			const companion: any = getTrackCompanion(set, trait);
+			const companion = getTrackCompanion(set, trait);
 			if (companion && !String(companion.name || '').trim()) {
 				const hasVal = (getTraitDice(companion)[0] || 0) > 0 || Boolean(companion.isOut);
 				if (!hasVal) {
@@ -1480,13 +1560,13 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		closeInlineTrackLabel();
 	}
 
-	function handleTrackClick(sArg: any, t: any, size: number) {
-		if (props.submode === 'print') return;
+	function handleTrackClick(sArg: number, t: number | null | undefined, size: number) {
+		if (props.submode === 'print' || typeof t !== 'number') return;
 		const set = props.character.traitSets[sArg];
 		const trait = set?.traits?.[t];
 		if (!trait) return;
 		if (!Array.isArray(trait.traits)) trait.traits = [];
-		const companion: any = getTrackCompanion(set, trait);
+		const companion = getTrackCompanion(set, trait);
 		if (companion) {
 			const cur = getTraitDice(companion)[0] || 0;
 			if (cur === size) {
@@ -1507,26 +1587,29 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			}
 		} else {
 			const name = getTrackLabel(set) || 'Track';
-			(trait.traits as any[]).push({ name, rating: { type: 'Die', value: [size], range: getTrackScale(set).slice() } });
+			trait.traits.push({ name, rating: { type: 'Die', value: [size], range: getTrackScale(set).slice() } });
 		}
 		updateCharacter(props.character);
 	}
 
-	function handleTrackOutClick(sArg: any, t: any) {
-		if (props.submode === 'print') return;
+	function handleTrackOutClick(sArg: number, t: number | null | undefined) {
+		if (props.submode === 'print' || typeof t !== 'number') return;
 		const set = props.character.traitSets[sArg];
 		const trait = set?.traits?.[t];
 		if (!trait) return;
 		if (!Array.isArray(trait.traits)) trait.traits = [];
-		let companion: any = getTrackCompanion(set, trait);
+		let companion = getTrackCompanion(set, trait);
 		if (!companion) {
 			const name = getTrackLabel(set) || 'Track';
 			const scale = getTrackScale(set);
-			companion = { name, rating: { type: 'Die', value: [scale[0] || 4], range: scale.slice(), out: true } };
-			(trait.traits as any[]).push(companion);
+			companion = {
+				name,
+				rating: { type: 'Die', value: [scale[0] || 4], range: scale.slice(), out: true } as Trait['rating'],
+			};
+			trait.traits.push(companion);
 		} else {
 			companion.isOut = !companion.isOut;
-			const r = companion.rating;
+			const r = companion.rating as Record<string, unknown> | null | undefined;
 			if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) {
 				r.out = Boolean(companion.isOut);
 			}
@@ -1543,13 +1626,13 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function getPipConfig(traitSetArg: TraitSet) {
 		const ctk = getView(traitSetArg);
-		const p = ctk?.pips;
-		const perRow = (p as any)?.perRow ?? 5;
-		const connected = (p as any)?.connected !== false;
+		const p = ctk?.pips && typeof ctk.pips === 'object' ? ctk.pips : undefined;
+		const perRow = p?.perRow ?? 5;
+		const connected = p?.connected !== false;
 		return {
 			perRow: Math.max(1, perRow),
 			connected,
-			labels: (p as any)?.labels === true,
+			labels: p?.labels === true,
 		};
 	}
 
@@ -1593,7 +1676,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!ts) return;
 		const bubbles: boolean[] = [];
 		for (let i = 0; i < count; i++) bubbles.push(i < filled);
-		(ts as unknown as Record<string, any>).rating = { type: 'Pip', value: bubbles };
+		ts.rating = { type: 'Pip', value: bubbles };
 		updateCharacter(props.character);
 	}
 
@@ -1620,7 +1703,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return getPipConfig(traitSetArg).labels === true;
 	}
 
-	function pipRowFilled(t: any, index: number, filledCount: number): boolean {
+	function pipRowFilled(t: unknown, index: number, filledCount: number): boolean {
 		if (t && typeof t === 'object') {
 			const rating = resolveTraitRating(t);
 			if (rating && rating.type === 'Pip' && Array.isArray(rating.value) && rating.value.length) {
@@ -1631,11 +1714,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function pipRows(traitSetArg: TraitSet) {
-		const cfg = getPipConfig(traitSetArg);
 		const track = getPipTrack(traitSetArg);
 		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
 		const n = Math.max(track.count, traits.length);
-		const rows: { index: number; trait: any; filled: boolean; name: string }[] = [];
+		const rows: { index: number; trait: Trait | null; filled: boolean; name: string }[] = [];
 		for (let i = 0; i < n; i++) {
 			const t = traits[i];
 			const named = t && typeof t === 'object' && typeof t.name === 'string' && t.name.length ? t : null;
@@ -1643,7 +1725,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				index: i,
 				trait: named,
 				filled: pipRowFilled(t, i, track.filled),
-				name: named ? (named as any).name : '',
+				name: named ? named.name || '' : '',
 			});
 		}
 		return rows;
@@ -1683,11 +1765,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
 		bubbles[pipIndex] = !bubbles[pipIndex];
 		const hasExplicitType = getRating(trait)?.type === 'Pip';
-		(trait as any).rating = {
+		trait.rating = {
 			...(hasExplicitType ? { type: 'Pip' as const } : {}),
 			value: bubbles,
 			...(Array.isArray(r.range) && r.range.length ? { range: [...r.range] } : {}),
-		};
+		} as Trait['rating'];
 		updateCharacter(props.character);
 	}
 
@@ -1760,10 +1842,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return matches.find((e: Trait) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || matches[0];
 		}
 		const blocks = characterCurioFunctions.blockChildren(trait, traitSet.value);
-		return blocks.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll);
+		return blocks.find((e) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll);
 	}
 
-	function blankPipTrait(): any {
+	function blankPipTrait(): Trait {
 		return { name: '', description: '', traits: [], tags: [], custom: {} };
 	}
 
@@ -1785,7 +1867,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const trait = ensurePipTrait(traitSetIndex, itemIndex);
 		if (!trait) return;
 		const next = !pipRowFilled(trait, itemIndex, 0);
-		(trait as unknown as Record<string, any>).rating = { type: 'Pip', value: [next] };
+		trait.rating = { type: 'Pip', value: [next] };
 		updateCharacter(props.character);
 	}
 
@@ -1803,8 +1885,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const trait = ensurePipTrait(traitSetIndex, itemIndex);
 		if (!trait) return;
 		const clean = typeof name === 'string' ? name.trim() : '';
-		if ((trait as any).name === clean) return;
-		(trait as any).name = clean;
+		if (trait.name === clean) return;
+		trait.name = clean;
 		updateCharacter(props.character);
 	}
 
@@ -1863,74 +1945,74 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return style;
 	}
 
-	function getBranchGroups(traitSetArg: TraitSet, items: any[]) {
+	function getBranchGroups(traitSetArg: TraitSet, items: RenderedTraitItem[]): BranchGroup[] {
 		const list = items || [];
-		const parents = list.filter((it: any) => getBranchRole(it.trait) !== 'specialty');
-		const flats = list.filter((it: any) => !it.isPlaceholder && getBranchRole(it.trait) === 'specialty');
+		const parents = list.filter((it) => getBranchRole(it.trait) !== 'specialty');
+		const flats = list.filter((it) => !it.isPlaceholder && getBranchRole(it.trait) === 'specialty');
 		const parentIdx = new Set(
 			parents
-				.filter((p: any) => p.originalIndex !== null && p.originalIndex !== undefined)
-				.map((p: any) => p.originalIndex),
+				.filter((p): p is RenderedTraitItem & { originalIndex: number } => typeof p.originalIndex === 'number')
+				.map((p) => p.originalIndex),
 		);
-		const groups: any[] = parents.map((traitItem: any) => {
+		const groups: BranchGroup[] = parents.map((traitItem) => {
 			const tIdx = traitItem.originalIndex;
-			const nested = (traitItem.trait?.traits || [])
-				.filter((sub: any) => resolveRating(sub, [traitItem.trait, traitSetArg])?.type !== 'Pip')
-				.map((sub: any, u: number) => ({ kind: 'sub', sub, u }));
-			const linked = flats
-				.filter((f: any) => getView(f.trait)?.linkTo === tIdx)
-				.map((f: any) => ({ kind: 'flat', item: f }));
+			const nested: BranchSubEntry[] = (traitItem.trait?.traits || [])
+				.filter((sub) => resolveRating(sub, [traitItem.trait, traitSetArg])?.type !== 'Pip')
+				.map((sub, u) => ({ kind: 'sub' as const, sub, u }));
+			const linked: BranchSubEntry[] = flats
+				.filter((f) => getView(f.trait)?.linkTo === tIdx)
+				.map((f) => ({ kind: 'flat' as const, item: f }));
 			return { traitItem, subs: [...nested, ...linked] };
 		});
-		const orphans = flats
-			.filter((f: any) => {
+		const orphans: BranchSubEntry[] = flats
+			.filter((f) => {
 				const lt = getView(f.trait)?.linkTo;
 				return !(typeof lt === 'number' && parentIdx.has(lt));
 			})
-			.map((f: any) => ({ kind: 'flat', item: f }));
+			.map((f) => ({ kind: 'flat' as const, item: f }));
 		if (orphans.length) {
 			groups.push({ traitItem: null, subs: orphans });
 		}
-		const split = groups.some((g: any) => {
-			const hasLeftSub = (g.subs || []).some((e: any) => {
+		const split = groups.some((g) => {
+			const hasLeftSub = (g.subs || []).some((e) => {
 				const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
-				return getBranchSide(t) === 'left';
+				return t ? getBranchSide(t) === 'left' : false;
 			});
 			if (hasLeftSub) return true;
-			const slots = g.traitItem?.trait?.slots;
+			const slots = (g.traitItem?.trait as Record<string, unknown> | undefined)?.slots;
 			if (slots && typeof slots === 'object' && !Array.isArray(slots)) {
-				return Object.values(slots).some((sl: any) => getBranchSide(sl as Trait) === 'left');
+				return Object.values(slots as Record<string, unknown>).some((sl) => getBranchSide(sl as Trait) === 'left');
 			}
 			return false;
 		});
-		groups.forEach((g: any) => {
+		groups.forEach((g) => {
 			g.split = split;
 		});
 		return groups;
 	}
 
-	function hasBranchSplit(traitSetArg: TraitSet, items: any[]) {
+	function hasBranchSplit(traitSetArg: TraitSet, items: RenderedTraitItem[]) {
 		if (getView(traitSetArg)?.style?.body !== 'subtrait-columns') return false;
-		return getBranchGroups(traitSetArg, items).some((g: any) => g.split);
+		return getBranchGroups(traitSetArg, items).some((g) => g.split);
 	}
 
 	// Flank layout: a subtrait-columns set with traitColumns 2 spreads
 	// parent traits across outer columns with subtraits down the middle.
 	// Explicit left-side subtraits (split) win over it.
-	function hasBranchFlank(traitSetArg: TraitSet, items: any[]) {
+	function hasBranchFlank(traitSetArg: TraitSet, items: RenderedTraitItem[]) {
 		if (getView(traitSetArg)?.style?.body !== 'subtrait-columns') return false;
 		if (Number(getView(traitSetArg)?.traitColumns) !== 2) return false;
 		return !hasBranchSplit(traitSetArg, items);
 	}
 
-	function getFlankColumns(traitSetArg: TraitSet, items: any[]) {
+	function getFlankColumns(traitSetArg: TraitSet, items: RenderedTraitItem[]) {
 		const groups = getBranchGroups(traitSetArg, items);
-		const parents = groups.filter((g: any) => g.traitItem);
+		const parents = groups.filter((g) => g.traitItem);
 		const mid = Math.ceil(parents.length / 2);
-		const center: any[] = [];
-		groups.forEach((g: any) => {
+		const center: BranchSubEntry[] = [];
+		groups.forEach((g) => {
 			const tIdx = g.traitItem ? g.traitItem.originalIndex : null;
-			(g.subs || []).forEach((e: any) => {
+			(g.subs || []).forEach((e) => {
 				center.push({ ...e, traitIndex: tIdx, traitItem: g.traitItem });
 			});
 		});
@@ -1949,19 +2031,19 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return null;
 	}
 
-	function getBranchSide(trait: Trait) {
-		return getView(trait)?.branchSide === 'left' ? 'left' : 'right';
+	function getBranchSide(trait: Trait | null | undefined) {
+		return trait && getView(trait)?.branchSide === 'left' ? 'left' : 'right';
 	}
 
-	function branchSubs(subs: any[], side: string) {
-		return (subs || []).filter((e: any) => {
+	function branchSubs(subs: BranchSubEntry[], side: string) {
+		return (subs || []).filter((e) => {
 			const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
 			const sd = getBranchSide(t);
 			return side === 'left' ? sd === 'left' : sd !== 'left';
 		});
 	}
 
-	function handleBranchFlatClick(sArg: any, t: any, trait: Trait) {
+	function handleBranchFlatClick(sArg: number, t: number | null | undefined, trait: Trait) {
 		if (props.submode === 'play') {
 			const traitSetArg = props.character.traitSets[sArg];
 			const first = ratingDice(resolveRating(trait, [traitSetArg]))[0];
@@ -1983,7 +2065,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function getThreeColEffect(trait: Trait) {
 		const entries = characterCurioFunctions.blockChildren(trait, traitSet.value);
-		const effect = entries.find((e: any) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || entries[0];
+		const effect = entries.find((e) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || entries[0];
 		if (!effect) return '';
 		return effect.description || effect.name || '';
 	}
@@ -2028,7 +2110,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return list;
 	}
 
-	function setDiceCount(sArg: any, t: any, count: number) {
+	function setDiceCount(sArg: number, t: number | null | undefined, count: number) {
+		if (typeof t !== 'number') return;
 		const traitSetArg = props.character.traitSets[sArg];
 		const trait = traitSetArg?.traits?.[t];
 		if (!trait) return;
@@ -2044,7 +2127,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function addTraitSetDiceToRoller(traitSetArg: TraitSet) {
 		if (!traitSetArg) return;
-		const diceToAdd: any[] = [];
+		const diceToAdd: StagedDiePayload[] = [];
 		const poolName = traitSetArg.name || props.character.name || 'Challenge Pool';
 		for (const tr of traitSetArg.traits || []) {
 			const dice = availableDice(tr, [traitSetArg]);
@@ -2108,7 +2191,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (resolved && Array.isArray(resolved.range) && resolved.range.length > 0) {
 			return resolved.range;
 		}
-		const rCell = (getView(ts)?.parts as Record<string, any> | undefined)?.rating;
+		const rCell = (getView(ts)?.parts as Record<string, { range?: number[] }> | undefined)?.rating;
 		if (rCell && Array.isArray(rCell.range) && rCell.range.length > 0) {
 			return rCell.range;
 		}
@@ -2116,21 +2199,21 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return setLadder.length > 0 ? setLadder : [4, 6, 8, 10, 12];
 	}
 
-	function addDieToPoolTrait(sArg: any, tIdx: any, dieSize: number) {
-		if (props.submode === 'print') return;
+	function addDieToPoolTrait(sArg: number, tIdx: number | null | undefined, dieSize: number) {
+		if (props.submode === 'print' || typeof tIdx !== 'number') return;
 		const set = props.character?.traitSets?.[sArg];
 		const trait = set?.traits?.[tIdx];
 		if (!trait || !Number.isFinite(dieSize) || dieSize <= 0) return;
 		const cur = characterCurioFunctions.getTraitDice(trait, [set]);
 		characterCurioFunctions.setTraitDice(trait, [...cur, Number(dieSize)]);
-		if ((trait as any).rating && typeof (trait as any).rating === 'object') {
-			(trait as any).rating.type = 'Dice';
+		if (trait.rating && typeof trait.rating === 'object') {
+			trait.rating.type = 'Dice';
 		}
 		updateCharacter(props.character);
 	}
 
-	function removeDieFromPoolTrait(sArg: any, tIdx: any, dieIndex: number) {
-		if (props.submode === 'print') return;
+	function removeDieFromPoolTrait(sArg: number, tIdx: number | null | undefined, dieIndex: number) {
+		if (props.submode === 'print' || typeof tIdx !== 'number') return;
 		const set = props.character?.traitSets?.[sArg];
 		const trait = set?.traits?.[tIdx];
 		if (!trait) return;
@@ -2139,8 +2222,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const next = [...cur];
 		next.splice(dieIndex, 1);
 		characterCurioFunctions.setTraitDice(trait, next);
-		if (next.length > 0 && (trait as any).rating && typeof (trait as any).rating === 'object') {
-			(trait as any).rating.type = 'Dice';
+		if (next.length > 0 && trait.rating && typeof trait.rating === 'object') {
+			trait.rating.type = 'Dice';
 		}
 		const viewBag = getView(trait);
 		if (viewBag && Array.isArray(viewBag.spentDice)) {
@@ -2177,7 +2260,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return listTraitsCount;
 	}
 
-	function stageRawDie(payload: unknown) {
+	function stageRawDie(payload: StagedDiePayload | StagedDiePayload[]) {
 		emit('addDieToRoller', payload);
 	}
 

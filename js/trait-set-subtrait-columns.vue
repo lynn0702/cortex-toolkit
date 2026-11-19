@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { getView } from './model.ts';
-import { injectTraitSet } from './use-trait-set.ts';
+import { injectTraitSet, type BranchSubEntry, type RenderedTraitItem } from './use-trait-set.ts';
 import { resolveBranchShares } from './use-trait-set-editor.ts';
 
 const {
@@ -44,7 +44,7 @@ const isSplit = computed(() => hasBranchSplit(traitSet.value, renderedTraits.val
 const flankCols = computed(() => getFlankColumns(traitSet.value, renderedTraits.value));
 const subtraitRatings = computed(() => getSubtraitRatings(traitSet.value));
 
-function isFilledSubEntry(entry: any): boolean {
+function isFilledSubEntry(entry: BranchSubEntry | null | undefined): boolean {
 	const t = entry?.kind === 'sub' ? entry.sub : entry?.item?.trait;
 	if (!t) return false;
 	return Boolean((t.name && String(t.name).trim()) || isTraitRated(t));
@@ -76,12 +76,12 @@ const branchGridStyle = computed(() => {
 	);
 });
 
-function showTraitName(item: any): boolean {
+function showTraitName(item: RenderedTraitItem | null | undefined): boolean {
 	if (!item || item.isPlaceholder || !item.trait?.name) return false;
 	return !printBlank.value || isFixedSystemTrait(traitSet.value, item.trait);
 }
 
-function visibleSideEntries(entries: any[]): any[] {
+function visibleSideEntries(entries: BranchSubEntry[] | null | undefined): BranchSubEntry[] {
 	if (printBlank.value) return [];
 	const list = entries || [];
 	if (submode.value === 'print') {
@@ -90,23 +90,23 @@ function visibleSideEntries(entries: any[]): any[] {
 	return list;
 }
 
-function showBlankSlotForSide(entries: any[]): boolean {
+function showBlankSlotForSide(entries: BranchSubEntry[] | null | undefined): boolean {
 	if (visibleSideEntries(entries).length > 0) return false;
 	return submode.value === 'print' || Boolean(printBlank.value);
 }
 
-function connectedSubCount(entries: any[]): number {
+function connectedSubCount(entries: BranchSubEntry[] | null | undefined): number {
 	if (printBlank.value) return 0;
 	return (entries || []).filter(isFilledSubEntry).length;
 }
 
-function connClass(entries: any[]): string {
+function connClass(entries: BranchSubEntry[] | null | undefined): string {
 	const n = connectedSubCount(entries);
 	if (n <= 0) return 'branch-conn-none';
 	return n === 1 ? 'branch-conn-single' : 'branch-conn-multi';
 }
 
-function sideCountClass(entries: any[]): string {
+function sideCountClass(entries: BranchSubEntry[] | null | undefined): string {
 	const n = connectedSubCount(entries);
 	if (n <= 0) return 'branch-side-none';
 	return n === 1 ? 'branch-side-single' : 'branch-side-multi';
@@ -279,17 +279,17 @@ function sideCountClass(entries: any[]): string {
 							tabindex="0"
 							:aria-label="`Stage d${firstDie(entry.sub)} from ${entry.sub.name || 'subtrait'}`"
 							@click.stop="
-								!printBlank && !entry.traitItem.isPlaceholder
+								!printBlank && !entry.traitItem?.isPlaceholder
 									? handleSingleDieClick(entry.sub, firstDie(entry.sub), traitSet, s, entry.traitIndex)
 									: null
 							"
 							@keydown.enter.prevent="
-								!printBlank && !entry.traitItem.isPlaceholder
+								!printBlank && !entry.traitItem?.isPlaceholder
 									? handleSingleDieClick(entry.sub, firstDie(entry.sub), traitSet, s, entry.traitIndex)
 									: null
 							"
 							@keydown.space.prevent="
-								!printBlank && !entry.traitItem.isPlaceholder
+								!printBlank && !entry.traitItem?.isPlaceholder
 									? handleSingleDieClick(entry.sub, firstDie(entry.sub), traitSet, s, entry.traitIndex)
 									: null
 							"

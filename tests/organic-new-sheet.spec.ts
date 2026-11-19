@@ -122,7 +122,9 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 				character: ch,
 				submode: 'play',
 				editing: [],
-				dicePool: { items: [{ size: 8, qty: 1, source: 'Jimmy the Snitch' }] },
+				dicePool: {
+					items: [{ id: 'd1', size: 8, qty: 1, source: 'Jimmy the Snitch', isScale: false, hitches: 1, keepsExtra: 0 }],
+				},
 			},
 		});
 
@@ -797,7 +799,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 				submode: 'edit',
 				character: ch,
 				editing: ['traitSet', 0],
-				dicePool: { dice: [null, null, null, null, null], items: [], wordBank: [] },
+				dicePool: { dice: [null, null, null, null, null], items: [], wordBank: [] } as any,
 			},
 		});
 		await flushPromises();

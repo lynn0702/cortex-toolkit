@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getView, resolveCurrencyLabel } from './model.ts';
-import { injectTraitSet } from './use-trait-set.ts';
+import { getView, resolveCurrencyLabel, type Trait, type TraitSet } from './model.ts';
+import { injectTraitSet, type RenderedTraitItem } from './use-trait-set.ts';
 
 const props = withDefaults(
 	defineProps<{
-		item: any;
+		item: RenderedTraitItem;
 		inPartsGrid?: boolean;
 		placementAbove?: boolean;
 	}>(),
@@ -67,46 +67,46 @@ function formatAltRollPpTag(ppDelta: number | undefined | null): string {
 	return (ppDelta > 0 ? '+' : '') + ppDelta + cur;
 }
 
-function formatAltRollAriaLabel(tr: any, ts: any): string {
-	const alt = getAltRoll(tr, ts);
+function formatAltRollAriaLabel(tr: Trait | null | undefined, ts: TraitSet | null | undefined): string {
+	const alt = tr && ts ? getAltRoll(tr, ts) : null;
 	const die = alt?.die || 4;
 	const tag = formatAltRollPpTag(alt?.ppDelta);
 	return tag ? `Take d${die} ${tag}` : `Take d${die}`;
 }
 
-function formatAltRollTitle(tr: any, ts: any): string {
-	const alt = getAltRoll(tr, ts);
+function formatAltRollTitle(tr: Trait | null | undefined, ts: TraitSet | null | undefined): string {
+	const alt = tr && ts ? getAltRoll(tr, ts) : null;
 	const die = alt?.die || 4;
 	const ppDelta = alt?.ppDelta;
 	if (!ppDelta) return `Take d${die}`;
 	return `Take d${die} (${ppDelta > 0 ? '+' : ''}${ppDelta} ${currencyLabel.value})`;
 }
 
-function canMutateItem(item: any): boolean {
+function canMutateItem(item: RenderedTraitItem): boolean {
 	return !printBlank.value && !item.isPlaceholder;
 }
 
-function activateSingleDie(item: any, dieSize: number | null) {
-	if (!canMutateItem(item)) return;
+function activateSingleDie(item: RenderedTraitItem, dieSize: number | null) {
+	if (!canMutateItem(item) || item.originalIndex === null) return;
 	handleSingleDieClick(item.trait, dieSize, traitSet.value, s.value, item.originalIndex);
 }
 
-function activateSteppedDie(item: any, size: number) {
-	if (!canMutateItem(item)) return;
+function activateSteppedDie(item: RenderedTraitItem, size: number) {
+	if (!canMutateItem(item) || item.originalIndex === null) return;
 	handleSteppedDieClick(s.value, item.originalIndex, size);
 }
 
-function activateOut(item: any) {
-	if (!canMutateItem(item)) return;
+function activateOut(item: RenderedTraitItem) {
+	if (!canMutateItem(item) || item.originalIndex === null) return;
 	handleOutClick(s.value, item.originalIndex);
 }
 
-function activatePoolDie(item: any, dieSize: number, dIdx: number) {
-	if (!canMutateItem(item)) return;
+function activatePoolDie(item: RenderedTraitItem, dieSize: number, dIdx: number) {
+	if (!canMutateItem(item) || item.originalIndex === null) return;
 	handleDieClick(item.trait, dieSize, dIdx, traitSet.value, s.value, item.originalIndex);
 }
 
-function activatePipBubble(trait: any, pIdx: number) {
+function activatePipBubble(trait: Trait, pIdx: number) {
 	if (printBlank.value) return;
 	toggleTraitPipBubble(trait, pIdx);
 }

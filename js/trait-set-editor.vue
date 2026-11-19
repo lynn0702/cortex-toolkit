@@ -9,10 +9,12 @@ import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 import VisibilityEye from './visibility-eye.vue';
 import TagEditor from './tag-editor.vue';
 import { useCuriosityGraph } from './curiosity-graph.ts';
+import type { Character } from './model.ts';
+import type { EditingPath } from './use-history.ts';
 
 const props = withDefaults(
 	defineProps<{
-		character: any;
+		character: Character;
 		traitSetID: number;
 		open?: boolean;
 		viewY?: number | null;
@@ -24,8 +26,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(e: 'selectElement', selector: any[]): void;
-	(e: 'updateCharacter', character: any): void;
+	(e: 'selectElement', selector: EditingPath): void;
+	(e: 'updateCharacter', character: Character): void;
 	(e: 'removeTraitSet', traitSetID: number): void;
 }>();
 

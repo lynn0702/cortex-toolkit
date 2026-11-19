@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from 'vue';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, type Character, type TraitSet } from './model.ts';
+import type { EditingPath } from './use-history.ts';
 import { getSheetSections, parsePct, formatPct } from './sheet-grid.ts';
 
 // Page-level arrangement: every set on every page as a draggable box on
@@ -11,12 +12,12 @@ import { getSheetSections, parsePct, formatPct } from './sheet-grid.ts';
 // Click selects; the readout beneath edits the selection. Right and
 // left, right, and bottom edges resize in place. The model commits once, on release.
 const props = defineProps<{
-	character: any;
+	character: Character;
 }>();
 
 const emit = defineEmits<{
-	(e: 'updateCharacter', character: any): void;
-	(e: 'selectElement', selector: any[]): void;
+	(e: 'updateCharacter', character: Character): void;
+	(e: 'selectElement', selector: EditingPath): void;
 }>();
 
 const ROW_H = 20;
@@ -37,22 +38,22 @@ interface Block {
 	top: number;
 	height: number;
 	base: number;
-	set: any;
+	set: TraitSet;
 }
 
-function layoutFor(page: number, setsInput?: any[]): { blocks: Block[]; rows: number } {
+function layoutFor(page: number, setsInput?: TraitSet[]): { blocks: Block[]; rows: number } {
 	const sets = setsInput ?? props.character?.traitSets ?? [];
-	const sections = getSheetSections(sets as any, page);
+	const sections = getSheetSections(sets, page);
 	const out: Block[] = [];
 	let cursor = 0;
 	const labelOf = (i: number) => {
-		const s = (sets as any[])[i] as any;
+		const s = sets[i];
 		return s?.name || '#' + (i + 1);
 	};
 	for (const section of sections) {
 		if (section.type !== 'grid') {
 			for (const item of section.ordered || []) {
-				const sObj = (sets as any[])[item.index];
+				const sObj = sets[item.index];
 				out.push({
 					kind: 'band',
 					index: item.index,
@@ -72,12 +73,12 @@ function layoutFor(page: number, setsInput?: any[]): { blocks: Block[]; rows: nu
 		let maxBottom = -Infinity;
 		const members: { index: number; left: number; width: number; top: number; height: number }[] = [];
 		for (const item of section.ordered || []) {
-			const set = (sets as any[])[item.index];
-			const p = getView(set)?.place as any;
+			const set = sets[item.index];
+			const p = getView(set)?.place;
 			const left = p ? Number(String(p.left).replace('%', '')) : 0;
 			const width = p ? Number(String(p.width).replace('%', '')) : 100;
-			const top = p && Number.isInteger(p.top) && p.top >= 0 ? p.top : 0;
-			const height = p && Number.isInteger(p.height) && p.height >= 1 ? p.height : 1;
+			const top = p && Number.isInteger(p.top) && (p.top as number) >= 0 ? (p.top as number) : 0;
+			const height = p && Number.isInteger(p.height) && (p.height as number) >= 1 ? (p.height as number) : 1;
 			if (!Number.isFinite(left) || !Number.isFinite(width)) continue;
 			members.push({ index: item.index, left, width, top, height });
 			minTop = Math.min(minTop, top);
@@ -95,7 +96,7 @@ function layoutFor(page: number, setsInput?: any[]): { blocks: Block[]; rows: nu
 				top: cursor + (m.top - minTop),
 				height: m.height,
 				base: minTop,
-				set: (sets as any[])[m.index],
+				set: sets[m.index],
 			});
 		}
 		cursor += Math.max(1, maxBottom - minTop);
@@ -116,7 +117,7 @@ const pages = computed(() => {
 // the mapped values; the model commits once, on release.
 interface DragState {
 	index: number;
-	setObj: any;
+	setObj: TraitSet;
 	mode: 'move' | 'wl' | 'w' | 'h';
 	base: { left: number; width: number; top: number; height: number };
 	page: number;
@@ -133,7 +134,7 @@ const drag = ref<DragState | null>(null);
 
 function setNameOf(index: number) {
 	const sets = props.character?.traitSets || [];
-	return (sets[index] as any)?.name || '#' + (index + 1);
+	return sets[index]?.name || '#' + (index + 1);
 }
 
 function getOtherPlacedBlocks(
@@ -142,7 +143,7 @@ function getOtherPlacedBlocks(
 ): { index: number; left: number; width: number; top: number; height: number }[] {
 	const sets = props.character?.traitSets || [];
 	const list: { index: number; left: number; width: number; top: number; height: number }[] = [];
-	sets.forEach((s: any, idx: number) => {
+	sets.forEach((s, idx: number) => {
 		if (idx === excludeIndex) return;
 		if ((Number(getView(s)?.page) || 1) !== page) return;
 		const p = getView(s)?.place;
@@ -228,7 +229,7 @@ function numOf(index: number, field: 'left' | 'width' | 'top' | 'height') {
 	if (drag.value && drag.value.index === index && typeof drag.value[field] === 'number') {
 		return drag.value[field];
 	}
-	const p = getView(props.character?.traitSets?.[index])?.place as any;
+	const p = getView(props.character?.traitSets?.[index])?.place;
 	if (field === 'left') {
 		const v = parsePct(p?.left);
 		return v === null ? 0 : Math.round(v * 1000) / 1000;
@@ -238,7 +239,7 @@ function numOf(index: number, field: 'left' | 'width' | 'top' | 'height') {
 		return v === null ? 100 : Math.round(v * 1000) / 1000;
 	}
 	if (field === 'top') {
-		return Number.isInteger(p?.top) && (p.top as number) >= 0 ? (p.top as number) : 0;
+		return p && Number.isInteger(p.top) && (p.top as number) >= 0 ? (p.top as number) : 0;
 	}
 	const h = p?.height;
 	return Number.isInteger(h) && (h as number) >= 1 ? (h as number) : 1;
@@ -267,15 +268,16 @@ const snapPct = (n: number) => Math.round(n / 5) * 5;
 // array the dragged set was already removed from: the doc slot
 // (insert-before index) and the top (the landed group's key, or a fresh
 // row past the last top).
-function mapDrop(sets: any[], page: number, row: number): { to: number; top: number } {
+function mapDrop(sets: TraitSet[], page: number, row: number): { to: number; top: number } {
 	const layout = layoutFor(page, sets);
 	const over = layout.blocks.find((b) => row >= b.top && row < b.top + b.height);
 	let to: number;
 	if (over) {
 		to = sets.indexOf(over.set);
 	} else {
-		const samePage = sets.filter((s: any) => (Number(getView(s)?.page) || 1) === page);
-		to = samePage.length ? sets.indexOf(samePage.at(-1)) + 1 : sets.length;
+		const samePage = sets.filter((s) => (Number(getView(s)?.page) || 1) === page);
+		const lastSame = samePage.at(-1);
+		to = lastSame ? sets.indexOf(lastSame) + 1 : sets.length;
 	}
 	let top: number;
 	if (over && over.kind === 'box') {
@@ -437,7 +439,7 @@ function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'mo
 		const overPage = over ? over.page : pg;
 		const overRow = over ? over.row : base.top;
 		const mapped = mapDrop(
-			sets.filter((s: any) => s !== setObj),
+			sets.filter((s) => s !== setObj),
 			overPage,
 			overRow,
 		);
@@ -498,11 +500,11 @@ function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'mo
 			writePlace(b.index, { left: d.left, width: d.width, top: d.top, height: d.height });
 			return;
 		}
-		const live: any[] = props.character?.traitSets || [];
+		const live: TraitSet[] = props.character?.traitSets || [];
 		let from = live.indexOf(d.setObj);
 		if (from === -1) {
-			const sid = (d.setObj as any)?.id;
-			if (sid !== undefined) from = live.findIndex((s: any) => s?.id === sid);
+			const sid = d.setObj?.id;
+			if (sid !== undefined) from = live.findIndex((s) => s?.id === sid);
 		}
 		if (from === -1) return;
 		const mapped = mapDrop(

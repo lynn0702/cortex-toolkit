@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetFrame from '../js/trait-set-frame.vue';
+import type { Character } from '../js/model.ts';
 import {
 	resolveBorder,
 	resolveFrame,
@@ -31,7 +32,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			};
 
 			const wrapper = mount(TraitSetBlock, {
-				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: character as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
 			// Check framed suppression classes (disables box CSS border)
@@ -75,7 +76,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			};
 
 			const wrapper = mount(TraitSetBlock, {
-				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: character as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
 			const frameSvg = wrapper.findComponent(TraitSetFrame);
@@ -107,7 +108,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			};
 
 			const wrapper = mount(TraitSetBlock, {
-				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: character as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
 			// No header rendered
@@ -139,7 +140,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			};
 
 			const wrapper = mount(TraitSetBlock, {
-				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: character as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
 			const frameSvg = wrapper.findComponent(TraitSetFrame);
@@ -352,7 +353,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			};
 
 			const wrapper = mount(TraitSetBlock, {
-				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: character as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 
 			expect(wrapper.find('.frame-block-svg').exists()).toBe(true);
@@ -393,7 +394,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 		it('Item 3: spreads multi-die ring trait and set-level Dice across ring arc without duplicating list distinctions', async () => {
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
-			const character = structuredClone(raw);
+			const character = structuredClone(raw) as unknown as Character;
 
 			// Set 0 (The Architect): set-level Dice [10, 10, 10] spreads into 3 ring die nodes without repeated Boss Die labels
 			const archWrapper = mount(TraitSetBlock, {
@@ -484,7 +485,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 		it('Item 4: renders leader lines for Architect and Dreamer, but none for Vanguard', async () => {
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
-			const character = structuredClone(raw);
+			const character = structuredClone(raw) as unknown as Character;
 
 			// Architect: set 0 (has image + name) -> renders leader line
 			const archWrapper = mount(TraitSetBlock, {
@@ -514,11 +515,11 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 		it('Item 6: verifies The Dreamer & the Architect composition across all 4 sets', async () => {
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
-			const character = structuredClone(raw);
+			const character = structuredClone(raw) as unknown as Character;
 
 			// 1. Architect (set 0)
 			const archWrapper = mount(TraitSetBlock, {
-				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: character as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 			expect(archWrapper.find('.portrait-circle').exists()).toBe(true);
 			expect(archWrapper.find('.portrait-leader-line').exists()).toBe(false);
@@ -589,7 +590,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			}
 
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
-			const character = structuredClone(raw);
+			const character = structuredClone(raw) as unknown as Character;
 			for (const traitSetID of [0, 3]) {
 				const wrapper = mount(TraitSetBlock, {
 					props: { character, traitSetID, submode: 'play', editing: [] },
@@ -648,7 +649,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				],
 			};
 			const orthoWrap = mount(TraitSetBlock, {
-				props: { character: orthoChar, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: orthoChar as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 			expect(orthoWrap.find('.frame-block-svg').exists()).toBe(true);
 			expect(orthoWrap.find('.portrait.portrait-shape-round').exists()).toBe(true);
@@ -660,7 +661,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			// 4. When Trait Array = none on a set-level Dice set, dice render in header (and body when header=none)
 			orthoChar.traitSets[0].view.frame.array = 'none';
 			const hdrDiceWrap = mount(TraitSetBlock, {
-				props: { character: orthoChar, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: orthoChar as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 			expect(hdrDiceWrap.find('.portrait.portrait-shape-round').exists()).toBe(true);
 			expect(hdrDiceWrap.find('.ring-grid').exists()).toBe(false);
@@ -669,7 +670,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 			orthoChar.traitSets[0].view.header = 'none';
 			const bodyDiceWrap = mount(TraitSetBlock, {
-				props: { character: orthoChar, traitSetID: 0, submode: 'play', editing: [] },
+				props: { character: orthoChar as unknown as Character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 			expect(bodyDiceWrap.findAll('.trait-set-body-dice .diecon-wrapper')).toHaveLength(3);
 			bodyDiceWrap.unmount();

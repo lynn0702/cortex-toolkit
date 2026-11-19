@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, getCurrentInstance, nextTick, ref } from 'vue';
-import { characterCurioFunctions } from './functions.ts';
+import { characterCurioFunctions, type SetPresetEntry } from './functions.ts';
 import {
 	getView,
 	isNameSet,
@@ -17,6 +17,8 @@ import {
 	getCuriosityPortrait,
 	getCuriosityThumbnailUrl,
 	getIdentityText,
+	type Character,
+	type SheetTemplate,
 } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
 import TraitSetFrame from './trait-set-frame.vue';
@@ -25,14 +27,22 @@ import { SHOWCASE_TEMPLATES, DREAMER_ARCHITECT_SHOWCASE } from './showcase-templ
 
 const TraitSetMini = defineAsyncComponent(() => import('./trait-set-mini.vue'));
 
-declare const characterCurioLibraryTemplates: any;
+declare const characterCurioLibraryTemplates: SheetTemplate[] | undefined;
+
+type ImportedCharacterRecord = Partial<Character> & Record<string, unknown>;
+
+interface ImportBuffer {
+	newCharacter: ImportedCharacterRecord;
+	oldCharacterIndex: number;
+	oldCharacter: Character | null;
+}
 
 const props = withDefaults(
 	defineProps<{
-		characters: any[];
+		characters: Character[];
 		openCharacterIDs?: string[];
-		sheetTemplates?: any[];
-		customPresets?: any[];
+		sheetTemplates?: SheetTemplate[];
+		customPresets?: SetPresetEntry[];
 	}>(),
 	{
 		openCharacterIDs: () => [],
@@ -42,8 +52,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(e: 'createFromLibrary', tmpl: any, asTemplate: boolean, openPrint: boolean): void;
-	(e: 'previewTemplate', tmpl: any): void;
+	(e: 'createFromLibrary', tmpl: SheetTemplate, asTemplate: boolean, openPrint: boolean): void;
+	(e: 'previewTemplate', tmpl: SheetTemplate): void;
 	(e: 'createCharacter', isTemplate: boolean, templateId?: string | null): void;
 	(e: 'createFromTemplate', characterID: string): void;
 	(e: 'toggleTemplate', characterID: string): void;
@@ -54,10 +64,10 @@ const emit = defineEmits<{
 	(e: 'exportAllCharacters'): void;
 	(e: 'deleteCharacter', id: string): void;
 	(e: 'deleteAllCharacters'): void;
-	(e: 'importSheetTemplate', char: any): void;
-	(e: 'importSetPresets', presets: any[]): void;
+	(e: 'importSheetTemplate', char: SheetTemplate): void;
+	(e: 'importSetPresets', presets: SetPresetEntry[]): void;
 	(e: 'deleteSheetTemplate', id: string): void;
-	(e: 'importCharacter', character: any): void;
+	(e: 'importCharacter', character: ImportedCharacterRecord): void;
 }>();
 
 const instance = getCurrentInstance();
@@ -67,14 +77,14 @@ const rosterSearch = ref('');
 const selectedTemplateId = ref('');
 
 const showImportConfirm = ref(false);
-const importQueue = ref<any[]>([]);
-const importBuffer = ref<any>(null);
+const importQueue = ref<ImportedCharacterRecord[]>([]);
+const importBuffer = ref<ImportBuffer | null>(null);
 const importError = ref('');
 const libraryLoading = ref(false);
 const libraryError = ref('');
 const libraryBundleEpoch = ref(0);
 const showDeleteConfirm = ref(false);
-const characterToDelete = ref<any>(null);
+const characterToDelete = ref<Character | null>(null);
 const showDeleteAllConfirm = ref(false);
 const showLibrary = ref(false);
 const showTraitSetMini = ref(false);
@@ -100,10 +110,10 @@ const charactersSorted = computed(() => {
 const matchingCharacters = computed(() => {
 	const q = rosterSearch.value.toLowerCase().trim();
 	if (!q) return charactersSorted.value;
-	return charactersSorted.value.filter((c: any) => {
+	return charactersSorted.value.filter((c) => {
 		const name = (c.name || '').toLowerCase();
 		const game = getCuriosityGame(c).toLowerCase();
-		const type = (c.type || getView(c)?.type || '').toLowerCase();
+		const type = String((c as Record<string, unknown>).type || getView(c)?.type || '').toLowerCase();
 		return (
 			name.includes(q) || game.includes(q) || type.includes(q) || characterCurioFunctions.characterMatchesTagQuery(c, q)
 		);
@@ -121,37 +131,36 @@ const charactersFiltered = computed(() => {
 	return list;
 });
 
-const customTemplates = computed(() => (props.sheetTemplates || []).filter((t: any) => Boolean(t?.userSaved)));
+const customTemplates = computed<SheetTemplate[]>(() =>
+	(props.sheetTemplates || []).filter((t) => Boolean(t?.userSaved)),
+);
 
-const libraryTemplates = computed(() => {
+const libraryTemplates = computed<SheetTemplate[]>(() => {
 	void libraryBundleEpoch.value;
-	const base = typeof characterCurioLibraryTemplates !== 'undefined' ? characterCurioLibraryTemplates : [];
+	const base =
+		typeof characterCurioLibraryTemplates !== 'undefined' && Array.isArray(characterCurioLibraryTemplates)
+			? characterCurioLibraryTemplates
+			: [];
 	if (typeof characterCurioLibraryTemplates === 'undefined') {
 		loadLibraryTemplates();
 	}
+	const dreamer = DREAMER_ARCHITECT_SHOWCASE as unknown as SheetTemplate;
+	const showcases = SHOWCASE_TEMPLATES as unknown as SheetTemplate[];
 	const knownIds = new Set<string>(
-		[...customTemplates.value, DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base]
-			.map((t: any) => String(t?.id || ''))
-			.filter(Boolean),
+		[...customTemplates.value, dreamer, ...showcases, ...base].map((t) => String(t?.id || '')).filter(Boolean),
 	);
-	const rosterDemoTemplates = (props.characters || [])
-		.filter((c: any) => {
+	const rosterDemoTemplates: SheetTemplate[] = (props.characters || [])
+		.filter((c) => {
 			if (!c || typeof c !== 'object') return false;
 			if (!c.isTemplate && !hasTemplateListing(getView(c)?.listing)) return false;
-			const tplRef = c.sheet?.template;
+			const tplRef = c.sheet?.template as string | { id?: string } | undefined;
 			const linkedId = typeof tplRef === 'string' ? tplRef : String(tplRef?.id || '');
 			return !linkedId || !knownIds.has(linkedId);
 		})
-		.map((c: any) => ({ ...characterToSheetTemplate(c), userSaved: true }));
-	const merged = [
-		...customTemplates.value,
-		...rosterDemoTemplates,
-		DREAMER_ARCHITECT_SHOWCASE,
-		...SHOWCASE_TEMPLATES,
-		...base,
-	];
+		.map((c) => ({ ...characterToSheetTemplate(c), userSaved: true }));
+	const merged: SheetTemplate[] = [...customTemplates.value, ...rosterDemoTemplates, dreamer, ...showcases, ...base];
 	const seen = new Set<string>();
-	return merged.filter((t: any) => {
+	return merged.filter((t) => {
 		const id = t?.id;
 		if (!id || seen.has(id)) return false;
 		seen.add(id);
@@ -159,16 +168,16 @@ const libraryTemplates = computed(() => {
 	});
 });
 
-function isOfficialEntry(t: any): boolean {
+function isOfficialEntry(t: SheetTemplate): boolean {
 	return !t?.userSaved && Boolean(safeLinkUrl(getTemplateListing(t)?.url));
 }
 
-function isReferenceEntry(t: any): boolean {
+function isReferenceEntry(t: SheetTemplate): boolean {
 	return !t?.userSaved && !safeLinkUrl(getTemplateListing(t)?.url);
 }
 
-function isSavedSheetTemplate(tmpl: any): boolean {
-	return Boolean(tmpl?.userSaved && customTemplates.value.some((ct: any) => ct?.id === tmpl?.id));
+function isSavedSheetTemplate(tmpl: SheetTemplate): boolean {
+	return Boolean(tmpl?.userSaved && customTemplates.value.some((ct) => ct?.id === tmpl?.id));
 }
 
 const libraryCategoryCounts = computed(() => {
@@ -177,7 +186,7 @@ const libraryCategoryCounts = computed(() => {
 		all: all.length,
 		official: all.filter(isOfficialEntry).length,
 		reference: all.filter(isReferenceEntry).length,
-		saved: all.filter((t: any) => Boolean(t?.userSaved)).length,
+		saved: all.filter((t) => Boolean(t?.userSaved)).length,
 	};
 });
 
@@ -193,12 +202,12 @@ const libraryTemplatesFiltered = computed(() => {
 	} else if (cat === 'reference') {
 		list = list.filter(isReferenceEntry);
 	} else if (cat === 'saved') {
-		list = list.filter((t: any) => Boolean(t?.userSaved));
+		list = list.filter((t) => Boolean(t?.userSaved));
 	}
 	if (librarySearch.value && librarySearch.value.trim().length) {
 		const q = librarySearch.value.toLowerCase().trim();
 		list = list.filter(
-			(t: any) =>
+			(t) =>
 				getTemplateTitle(t).toLowerCase().includes(q) ||
 				String(t?.id || '')
 					.toLowerCase()
@@ -208,7 +217,7 @@ const libraryTemplatesFiltered = computed(() => {
 				getTemplateVariant(t).toLowerCase().includes(q) ||
 				getTemplateDescription(t).toLowerCase().includes(q) ||
 				getCuriosityGame(t?.character).toLowerCase().includes(q) ||
-				(t.character?.traitSets || []).some((s: any) =>
+				(t.character?.traitSets || []).some((s) =>
 					String(s?.name || '')
 						.toLowerCase()
 						.includes(q),
@@ -223,19 +232,19 @@ function resetLibraryFilters() {
 	libraryCategory.value = 'all';
 }
 
-function safeImageUrl(url: any) {
+function safeImageUrl(url: unknown) {
 	return characterCurioFunctions.safeImageUrl(url);
 }
 
-function safeLinkUrl(url: any) {
+function safeLinkUrl(url: unknown) {
 	return characterCurioFunctions.safeLinkUrl(url);
 }
 
-function cardHeroImage(tmpl: any): string {
+function cardHeroImage(tmpl: SheetTemplate): string {
 	return getTemplateHeroImage(tmpl);
 }
 
-function cardRatingTraits(tmpl: any) {
+function cardRatingTraits(tmpl: SheetTemplate) {
 	const listing = getTemplateListing(tmpl) || {};
 	const entries: Array<[string, unknown]> = [
 		['Setting', listing.setting],
@@ -255,13 +264,13 @@ function cardRatingTraits(tmpl: any) {
 	return traits;
 }
 
-function cardHasRatings(tmpl: any): boolean {
+function cardHasRatings(tmpl: SheetTemplate): boolean {
 	return cardRatingTraits(tmpl).length > 0;
 }
 
 // Mini character for a library card hero: the cover image acts as portrait,
 // and real Setting/Prep/Complexity ratings (when present) render on the ring.
-function cardRingCharacter(tmpl: any) {
+function cardRingCharacter(tmpl: SheetTemplate) {
 	const ratings = cardRatingTraits(tmpl);
 	const charView = getView(tmpl?.character);
 	const ringColor =
@@ -293,14 +302,14 @@ function cardRingCharacter(tmpl: any) {
 	};
 }
 
-function cardDescription(tmpl: any): string {
+function cardDescription(tmpl: SheetTemplate): string {
 	return getTemplateDescription(tmpl);
 }
 
-function cardMetaBadges(tmpl: any): string[] {
+function cardMetaBadges(tmpl: SheetTemplate): string[] {
 	const badges: string[] = [];
 	const charView = getView(tmpl?.character);
-	const pages = Number(charView?.pageCount || (tmpl as any)?.pages || 0);
+	const pages = Number(charView?.pageCount || (tmpl as Record<string, unknown>)?.pages || 0);
 	if (pages > 0) {
 		badges.push(pages === 1 ? '1 Page' : `${pages} Pages`);
 	}
@@ -314,7 +323,7 @@ function cardMetaBadges(tmpl: any): string[] {
 	return badges;
 }
 
-function cardTraitTags(tmpl: any): { visible: string[]; overflow: number } {
+function cardTraitTags(tmpl: SheetTemplate): { visible: string[]; overflow: number } {
 	const seen = new Set<string>();
 	const names: string[] = [];
 	for (const s of tmpl?.character?.traitSets || []) {
@@ -331,9 +340,9 @@ function cardTraitTags(tmpl: any): { visible: string[]; overflow: number } {
 	};
 }
 
-function cardSchematicBlocks(tmpl: any): Array<'ring' | 'cut' | 'half' | 'full'> {
-	const sets = (tmpl?.character?.traitSets || []).filter((s: any) => Boolean(s?.name) && !isNameSet(s));
-	return sets.slice(0, 6).map((s: any) => {
+function cardSchematicBlocks(tmpl: SheetTemplate): Array<'ring' | 'cut' | 'half' | 'full'> {
+	const sets = (tmpl?.character?.traitSets || []).filter((s) => Boolean(s?.name) && !isNameSet(s));
+	return sets.slice(0, 6).map((s) => {
 		const view = getView(s);
 		const frame = typeof view?.frame === 'object' && view.frame !== null ? view.frame : null;
 		const border = typeof view?.border === 'object' && view.border !== null ? view.border : null;
@@ -360,7 +369,7 @@ function loadLibraryTemplates() {
 	script.onload = () => {
 		libraryLoading.value = false;
 		libraryBundleEpoch.value++;
-		(instance?.proxy as any)?.$forceUpdate();
+		(instance?.proxy as { $forceUpdate?: () => void } | null | undefined)?.$forceUpdate?.();
 	};
 	script.onerror = () => {
 		libraryLoading.value = false;
@@ -369,7 +378,7 @@ function loadLibraryTemplates() {
 	document.head.appendChild(script);
 }
 
-function useLibrary(tmpl: any, asTemplate = false, openPrint = false) {
+function useLibrary(tmpl: SheetTemplate, asTemplate = false, openPrint = false) {
 	showLibrary.value = false;
 	emit('createFromLibrary', tmpl, asTemplate, openPrint);
 }
@@ -414,7 +423,7 @@ function exportAll() {
 	emit('exportAllCharacters');
 }
 
-function promptDeleteCharacter(character: any) {
+function promptDeleteCharacter(character: Character) {
 	characterToDelete.value = character;
 	showDeleteConfirm.value = true;
 }
@@ -481,7 +490,7 @@ function processImportFiles(files: FileList | null | undefined) {
 					emit('importSetPresets', data.presets);
 					presetsAdded = data.presets.length;
 				}
-				let candidates: any[] = [];
+				let candidates: unknown[] = [];
 				if (Array.isArray(data)) {
 					candidates = data;
 				} else if (data && data.characters && Array.isArray(data.characters)) {
@@ -509,7 +518,7 @@ function processImportFiles(files: FileList | null | undefined) {
 				let added = 0;
 				let templatesAdded = 0;
 				let invalidSkipped = 0;
-				candidates.forEach((char: any) => {
+				candidates.forEach((char) => {
 					if (!characterCurioFunctions.isValidCurrentCharacter(char)) {
 						invalidSkipped++;
 						return;
@@ -519,7 +528,7 @@ function processImportFiles(files: FileList | null | undefined) {
 					// (replace, never duplicate) instead of importing
 					// as characters.
 					if (characterCurioFunctions.isSheetTemplateFile(char)) {
-						emit('importSheetTemplate', char);
+						emit('importSheetTemplate', char as unknown as SheetTemplate);
 						templatesAdded++;
 						return;
 					}
@@ -529,7 +538,7 @@ function processImportFiles(files: FileList | null | undefined) {
 						added++;
 					}
 				});
-				candidates = candidates.filter((c: any) => !characterCurioFunctions.isSheetTemplateFile(c));
+				candidates = candidates.filter((c) => !characterCurioFunctions.isSheetTemplateFile(c));
 				if (added < candidates.length) {
 					importError.value =
 						'Skipped ' +
@@ -583,8 +592,9 @@ function importNextQueueItem() {
 	if (!importQueue.value.length || importBuffer.value !== null) return;
 
 	const newCharacter = importQueue.value.shift();
+	if (!newCharacter) return;
 
-	const c = props.characters.findIndex((existingCharacter: any) => existingCharacter.id === newCharacter.id);
+	const c = props.characters.findIndex((existingCharacter) => existingCharacter.id === newCharacter.id);
 
 	importBuffer.value = {
 		newCharacter: newCharacter,
@@ -611,6 +621,7 @@ async function importCancel() {
 }
 
 async function importConfirm() {
+	if (!importBuffer.value) return;
 	const character = importBuffer.value.newCharacter;
 
 	showImportConfirm.value = false;
@@ -636,13 +647,17 @@ async function importConfirm() {
 	importNextQueueItem();
 }
 
-function renderDate(timestamp: any) {
+function renderDate(timestamp: string | number | Date | null | undefined) {
+	if (timestamp === undefined || timestamp === null) return '';
 	return characterCurioFunctions.renderDate(timestamp);
 }
 
-function getRelativeDateLabel(date1: any, date2: any) {
-	const d1 = new Date(date1).getTime();
-	const d2 = new Date(date2).getTime();
+function getRelativeDateLabel(
+	date1: string | number | Date | null | undefined,
+	date2: string | number | Date | null | undefined,
+) {
+	const d1 = date1 !== undefined && date1 !== null ? new Date(date1).getTime() : 0;
+	const d2 = date2 !== undefined && date2 !== null ? new Date(date2).getTime() : 0;
 	if (d2 > d1) return 'newer';
 	if (d2 < d1) return 'older';
 	return 'same age';
@@ -1042,21 +1057,21 @@ function getRelativeDateLabel(date1: any, date2: any) {
 					<div>
 						<p>
 							<span class="modal-import-prefix">Replace this…</span><br />
-							{{ importBuffer.oldCharacter.name }}<br />
-							<span class="modal-import-date">{{ renderDate(importBuffer.oldCharacter.dateModified) }}</span>
+							{{ importBuffer?.oldCharacter?.name }}<br />
+							<span class="modal-import-date">{{ renderDate(importBuffer?.oldCharacter?.dateModified) }}</span>
 						</p>
 					</div>
 					<div>
 						<p>
 							<span class="modal-import-prefix">…with this?</span><br />
-							{{ importBuffer.newCharacter.name }}<br />
+							{{ importBuffer?.newCharacter?.name }}<br />
 							<span class="modal-import-date"
-								>{{ renderDate(importBuffer.newCharacter.dateModified) }}
+								>{{ renderDate(importBuffer?.newCharacter?.dateModified) }}
 								<span class="modal-import-date-suffix"
 									>({{
 										getRelativeDateLabel(
-											importBuffer.oldCharacter.dateModified,
-											importBuffer.newCharacter.dateModified,
+											importBuffer?.oldCharacter?.dateModified,
+											importBuffer?.newCharacter?.dateModified,
 										)
 									}})</span
 								></span

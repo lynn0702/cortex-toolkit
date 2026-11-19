@@ -13,8 +13,10 @@ import {
 	resolvePpDelta,
 	getCuriosityGame,
 	type AltRollOption,
+	type Character,
 } from './model.ts';
-import { formatDiceNotation } from './dice-pool.ts';
+import { formatDiceNotation, type DiceItem } from './dice-pool.ts';
+import type { EditingPath } from './use-history.ts';
 
 interface PaletteItem {
 	id: string;
@@ -41,8 +43,8 @@ interface PaletteItem {
 
 const props = defineProps<{
 	open: boolean;
-	character?: any | null;
-	characters: any[];
+	character?: Character | null;
+	characters: Character[];
 	mode: string;
 	submode: string | null;
 	activePoolSide: 'player' | 'opposition';
@@ -53,11 +55,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	(e: 'close'): void;
-	(e: 'addDie', dieData: any): void;
+	(e: 'addDie', dieData: Partial<DiceItem> | Partial<DiceItem>[]): void;
 	(e: 'rollPool'): void;
 	(e: 'clearPools'): void;
 	(e: 'togglePoolSide'): void;
-	(e: 'selectElement', selector: unknown[]): void;
+	(e: 'selectElement', selector: EditingPath): void;
 	(e: 'navigate', mode: string, submode: string | null): void;
 	(e: 'loadCharacter', id: string): void;
 	(e: 'exportCharacter', id: string): void;
@@ -166,7 +168,7 @@ const allItems = computed<PaletteItem[]>(() => {
 				selector: ['traitSet', sIdx],
 				setIndex: sIdx,
 				tags: setTags,
-				searchBlob: buildSearchBlob([setName, setNoun, ts.description, formatDiceNotation(setDice), setTags]),
+				searchBlob: buildSearchBlob([setName, setNoun, ts.description ?? '', formatDiceNotation(setDice), setTags]),
 			});
 
 			const traits = Array.isArray(ts.traits) ? ts.traits : [];
@@ -449,7 +451,7 @@ watch(filteredItems, () => {
 const activeItem = computed(() => filteredItems.value[activeIndex.value] || null);
 const activeOptionId = computed(() => (activeItem.value ? `palette-option-${activeIndex.value}` : ''));
 
-function buildStagePayload(item: PaletteItem, asHinder = false): any | null {
+function buildStagePayload(item: PaletteItem, asHinder = false): Partial<DiceItem> | Partial<DiceItem>[] | null {
 	if (asHinder || (item.dice.length === 0 && item.canHinder)) {
 		const alt = item.altRoll;
 		if (!alt) return null;
@@ -530,7 +532,7 @@ function activateItem(item: PaletteItem, keepOpen = false) {
 			return;
 		}
 		if (item.selector) {
-			emit('selectElement', item.selector);
+			emit('selectElement', item.selector as EditingPath);
 			scrollSetIntoView(item.setIndex);
 			emit('close');
 		}
@@ -544,7 +546,7 @@ function activateItem(item: PaletteItem, keepOpen = false) {
 	}
 	if (item.selector) {
 		nextTick(() => {
-			emit('selectElement', item.selector!);
+			emit('selectElement', item.selector as EditingPath);
 			scrollSetIntoView(item.setIndex);
 		});
 	}

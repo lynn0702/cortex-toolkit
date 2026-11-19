@@ -8,9 +8,12 @@ import {
 	isRingBadgeTrait,
 	resolveSubtraitNoun,
 	setRingBadgeDie,
+	type Character,
+	type Trait,
 } from './model.ts';
 import DiceRoller from './dice-roller.vue';
-import type { NamedPool } from './dice-pool.ts';
+import type { DiceItem, DicePool, NamedPool } from './dice-pool.ts';
+import type { EditingPath } from './use-history.ts';
 
 const TraitEditor = defineAsyncComponent(() => import('./trait-editor.vue'));
 const TraitSetEditor = defineAsyncComponent(() => import('./trait-set-editor.vue'));
@@ -19,16 +22,16 @@ const JsonEditor = defineAsyncComponent(() => import('./json-editor.vue'));
 
 const props = withDefaults(
 	defineProps<{
-		character?: any;
-		curiosities?: any[];
-		editing?: any[];
+		character?: Character | null;
+		curiosities?: Character[];
+		editing?: EditingPath;
 		submode?: string | null;
 		mode?: string;
 		isOpen?: boolean;
 		position?: 'left' | 'right';
 		panelTab?: 'properties' | 'roller' | 'json';
-		dicePool?: any;
-		oppositionPool?: any;
+		dicePool?: DicePool | null;
+		oppositionPool?: DicePool | null;
 		activePoolSide?: 'player' | 'opposition';
 		namedPools?: NamedPool[];
 		activePoolId?: string;
@@ -49,14 +52,14 @@ const emit = defineEmits<{
 	(e: 'update:panelTab', tab: 'properties' | 'roller' | 'json'): void;
 	(e: 'update:isOpen', open: boolean): void;
 	(e: 'togglePosition'): void;
-	(e: 'selectElement', selector: any[]): void;
-	(e: 'updateCharacter', character: any): void;
-	(e: 'applyJson', parsed: any): void;
+	(e: 'selectElement', selector: EditingPath): void;
+	(e: 'updateCharacter', character: Character): void;
+	(e: 'applyJson', parsed: unknown): void;
 	(e: 'removeTrait', traitSetID: number, traitID: number): void;
 	(e: 'removeTraitSet', traitSetID: number): void;
 	(e: 'saveSheetTemplate'): void;
 	(e: 'exportSheetTemplate'): void;
-	(e: 'addDie', die: any): void;
+	(e: 'addDie', die: Partial<DiceItem> | Partial<DiceItem>[]): void;
 	(e: 'removeDie', index: number): void;
 	(e: 'clearPool'): void;
 	(e: 'clearOppositionPool'): void;
@@ -158,13 +161,13 @@ const traitSet = computed(() => {
 	return null;
 });
 
-const resolvedTraitChain = computed<any[]>(() => {
+const resolvedTraitChain = computed<Trait[]>(() => {
 	if (!traitSet.value || !Array.isArray(traitSet.value.traits) || !traitPath.value.length) return [];
-	const chain: any[] = [];
-	let currentList: any[] | undefined = traitSet.value.traits;
+	const chain: Trait[] = [];
+	let currentList: Trait[] | undefined = traitSet.value.traits;
 	for (const idx of traitPath.value) {
 		if (!Array.isArray(currentList) || !currentList[idx]) return [];
-		const node = currentList[idx];
+		const node: Trait = currentList[idx];
 		chain.push(node);
 		currentList = node.traits;
 	}
@@ -191,7 +194,7 @@ const scaleRingSetIndex = computed<number>(() => {
 	}
 	const sets = props.character?.traitSets;
 	if (!Array.isArray(sets)) return -1;
-	return sets.findIndex((s: any) => Array.isArray(s?.traits) && s.traits.some((t: any) => isRingBadgeTrait(t)));
+	return sets.findIndex((s) => Array.isArray(s?.traits) && s.traits.some((t) => isRingBadgeTrait(t)));
 });
 
 const scaleRingSet = computed(() =>
@@ -200,7 +203,7 @@ const scaleRingSet = computed(() =>
 
 const ringBadgeTrait = computed(() => {
 	const setNode = scaleRingSet.value;
-	return Array.isArray(setNode?.traits) ? (setNode.traits.find((t: any) => isRingBadgeTrait(t)) ?? null) : null;
+	return Array.isArray(setNode?.traits) ? (setNode.traits.find((t) => isRingBadgeTrait(t)) ?? null) : null;
 });
 
 const ringBadgeLabel = computed(() => {
@@ -268,7 +271,7 @@ function toggleJson() {
 	emit('update:panelTab', props.panelTab === 'json' ? 'properties' : 'json');
 }
 
-function goCrumb(selector: any[]) {
+function goCrumb(selector: EditingPath) {
 	if (props.panelTab !== 'properties') emit('update:panelTab', 'properties');
 	emit('selectElement', selector);
 }
@@ -276,7 +279,7 @@ function goCrumb(selector: any[]) {
 // Sheet-root selections that open a tab directly: page, theme, dice.
 // theme lands at the tab top; dice lands on the same tab with the
 // Die Style & Geometry section scrolled into view.
-function enterSheetTab(sel: any) {
+function enterSheetTab(sel: EditingPath | undefined) {
 	const primary = Array.isArray(sel) ? sel[0] : undefined;
 	if (primary === 'page') {
 		sheetTab.value = 'page';
@@ -307,7 +310,7 @@ watch(() => props.editing, enterSheetTab, { immediate: true });
 
 interface Crumb {
 	label: string;
-	selector: any[] | null;
+	selector: EditingPath | null;
 }
 
 // Crumb links only navigate in Edit; the current item is never a link.
@@ -366,7 +369,7 @@ const switchableTraitSets = computed<{ index: number; label: string }[]>(() => {
 	const sets = props.character?.traitSets;
 	if (!Array.isArray(sets)) return [];
 	const out: { index: number; label: string }[] = [];
-	sets.forEach((ts: any, idx: number) => {
+	sets.forEach((ts, idx: number) => {
 		if (!ts || isNameSet(ts)) return;
 		const label = String(ts.name || ts.noun || `Set ${out.length + 1}`).trim() || `Set ${out.length + 1}`;
 		out.push({ index: idx, label });
@@ -389,7 +392,7 @@ const diceCount = computed(() => {
 	return (props.dicePool?.items?.length || 0) + (props.oppositionPool?.items?.length || 0);
 });
 
-const diceRollerRef = ref<any>(null);
+const diceRollerRef = ref<InstanceType<typeof DiceRoller> | null>(null);
 defineExpose({
 	diceRoller: diceRollerRef,
 	roll: (opts?: { forceDialog?: boolean }) => diceRollerRef.value?.roll(opts),

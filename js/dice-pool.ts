@@ -84,6 +84,7 @@ export const DEFAULT_D4 = new Die(null, 'D4', 4, 1, [], 'Default');
 export interface DiceItem {
 	id: string;
 	size: number;
+	qty?: number;
 	source: string;
 	isScale: boolean;
 	hitches: number;
@@ -126,6 +127,7 @@ export interface PoolResultSummary {
 	actionTotal?: number;
 	separateBonus?: number;
 	isBotch?: boolean;
+	dice?: RollResult[];
 }
 
 export interface PoolEvaluation {

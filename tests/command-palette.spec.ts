@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import CommandPalette from '../js/command-palette.vue';
+import type { Character } from '../js/model.ts';
 
 beforeAll(() => {
 	if (typeof HTMLDialogElement !== 'undefined') {
@@ -18,7 +19,7 @@ beforeAll(() => {
 	}
 });
 
-function sampleCharacter() {
+function sampleCharacter(): Character {
 	return {
 		id: 'char-1',
 		name: 'Dreamer & Architect',
@@ -77,7 +78,7 @@ function sampleCharacter() {
 				],
 			},
 		],
-	};
+	} as unknown as Character;
 }
 
 async function runAxeAudit(container: HTMLElement) {

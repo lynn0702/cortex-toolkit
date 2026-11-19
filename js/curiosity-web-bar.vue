@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, useId, watch } from 'vue';
 import type { GraphLinkEdge } from './curiosity-graph.ts';
+import type { Character } from './model.ts';
 
 export interface WebTrailCrumb {
 	id: string;
@@ -8,12 +9,12 @@ export interface WebTrailCrumb {
 }
 
 const props = defineProps<{
-	activeNode: any | null;
-	hostRoot: any | null;
+	activeNode: Character | null;
+	hostRoot: Character | null;
 	trail: WebTrailCrumb[];
 	incomingBacklinks: GraphLinkEdge[];
 	outgoingLinks: GraphLinkEdge[];
-	pullableCuriosities: any[];
+	pullableCuriosities: Character[];
 	submode?: string | null;
 }>();
 
@@ -51,9 +52,10 @@ const effectiveTrail = computed<Array<WebTrailCrumb & { isCurrent: boolean }>>((
 		});
 	};
 
-	if (props.hostRoot && props.hostRoot.id && (!props.trail.length || props.trail[0]?.id !== props.hostRoot.id)) {
-		if (!props.trail.some((t) => t.id === props.hostRoot.id)) {
-			push(props.hostRoot.id, props.hostRoot.name);
+	const hostRoot = props.hostRoot;
+	if (hostRoot && hostRoot.id && (!props.trail.length || props.trail[0]?.id !== hostRoot.id)) {
+		if (!props.trail.some((t) => t.id === hostRoot.id)) {
+			push(hostRoot.id, hostRoot.name);
 		}
 	}
 	for (const step of props.trail) {

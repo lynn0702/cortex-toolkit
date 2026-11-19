@@ -12,6 +12,8 @@ import {
 	watch,
 } from 'vue';
 import type { ToastOptions } from './use-toast.ts';
+import type { EditingPath } from './use-history.ts';
+import type { DiceItem, DicePool } from './dice-pool.ts';
 import { characterCurioFunctions, characterCurioSetPresets, type SetPresetEntry } from './functions.ts';
 import {
 	DIE_LADDER,
@@ -28,6 +30,7 @@ import {
 	resolvePlotPoints,
 	getCuriosityGame,
 	type Character,
+	type SheetTemplate,
 	type TraitSet,
 	type Trait,
 	type ViewBag,
@@ -49,29 +52,32 @@ const TraitSetMini = defineAsyncComponent(() => import('./trait-set-mini.vue'));
 const props = defineProps<{
 	submode?: string | null;
 	character?: Character;
-	editing?: unknown[] | null;
+	editing?: EditingPath | null;
 	viewY?: number | null;
-	dicePool?: any;
+	dicePool?: DicePool | { items?: DiceItem[] } | null;
 	isDesktopPillars?: boolean;
 }>();
 
 const emit = defineEmits<{
-	(e: 'selectElement', selector: unknown[]): void;
+	(e: 'selectElement', selector: EditingPath): void;
 	(e: 'updateCharacter', character: Character): void;
 	(e: 'exportCharacter', id: string): void;
 	(e: 'saveSheetTemplate'): void;
 	(e: 'exportSheetTemplate'): void;
-	(e: 'addDieToRoller', die: unknown): void;
+	(e: 'addDieToRoller', die: Partial<DiceItem> | Partial<DiceItem>[]): void;
 	(e: 'closeDrawer'): void;
 }>();
 
 const instance = getCurrentInstance();
-const rootTemplates = () => (instance?.proxy as any)?.$root?.sheetTemplates ?? null;
+const rootTemplates = (): SheetTemplate[] | null => {
+	const root = (instance?.proxy?.$root as { sheetTemplates?: SheetTemplate[] } | null | undefined) ?? null;
+	return root?.sheetTemplates ?? null;
+};
 const showToast = inject<((msg: string, options?: ToastOptions) => void) | null>('showToast', null);
 
 const rootEl = ref<HTMLElement | null>(null);
 
-const printPageView = ref<any>('all');
+const printPageView = ref<'all' | number>('all');
 const printBlank = ref(false);
 const printBW = ref(false);
 const showInlineAddSet = ref(false);
@@ -459,7 +465,8 @@ function applyFonts() {
 			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.secondary);
 	}
 	if (ctk.diceConfig && typeof window !== 'undefined') {
-		(window as any).__characterCurioActiveDiceConfig = ctk.diceConfig;
+		(window as Window & { __characterCurioActiveDiceConfig?: unknown }).__characterCurioActiveDiceConfig =
+			ctk.diceConfig;
 	}
 }
 
@@ -478,7 +485,7 @@ function getSheetGridStyle(section: SheetSection) {
 }
 
 // SELECTING
-function selectElement(selector: unknown[]) {
+function selectElement(selector: EditingPath) {
 	if (props.submode === 'print') return;
 	if (props.submode === 'play') {
 		if (!selector.length || selector[0] === 'trait') {
@@ -500,7 +507,7 @@ function addTraitSet(page = 1) {
 	const character = props.character as Character;
 	if (!character) return;
 
-	const traitSet: any = structuredClone(characterCurioFunctions.defaultTraitSet);
+	const traitSet = structuredClone(characterCurioFunctions.defaultTraitSet) as unknown as TraitSet;
 
 	traitSet.name = characterCurioFunctions.nextUniqueName(
 		(character.traitSets || []).map((ts) => ts?.name),
@@ -544,7 +551,7 @@ function removeTraitSet(traitSetID: number) {
 	updateCharacter(character);
 }
 
-function stampPlaySetOptions(traitSet: any) {
+function stampPlaySetOptions(traitSet: TraitSet) {
 	const v = ensureView(traitSet) as Record<string, unknown>;
 	v.visibility = 'play-only';
 	v.playMutable = true;
@@ -559,7 +566,7 @@ function stampPlaySetOptions(traitSet: any) {
 function addPresetSet(preset: SetPresetEntry, page?: number) {
 	const character = props.character as Character;
 	if (!character || !preset) return;
-	const traitSet: any = characterCurioFunctions.instantiateSetPreset(preset, character, page ?? 1);
+	const traitSet: TraitSet = characterCurioFunctions.instantiateSetPreset(preset, character, page ?? 1);
 	if (props.submode === 'play') {
 		stampPlaySetOptions(traitSet);
 	} else if (props.submode === 'edit' && Boolean(characterCurioSetPresets[preset.id])) {
@@ -581,10 +588,10 @@ function addPresetSet(preset: SetPresetEntry, page?: number) {
 	}
 }
 
-function applyMiniSet(builtSet: any) {
+function applyMiniSet(builtSet: TraitSet) {
 	const character = props.character as Character;
 	if (!character || !builtSet) return;
-	const traitSet: any = structuredClone(builtSet);
+	const traitSet: TraitSet = structuredClone(builtSet);
 	if (typeof traitSet.name === 'string' && traitSet.name.trim().length > 0) {
 		traitSet.name = characterCurioFunctions.nextUniqueName(
 			(character.traitSets || []).map((ts) => ts?.name),
@@ -715,7 +722,7 @@ function addTrait(traitSetID: number) {
 	const traitSet = character.traitSets[traitSetID];
 	const noun = traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait';
 
-	const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
+	const trait = structuredClone(characterCurioFunctions.defaultTrait) as unknown as Trait;
 	trait.name = characterCurioFunctions.nextUniqueName(
 		(Array.isArray(traitSet.traits) ? traitSet.traits : []).map((tr) => tr?.name),
 		'New ' + noun,
@@ -730,19 +737,24 @@ function addTrait(traitSetID: number) {
 		trait.rating = {
 			value: setDice.length ? [...setDice] : [8, 8],
 		};
-		if ((traitSet as any).pool === true) trait.pool = true;
-	} else if (!isNameSet(traitSet) && (traitSet as any).rating === null) {
+		if (traitSet.pool === true) trait.pool = true;
+	} else if (!isNameSet(traitSet) && traitSet.rating === null) {
 		delete trait.rating;
 	} else {
 		const allowed = characterCurioFunctions.getTraitSetRatings(traitSet);
 		const cur =
-			trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
+			trait.rating &&
+			typeof trait.rating === 'object' &&
+			trait.rating.type === 'Die' &&
+			Array.isArray(trait.rating.value)
+				? Number(trait.rating.value[0]) || 0
+				: 0;
 		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
 		if (allowed.length > 0 && !allowed.includes(cur)) {
 			trait.rating = isDefaultLadder
 				? { type: 'Die', value: [allowed[0]] }
 				: { type: 'Die', value: [allowed[0]], range: allowed.slice() };
-		} else if (!isDefaultLadder && allowed.length > 0 && trait.rating) {
+		} else if (!isDefaultLadder && allowed.length > 0 && trait.rating && typeof trait.rating === 'object') {
 			trait.rating.range = allowed.slice();
 		}
 	}
@@ -855,7 +867,7 @@ let carouselObserver: IntersectionObserver | null = null;
 let mediaQuery: MediaQueryList | null = null;
 let handleMediaChange: (() => void) | null = null;
 
-function getMobileJumpPillLabel(traitSet: any, orderIdx: number): string {
+function getMobileJumpPillLabel(traitSet: TraitSet | null | undefined, orderIdx: number): string {
 	if (isNameSet(traitSet)) return props.character?.name?.trim() || traitSet?.name || 'Name';
 	if (traitSet?.name && String(traitSet.name).trim().length) return String(traitSet.name).trim();
 	if (traitSet?.noun && String(traitSet.noun).trim().length) return String(traitSet.noun).trim();
@@ -953,7 +965,7 @@ const pillarOptions = computed<ReadonlyArray<{ key: string; label: string }>>(()
 	return [{ key: '', label: 'Auto' }, ...keys.map((k) => ({ key: k, label: getPillarLabel(props.character, k) }))];
 });
 
-function setSetPillar(ts: any, val: string) {
+function setSetPillar(ts: TraitSet | null | undefined, val: string) {
 	if (!ts || !props.character) return;
 	const v = ensureView(ts) as Record<string, unknown>;
 	const trimmed = String(val || '').trim();
@@ -1368,7 +1380,7 @@ defineExpose({
 							<TraitSetBlock
 								v-for="item in col.sets"
 								:key="'mobile-set-' + item.index"
-								:character="character"
+								:character="character!"
 								:traitSetID="item.index"
 								:submode="submode"
 								:editing="editing"
@@ -1406,7 +1418,7 @@ defineExpose({
 								>
 									<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
 										<TraitSetBlock
-											:character="character"
+											:character="character!"
 											:traitSetID="s"
 											:submode="submode"
 											:editing="editing"

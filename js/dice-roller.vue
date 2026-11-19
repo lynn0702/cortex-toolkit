@@ -10,9 +10,11 @@ import {
 	parseTraitShorthand,
 	saveRollLog,
 	type DiceItem,
+	type DicePool,
 	type FlattenedTraitSuggestion,
 	type NamedPool,
 	type PoolEvaluation,
+	type PoolResultSummary,
 	type RollLogEntry,
 	type RollLogPoolSummary,
 	type RollLogSideSummary,
@@ -22,20 +24,47 @@ import {
 	type WordBankKind,
 } from './dice-pool.ts';
 import { characterCurioFunctions } from './functions.ts';
-import { hasPlotPoints, resolvePlotPoints } from './model.ts';
+import { hasPlotPoints, resolvePlotPoints, type Character } from './model.ts';
 import RollerOutcome from './roller-outcome.vue';
+
+type PoolLike =
+	| DicePool
+	| {
+			items?: DiceItem[];
+			wordBank?: WordBankItem[];
+			is_empty?: () => boolean;
+			add?: (dice: unknown, options?: { skipWordBank?: boolean }) => void;
+			addWord?: (label: string, kind?: WordBankKind) => WordBankItem | null;
+			removeWord?: (idOrIndex: string | number) => WordBankItem | null;
+			clear?: () => void;
+			removeAt?: (index: number) => DiceItem | null;
+			stepDownAt?: (index: number) => boolean;
+			stepUpAt?: (index: number) => boolean;
+			duplicateAt?: (index: number) => DiceItem | null;
+	  };
+
+interface DieAddPayload {
+	size?: number;
+	qty?: number;
+	source?: string;
+	isScale?: boolean;
+	hitches?: number;
+	keepsExtra?: number;
+	ppDelta?: number;
+	ppCommitted?: boolean;
+}
 
 const props = withDefaults(
 	defineProps<{
 		open: boolean;
-		pool?: any;
-		oppositionPool?: any;
+		pool?: PoolLike | null;
+		oppositionPool?: PoolLike | null;
 		activePoolSide?: 'player' | 'opposition';
 		namedPools?: NamedPool[];
 		activePoolId?: string;
-		curiosities?: any[];
-		character?: any;
-		history?: any[];
+		curiosities?: Character[];
+		character?: Character | null;
+		history?: unknown[];
 		position?: string;
 	}>(),
 	{
@@ -45,7 +74,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(e: 'addDie', die: any): void;
+	(e: 'addDie', die: Partial<DiceItem> | Partial<DiceItem>[]): void;
 	(e: 'removeDie', index: number): void;
 	(e: 'clearPool'): void;
 	(e: 'clearOppositionPool'): void;
@@ -85,13 +114,13 @@ const effectivePools = computed<NamedPool[]>(() => {
 			id: 'player',
 			ownerId: props.character?.id ?? null,
 			ownerName: 'Player',
-			pool: playerPoolRef.value,
+			pool: playerPoolRef.value as DicePool,
 		},
 		{
 			id: 'opposition',
 			ownerId: null,
 			ownerName: 'Opposition',
-			pool: oppositionPoolRef.value,
+			pool: oppositionPoolRef.value as DicePool,
 		},
 	];
 });
@@ -125,13 +154,13 @@ const isActiveChallengerTone = computed(() => {
 	return !entry.ownerId && idx > 0;
 });
 
-function itemsForPool(poolObj: any): DiceItem[] {
+function itemsForPool(poolObj: PoolLike | null | undefined): DiceItem[] {
 	return poolObj && Array.isArray(poolObj.items) ? poolObj.items : [];
 }
 
 const stagedDice = computed<DiceItem[]>(() => itemsForPool(activePool.value));
 
-function wordsForPool(poolObj: any, poolId: string): WordBankItem[] {
+function wordsForPool(poolObj: PoolLike | null | undefined, poolId: string): WordBankItem[] {
 	if (poolObj && Array.isArray(poolObj.wordBank)) return poolObj.wordBank;
 	if (!localWordsByPool.value[poolId]) {
 		localWordsByPool.value[poolId] = [];
@@ -141,10 +170,10 @@ function wordsForPool(poolObj: any, poolId: string): WordBankItem[] {
 
 const activeWordBank = computed<WordBankItem[]>(() => wordsForPool(activePool.value, currentPoolId.value));
 
-const allKnownCuriosities = computed<any[]>(() => {
-	const seen = new Set<any>();
-	const result: any[] = [];
-	const pushEntity = (entity: any) => {
+const allKnownCuriosities = computed<Character[]>(() => {
+	const seen = new Set<unknown>();
+	const result: Character[] = [];
+	const pushEntity = (entity: Character | null | undefined) => {
 		if (!entity || typeof entity !== 'object') return;
 		const key = entity.id ?? entity;
 		if (seen.has(key)) return;
@@ -165,7 +194,7 @@ const allKnownCuriosities = computed<any[]>(() => {
 	return result;
 });
 
-function findOwnerEntity(entry: NamedPool | null | undefined): any | null {
+function findOwnerEntity(entry: NamedPool | null | undefined): Character | null {
 	if (!entry) return null;
 	if (entry.ownerId) {
 		const found = allKnownCuriosities.value.find((c) => c && String(c.id) === String(entry.ownerId));
@@ -263,7 +292,7 @@ const newPoolName = ref('');
 const newPoolWithPP = ref(false);
 const newPoolInputRef = ref<HTMLInputElement | null>(null);
 
-const unpooledCuriosities = computed<any[]>(() => {
+const unpooledCuriosities = computed<Character[]>(() => {
 	if (!isMultiPoolMode.value) return [];
 	const ownedIds = new Set(effectivePools.value.map((p) => (p.ownerId ? String(p.ownerId) : '')).filter(Boolean));
 	return allKnownCuriosities.value.filter((c) => c && c.id && !c.isTemplate && !ownedIds.has(String(c.id)));
@@ -280,7 +309,7 @@ function toggleAddPool() {
 	}
 }
 
-function quickAddCuriosityPool(curiosity: any) {
+function quickAddCuriosityPool(curiosity: Character) {
 	if (!curiosity) return;
 	emit('addNamedPool', {
 		ownerId: String(curiosity.id),
@@ -391,17 +420,17 @@ function toggleSelectDie(id: string) {
 }
 
 // Staged item resolution helpers (sparse data, base default 1)
-function itemHitches(d: any): number {
+function itemHitches(d: { hitches?: unknown } | null | undefined): number {
 	const h =
 		d && typeof d.hitches === 'number' && Number.isFinite(d.hitches) && d.hitches >= 0 ? Math.floor(d.hitches) : 1;
 	return h;
 }
 
-function isExempt(d: any): boolean {
+function isExempt(d: { hitches?: unknown } | null | undefined): boolean {
 	return itemHitches(d) === 0;
 }
 
-function itemKeepsExtra(d: any): number {
+function itemKeepsExtra(d: { keepsExtra?: unknown; isScale?: unknown } | null | undefined): number {
 	if (d && typeof d.keepsExtra === 'number' && Number.isFinite(d.keepsExtra) && d.keepsExtra > 0) {
 		return Math.floor(d.keepsExtra);
 	}
@@ -484,7 +513,12 @@ function getUuid(): string {
 		: Math.random().toString(36).substring(2, 9);
 }
 
-function addWordToPool(targetPool: any, poolId: string, label: string, kind: WordBankKind = 'trait') {
+function addWordToPool(
+	targetPool: PoolLike | null | undefined,
+	poolId: string,
+	label: string,
+	kind: WordBankKind = 'trait',
+) {
 	if (targetPool && typeof targetPool.addWord === 'function') {
 		return targetPool.addWord(label, kind);
 	}
@@ -495,7 +529,7 @@ function addWordToPool(targetPool: any, poolId: string, label: string, kind: Wor
 	return item;
 }
 
-function removeWordFromPool(targetPool: any, poolId: string, id: string) {
+function removeWordFromPool(targetPool: PoolLike | null | undefined, poolId: string, id: string) {
 	if (targetPool && typeof targetPool.removeWord === 'function') {
 		return targetPool.removeWord(id);
 	}
@@ -505,7 +539,11 @@ function removeWordFromPool(targetPool: any, poolId: string, id: string) {
 	return null;
 }
 
-function addDiceToTargetPool(targetPool: any, dicePayloads: any | any[], skipWordBank = true) {
+function addDiceToTargetPool(
+	targetPool: PoolLike | null | undefined,
+	dicePayloads: DieAddPayload | DieAddPayload[],
+	skipWordBank = true,
+) {
 	if (targetPool && typeof targetPool.add === 'function') {
 		targetPool.add(dicePayloads, { skipWordBank });
 	} else if (targetPool && Array.isArray(targetPool.items)) {
@@ -654,7 +692,7 @@ function openPresearch() {
 	isPresearchOpen.value = true;
 	highlightedIdx.value = 0;
 	nextTick(() => {
-		const pop = presearchPopoverRef.value as any;
+		const pop = presearchPopoverRef.value;
 		if (!pop) return;
 		positionPopoverFallback();
 		if (typeof pop.showPopover === 'function') {
@@ -667,7 +705,7 @@ function openPresearch() {
 
 function closePresearch() {
 	isPresearchOpen.value = false;
-	const pop = presearchPopoverRef.value as any;
+	const pop = presearchPopoverRef.value;
 	if (pop && typeof pop.hidePopover === 'function') {
 		try {
 			if (pop.matches(':popover-open')) pop.hidePopover();
@@ -1080,8 +1118,8 @@ function evaluatePoolResults(
 	const label = poolDisplayLabel(entry);
 
 	const separateGroups: SeparateGroup[] = [];
-	let bestTotal: any = null;
-	let bestEffect: any = null;
+	let bestTotal: PoolResultSummary | null = null;
+	let bestEffect: PoolResultSummary | null = null;
 	let log = '';
 	const hitchesTotal = results.filter((r) => r.isHitch).length;
 	const botch = results.length > 0 && results.every((r) => r.isHitch);
@@ -1089,8 +1127,8 @@ function evaluatePoolResults(
 	if (!hasSeparate || combineSep) {
 		const eligible = results.filter((r) => !r.isHitch);
 		if (eligible.length === 0) {
-			bestTotal = { isBotch: true };
-			bestEffect = { isBotch: true };
+			bestTotal = { total: 0, formula: '', effect: 'd4', isBotch: true };
+			bestEffect = { total: 0, formula: '', effect: 'd4', isBotch: true };
 			log = `${label} (Keep ${keepCount}): Botch`;
 		} else {
 			const sortedForTotal = eligible.toSorted((a, b) => b.value - a.value);

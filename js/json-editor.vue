@@ -2,14 +2,15 @@
 import { ref, watch, onMounted } from 'vue';
 import { cloneDeep } from './clone-deep.ts';
 import { orderCharacterKeys, toLayeredEntity } from './layered-materialize.ts';
+import type { Character } from './model.ts';
 
 const props = defineProps<{
-	character?: any;
+	character?: Character | null;
 	open?: boolean;
 }>();
 
 const emit = defineEmits<{
-	(e: 'applyJson', parsed: any): void;
+	(e: 'applyJson', parsed: Record<string, unknown>): void;
 }>();
 
 const text = ref('');
@@ -29,10 +30,10 @@ function fill() {
 	// no materialized slot objects, no internal ids — the document a
 	// person can actually hand-edit.
 	const raw = cloneDeep(props.character);
-	let doc: any = null;
+	let doc: Record<string, unknown> | null = null;
 	try {
 		doc = toLayeredEntity(raw as Record<string, unknown>);
-	} catch (e: any) {
+	} catch (e: unknown) {
 		error.value = 'JSON error: ' + String((e as Error)?.message || e).slice(0, 200);
 		return;
 	}
@@ -59,10 +60,10 @@ function fill() {
 
 function apply() {
 	error.value = '';
-	let parsed: any = null;
+	let parsed: unknown = null;
 	try {
 		parsed = JSON.parse(text.value);
-	} catch (e: any) {
+	} catch (e: unknown) {
 		error.value = 'JSON error: ' + String((e as Error)?.message || e).slice(0, 200);
 		return;
 	}
@@ -70,11 +71,12 @@ function apply() {
 		error.value = 'JSON error: top level must be a character object';
 		return;
 	}
-	if ((typeof parsed.id !== 'string' || !parsed.id.length) && props.character?.id) {
-		parsed.id = props.character.id;
+	const obj = parsed as Record<string, unknown>;
+	if ((typeof obj.id !== 'string' || !obj.id.length) && props.character?.id) {
+		obj.id = props.character.id;
 	}
-	emit('applyJson', parsed);
-	filledId.value = parsed.id || '';
+	emit('applyJson', obj);
+	filledId.value = typeof obj.id === 'string' ? obj.id : '';
 }
 
 function copy() {

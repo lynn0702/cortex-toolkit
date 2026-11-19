@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { ensureView, getView, isNameSet, isRingBadgeTrait, resolveSetPillar } from './model.ts';
+import {
+	ensureView,
+	getView,
+	isNameSet,
+	isRingBadgeTrait,
+	resolveSetPillar,
+	type Character,
+	type FrameConfig,
+	type TraitSet,
+} from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
-import { computed, inject, nextTick, ref, onMounted, watch } from 'vue';
-import { useTraitSet } from './use-trait-set.ts';
+import { computed, inject, nextTick, ref, onMounted, watch, type Component } from 'vue';
+import { useTraitSet, type StagedDiePayload } from './use-trait-set.ts';
+import type { EditingPath } from './use-history.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetPips from './trait-set-pips.vue';
 import TraitSetSubtraitColumns from './trait-set-subtrait-columns.vue';
@@ -15,21 +25,21 @@ import TraitSetCuriosity from './trait-set-curiosity.vue';
 import PortraitRing from './portrait-ring.vue';
 
 const props = defineProps<{
-	character: any;
+	character: Character;
 	traitSetID?: number;
 	submode?: string | null;
-	editing?: any;
+	editing?: EditingPath | null;
 	viewY?: number | null;
 	printBlank?: boolean;
 }>();
 
 const emit = defineEmits<{
-	(e: 'selectElement', selector: any[]): void;
-	(e: 'updateCharacter', character: any): void;
+	(e: 'selectElement', selector: EditingPath): void;
+	(e: 'updateCharacter', character: Character): void;
 	(e: 'removeTrait', traitSetID: number, traitID: number): void;
 	(e: 'removeTraitSet', traitSetID: number): void;
 	(e: 'addTrait', traitSetID: number): void;
-	(e: 'addDieToRoller', die: any): void;
+	(e: 'addDieToRoller', die: StagedDiePayload | StagedDiePayload[]): void;
 }>();
 
 const ts = useTraitSet(props, emit);
@@ -74,7 +84,7 @@ const isName = computed(() => isNameSet(traitSet.value));
 const pillarCtx = inject<{
 	sheetUsesPillars: { value: boolean };
 	pillarOptions: { value: ReadonlyArray<{ key: string; label: string }> };
-	setSetPillar: (ts: any, val: string) => void;
+	setSetPillar: (ts: TraitSet | null | undefined, val: string) => void;
 } | null>('curioPillarContext', null);
 
 const rawSetPillar = computed(() => {
@@ -172,7 +182,7 @@ const showRingActions = computed(() => {
 	if (!shouldRenderBodyComponent.value) return true;
 	const v = getView(traitSet.value);
 	if (v?.ringNoun) return true;
-	return Boolean(traitSet.value?.traits?.some((t: any) => Boolean(getView(t)?.ring)));
+	return Boolean(traitSet.value?.traits?.some((t) => Boolean(getView(t)?.ring)));
 });
 
 const setSfxEntries = computed(() => characterCurioFunctions.blockChildren(traitSet.value));
@@ -197,7 +207,7 @@ const isSetTrulyEmpty = computed(() => {
 	return true;
 });
 
-const BODY_COMPONENTS: Record<string, any> = {
+const BODY_COMPONENTS: Record<string, Component> = {
 	name: TraitSetName,
 	curiosity: TraitSetCuriosity,
 	image: TraitSetImage,
@@ -233,9 +243,9 @@ const shouldRenderBodyComponent = computed(() => {
 	}
 	if (hasTraitArray.value) {
 		const all = traitSet.value?.traits || [];
-		const hasExplicitRingTraits = all.some((t: any) => Boolean(getView(t)?.ring));
+		const hasExplicitRingTraits = all.some((t) => Boolean(getView(t)?.ring));
 		if (!hasExplicitRingTraits) return false;
-		return all.some((t: any) => !getView(t)?.ring && !isRingBadgeTrait(t));
+		return all.some((t) => !getView(t)?.ring && !isRingBadgeTrait(t));
 	}
 	if (
 		showPortraitHub.value &&
@@ -256,10 +266,10 @@ function applyRingImageFile(file: File) {
 	characterCurioFunctions.processImageFile(file, 1280, 0.85).then(
 		(dataURL: string) => {
 			const v = ensureView(traitSet.value);
-			const f = typeof v.frame === 'object' && v.frame !== null ? (v.frame as any) : {};
+			const f: Partial<FrameConfig> = typeof v.frame === 'object' && v.frame !== null ? (v.frame as FrameConfig) : {};
 			v.frame = {
-				shape: f.shape && f.shape !== 'block' && f.shape !== 'line' ? f.shape : 'circle',
 				...f,
+				shape: f.shape || 'circle',
 				image: {
 					...(f.image || {}),
 					url: dataURL,
@@ -400,9 +410,7 @@ watch(rootEl, (el) => {
 					</span>
 					<div
 						class="trait-set-header-counter"
-						v-if="
-							headerTop && traitSet.traits?.some((t: any) => hasTraitCounter(t)) && getCounterLabel(traitSet).length > 0
-						"
+						v-if="headerTop && traitSet.traits?.some((t) => hasTraitCounter(t)) && getCounterLabel(traitSet).length > 0"
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
@@ -687,9 +695,7 @@ watch(rootEl, (el) => {
 					</span>
 					<div
 						class="trait-set-header-counter"
-						v-if="
-							headerTop && traitSet.traits?.some((t: any) => hasTraitCounter(t)) && getCounterLabel(traitSet).length > 0
-						"
+						v-if="headerTop && traitSet.traits?.some((t) => hasTraitCounter(t)) && getCounterLabel(traitSet).length > 0"
 					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
