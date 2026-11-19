@@ -97,6 +97,15 @@ function activateTrackOut(item: RenderedTraitItem) {
 	handleTrackOutClick(s.value, item.originalIndex);
 }
 
+const BLANK_SUBTRAIT_PLACEHOLDER: Trait[] = [{ name: '' }];
+
+function subtraitsForDisplay(set: TraitSet | null | undefined, trait: Trait | null | undefined): Trait[] {
+	if (!set || !trait) return [];
+	const visible = visibleSubtraits(set, trait);
+	if (visible.length) return visible;
+	return printBlank.value ? BLANK_SUBTRAIT_PLACEHOLDER : [];
+}
+
 function activateSubtrait(subtrait: Trait, size: number | null, parentOriginalIndex: number | null) {
 	if (printBlank.value || parentOriginalIndex === null) return;
 	handleSingleDieClick(subtrait, size, traitSet.value, s.value, parentOriginalIndex);
@@ -302,11 +311,7 @@ function activateSubtrait(subtrait: Trait, size: number | null, parentOriginalIn
 	>
 		<li
 			class="subtrait"
-			v-for="(subtrait, u) in visibleSubtraits(traitSet, item.trait).length
-				? visibleSubtraits(traitSet, item.trait)
-				: printBlank
-					? [{ name: '' }]
-					: []"
+			v-for="(subtrait, u) in subtraitsForDisplay(traitSet, item.trait)"
 			:key="subtrait._lid || 'u' + u"
 			@click.stop="activateSubtrait(subtrait, firstDie(subtrait), item.originalIndex)"
 		>

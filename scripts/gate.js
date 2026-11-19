@@ -26,7 +26,7 @@ run('1. Production Build (vite + asset versioning)', 'npm run build');
 // 2. Code Style
 run('2. Code Style (prettier)', 'npx prettier --check --cache .');
 
-// 3. Type Check (+ zero-any ratchet on js/)
+// 3. Type Check (+ zero-any ratchet on js/ & tests/)
 run('3. Type Check (vue-tsc)', 'npm run check');
 {
 	const anyRe = /(?::\s*any\b|\bas\s+any\b|<any>|any\[\]|Record<[^,>]+,\s*any>)/;
@@ -50,12 +50,13 @@ run('3. Type Check (vue-tsc)', 'npm run check');
 		}
 	}
 	checkNoAny(path.join(root, 'js'));
+	checkNoAny(path.join(root, 'tests'));
 	if (violations.length > 0) {
-		console.error(`[FAIL] Explicit TypeScript 'any' found in js/ (${violations.length}):`);
+		console.error(`[FAIL] Explicit TypeScript 'any' found in js/ or tests/ (${violations.length}):`);
 		violations.slice(0, 20).forEach((v) => console.error(`  ${v}`));
 		process.exit(1);
 	}
-	console.log('[PASS] TypeScript zero-any ratchet: 0 explicit any annotations in js/');
+	console.log('[PASS] TypeScript zero-any ratchet: 0 explicit any annotations in js/ and tests/');
 }
 
 // 4. Test Suites

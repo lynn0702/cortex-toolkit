@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { defineComponent, h, nextTick, reactive } from 'vue';
+import { defineComponent, h, nextTick, reactive, ref } from 'vue';
 import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
@@ -96,12 +96,12 @@ function assertLlmDomSemantics(container: HTMLElement) {
 }
 
 // 3. Fixture: Representative Character covering Rated Traits, Statements/Pips, Stress, Multi-Die Pools, and Play-Only Sets
-function createTestCharacter() {
-	return {
+function createTestCharacter(): CharacterModel {
+	return makeCharacter({
 		name: 'Valerie Vance',
 		plotPoints: 2,
 		traitSets: [
-			{
+			makeTraitSet({
 				name: 'Attributes',
 				noun: 'Attribute',
 				view: { pillar: 'prime', style: { body: 'default' } },
@@ -123,8 +123,8 @@ function createTestCharacter() {
 						custom: {},
 					},
 				],
-			},
-			{
+			}),
+			makeTraitSet({
 				name: 'Values',
 				noun: 'Value',
 				view: { pillar: 'prime' },
@@ -141,8 +141,8 @@ function createTestCharacter() {
 						tags: [],
 					},
 				],
-			},
-			{
+			}),
+			makeTraitSet({
 				name: 'Stress',
 				noun: 'Stress',
 				view: { pillar: 'play', style: { body: 'stress' }, outIndicator: true },
@@ -156,16 +156,16 @@ function createTestCharacter() {
 						custom: {},
 					},
 				],
-			},
-			{
+			}),
+			makeTraitSet({
 				name: 'XP Milestone',
 				noun: 'XP',
 				rating: { type: 'Pip', value: [true, true, false, false, false], range: [5] },
 				view: { pillar: 'plus', style: { body: 'pips' }, pips: { perRow: 5, connected: true, labels: false } },
 				traits: [],
-			},
+			}),
 		],
-	};
+	});
 }
 
 describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
@@ -176,7 +176,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			for (let s = 0; s < character.traitSets.length; s++) {
 				const wrapper = mount(TraitSetBlock, {
 					props: {
-						character: character as any,
+						character,
 						traitSetID: s,
 						submode,
 						editing: [],
@@ -197,7 +197,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		const character = createTestCharacter();
 		const wrapper = mount(TraitSetBlock, {
 			props: {
-				character: character as any,
+				character,
 				traitSetID: 3, // XP Milestone pips set
 				submode: 'play',
 				editing: [],
@@ -454,7 +454,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				traitID: 0,
 				open: true,
 				submode: 'play',
-			} as any,
+			},
 		});
 
 		await runAxeAudit(wrapper.element as HTMLElement);
@@ -625,16 +625,16 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		await saveBtn.trigger('click');
 		const savedEvents = wrapper.emitted('saved');
 		expect(savedEvents && savedEvents.length).toBe(1);
-		const savedPreset = (savedEvents![0] as any)[0];
+		const savedPreset = savedEvents![0][0] as { id: string; label: string; preset: TraitSet };
 		expect(savedPreset.id).toBe('overload-tracker');
 		expect(savedPreset.label).toBe('Overload Tracker');
-		expect(savedPreset.preset.view.pillar).toBeUndefined();
+		expect(savedPreset.preset.view?.pillar).toBeUndefined();
 
 		// Verify collision blocks saving duplicate custom preset
 		expect(wrapper.find('.mini-collision-alert').exists()).toBe(true);
 
 		// Instantiate saved preset onto a character and verify Play, Edit, and Print rendering
-		const char: any = { name: 'Tester', traitSets: [] };
+		const char = makeCharacter({ name: 'Tester', traitSets: [] });
 		const addedSet = characterCurioFunctions.instantiateSetPreset(savedPreset, char, 1);
 		char.traitSets.push(addedSet);
 		expect(characterCurioFunctions.getTrackScale(addedSet)).toEqual([6, 8, 10]);
@@ -725,7 +725,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	it('supports trait-specific custom companion track names (Injured, Worried) with track fallback and T/L marker toggles', async () => {
-		const customSet: any = {
+		const customSet = makeTraitSet({
 			name: 'Attributes',
 			view: {
 				labels: { track: 'Stress' },
@@ -738,34 +738,34 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			traits: [
 				{
 					name: 'Physical',
-					rating: { type: 'Die', value: 8 },
-					traits: [{ name: 'Injured', rating: { type: 'Die', value: 6, range: [4, 6, 8, 10, 12] } }],
+					rating: { type: 'Die', value: [8] },
+					traits: [{ name: 'Injured', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }],
 				},
 				{
 					name: 'Mental',
-					rating: { type: 'Die', value: 10 },
-					traits: [{ name: 'Worried', rating: { type: 'Die', value: 8, range: [4, 6, 8, 10, 12] } }],
+					rating: { type: 'Die', value: [10] },
+					traits: [{ name: 'Worried', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
 				},
 				{
 					name: 'Social',
-					rating: { type: 'Die', value: 6 },
+					rating: { type: 'Die', value: [6] },
 					traits: [
 						// Fallback to set track label
-						{ name: 'Stress', rating: { type: 'Die', value: 4, range: [4, 6, 8, 10, 12] } },
+						{ name: 'Stress', rating: { type: 'Die', value: [4], range: [4, 6, 8, 10, 12] } },
 					],
 				},
 			],
-		};
+		});
 
-		const char: any = { name: 'Custom Track Tester', traitSets: [customSet] };
+		const char = makeCharacter({ name: 'Custom Track Tester', traitSets: [customSet] });
 		const block = mount(TraitSetBlock, {
 			props: { character: char, traitSetID: 0, submode: 'play' },
 		});
 
 		const labels = block.findAll('.attached-stress-label').map((el) => el.text());
 		expect(labels).toEqual(['Injured', 'Worried', 'Stress']);
-		expect(customSet.view.labels.stress).toBeUndefined();
-		expect(customSet.view.labels.track).toBe('Stress');
+		expect((customSet.view?.labels as Record<string, unknown> | undefined)?.stress).toBeUndefined();
+		expect(customSet.view?.labels?.track).toBe('Stress');
 
 		// Test TraitSetMini child marker toggle via unified RowMini behavior bar
 		const mini = mount(TraitSetMini, {
@@ -787,27 +787,27 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 	describe('PageLayoutMini (Phase 4a & 4b)', () => {
 		it('renders PageLayoutMini with placed boxes and stacked bands, maintaining accessibility', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Layout Test Hero',
 				view: { pageCount: 2 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Distinctions',
 						view: { page: 1, place: { left: '0%', width: '100%', top: 0, height: 2 } },
 						traits: [{ name: 'Ace Pilot' }],
-					},
-					{
+					}),
+					makeTraitSet({
 						name: 'Attributes',
 						view: { page: 1, place: { left: '0%', width: '50%', top: 2, height: 2 } },
 						traits: [{ name: 'Physical' }],
-					},
-					{
+					}),
+					makeTraitSet({
 						name: 'Skills',
 						view: { page: 2 }, // unplaced band
 						traits: [{ name: 'Fight' }],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -826,7 +826,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const fullWidthBtn = wrapper.find('button[title="Full width, stacked in document order"]');
 			expect(fullWidthBtn.exists()).toBe(true);
 			await fullWidthBtn.trigger('click');
-			expect(char.traitSets[0].view.place).toBeUndefined();
+			expect(char.traitSets[0].view?.place).toBeUndefined();
 
 			await runAxeAudit(wrapper.element as HTMLElement);
 			wrapper.unmount();
@@ -834,17 +834,17 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('commits place on release, while Escape key cancels gesture and leaves character model untouched', async () => {
 			const initialPlace = { left: '0%', width: '100%', top: 0, height: 2 };
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Drag Cancel Hero',
 				view: { pageCount: 1 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Distinctions',
 						view: { page: 1, place: { ...initialPlace } },
 						traits: [{ name: 'Hero' }],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -875,24 +875,24 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			window.dispatchEvent(pointerupEv);
 
 			// Verify place remains untouched
-			expect(char.traitSets[0].view.place.left).toBe('0%');
-			expect(char.traitSets[0].view.place.width).toBe('100%');
+			expect(char.traitSets[0].view?.place?.left).toBe('0%');
+			expect(char.traitSets[0].view?.place?.width).toBe('100%');
 
 			wrapper.unmount();
 		});
 
 		it('starts drag on the first pointerdown on an unselected block and commits with 5% snap, with mouse and touch unified', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Pointer Drag Hero',
 				view: { pageCount: 1 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Unselected Set',
 						view: { page: 1, place: { left: '10%', width: '40%', top: 0, height: 1 } },
 						traits: [],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -935,7 +935,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			window.dispatchEvent(pointerupMouse);
 			await wrapper.vm.$nextTick();
 
-			expect(char.traitSets[0].view.place.left).toBe('25%');
+			expect(char.traitSets[0].view?.place?.left).toBe('25%');
 
 			// Now test touch pointerType drag moving by 38px (7.6% of 500px, snaps to 10% -> 25% + 10% = 35%)
 			const pointerdownTouch = new PointerEvent('pointerdown', { clientX: 125, clientY: 10, pointerType: 'touch' });
@@ -947,7 +947,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const pointerupTouch = new PointerEvent('pointerup', { clientX: 163, clientY: 10, pointerType: 'touch' });
 			window.dispatchEvent(pointerupTouch);
 
-			expect(char.traitSets[0].view.place.left).toBe('35%');
+			expect(char.traitSets[0].view?.place?.left).toBe('35%');
 
 			// Verify openSet is not emitted
 			expect(wrapper.emitted('openSet')).toBeUndefined();
@@ -956,17 +956,17 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('resizes width and height via pointer on resize edges with 5% snap', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Resize Edge Hero',
 				view: { pageCount: 1 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Resizable Set',
 						view: { page: 1, place: { left: '10%', width: '40%', top: 0, height: 1 } },
 						traits: [],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -998,7 +998,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			window.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 10 }));
 			window.dispatchEvent(new PointerEvent('pointerup', { clientX: 300, clientY: 10 }));
 
-			expect(char.traitSets[0].view.place.width).toBe('50%');
+			expect(char.traitSets[0].view?.place?.width).toBe('50%');
 
 			// Drag height edge down by 40px (2 rows of 20px -> 1 + 2 = 3)
 			const edgeS = wrapper.find('.place-mini-edge-s');
@@ -1008,28 +1008,28 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			window.dispatchEvent(new PointerEvent('pointermove', { clientX: 250, clientY: 60 }));
 			window.dispatchEvent(new PointerEvent('pointerup', { clientX: 250, clientY: 60 }));
 
-			expect(char.traitSets[0].view.place.height).toBe(3);
+			expect(char.traitSets[0].view?.place?.height).toBe(3);
 
 			wrapper.unmount();
 		});
 
 		it('moves set across pages in PageLayoutMini, reordering array, updating view.page, and leaving view.pillar untouched', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Pillar Hero',
 				view: { pageCount: 2 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Set 1',
 						view: { page: 1, pillar: 'prime', place: { left: '0%', width: '50%', top: 0, height: 1 } },
 						traits: [],
-					},
-					{
+					}),
+					makeTraitSet({
 						name: 'Set 2',
 						view: { page: 2, pillar: 'identity', place: { left: '0%', width: '100%', top: 0, height: 1 } },
 						traits: [],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -1046,26 +1046,26 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(page2Btn).toBeDefined();
 			await page2Btn!.trigger('click');
 
-			expect(char.traitSets[0].view.page).toBe(2);
+			expect(char.traitSets[0].view?.page).toBe(2);
 			// Pillar must never be disturbed!
-			expect(char.traitSets[0].view.pillar).toBe('prime');
-			expect(char.traitSets[1].view.pillar).toBe('identity');
+			expect(char.traitSets[0].view?.pillar).toBe('prime');
+			expect(char.traitSets[1].view?.pillar).toBe('identity');
 
 			wrapper.unmount();
 		});
 
 		it('supports keyboard navigation: arrows move, shift+arrows resize, enter/space opens block mini', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Keyboard Hero',
 				view: { pageCount: 1 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Movable Set',
 						view: { page: 1, place: { left: '10%', width: '40%', top: 1, height: 2 } },
 						traits: [],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -1080,19 +1080,19 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Move right (ArrowRight -> +5%)
 			await block.trigger('keydown', { key: 'ArrowRight' });
-			expect(char.traitSets[0].view.place.left).toBe('15%');
+			expect(char.traitSets[0].view?.place?.left).toBe('15%');
 
 			// Resize width (Shift+ArrowRight -> +5%)
 			await block.trigger('keydown', { key: 'ArrowRight', shiftKey: true });
-			expect(char.traitSets[0].view.place.width).toBe('45%');
+			expect(char.traitSets[0].view?.place?.width).toBe('45%');
 
 			// Move down (ArrowDown -> +1 row)
 			await block.trigger('keydown', { key: 'ArrowDown' });
-			expect(char.traitSets[0].view.place.top).toBe(2);
+			expect(char.traitSets[0].view?.place?.top).toBe(2);
 
 			// Resize height (Shift+ArrowDown -> +1 row)
 			await block.trigger('keydown', { key: 'ArrowDown', shiftKey: true });
-			expect(char.traitSets[0].view.place.height).toBe(3);
+			expect(char.traitSets[0].view?.place?.height).toBe(3);
 
 			// Enter selects the set in the docked editor without opening a modal
 			await block.trigger('keydown', { key: 'Enter' });
@@ -1104,7 +1104,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('acceptance case: stress-bearing set with track, trackLabel, block, and companion scale preserves structure through move/resize', async () => {
-			const stressSet = {
+			const stressSet = makeTraitSet({
 				name: 'Attributes',
 				view: {
 					place: { left: '0%', top: 0, width: '50%', height: 2 },
@@ -1123,13 +1123,13 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 						traits: [{ name: 'Stress', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }],
 					},
 				],
-			};
+			});
 
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Stress Acceptance Hero',
 				view: { pageCount: 1 },
 				traitSets: [stressSet],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -1147,30 +1147,30 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			await block.trigger('keydown', { key: 'ArrowDown' });
 
 			// Verify place changed correctly
-			expect(char.traitSets[0].view.place.left).toBe('5%');
-			expect(char.traitSets[0].view.place.top).toBe(1);
+			expect(char.traitSets[0].view?.place?.left).toBe('5%');
+			expect(char.traitSets[0].view?.place?.top).toBe(1);
 
 			// Verify stress parts and companion scale remain 100% intact
-			expect(char.traitSets[0].view.parts.track).toEqual({ left: '65%', top: 0, width: '35%', height: 1 });
-			expect(char.traitSets[0].view.parts.trackLabel).toEqual({ left: '40%', top: 0, width: '25%', height: 1 });
-			expect(char.traitSets[0].view.parts.block).toEqual({ left: '0%', top: 1, width: '100%', height: 1 });
-			expect(char.traitSets[0].traits[0].traits[0].rating.range).toEqual([4, 6, 8, 10, 12]);
+			expect(char.traitSets[0].view?.parts?.track).toEqual({ left: '65%', top: 0, width: '35%', height: 1 });
+			expect(char.traitSets[0].view?.parts?.trackLabel).toEqual({ left: '40%', top: 0, width: '25%', height: 1 });
+			expect(char.traitSets[0].view?.parts?.block).toEqual({ left: '0%', top: 1, width: '100%', height: 1 });
+			expect(char.traitSets[0].traits[0].traits?.[0].rating?.range).toEqual([4, 6, 8, 10, 12]);
 
 			wrapper.unmount();
 		});
 
 		it('wires seamless Set Editor handoff from PageLayoutMini without modal overlay', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Handoff Hero',
 				view: { pageCount: 1 },
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Handoff Set',
 						view: { page: 1, place: { left: '0%', width: '100%', top: 0, height: 1 } },
 						traits: [{ name: 'Initial Trait' }],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(PageLayoutMini, {
 				props: { character: char },
@@ -1196,11 +1196,18 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	describe('Phase 3c: SVG Frames, Dynamic Positional Anchors, & Mobile Fallback', () => {
-		function createStressBearingFramedSet(shape: any = 'ring') {
-			return {
+		function createStressBearingFramedSet(shape: FrameShape | Record<string, unknown> = 'ring'): TraitSet {
+			return makeTraitSet({
 				name: 'Attributes',
 				view: {
-					frame: typeof shape === 'string' ? shape : { stroke: 'primary', ...shape },
+					frame:
+						typeof shape === 'string'
+							? shape
+							: ({ stroke: 'primary', ...shape } as TraitSet['view'] extends infer V
+									? V extends { frame?: infer F }
+										? F
+										: never
+									: never),
 					labels: { track: 'Stress' },
 					parts: {
 						name: { left: '0%', top: 0, width: '35%', height: 1 },
@@ -1226,12 +1233,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 						traits: [{ name: 'Stress', rating: { type: 'Die', value: [4], range: [4, 6, 8, 10, 12] } }],
 					},
 				],
-			};
+			});
 		}
 
 		it('1. Stress-Bearing Framed Set: renders ring frame with visible, clickable rating die and stress track in Edit, Play, and Print', async () => {
 			const set = createStressBearingFramedSet('ring');
-			const char: any = { name: 'Framed Hero', traitSets: [set] };
+			const char = makeCharacter({ name: 'Framed Hero', traitSets: [set] });
 
 			for (const mode of ['play', 'edit', 'print']) {
 				const block = mount(TraitSetBlock, {
@@ -1264,7 +1271,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('2. Circle -> Ellipse -> Block Morph: traits preserve 0..N-1 order and internal view.parts across all three shapes', async () => {
 			const set = createStressBearingFramedSet('ring');
-			const char: any = { name: 'Morph Hero', traitSets: [set] };
+			const char = makeCharacter({ name: 'Morph Hero', traitSets: [set] });
 
 			const wrapper = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'play' },
@@ -1278,26 +1285,30 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(names).toEqual(['Physical', 'Mental', 'Social']);
 
 			// 2) Morph to Ellipse (ellipse without ring body renders standard list)
-			const ellipseSet = {
+			const ellipseSet = makeTraitSet({
 				...set,
-				view: { ...set.view, frame: { shape: 'ellipse', span: [0, 360], stroke: 'accent', corner: 8 } },
-			};
-			await wrapper.setProps({ character: { id: 'morph-hero', name: 'Morph Hero', traitSets: [ellipseSet] } as any });
+				view: { ...set.view, frame: { shape: 'ellipse' as FrameShape, span: [0, 360], stroke: 'accent', corner: 8 } },
+			});
+			await wrapper.setProps({
+				character: makeCharacter({ id: 'morph-hero', name: 'Morph Hero', traitSets: [ellipseSet] }),
+			});
 			await wrapper.vm.$nextTick();
 			expect(wrapper.find('.trait-list').exists()).toBe(true);
 			names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name') || '');
 			expect(names).toEqual(['Physical', 'Mental', 'Social']);
 
 			// 3) Morph to Block
-			const blockSet = {
+			const blockSet = makeTraitSet({
 				...set,
 				view: {
 					...set.view,
 					border: { shape: 'block', corner: 'cut', stroke: 'primary' },
 					frame: { shape: 'none', array: 'none' },
 				},
-			};
-			await wrapper.setProps({ character: { id: 'morph-hero', name: 'Morph Hero', traitSets: [blockSet] } as any });
+			});
+			await wrapper.setProps({
+				character: makeCharacter({ id: 'morph-hero', name: 'Morph Hero', traitSets: [blockSet] }),
+			});
 			await wrapper.vm.$nextTick();
 			expect(wrapper.find('.trait-set-body-framed').exists()).toBe(true);
 			expect(wrapper.find('.frame-block-svg').exists()).toBe(true);
@@ -1307,8 +1318,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(names).toEqual(['Physical', 'Mental', 'Social']);
 
 			// Parts intact
-			expect(set.view.parts.track).toBeDefined();
-			expect(set.view.parts.name).toBeDefined();
+			expect(set.view?.parts?.track).toBeDefined();
+			expect(set.view?.parts?.name).toBeDefined();
 
 			wrapper.unmount();
 		});
@@ -1341,12 +1352,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('4. Bare-Path Section Line (border shape: "line"): renders crisp SVG section divider across Edit, Play, and Print', () => {
-			const lineSet: any = {
+			const lineSet = makeTraitSet({
 				name: 'Divider Section',
 				view: { border: { shape: 'line', stroke: 'accent' } },
 				traits: [{ name: 'Followup Trait' }],
-			};
-			const char: any = { name: 'Line Hero', traitSets: [lineSet] };
+			});
+			const char = makeCharacter({ name: 'Line Hero', traitSets: [lineSet] });
 
 			for (const mode of ['play', 'edit', 'print']) {
 				const block = mount(TraitSetBlock, {
@@ -1369,7 +1380,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('5. Mobile Forced-Off & User Toggled-Off Fallback (Zero Overspill): turns off radial frame cleanly to view.parts stack', async () => {
 			const set = createStressBearingFramedSet('ring');
-			const char: any = { name: 'Fallback Hero', traitSets: [set] };
+			const char = makeCharacter({ name: 'Fallback Hero', traitSets: [set] });
 
 			const wrapper = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'play' },
@@ -1381,9 +1392,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// 1. User selects "none" (or deletes frame in editor): turns frame off cleanly to view.parts
 			const unframedSet = structuredClone(set);
-			delete unframedSet.view.frame;
+			if (unframedSet.view) delete unframedSet.view.frame;
 			await wrapper.setProps({
-				character: { id: 'fallback-hero', name: 'Fallback Hero', traitSets: [unframedSet] } as any,
+				character: makeCharacter({ id: 'fallback-hero', name: 'Fallback Hero', traitSets: [unframedSet] }),
 			});
 			expect(wrapper.find('.portrait').exists()).toBe(false);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(false);
@@ -1395,9 +1406,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// 2. User re-enables frame: restores frame cleanly
 			const reframedSet = structuredClone(set);
-			reframedSet.view.frame = { shape: 'ring', span: [0, 360] };
+			if (reframedSet.view) reframedSet.view.frame = { shape: 'ring', span: [0, 360] };
 			await wrapper.setProps({
-				character: { id: 'fallback-hero', name: 'Fallback Hero', traitSets: [reframedSet] } as any,
+				character: makeCharacter({ id: 'fallback-hero', name: 'Fallback Hero', traitSets: [reframedSet] }),
 			});
 			expect(wrapper.find('.portrait').exists()).toBe(true);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(true);
@@ -1407,7 +1418,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('6. A11y & Sparse JSON Compliance: SVG contains zero text, DOM order is 0..N-1, and JSON is terse', async () => {
 			const set = createStressBearingFramedSet({ shape: 'ring', span: [0, 360], stroke: 'primary', corner: 8 });
-			const char: any = { name: 'A11y Hero', traitSets: [set] };
+			const char = makeCharacter({ name: 'A11y Hero', traitSets: [set] });
 
 			const wrapper = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'play' },
@@ -1438,7 +1449,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('7. Frame = Arc fan-out distribution on PortraitRing & radial stroke arc', async () => {
-			const arcSet: any = {
+			const arcSet = makeTraitSet({
 				name: 'Roles',
 				view: {
 					frame: { shape: 'circle', array: 'arc', span: [45, 135], traitsSpan: [45, 135] },
@@ -1449,8 +1460,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					{ name: 'Engineer', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
 					{ name: 'Navigator', rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] } },
 				],
-			};
-			const char: any = { name: 'Arc Hero', traitSets: [arcSet] };
+			});
+			const char = makeCharacter({ name: 'Arc Hero', traitSets: [arcSet] });
 
 			const wrapper = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'play' },
@@ -1486,10 +1497,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 	describe('Phase 4: Unified Set & Subtrait Editor (Rule of 3)', () => {
 		it('renders identity (name line 1, description line 2) and unified rating types in TraitEditor for a subtrait', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Test Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Skills',
 						traits: [
 							{
@@ -1497,9 +1508,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								traits: [{ name: 'Swords', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(TraitEditor, {
 				props: {
@@ -1532,17 +1543,17 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const pipBtn = typeButtons.find((b) => b.text() === 'Pip');
 			expect(pipBtn).toBeDefined();
 			await pipBtn!.trigger('click');
-			expect(char.traitSets[0].traits[0].traits[0].rating.type).toBe('Pip');
+			expect(char.traitSets[0].traits[0].traits?.[0].rating?.type).toBe('Pip');
 
 			wrapper.unmount();
 		});
 
 		it('derives counter column presence structurally from Counter rating traits without set flags', async () => {
 			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Counter Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Badges',
 						view: { style: { body: 'die-rows' } },
 						traits: [
@@ -1551,9 +1562,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								rating: { type: 'Counter', value: [5], range: [0, 20] },
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'play' },
@@ -1566,10 +1577,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('warns before rating-type change when child traits exist and confirms switch', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Complex Trait Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Powers',
 						traits: [
 							{
@@ -1588,9 +1599,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								],
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(TraitEditor, {
 				props: {
@@ -1612,22 +1623,22 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			// Click Counter -> warning banner displayed
 			await counterBtn!.trigger('click');
 			expect(wrapper.find('.editor-warning-banner').exists()).toBe(true);
-			expect(char.traitSets[0].traits[0].traits[0].rating.type).toBe('Die');
+			expect(char.traitSets[0].traits[0].traits?.[0].rating?.type).toBe('Die');
 
 			// Click Confirm in warning banner -> switches type to Counter
 			const confirmBtn = wrapper.find('.btn-warning-confirm');
 			expect(confirmBtn.exists()).toBe(true);
 			await confirmBtn.trigger('click');
-			expect(char.traitSets[0].traits[0].traits[0].rating.type).toBe('Counter');
+			expect(char.traitSets[0].traits[0].traits?.[0].rating?.type).toBe('Counter');
 
 			wrapper.unmount();
 		});
 
 		it('supports statement child trait in Play mode with read-only name and interactive pip toggle', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Statement Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Distinctions',
 						traits: [
 							{
@@ -1640,9 +1651,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								],
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(TraitEditor, {
 				props: {
@@ -1667,23 +1678,23 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(pipWrap.attributes('aria-checked')).toBe('false');
 
 			await pipWrap.trigger('click');
-			expect(char.traitSets[0].traits[0].traits[0].rating.value[0]).toBe(true);
+			expect((char.traitSets[0].traits[0].traits?.[0].rating?.value as unknown[])?.[0]).toBe(true);
 
 			wrapper.unmount();
 		});
 
 		it('renders [OUT] toggle chip in the scale row and updates out state', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Out Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Stress',
-						view: { style: { body: 'die-track' }, parts: { track: true } },
+						view: { style: { body: 'die-track' }, parts: { track: true } as unknown as Record<string, never> },
 						traits: [{ name: 'Physical', rating: { type: 'Die', value: [6] } }],
-					},
+					}),
 				],
-			};
+			});
 
 			const wrapper = mount(TraitSetEditor, {
 				props: {
@@ -1707,10 +1718,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('creates a subtrait from set editor, drills into TraitEditor with breadcrumb, and surfaces subtrait parts on parent mini', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
 			const { default: StudioPanel } = await import('../js/studio-panel.vue');
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Subtrait Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Attributes',
 						noun: 'Attribute',
 						view: {},
@@ -1718,9 +1729,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							{ name: 'Agility', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }, traits: [] },
 							{ name: 'Brawn', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }, traits: [] },
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			// 1. Set editor offers "Create subtrait" (no SUBTRAIT SCALE or ATTACHED TRACK)
 			const setEditor = mount(TraitSetEditor, {
@@ -1807,10 +1818,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('supports multiple subtraits with drill-in buttons, Noun vs Trait Name labels, and 3-level recursion cap', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
 			const { default: StudioPanel } = await import('../js/studio-panel.vue');
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Recursive Hero',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Attributes',
 						noun: 'Attribute',
 						view: {},
@@ -1828,9 +1839,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								],
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			// 1. Set editor lists existing subtrait drill-in button AND Create subtrait button for adding more
 			const setEditor = mount(TraitSetEditor, {
@@ -1844,8 +1855,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const createSubBtn = setEditor.findAll('button.editor-button').find((b) => b.text().includes('Create subtrait'));
 			expect(createSubBtn).toBeDefined();
 			await createSubBtn!.trigger('click');
-			expect(char.traitSets[0].traits[0].traits.length).toBe(2);
-			expect(char.traitSets[0].traits[0].traits[1].noun).toBe('Subtrait 2');
+			expect(char.traitSets[0].traits[0].traits?.length).toBe(2);
+			expect(char.traitSets[0].traits[0].traits?.[1].noun).toBe('Subtrait 2');
 			setEditor.unmount();
 
 			// 2. Set-level drilldown uses "Noun" label; instance drilldown uses "Trait Name" label
@@ -1917,7 +1928,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('mirrors Range with OUT chip, applies range across the set automatically, and wires Attributes (4 rows) and Values (4 parts) in Section Layout mini', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
 			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
-			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const char = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 
 			// 1. Subtrait editor mirrors Range with OUT chip, inline Pool/Spendable, no Apply-to-all button, and auto-syncs range across set
 			const subEditor = mount(TraitEditor, {
@@ -1937,8 +1948,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const outChip = subEditor.find('.rating-scale-chip-out');
 			expect(outChip.exists()).toBe(true);
 			await outChip.trigger('click');
-			expect(char.traitSets[0].traits[0].traits[0].rating.out).toBe(true);
-			expect(char.traitSets[0].traits[4].traits[0].rating.out).toBe(true);
+			expect(char.traitSets[0].traits[0].traits?.[0].rating?.out).toBe(true);
+			expect(char.traitSets[0].traits[4].traits?.[0].rating?.out).toBe(true);
 			subEditor.unmount();
 
 			// 2. Attributes Section Layout mini renders 4 stacked rows (Attribute · Name, Attribute · Rating, Stress · Label, Stress · Rating) with no Subtrait · Subtraits
@@ -1971,17 +1982,17 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			valEditor.unmount();
 
 			// 4. Mini editor supports bottom header, removing header, and removing any trait element
-			const distChar: any = {
+			const distChar = makeCharacter({
 				name: 'Tester',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Distinctions',
 						noun: 'Distinction',
 						view: { header: 'top', headerAlign: 'center' },
 						traits: [{ name: 'Clever', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
-					},
+					}),
 				],
-			};
+			});
 			const distEditor = mount(TraitSetEditor, {
 				props: { character: distChar, traitSetID: 0 },
 				attachTo: document.body,
@@ -1990,14 +2001,14 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const bottomBtn = distEditor.find('button[title="Bottom bar header"]');
 			expect(bottomBtn.exists()).toBe(true);
 			await bottomBtn.trigger('click');
-			expect(distChar.traitSets[0].view.header).toBe('bottom');
+			expect(distChar.traitSets[0].view?.header).toBe('bottom');
 			expect(distEditor.find('.row-mini-headerbar-bottom').exists()).toBe(true);
 
 			// Remove header via row-mini remove button -> header = 'none', renders + Header restore button
 			const removeHeaderBtn = distEditor.find('.row-mini-header-remove');
 			expect(removeHeaderBtn.exists()).toBe(true);
 			await removeHeaderBtn.trigger('click');
-			expect(distChar.traitSets[0].view.header).toBe('none');
+			expect(distChar.traitSets[0].view?.header).toBe('none');
 			expect(distEditor.find('.row-mini-headerbox').exists()).toBe(false);
 			expect(distEditor.find('.row-mini-restore-header').exists()).toBe(true);
 
@@ -2016,7 +2027,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			miniRemovers = distEditor.findAll('.row-mini-box .row-mini-remove');
 			await miniRemovers[0].trigger('click');
 			expect(distEditor.findAll('.row-mini-box').length).toBe(0);
-			expect(distChar.traitSets[0].view.parts).toEqual({});
+			expect(distChar.traitSets[0].view?.parts).toEqual({});
 			distEditor.unmount();
 
 			// 5. Card Builder modal also supports bottom header, none header, and removing all parts
@@ -2042,19 +2053,19 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			modalMini.unmount();
 
 			// 6. Image block shows a resizable Image box in the section mini and applies stored width/height
-			const imgChar: any = {
+			const imgChar = makeCharacter({
 				name: 'Tester',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Art',
 						view: {
 							style: { body: 'image' },
 							imageConfig: { url: 'x.png', width: '50%', height: '180px' },
 						},
 						traits: [],
-					},
+					}),
 				],
-			};
+			});
 			const imgEditor = mount(TraitSetEditor, {
 				props: { character: imgChar, traitSetID: 0 },
 				attachTo: document.body,
@@ -2070,10 +2081,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			imgBlock.unmount();
 
 			// 6b. Border: Line preserves the Image set graphic and passes axe-core in edit & play
-			const imgLineChar: any = {
+			const imgLineChar = makeCharacter({
 				name: 'Tester',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Art',
 						view: {
 							style: { body: 'image' },
@@ -2081,9 +2092,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							imageConfig: { url: 'x.png', height: 180 },
 						},
 						traits: [],
-					},
+					}),
 				],
-			};
+			});
 			for (const submode of ['edit', 'play'] as const) {
 				const lineBlock = mount(TraitSetBlock, {
 					props: { character: imgLineChar, traitSetID: 0, submode, editing: [] },
@@ -2096,20 +2107,22 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			}
 
 			// 6c. Image set hosts trait parts & traits with Background/Above/Below layering in editor & sheet
-			const imgOverlayChar: any = reactive({
-				name: 'Tester',
-				traitSets: [
-					{
-						name: 'Backdrop',
-						noun: 'Trait',
-						view: {
-							style: { body: 'image' },
-							imageConfig: { url: 'x.png', width: '50%', height: '180px' },
-						},
-						traits: [],
-					},
-				],
-			});
+			const imgOverlayChar = reactive<CharacterModel>(
+				makeCharacter({
+					name: 'Tester',
+					traitSets: [
+						makeTraitSet({
+							name: 'Backdrop',
+							noun: 'Trait',
+							view: {
+								style: { body: 'image' },
+								imageConfig: { url: 'x.png', width: '50%', height: '180px' },
+							},
+							traits: [],
+						}),
+					],
+				}),
+			);
 			const imgOverlayEditor = mount(TraitSetEditor, {
 				props: { character: imgOverlayChar, traitSetID: 0 },
 			});
@@ -2118,20 +2131,20 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				imgOverlayEditor.findAll('.row-mini-part-chip').find((b) => b.text().includes(label));
 			await chipByLabel('Name')!.trigger('click');
 			await chipByLabel('Rating')!.trigger('click');
-			expect(imgOverlayChar.traitSets[0].view.parts).toHaveProperty('name');
-			expect(imgOverlayChar.traitSets[0].view.parts).toHaveProperty('rating');
+			expect(imgOverlayChar.traitSets[0].view?.parts).toHaveProperty('name');
+			expect(imgOverlayChar.traitSets[0].view?.parts).toHaveProperty('rating');
 			expect(imgOverlayEditor.find('.row-mini-imagebox').exists()).toBe(true);
 			expect(imgOverlayEditor.find('.row-mini-over-image .row-mini-box').exists()).toBe(true);
 			const layerBtn = (label: string) =>
 				imgOverlayEditor.findAll('.editor-group-btn').find((b) => b.text().trim() === label);
 			await layerBtn('Above')!.trigger('click');
-			expect(imgOverlayChar.traitSets[0].view.imageConfig.layout).toBe('above');
+			expect(imgOverlayChar.traitSets[0].view?.imageConfig?.layout).toBe('above');
 			expect(imgOverlayEditor.find('.image-mini-layout-above').exists()).toBe(true);
 			await layerBtn('Below')!.trigger('click');
-			expect(imgOverlayChar.traitSets[0].view.imageConfig.layout).toBe('below');
+			expect(imgOverlayChar.traitSets[0].view?.imageConfig?.layout).toBe('below');
 			expect(imgOverlayEditor.find('.image-mini-layout-below').exists()).toBe(true);
 			await layerBtn('Background')!.trigger('click');
-			expect(imgOverlayChar.traitSets[0].view.imageConfig.layout).toBeUndefined();
+			expect(imgOverlayChar.traitSets[0].view?.imageConfig?.layout).toBeUndefined();
 			expect(imgOverlayEditor.find('.image-mini-layout-overlay').exists()).toBe(true);
 			expect(layerBtn('Background')!.attributes('aria-pressed')).toBe('true');
 			await runAxeAudit(imgOverlayEditor.element as HTMLElement);
@@ -2164,24 +2177,25 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			}
 
 			// 7. Ring set with no stored parts previews name and rating inline, as it renders
-			const ringChar: any = {
+			const ringChar = makeCharacter({
 				name: 'Tester',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Ring Set',
 						noun: 'Distinction',
 						view: { frame: { shape: 'ring' } },
 						traits: [{ name: 'A', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
-					},
+					}),
 				],
-			};
+			});
 			const ringEditor = mount(TraitSetEditor, {
 				props: { character: ringChar, traitSetID: 0 },
 				attachTo: document.body,
 			});
 			const ringBoxes = ringEditor.findAll('.row-mini-box');
 			expect(ringBoxes.length).toBe(2);
-			const rowOf = (b: any) => (b.attributes('style') || '').match(/grid-row: (\d+)/)?.[1];
+			const rowOf = (b: { attributes: (name: string) => string | undefined }) =>
+				(b.attributes('style') || '').match(/grid-row: (\d+)/)?.[1];
 			expect(rowOf(ringBoxes[0])).toBe(rowOf(ringBoxes[1]));
 			ringEditor.unmount();
 		});
@@ -2190,7 +2204,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
 			const { default: PortraitRing } = await import('../js/portrait-ring.vue');
 			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
-			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const char = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 
 			// 1. Mount Values set: zero duplicate statements, pip in child:Statement:rating, box in child:Statement:label
 			const valuesWrapper = mount(TraitSetBlock, {
@@ -2217,9 +2231,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(pipInNameCell.exists()).toBe(false);
 
 			// Clicking pip toggles questioned state
-			expect(char.traitSets[4].traits[0].traits[0].rating.value[0]).toBe(false);
+			expect((char.traitSets[4].traits[0].traits?.[0].rating?.value as unknown[])?.[0]).toBe(false);
 			await pipInRatingCell.trigger('click');
-			expect(char.traitSets[4].traits[0].traits[0].rating.value[0]).toBe(true);
+			expect((char.traitSets[4].traits[0].traits?.[0].rating?.value as unknown[])?.[0]).toBe(true);
 
 			// Statement box is in child:Statement:label cell, not in name cell
 			const boxInLabelCell = dutyRow.find('.trait-part-child-Statement-label .trait-pip-box');
@@ -2281,12 +2295,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('supports on-sheet editable toggle for statements, rating selector die chips with OUT option, and set-level subtrait noun editing', async () => {
 			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
 			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
-			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-			const valuesSet = char.traitSets.find((ts: any) => ts.name === 'Values');
+			const char = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const valuesSet = char.traitSets.find((ts) => ts.name === 'Values');
 			expect(valuesSet).toBeDefined();
 
 			// 1. With editableOnSheet true on Values trait, renders input on sheet
-			const dutyTrait = valuesSet.traits.find((t: any) => t.name === 'Duty');
+			const dutyTrait = valuesSet!.traits.find((t) => t.name === 'Duty')!;
 			expect(dutyTrait).toBeDefined();
 			dutyTrait.view = { editableOnSheet: true };
 
@@ -2306,7 +2320,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Typing in input updates statement text
 			await statementInput.setValue('Protect the outpost.');
-			const dutyStatementChild = dutyTrait.traits[0];
+			const dutyStatementChild = dutyTrait.traits![0];
 			expect(dutyStatementChild.name).toBe('Protect the outpost.');
 
 			valuesWrapper.unmount();
@@ -2379,8 +2393,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('surfaces Distinctions SFX (Hinder) as child subtrait in TraitSetEditor and TraitEditor with delete and ratingDisplay options', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
 			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
-			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-			const distinctionsSetIdx = char.traitSets.findIndex((ts: any) => ts.name === 'Distinctions');
+			const char = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const distinctionsSetIdx = char.traitSets.findIndex((ts) => ts.name === 'Distinctions');
 			expect(distinctionsSetIdx).toBeGreaterThanOrEqual(0);
 			const distinctionsSet = char.traitSets[distinctionsSetIdx];
 
@@ -2403,7 +2417,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const singleDieBtn = ratingDisplayBtns.find((b) => b.text() === 'Single Die');
 			expect(singleDieBtn).toBeDefined();
 			await singleDieBtn!.trigger('click');
-			expect(distinctionsSet.view.ratingDisplay).toBe('rating');
+			expect(distinctionsSet.view?.ratingDisplay).toBe('rating');
 
 			// Subtraits section displays Hinder with SFX summary badge
 			const subtraitRows = setEditor.findAll('.editor-subtrait-row');
@@ -2419,14 +2433,14 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Check that traits no longer have SFX
 			for (const tr of distinctionsSet.traits) {
-				const hasHinder = tr.traits?.some((st: any) => st.name === 'Hinder' || st.name === 'SFX');
+				const hasHinder = tr.traits?.some((st) => st.name === 'Hinder' || st.name === 'SFX');
 				expect(hasHinder).toBeFalsy();
 			}
 
 			setEditor.unmount();
 
 			// 2. TraitEditor on an individual distinction also surfaces Hinder
-			const charWithHinder: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const charWithHinder = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 			const traitEditor = mount(TraitEditor, {
 				props: {
 					character: charWithHinder,
@@ -2447,19 +2461,19 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const traitDeleteBtn = traitHinderRow!.find('.editor-subtrait-delete');
 			await traitDeleteBtn.trigger('click');
 			const firstTrait = charWithHinder.traitSets[distinctionsSetIdx].traits[0];
-			const stillHasHinder = firstTrait.traits?.some((st: any) => st.name === 'Hinder' || st.name === 'SFX');
+			const stillHasHinder = firstTrait.traits?.some((st) => st.name === 'Hinder' || st.name === 'SFX');
 			expect(stillHasHinder).toBeFalsy();
 
 			traitEditor.unmount();
 		});
 
 		it('verifies Part A: ring into frame, frame images, zoom, and pointer events', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Test Pilot',
 				portrait: { url: 'https://example.com/portrait.jpg', view: { zoom: 1 } },
 				traitSets: [
 					// Set 0: frame shape ring
-					{
+					makeTraitSet({
 						name: 'Roles',
 						noun: 'Role',
 						view: {
@@ -2473,9 +2487,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							{ name: 'Pilot', rating: { type: 'Die', value: [8] } },
 							{ name: 'Engineer', rating: { type: 'Die', value: [10] } },
 						],
-					},
+					}),
 					// Set 1: style alias portrait-ring with frame.ring + imageConfig
-					{
+					makeTraitSet({
 						name: 'Alias Roles',
 						noun: 'Role',
 						view: {
@@ -2484,9 +2498,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							imageConfig: { url: 'https://example.com/alias-hub.jpg', zoom: 0.75 },
 						},
 						traits: [{ name: 'Gunner', rating: { type: 'Die', value: [8] } }],
-					},
+					}),
 					// Set 2: block border + portrait circle frame with image
-					{
+					makeTraitSet({
 						name: 'Equipment',
 						noun: 'Item',
 						view: {
@@ -2497,18 +2511,18 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							},
 						},
 						traits: [{ name: 'Blaster', rating: { type: 'Die', value: [6] } }],
-					},
+					}),
 					// Set 3: line border divider (no portrait hub)
-					{
+					makeTraitSet({
 						name: 'Divider Set',
 						noun: 'Divider',
 						view: {
 							border: 'line',
 						},
 						traits: [{ name: 'Note', rating: { type: 'Die', value: [6] } }],
-					},
+					}),
 				],
-			};
+			});
 
 			// 1. Ring framed set renders inside its block
 			const w0 = mount(TraitSetBlock, {
@@ -2562,10 +2576,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('verifies Part B: generic Pip-child path, removal of statement shortcuts, and editableOnSheet', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Test Pilot',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Values',
 						noun: 'Value',
 						view: {
@@ -2575,7 +2589,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							{
 								name: 'Duty',
 								description: 'The crew comes home before the cargo.',
-								rating: { type: 'Die', value: 8 },
+								rating: { type: 'Die', value: [8] },
 								traits: [
 									{
 										name: 'Existing statement',
@@ -2590,19 +2604,22 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							{
 								name: 'Glory',
 								description: 'No jump vector is impossible.',
-								rating: { type: 'Die', value: 8 },
+								rating: { type: 'Die', value: [8] },
 								// No pip child yet
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
-			let tsApi: any;
+			let tsApi!: ReturnType<typeof useTraitSet>;
 			const TestHarness = defineComponent({
-				props: ['submode'],
+				props: { submode: { type: String, default: 'edit' } },
 				setup(props, { emit }) {
-					tsApi = useTraitSet({ character: char, traitSetID: 0, submode: props.submode || 'edit' } as any, emit);
+					tsApi = useTraitSet(
+						{ character: char, traitSetID: 0, submode: props.submode || 'edit' } as TraitSetProps,
+						emit,
+					);
 					return () => h('div');
 				},
 			});
@@ -2610,19 +2627,20 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const harness = mount(TestHarness, { props: { submode: 'edit' } });
 
 			// 1. Statement shortcuts are gone from API, generic ones present
-			expect(tsApi.canEditStatement).toBeUndefined();
-			expect(tsApi.getStatementText).toBeUndefined();
-			expect(tsApi.setStatementText).toBeUndefined();
+			const tsApiRecord = tsApi as unknown as Record<string, unknown>;
+			expect(tsApiRecord.canEditStatement).toBeUndefined();
+			expect(tsApiRecord.getStatementText).toBeUndefined();
+			expect(tsApiRecord.setStatementText).toBeUndefined();
 			expect(typeof tsApi.canEditChildOnSheet).toBe('function');
 			expect(typeof tsApi.setPipChildName).toBe('function');
 
 			// 2. canEditChildOnSheet gate logic
 			expect(tsApi.canEditChildOnSheet(char.traitSets[0].traits[0], char.traitSets[0])).toBe(true);
 			// In print mode, returns false
-			let printTsApi: any;
+			let printTsApi!: ReturnType<typeof useTraitSet>;
 			const PrintHarness = defineComponent({
 				setup(_p, { emit }) {
-					printTsApi = useTraitSet({ character: char, traitSetID: 0, submode: 'print' } as any, emit);
+					printTsApi = useTraitSet({ character: char, traitSetID: 0, submode: 'print' } as TraitSetProps, emit);
 					return () => h('div');
 				},
 			});
@@ -2637,7 +2655,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const gloryTrait = char.traitSets[0].traits[1];
 			expect(tsApi.getPipChild(gloryTrait)).toBeUndefined();
 			tsApi.togglePip(0, 1);
-			const newPipChild = tsApi.getPipChild(gloryTrait);
+			const newPipChild = tsApi.getPipChild(gloryTrait)!;
 			expect(newPipChild).toBeDefined();
 			expect(newPipChild.name).toBe('');
 			expect(newPipChild.view).toEqual({});
@@ -2647,13 +2665,13 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			tsApi.setPipChildName(gloryTrait, 'Updated glory text');
 			expect(tsApi.getPipChild(gloryTrait)?.name).toBe('Updated glory text');
 
-			const newTraitWithoutChild: any = {
+			const newTraitWithoutChild = makeTrait({
 				name: 'Justice',
 				description: 'Justice description',
-				rating: { type: 'Die', value: 8 },
-			};
+				rating: { type: 'Die', value: [8] },
+			});
 			tsApi.setPipChildName(newTraitWithoutChild, 'Freshly typed statement');
-			const createdChild = tsApi.getPipChild(newTraitWithoutChild);
+			const createdChild = tsApi.getPipChild(newTraitWithoutChild)!;
 			expect(createdChild).toBeDefined();
 			expect(createdChild.name).toBe('Freshly typed statement');
 			expect(createdChild.view).toEqual({});
@@ -2673,7 +2691,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Without editableOnSheet and playMutable, inputs do not render
 			const nonEditableChar = structuredClone(char);
-			delete nonEditableChar.traitSets[0].view.editableOnSheet;
+			if (nonEditableChar.traitSets[0].view) delete nonEditableChar.traitSets[0].view.editableOnSheet;
 			const blockNonEditable = mount(TraitSetBlock, {
 				props: { character: nonEditableChar, traitSetID: 0, submode: 'edit', editing: [] },
 			});
@@ -2682,16 +2700,16 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('verifies trait editor has no dedicated statement field, Pip child is editable via Subtraits drill-in, and multidie badge has active without c', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				name: 'Test Character',
 				traitSets: [
-					{
+					makeTraitSet({
 						name: 'Values',
 						noun: 'Value',
 						traits: [
 							{
 								name: 'Duty',
-								rating: { type: 'Die', value: 8 },
+								rating: { type: 'Die', value: [8] },
 								traits: [
 									{
 										name: 'Initial Statement',
@@ -2700,8 +2718,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								],
 							},
 						],
-					},
-					{
+					}),
+					makeTraitSet({
 						name: 'Assets',
 						noun: 'Asset',
 						traits: [
@@ -2710,9 +2728,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 								rating: { type: 'Dice', value: [6, 8] },
 							},
 						],
-					},
+					}),
 				],
-			};
+			});
 
 			// 1. TraitEditor on parent trait has NO dedicated statement field
 			const traitEditor = mount(TraitEditor, {
@@ -2750,7 +2768,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(nameInput.exists()).toBe(true);
 			expect((nameInput.element as HTMLInputElement).value).toBe('Initial Statement');
 			await nameInput.setValue('Edited via Drilldown');
-			expect(char.traitSets[0].traits[0].traits[0].name).toBe('Edited via Drilldown');
+			expect(char.traitSets[0].traits[0].traits?.[0].name).toBe('Edited via Drilldown');
 			subtraitEditor.unmount();
 
 			// 3. TraitSetBlock multidie badge: has 'active' class, NO 'c' class
@@ -2772,12 +2790,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('empty portrait-ring renders interactive drop-zone in edit mode only and passes axe-core', async () => {
-			const char: any = {
+			const char = makeCharacter({
 				id: 'ring-empty-test',
 				name: 'Empty Ring',
 				portrait: { url: '', alt: '', tags: [] },
 				traitSets: [
-					{
+					makeTraitSet({
 						id: 'attr-ring',
 						name: 'Attributes',
 						noun: 'Attribute',
@@ -2789,9 +2807,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 							style: { body: 'portrait-ring', header: 'none' },
 							frame: { shape: 'ring', span: [0, 360], color: 'primary', stroke: '2px' },
 						},
-					},
+					}),
 				],
-			};
+			});
 
 			const editWrapper = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'edit', editing: [] },
@@ -2810,37 +2828,39 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('exposes inline Parts Palette, Label/Text toggle, and non-exclusive Portrait Ring presetting in TraitSetEditor with zero a11y violations', async () => {
-			const char: any = reactive({
-				id: 'parts-palette-test',
-				name: 'Palette Hero',
-				traitSets: [
-					{
-						id: 'dist',
-						name: 'Distinctions',
-						noun: 'Distinction',
-						view: {
-							header: 'top',
-							border: { shape: 'block', corner: 8, color: 'primary' },
-							parts: {
-								name: { left: '0%', top: 0, width: '70%', height: 1, marker: 'L' },
-								rating: { left: '70%', top: 0, width: '30%', height: 1, ratingType: 'Die' },
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'parts-palette-test',
+					name: 'Palette Hero',
+					traitSets: [
+						makeTraitSet({
+							id: 'dist',
+							name: 'Distinctions',
+							noun: 'Distinction',
+							view: {
+								header: 'top',
+								border: { shape: 'block', corner: 8, color: 'primary' },
+								parts: {
+									name: { left: '0%', top: 0, width: '70%', height: 1, marker: 'L' },
+									rating: { left: '70%', top: 0, width: '30%', height: 1 },
+								},
 							},
-						},
-						traits: [{ name: 'Clever', rating: { type: 'Die', value: [8] }, traits: [] }],
-					},
-					{
-						id: 'skills',
-						name: 'Skills',
-						noun: 'Skill',
-						view: {
-							header: 'top',
-							style: { body: 'portrait-ring' },
-							frame: { shape: 'circle', array: 'ring', color: 'primary' },
-						},
-						traits: [{ name: 'Fly', rating: { type: 'Die', value: [6] }, traits: [] }],
-					},
-				],
-			});
+							traits: [{ name: 'Clever', rating: { type: 'Die', value: [8] }, traits: [] }],
+						}),
+						makeTraitSet({
+							id: 'skills',
+							name: 'Skills',
+							noun: 'Skill',
+							view: {
+								header: 'top',
+								style: { body: 'portrait-ring' },
+								frame: { shape: 'circle', array: 'ring', color: 'primary' },
+							},
+							traits: [{ name: 'Fly', rating: { type: 'Die', value: [6] }, traits: [] }],
+						}),
+					],
+				}),
+			);
 
 			const wrapper = mount(TraitSetEditor, {
 				props: { character: char, traitSetID: 0, open: true },
@@ -2852,7 +2872,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(sfxChip).toBeDefined();
 			expect(sfxChip!.attributes('aria-pressed')).toBe('false');
 			await sfxChip!.trigger('click');
-			expect(char.traitSets[0].view.parts.block).toBeDefined();
+			expect(char.traitSets[0].view?.parts?.block).toBeDefined();
 			expect(sfxChip!.attributes('aria-pressed')).toBe('true');
 
 			// Selecting Name box reveals Label/Text segmented behavior bar and toggles marker
@@ -2864,15 +2884,16 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const textBtn = behaviorBar.findAll('.editor-group-btn').find((b) => b.text().trim() === 'Text');
 			expect(textBtn).toBeDefined();
 			await textBtn!.trigger('click');
-			expect(char.traitSets[0].view.parts.name.marker).toBe('T');
+			expect((char.traitSets[0].view?.parts?.name as { marker?: string } | undefined)?.marker).toBe('T');
 
 			// Style: Portrait Ring presets set 0 without mutating sibling set 1
 			const styleSelect = wrapper.find('#trait-set-style-0');
 			if (styleSelect.exists()) {
 				await styleSelect.setValue('portrait-ring');
-				expect(char.traitSets[0].view.frame.shape).toBe('circle');
-				expect(char.traitSets[0].view.frame.array).toBe('ring');
-				expect(char.traitSets[1].view.style.body).toBe('portrait-ring');
+				const frame0 = char.traitSets[0].view?.frame as { shape?: string; array?: string } | undefined;
+				expect(frame0?.shape).toBe('circle');
+				expect(frame0?.array).toBe('ring');
+				expect(char.traitSets[1].view?.style?.body).toBe('portrait-ring');
 			}
 
 			await runAxeAudit(wrapper.element as HTMLElement);
@@ -2981,14 +3002,16 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('drives three-state drawer transitions and sticky .roller-action-bar inside StudioPanel Play mode', async () => {
-			const pool = reactive({ items: [{ size: 8, source: 'Distinctive' }], add() {}, removeAt() {}, clear() {} });
-			const oppPool = reactive({ items: [], add() {}, removeAt() {}, clear() {} });
-			const char: any = reactive({
-				id: 'drawer-char',
-				name: 'Drawer Hero',
-				plotPoints: 2,
-				traitSets: [],
-			});
+			const pool = reactive(makePool([{ size: 8, source: 'Distinctive' }]));
+			const oppPool = reactive(makePool());
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'drawer-char',
+					name: 'Drawer Hero',
+					plotPoints: 2,
+					traitSets: [],
+				}),
+			);
 
 			const splitPanel = mount(StudioPanel, {
 				props: {
@@ -2998,8 +3021,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					isOpen: true,
 					panelTab: 'roller',
 					drawerState: 'split',
-					dicePool: pool as any,
-					oppositionPool: oppPool as any,
+					dicePool: pool,
+					oppositionPool: oppPool,
 					activePoolSide: 'player',
 				},
 				attachTo: document.body,
@@ -3036,34 +3059,36 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('switches sibling Trait Sets via .crumb-set-select and toggles split/full Create drawer height in StudioPanel', async () => {
-			const char: any = reactive({
-				id: 'create-drawer-char',
-				name: 'Creator Hero',
-				plotPoints: 1,
-				traitSets: [
-					{
-						id: 'name',
-						name: 'Name',
-						noun: 'Trait',
-						view: { style: { header: 'default', body: 'name' } },
-						traits: [],
-					},
-					{
-						id: 'attributes',
-						name: 'Attributes',
-						noun: 'Attribute',
-						view: { pillar: 'prime', style: { header: 'default', body: 'list' } },
-						traits: [],
-					},
-					{
-						id: 'skills',
-						name: 'Skills',
-						noun: 'Skill',
-						view: { pillar: 'plus', style: { header: 'default', body: 'list' } },
-						traits: [],
-					},
-				],
-			});
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'create-drawer-char',
+					name: 'Creator Hero',
+					plotPoints: 1,
+					traitSets: [
+						makeTraitSet({
+							id: 'name',
+							name: 'Name',
+							noun: 'Trait',
+							view: { style: { header: 'default', body: 'name' } },
+							traits: [],
+						}),
+						makeTraitSet({
+							id: 'attributes',
+							name: 'Attributes',
+							noun: 'Attribute',
+							view: { pillar: 'prime', style: { header: 'default', body: 'list' } },
+							traits: [],
+						}),
+						makeTraitSet({
+							id: 'skills',
+							name: 'Skills',
+							noun: 'Skill',
+							view: { pillar: 'plus', style: { header: 'default', body: 'list' } },
+							traits: [],
+						}),
+					],
+				}),
+			);
 
 			const editPanel = mount(StudioPanel, {
 				props: {
@@ -3103,30 +3128,32 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('consolidates single-pillar Jump Strip in Character Play mode while preserving multi-pillar substack navigation', async () => {
-			const singlePillarChar: any = reactive({
-				id: 'single-pillar-char',
-				name: 'Solo Runner',
-				game: 'Cortex Prime',
-				plotPoints: 1,
-				portrait: {},
-				view: { pageCount: 1, sheetTheme: 'classic' },
-				traitSets: [
-					{
-						id: 'prime-dist',
-						name: 'Distinctions',
-						noun: 'Distinction',
-						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
-						traits: [{ id: 'd1', name: 'Scrappy', rating: { type: 'Die', value: [8] }, traits: [] }],
-					},
-					{
-						id: 'prime-roles',
-						name: 'Roles',
-						noun: 'Role',
-						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
-						traits: [{ id: 'r1', name: 'Hacker', rating: { type: 'Die', value: [6] }, traits: [] }],
-					},
-				],
-			});
+			const singlePillarChar = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'single-pillar-char',
+					name: 'Solo Runner',
+					game: 'Cortex Prime',
+					plotPoints: 1,
+					portrait: {},
+					view: { pageCount: 1, sheetTheme: 'classic' },
+					traitSets: [
+						makeTraitSet({
+							id: 'prime-dist',
+							name: 'Distinctions',
+							noun: 'Distinction',
+							view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+							traits: [{ id: 'd1', name: 'Scrappy', rating: { type: 'Die', value: [8] }, traits: [] }],
+						}),
+						makeTraitSet({
+							id: 'prime-roles',
+							name: 'Roles',
+							noun: 'Role',
+							view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+							traits: [{ id: 'r1', name: 'Hacker', rating: { type: 'Die', value: [6] }, traits: [] }],
+						}),
+					],
+				}),
+			);
 
 			const singleWrapper = mount(Character, {
 				props: {
@@ -3148,44 +3175,46 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			await runAxeAudit(singleWrapper.element as HTMLElement);
 			singleWrapper.unmount();
 
-			const multiPillarChar: any = reactive({
-				id: 'multi-pillar-char',
-				name: 'Dual Hero',
-				game: 'Cortex Prime',
-				plotPoints: 2,
-				portrait: {},
-				view: { pageCount: 1, sheetTheme: 'classic' },
-				traitSets: [
-					{
-						id: 'name',
-						name: 'Name',
-						noun: 'Trait',
-						view: { page: 1, style: { header: 'default', body: 'name' } },
-						traits: [],
-					},
-					{
-						id: 'p-dist',
-						name: 'Distinctions',
-						noun: 'Distinction',
-						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
-						traits: [{ id: 'd1', name: 'Bold', rating: { type: 'Die', value: [8] }, traits: [] }],
-					},
-					{
-						id: 'p-attrs',
-						name: 'Attributes',
-						noun: 'Attribute',
-						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
-						traits: [{ id: 'a1', name: 'Agility', rating: { type: 'Die', value: [8] }, traits: [] }],
-					},
-					{
-						id: 's-skills',
-						name: 'Skills',
-						noun: 'Skill',
-						view: { page: 1, column: 2, pillar: 'abilities', style: { body: 'list' } },
-						traits: [{ id: 'k1', name: 'Fight', rating: { type: 'Die', value: [6] }, traits: [] }],
-					},
-				],
-			});
+			const multiPillarChar = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'multi-pillar-char',
+					name: 'Dual Hero',
+					game: 'Cortex Prime',
+					plotPoints: 2,
+					portrait: {},
+					view: { pageCount: 1, sheetTheme: 'classic' },
+					traitSets: [
+						{
+							id: 'name',
+							name: 'Name',
+							noun: 'Trait',
+							view: { page: 1, style: { header: 'default', body: 'name' } },
+							traits: [],
+						},
+						{
+							id: 'p-dist',
+							name: 'Distinctions',
+							noun: 'Distinction',
+							view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+							traits: [{ id: 'd1', name: 'Bold', rating: { type: 'Die', value: [8] }, traits: [] }],
+						},
+						{
+							id: 'p-attrs',
+							name: 'Attributes',
+							noun: 'Attribute',
+							view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+							traits: [{ id: 'a1', name: 'Agility', rating: { type: 'Die', value: [8] }, traits: [] }],
+						},
+						{
+							id: 's-skills',
+							name: 'Skills',
+							noun: 'Skill',
+							view: { page: 1, column: 2, pillar: 'abilities', style: { body: 'list' } },
+							traits: [{ id: 'k1', name: 'Fight', rating: { type: 'Die', value: [6] }, traits: [] }],
+						},
+					],
+				}),
+			);
 
 			const multiWrapper = mount(Character, {
 				props: {
@@ -3215,30 +3244,32 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 	describe('Sets, Pillars, Play Pools, & Individual Track Labels', () => {
 		it('keeps organic Play sheet unified without surprise PLAY pillar, supports + Pillar inline form, and places sticky + Set in every pillar', async () => {
-			const organicChar: any = reactive({
-				id: 'organic-play-sheet',
-				name: 'Jimmy',
-				plotPoints: 1,
-				portrait: {},
-				view: { pageCount: 1 },
-				traitSets: [
-					{
-						id: 'name',
-						name: 'Name',
-						noun: 'Trait',
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						view: { style: { header: 'default', body: 'name' } },
-						traits: [],
-					},
-					{
-						id: 'traits',
-						name: 'Traits',
-						noun: 'Trait',
-						view: { style: { header: 'default', body: 'list' } },
-						traits: [{ id: 't1', name: 'Snitch', rating: { type: 'Die', value: [8] }, traits: [] }],
-					},
-				],
-			});
+			const organicChar = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'organic-play-sheet',
+					name: 'Jimmy',
+					plotPoints: 1,
+					portrait: {},
+					view: { pageCount: 1 },
+					traitSets: [
+						makeTraitSet({
+							id: 'name',
+							name: 'Name',
+							noun: 'Trait',
+							rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+							view: { style: { header: 'default', body: 'name' } },
+							traits: [],
+						}),
+						makeTraitSet({
+							id: 'traits',
+							name: 'Traits',
+							noun: 'Trait',
+							view: { style: { header: 'default', body: 'list' } },
+							traits: [{ id: 't1', name: 'Snitch', rating: { type: 'Die', value: [8] }, traits: [] }],
+						}),
+					],
+				}),
+			);
 
 			const wrapper = mount(Character, {
 				props: {
@@ -3281,8 +3312,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Adding a Play set does NOT split into a surprise PLAY pillar
 			expect(wrapper.findAll('.mobile-pillar-column').length).toBe(1);
-			expect(organicChar.traitSets[2].view.playMutable).toBe(true);
-			expect(organicChar.traitSets[2].view.visibility).toBe('play-only');
+			expect(organicChar.traitSets[2].view?.playMutable).toBe(true);
+			expect(organicChar.traitSets[2].view?.visibility).toBe('play-only');
 
 			// Click + Pillar, submit "Scene", and verify existing sets stay unified in SHEET while Scene appears with sticky + Set
 			await wrapper.find('.jump-pill-add-pillar').trigger('click');
@@ -3303,16 +3334,18 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('adds dice to a Play pool on canvas and preserves Dice pool type when reduced to 1 die', async () => {
-			const char: any = reactive({
-				id: 'pool-char',
-				name: 'Pool Tester',
-				plotPoints: 1,
-				portrait: {},
-				view: { pageCount: 1 },
-				traitSets: [],
-			});
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'pool-char',
+					name: 'Pool Tester',
+					plotPoints: 1,
+					portrait: {},
+					view: { pageCount: 1 },
+					traitSets: [],
+				}),
+			);
 			const poolPreset = characterCurioSetPresets['pool']!;
-			const poolSet: any = characterCurioFunctions.instantiateSetPreset(poolPreset, char, 1);
+			const poolSet = characterCurioFunctions.instantiateSetPreset(poolPreset, char, 1);
 			poolSet.spendable = false;
 			poolSet.view = { ...(poolSet.view || {}), visibility: 'play-only', playMutable: true };
 			char.traitSets.push(poolSet);
@@ -3323,8 +3356,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			});
 
 			const poolTrait = char.traitSets[0].traits[0];
-			expect(poolTrait.rating.type).toBe('Dice');
-			expect(poolTrait.rating.value).toEqual([6, 6]);
+			expect(poolTrait.rating?.type).toBe('Dice');
+			expect(poolTrait.rating?.value).toEqual([6, 6]);
 
 			// Open inline + die picker on canvas and append d10
 			const addBtn = block.find('.btn-pool-add-die');
@@ -3338,7 +3371,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(d10Btn).toBeTruthy();
 			await d10Btn.trigger('click');
 			await nextTick();
-			expect(poolTrait.rating.value).toEqual([6, 6, 10]);
+			expect(poolTrait.rating?.value).toEqual([6, 6, 10]);
 
 			// Remove two dice so 1 remains, ensuring rating.type stays Dice
 			const removeBtns = block.findAll('.btn-play-spend');
@@ -3347,8 +3380,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			await nextTick();
 			await block.findAll('.btn-play-spend')[0].trigger('click');
 			await nextTick();
-			expect(poolTrait.rating.value.length).toBe(1);
-			expect(poolTrait.rating.type).toBe('Dice');
+			expect((poolTrait.rating?.value as unknown[])?.length).toBe(1);
+			expect(poolTrait.rating?.type).toBe('Dice');
 			expect(block.find('.btn-pool-add-die').exists()).toBe(true);
 
 			await runAxeAudit(block.element as HTMLElement);
@@ -3356,16 +3389,18 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('edits individual trait track labels in Play mode without mutating sibling tracks or set track noun', async () => {
-			const char: any = reactive({
-				id: 'track-char',
-				name: 'Track Tester',
-				plotPoints: 1,
-				portrait: {},
-				view: { pageCount: 1 },
-				traitSets: [],
-			});
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'track-char',
+					name: 'Track Tester',
+					plotPoints: 1,
+					portrait: {},
+					view: { pageCount: 1 },
+					traitSets: [],
+				}),
+			);
 			const trackPreset = characterCurioSetPresets['trait-track']!;
-			const trackSet: any = characterCurioFunctions.instantiateSetPreset(trackPreset, char, 1);
+			const trackSet = characterCurioFunctions.instantiateSetPreset(trackPreset, char, 1);
 			trackSet.view = { ...(trackSet.view || {}), visibility: 'play-only', playMutable: true };
 			trackSet.traits.push({
 				id: 'second-trait',
@@ -3396,9 +3431,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const updatedBtns = block.findAll('.attached-stress-label-btn');
 			expect(updatedBtns[0].text().trim()).toBe('Injured');
 			expect(updatedBtns[1].text().trim()).toBe('Track');
-			expect(char.traitSets[0].view.labels?.track).toBeUndefined();
-			expect(char.traitSets[0].traits[0].traits[0].name).toBe('Injured');
-			expect(char.traitSets[0].traits[0].traits[0].view.part).toBe('track');
+			expect(char.traitSets[0].view?.labels?.track).toBeUndefined();
+			expect(char.traitSets[0].traits[0].traits?.[0].name).toBe('Injured');
+			expect((char.traitSets[0].traits[0].traits?.[0].view as Record<string, unknown> | undefined)?.part).toBe('track');
 
 			await runAxeAudit(block.element as HTMLElement);
 			block.unmount();
@@ -3461,7 +3496,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const settlePoolPP = (delta: number, poolId?: string) => {
 				const target = pools.find((p) => p.id === (poolId || state.activeId));
 				if (!target) return;
-				const owner = [kira, rival, location].find((c) => c.id === target.ownerId) as any;
+				const owner = [kira, rival, location].find((c) => c.id === target.ownerId) as
+					{ plotPoints?: number } | undefined;
 				if (owner && typeof owner.plotPoints === 'number') {
 					owner.plotPoints = Math.max(0, owner.plotPoints + delta);
 				} else if (typeof target.plotPoints === 'number') {
@@ -3474,8 +3510,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					open: true,
 					namedPools: pools,
 					activePoolId: state.activeId,
-					curiosities: [kira, rival, location],
-					character: kira,
+					curiosities: [kira, rival, location] as CharacterModel[],
+					character: kira as CharacterModel,
 					'onUpdate:activePoolId': (id: string) => {
 						state.activeId = id;
 						roller.setProps({ activePoolId: id });
@@ -3491,7 +3527,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 						roller.setProps({ activePoolId: created.id });
 					},
 					onSettlePP: settlePoolPP,
-				} as any,
+				},
 			});
 
 			// 1. Both PP-owning entities (Kira & Vex) show their PP steppers inside the Roller; Opposition (no PP) does not
@@ -3543,7 +3579,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			// Footer visibility contract: Guards has no PP -> showPlotPoints is false; Kira has PP -> showPlotPoints is true
 			const activeOwnerHasPP = () => {
 				const cur = pools.find((p) => p.id === state.activeId);
-				const ent = [kira, rival, location].find((c) => c.id === cur?.ownerId) as any;
+				const ent = [kira, rival, location].find((c) => c.id === cur?.ownerId) as { plotPoints?: number } | undefined;
 				return ent ? typeof ent.plotPoints === 'number' : typeof cur?.plotPoints === 'number';
 			};
 			expect(activeOwnerHasPP()).toBe(false);
@@ -3587,46 +3623,48 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 	describe('Slice 3: Non-Linear Curiosity Graph, Trait/Set ref Edges & CuriosityWebBar', () => {
 		it('renders TraitSetCuriosity setup, spawns embedded Curiosity with IME-safe Enter, stages dice in Play, and passes axe', async () => {
-			const char: any = reactive({
-				id: 'root-adv',
-				name: 'Starfall Sector',
-				version: '0.2',
-				traitSets: [
-					{ id: 'name', name: 'Starfall Sector', view: { style: { body: 'name' } }, traits: [] },
-					characterCurioFunctions.instantiateSetPreset(characterCurioSetPresets.curiosity, null),
-				],
-				curiosities: {
-					'existing-npc': {
-						id: 'existing-npc',
-						name: 'Captain Vane',
-						version: '0.2',
-						traitSets: [
-							{
-								id: 'name',
-								name: 'Captain Vane',
-								rating: { type: 'Die', value: [8] },
-								view: { style: { body: 'name' } },
-								traits: [{ name: 'Description', description: 'Smuggler of [[Rust Port]]' }],
-							},
-							{
-								id: 'roles',
-								name: 'Roles',
-								traits: [{ name: 'Pilot', rating: { type: 'Die', value: [10] } }],
-							},
-						],
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'root-adv',
+					name: 'Starfall Sector',
+					version: '0.2',
+					traitSets: [
+						makeTraitSet({ id: 'name', name: 'Starfall Sector', view: { style: { body: 'name' } }, traits: [] }),
+						characterCurioFunctions.instantiateSetPreset(characterCurioSetPresets.curiosity, null),
+					],
+					curiosities: {
+						'existing-npc': makeCharacter({
+							id: 'existing-npc',
+							name: 'Captain Vane',
+							version: '0.2',
+							traitSets: [
+								makeTraitSet({
+									id: 'name',
+									name: 'Captain Vane',
+									rating: { type: 'Die', value: [8] },
+									view: { style: { body: 'name' } },
+									traits: [{ name: 'Description', description: 'Smuggler of [[Rust Port]]' }],
+								}),
+								makeTraitSet({
+									id: 'roles',
+									name: 'Roles',
+									traits: [{ name: 'Pilot', rating: { type: 'Die', value: [10] } }],
+								}),
+							],
+						}),
 					},
-				},
-			});
+				}),
+			);
 
-			const stagedPayloads: any[] = [];
+			const stagedPayloads: Array<Record<string, unknown>> = [];
 			const wrapper = mount(TraitSetBlock, {
 				props: {
 					character: char,
 					traitSetID: 1,
 					submode: 'play',
-					onAddDieToRoller: (p: any) => stagedPayloads.push(p),
-					onUpdateCharacter: (next: any) => Object.assign(char, next),
-				} as any,
+					onAddDieToRoller: (p: Record<string, unknown>) => stagedPayloads.push(p),
+					onUpdateCharacter: (next: CharacterModel) => Object.assign(char, next),
+				} as unknown as InstanceType<typeof TraitSetBlock>['$props'],
 			});
 
 			// 1. Unlinked setup state passes WCAG 2.2 AA & LLM DOM semantics
@@ -3646,7 +3684,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			await nextTick();
 			const spawnedId = char.traitSets[1].ref;
 			expect(typeof spawnedId).toBe('string');
-			expect(char.curiosities[spawnedId]?.name).toBe('Rust Port');
+			expect(char.curiosities?.[spawnedId!]?.name).toBe('Rust Port');
 			expect(wrapper.find('.curiosity-card-name').text()).toBe('Rust Port');
 
 			// 4. Unlink and link existing Captain Vane -> stage Name d8 and Pilot d10 directly into Active Pool
@@ -3669,27 +3707,31 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('renders sibling trait-explore-btn (fa-lightbulb) for trait.ref without nested-interactive axe violations', async () => {
 			const exploredIds: string[] = [];
-			const char: any = reactive({
-				id: 'root-1',
-				name: 'Expedition',
-				version: '0.2',
-				traitSets: [
-					{
-						id: 'prime-contacts',
-						name: 'Contacts',
-						rating: { type: 'Die', range: [4, 6, 8, 10, 12] },
-						traits: [{ name: 'Archivist Sera', ref: 'npc-sera', rating: { type: 'Die', value: [8] } }],
+			const char = reactive<CharacterModel>(
+				makeCharacter({
+					id: 'root-1',
+					name: 'Expedition',
+					version: '0.2',
+					traitSets: [
+						makeTraitSet({
+							id: 'prime-contacts',
+							name: 'Contacts',
+							rating: { type: 'Die', value: [], range: [4, 6, 8, 10, 12] },
+							traits: [{ name: 'Archivist Sera', ref: 'npc-sera', rating: { type: 'Die', value: [8] } }],
+						}),
+					],
+					curiosities: {
+						'npc-sera': makeCharacter({
+							id: 'npc-sera',
+							name: 'Archivist Sera',
+							version: '0.2',
+							traitSets: [
+								makeTraitSet({ id: 'name', name: 'Archivist Sera', view: { style: { body: 'name' } }, traits: [] }),
+							],
+						}),
 					},
-				],
-				curiosities: {
-					'npc-sera': {
-						id: 'npc-sera',
-						name: 'Archivist Sera',
-						version: '0.2',
-						traitSets: [{ id: 'name', name: 'Archivist Sera', view: { style: { body: 'name' } }, traits: [] }],
-					},
-				},
-			});
+				}),
+			);
 
 			const wrapper = mount(TraitSetBlock, {
 				props: {
@@ -3700,10 +3742,10 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				global: {
 					provide: {
 						[CURIOSITY_GRAPH_KEY as symbol]: {
-							activeNode: { value: char } as any,
-							activeHostRoot: { value: null } as any,
-							resolveCuriosity: (id: string) => char.curiosities[id] || null,
-							linkableCuriosities: { value: [char.curiosities['npc-sera']] } as any,
+							activeNode: ref(char),
+							activeHostRoot: ref(null),
+							resolveCuriosity: (id: string) => char.curiosities?.[id] || null,
+							linkableCuriosities: ref([char.curiosities!['npc-sera']]),
 							exploreCuriosity: (id: string) => {
 								exploredIds.push(id);
 								return true;
@@ -3731,7 +3773,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('renders CuriosityWebBar breadcrumbs (aria-current="page", middle collapse), backlinks, and Pop Out with zero axe violations', async () => {
 			const navigated: string[] = [];
 			const popped: string[] = [];
-			const spawned: any[] = [];
+			const spawned: Array<{ name: string; navigate: boolean }> = [];
 
 			const webBar = mount(CuriosityWebBar, {
 				props: {
@@ -3752,7 +3794,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				attrs: {
 					onNavigate: (id: string) => navigated.push(id),
 					onPopOut: (id: string) => popped.push(id),
-					onSpawnPeer: (payload: any) => spawned.push(payload),
+					onSpawnPeer: (payload: { name: string; navigate: boolean }) => spawned.push(payload),
 				},
 			});
 
