@@ -241,6 +241,9 @@ Measured live in headless Chromium across `13` sequential end-to-end journeys (`
 6. **`#mobile-sheet-menu` `About` Entry Resolves Mobile Play Reachability (`T16`) `[DECIDED]` — Implemented**
    - `#mobile-sheet-menu` ([app-header.vue](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/js/app-header.vue)) now includes `About`, enabling direct navigation from Mobile Play to `About` in `2` taps without leaving Play for `Roster`.
 
+7. **Cross-Mode Set Styling Round-Trip (`T05`) `[DECIDED]` — Accepted Mode Boundary**
+   - Changing a Trait Set border style from Play mode and returning to Play (`4` clicks Desktop / `4` taps Mobile, `delta 0`) is accepted as an intentional Play ↔ Create mode boundary rather than adding authoring chrome to Play mode. `T05` stays tracked in the static task table while being marked `acceptedBoundary: true` in [interaction-map.cjs](file:///c:/Users/lynnj/source/repos/lynn0702/KaelriFork/cortex-toolkit/scripts/interaction-map.cjs), bringing unintended friction hotspots to **`0`**.
+
 ---
 
 ## 7. Running & Extending the Map

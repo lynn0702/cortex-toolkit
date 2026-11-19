@@ -639,6 +639,8 @@ const TASK_JOURNEYS = [
 		to: 'create_set_inspector',
 		actionCost: { desktopPointer: 2, desktopKeyboard: 2, mobileTouch: 2 },
 		actionDesc: 'Pick border option (+1) -> Click/tap Play header button (+1)',
+		acceptedBoundary: true,
+		boundaryReason: 'Intentional Play/Create separation: Play stays focused on rolling and session state',
 	},
 	{
 		id: 'T06',
@@ -1403,12 +1405,23 @@ function printReport(matrices, tasks, live) {
 		);
 	}
 
-	const hotspots = tasks.filter((t) => (t.costs.mobileTouch || 0) >= 4 || (t.mobileDelta || 0) >= 2);
+	const hotspots = tasks.filter(
+		(t) => !t.acceptedBoundary && ((t.costs.mobileTouch || 0) >= 4 || (t.mobileDelta || 0) >= 2),
+	);
+	const acceptedBoundaries = tasks.filter((t) => t.acceptedBoundary);
 	console.log(`\n3. Friction Hotspots (Mobile cost >= 4 or Mobile-vs-Desktop delta >= +2): ${hotspots.length}`);
 	for (const h of hotspots) {
 		console.log(
 			`  - ${h.id}: ${h.task} -> Desktop ${h.costs.desktopPointer} vs Mobile ${h.costs.mobileTouch} (delta +${h.mobileDelta})`,
 		);
+	}
+	if (acceptedBoundaries.length > 0) {
+		console.log(`   Accepted mode boundaries (${acceptedBoundaries.length}):`);
+		for (const b of acceptedBoundaries) {
+			console.log(
+				`  - ${b.id}: Desktop ${b.costs.desktopPointer} / Mobile ${b.costs.mobileTouch} (delta ${b.mobileDelta}) — ${b.boundaryReason}`,
+			);
+		}
 	}
 
 	if (live) {
