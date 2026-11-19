@@ -1,0 +1,17 @@
+{
+	"name": "Character Curio",
+	"short_name": "Curio",
+	"description": "Create, customize, and play Cortex Prime tabletop RPG sheets, dice pools, and connected curiosities offline in your browser.",
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#111827",
+	"icons": [
+		{
+			"src": "images/favicon.ico",
+			"sizes": "any",
+			"type": "image/x-icon"
+		}
+	]
+}

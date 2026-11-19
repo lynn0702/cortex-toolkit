@@ -40,7 +40,7 @@ jobs:
       - name: Stage files for Pages
         run: |
           mkdir -p _site/css _site/js
-          cp index.html CNAME _site/
+          cp index.html CNAME manifest.webmanifest sw.js _site/
           cp css/app.min.css css/fonts.css _site/css/
           cp js/app.min.js js/templates.bundle.js _site/js/
           if [ -d js/chunks ]; then cp -r js/chunks _site/js/; fi

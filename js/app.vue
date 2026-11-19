@@ -1883,12 +1883,12 @@ defineExpose({
 					<p>
 						Cortex Prime is the award-winning world-building tabletop RPG system for forging unique, compelling game
 						experiences from a set of modular rules mechanics available at
-						<a href="https://www.cortexrpg.com" target="_blank">CortexRPG.com</a>.
+						<a href="https://www.cortexrpg.com" target="_blank" rel="noopener noreferrer">CortexRPG.com</a>.
 					</p>
 
 					<p>
-						Cortex is ©️ {{ year }} Dire Wolf Digital, LLC. Cortex, Cortex Prime, associated logos and trade dress are
-						the trademarks of Dire Wolf Digital, LLC. Iconography used with permission.
+						Cortex is &copy; {{ year }} Dire Wolf Digital, LLC. Cortex, Cortex Prime, associated logos and trade dress
+						are the trademarks of Dire Wolf Digital, LLC. Iconography used with permission.
 					</p>
 
 					<p>

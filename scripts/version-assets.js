@@ -131,6 +131,31 @@ if (stampHtml) {
 
 	rewrite(targetDir, 'index.html', htmlReplacements);
 
+	const swAbs = path.join(targetDir, 'sw.js');
+	if (fs.existsSync(swAbs)) {
+		const swVersion = crypto
+			.createHash('sha1')
+			.update([appHash, cssHash, fontsHash, tplHash, ...staticImports].join(':'))
+			.digest('hex')
+			.slice(0, 10);
+		const precacheList = [
+			'./',
+			'./index.html',
+			'./manifest.webmanifest',
+			`./css/fonts.css?v=${fontsHash}`,
+			`./css/app.min.css?v=${cssHash}`,
+			`./js/app.min.js?v=${appHash}`,
+			`./js/templates.bundle.js?v=${tplHash}`,
+			'./images/favicon.ico',
+			...staticImports.map((chunkRel) => `./${chunkRel}`),
+		];
+		rewrite(targetDir, 'sw.js', [
+			[/__CURIO_SW_VERSION__/g, swVersion],
+			[/\['__CURIO_SW_PRECACHE__'\]/, JSON.stringify(precacheList)],
+		]);
+		console.log(`version-assets: sw=${swVersion} precache=${precacheList.length}`);
+	}
+
 	console.log(
 		`version-assets: site=${targetDir} app=${appHash} css=${cssHash} fonts=${fontsHash} templates=${tplHash} modulepreloads=${staticImports.length}${splashLcpImg ? ` lcp=${splashLcpImg}` : ''}`,
 	);

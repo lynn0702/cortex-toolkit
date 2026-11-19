@@ -27,3 +27,11 @@ if (document.readyState === 'loading') {
 } else {
 	mount();
 }
+
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator && window.location.protocol === 'https:') {
+	window.addEventListener('load', () => {
+		navigator.serviceWorker.register('./sw.js').catch(() => {
+			// Offline caching is progressive; ignore registration errors in restricted contexts.
+		});
+	});
+}

@@ -1,13 +1,16 @@
 # Character Curio
 
-Character Curio is a browser-based character sheet builder and solo dice roller built with Vue 3, TypeScript, and Vite.
+Character Curio is a browser-based Cortex Prime character sheet builder, multi-pool dice roller, and connected curiosity workspace built with Vue 3, TypeScript, and Vite.
+
+Live app: https://characters.lynnjones.rocks/
 
 ## Features
 
-- **Sheet Studio (Create & Edit):** Build character sheets with nested CSS-grid placement (`view.place`), trait-part layouts (`view.parts`), portrait rings, stepped die tracks, pip tracks, SFX groups, and custom CSS themes.
-- **Play Mode & Dice Roller:** Stage dice directly from traits into Player or Opposition pools, step/hitch dice, track Plot Points at roll time, manage Crisis/Challenge pools, and search/stage rapidly via the Quick-Palette (`Ctrl+K` / `/`).
-- **Template Library & Local Persistence:** Create sheets from bundled templates, save and manage custom sheet templates, export/import current-format `.curio.json` files, and persist state locally in IndexedDB (with a full-record `localStorage` fallback).
-- **Offline-Ready & Printable:** Self-hosted `.woff2` fonts and Font Awesome icon subsets with a WYSIWYG Print tab and `@media print` styling.
+- **Sheet Studio (Create & Edit):** Build character sheets with nested CSS-grid placement (`view.place`), trait-part layouts (`view.parts`), portrait rings & arcs, stepped die tracks, pip tracks, SFX groups, custom palettes/fonts, and dice styles.
+- **Play Mode & Multi-Pool Dice Roller:** Stage dice directly from traits across open Curiosities into named owner pools, track per-owner Plot Points, step/hitch dice, run multi-way contests, and search/stage rapidly via the Command Palette (`Ctrl+K` / `/`).
+- **Connected Curiosity Graph:** Link characters, locations, factions, and assets via `trait.ref`, `traitSet.ref`, and `[[wikilinks]]`, navigate trails and backlinks in `CuriosityWebBar`, and pop curiosities out or pull them in.
+- **Template Library & Local Persistence:** Create sheets from bundled templates, save and manage custom sheet templates and set presets, export/import current-format `.curio.json` files and full bundles, and persist state locally in IndexedDB (with a `localStorage` fallback).
+- **Offline-Ready PWA & Printable:** Self-hosted `.woff2` fonts, Font Awesome icon subsets, Web App Manifest, auto-versioned offline service worker, and WYSIWYG Print tab with `@media print` styling.
 
 ## Development
 
