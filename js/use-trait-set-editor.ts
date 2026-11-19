@@ -13,13 +13,13 @@ import {
 	type InjectionKey,
 } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
-import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './sheet-grid.ts';
+import { buildParts, parsePct } from './sheet-grid.ts';
+import { FLEX_BODIES, useTraitSetParts, resolveBranchShares, type PartCellRecord } from './use-trait-set-parts.ts';
+export { resolveBranchShares };
 import {
 	DIE_LADDER,
 	getView,
 	ensureView,
-	getRingBadgeDie,
-	setRingBadgeDie,
 	isNameSet,
 	getRating,
 	preserveInheritedTraitTypes,
@@ -33,18 +33,7 @@ import {
 	resolveSubtraitPlural,
 	resolvePpDelta,
 } from './model.ts';
-import {
-	resolveBorder,
-	resolveFrame,
-	normalizeZoom,
-	normalizeRingSize,
-	type BorderShape,
-	type BorderConfig,
-	type PortraitFrameShape,
-	type TraitArrayMode,
-	type FrameConfig,
-} from './frame-geometry.ts';
-import { getCharacterColorTokens } from './color-palette.ts';
+import { useTraitSetFrame, type MutableFrameConfig } from './use-trait-set-frame.ts';
 import type { ToastOptions } from './use-toast.ts';
 import type {
 	Character,
@@ -52,9 +41,6 @@ import type {
 	TraitSet,
 	SheetTemplate,
 	CharacterCurioCustom,
-	RingConfig,
-	ImageConfig,
-	ImageLayoutMode,
 	PipsConfig,
 	Visibility,
 } from './model.ts';
@@ -68,38 +54,10 @@ export interface SetSubtraitItem {
 	summary: string;
 }
 
-type PartCellRecord = {
-	left: string;
-	top: number;
-	width: string;
-	height: number;
-	marker?: string;
-	ratingType?: string;
-	range?: number[];
-};
-
-type MutableFrameConfig = Partial<FrameConfig> & {
-	ring?: RingConfig | null;
-	image?: { url?: string; alignment?: string; zoom?: number } | null;
-	[k: string]: unknown;
-};
-
-type MutableBorderConfig = Partial<BorderConfig> & Record<string, unknown>;
-
 export interface TraitSetEditorEmit {
 	(event: 'selectElement', selector: Array<string | number>): void;
 	(event: 'updateCharacter', character: Character): void;
 	(event: 'removeTraitSet', traitSetID: number): void;
-}
-
-// Pure branch-share normalization shared by the editor miniature and the
-// subtrait-columns renderer: finite numbers >= 0 win, else the CSS
-// defaults (1.4 / 1 / 1.4). Null when no branch object is stored.
-export function resolveBranchShares(branch: unknown): { left: number; center: number; right: number } | null {
-	const num = (v: unknown, fallback: number) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : fallback);
-	if (!branch || typeof branch !== 'object' || Array.isArray(branch)) return null;
-	const r = branch as Record<string, unknown>;
-	return { left: num(r.left, 1.4), center: num(r.center, 1), right: num(r.right, 1.4) };
 }
 
 export interface TraitSetEditorProps {
@@ -242,472 +200,42 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEdit
 
 	// Trait-part cells (view.parts): the generator spec shared by rebuilds
 	// and the default comparison, so hand-tuned widths survive control
-	// changes and Reset restores exactly what the generator would emit.
-	function partsSpec() {
-		const view = getView(traitSet.value) || {};
-		const scale = Array.isArray(view.ratingLadder) && view.ratingLadder.length ? view.ratingLadder : [4, 6, 8, 10, 12];
-		const traits: Trait[] = Array.isArray(traitSet.value?.traits)
-			? traitSet.value.traits
-			: traitSet.value?.traits
-				? Object.values(traitSet.value.traits as Record<string, Trait>)
-				: [];
-		const configuredTrack = typeof view.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
-		const hasImplicitTrackSub = Boolean(
-			!view.parts &&
-			configuredTrack &&
-			traits.some(
-				(t) =>
-					Array.isArray(t?.traits) &&
-					t.traits.some(
-						(st) =>
-							st &&
-							typeof st === 'object' &&
-							String(st.noun || st.name || '')
-								.trim()
-								.toLowerCase() === configuredTrack &&
-							resolveRating(st, [t, traitSet.value])?.type === 'Die',
-					),
-			),
-		);
-		const trackOn = partsHaveTrack() || hasImplicitTrackSub;
-		const tScale = characterCurioFunctions.getTrackScale(traitSet.value);
-		const rating = currentPartRatingPlacement();
-		const statement = Boolean((traitSet.value as { statement?: unknown } | null)?.statement);
-		const hasDesc = traits.some((t) => typeof t?.description === 'string' && t.description.trim().length > 0);
-		const hasSfx = traits.some((t) => characterCurioFunctions.blockChildren(t, traitSet.value).length > 0);
-		const hasSub = traits.some((t) =>
-			characterCurioFunctions.ratedSubtraits(t, traitSet.value).some((st) => {
-				const key = String(st?.noun || st?.name || '')
-					.trim()
-					.toLowerCase();
-				if (trackOn && configuredTrack && key === configuredTrack) return false;
-				const r = resolveRating(st, [t, traitSet.value]);
-				if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return false;
-				return true;
-			}),
-		);
-		return {
-			rating,
-			ratingDice: scale.length,
-			trackDice: trackOn ? tScale.length : 0,
-			description: hasDesc && !statement && rating !== 'above',
-			block: hasSfx,
-			subtraits: hasSub,
-		};
-	}
-
-	function isRingFrame(): boolean {
-		const f = resolveFrame(traitSet.value);
-		return Boolean(f && f.array !== 'none');
-	}
-
-	function normalizeEffectiveParts(
-		rawParts: Record<string, PartCellRecord> | null | undefined,
-	): Record<string, PartCellRecord> {
-		const spec = partsSpec();
-		const base: Record<string, PartCellRecord> =
-			rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts)
-				? (structuredClone(toRaw(rawParts)) as Record<string, PartCellRecord>)
-				: (buildParts(spec) as Record<string, PartCellRecord>);
-		if (!spec.subtraits && base.subtraits) {
-			delete base.subtraits;
-		}
-		if (isRingFrame()) {
-			const hasFour = Boolean(base.name && base.rating && base.trackLabel && base.track);
-			const isStaleInlineOrTwoRow =
-				hasFour &&
-				((Number(base.name.top) === 0 &&
-					Number(base.rating.top) === 0 &&
-					Number(base.trackLabel.top) === 0 &&
-					Number(base.track.top) === 0) ||
-					(Number(base.name.top) === 0 &&
-						Number(base.rating.top) === 0 &&
-						Number(base.trackLabel.top) === 1 &&
-						Number(base.track.top) === 1));
-			if (isStaleInlineOrTwoRow) {
-				base.name = { ...base.name, left: '0%', top: 0, width: '100%', height: 1 };
-				base.rating = { ...base.rating, left: '0%', top: 1, width: '100%', height: 1 };
-				base.trackLabel = { ...base.trackLabel, left: '0%', top: 2, width: '100%', height: 1 };
-				base.track = { ...base.track, left: '0%', top: 3, width: '100%', height: 1 };
-			}
-		}
-		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
-		let pipChildNoun = '';
-		for (const t of traits) {
-			if (!Array.isArray(t?.traits)) continue;
-			const match = t.traits.find((sub) => {
-				const r = resolveRating(sub, [t, traitSet.value]);
-				return r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
-			});
-			if (match) {
-				pipChildNoun = String(match.noun || match.name || 'Pip').trim() || 'Pip';
-				break;
-			}
-		}
-		const hasExistingChildPart = Object.keys(base).some((k) => k.startsWith('child:') || k.startsWith('child_'));
-		if (
-			pipChildNoun &&
-			base.name &&
-			base.rating &&
-			Number(base.name.top || 0) === 0 &&
-			Number(base.rating.top || 0) === 0 &&
-			!hasExistingChildPart
-		) {
-			let nextTop = 1;
-			for (const k of Object.keys(base)) {
-				if (k === 'name' || k === 'rating') continue;
-				const top = Number(base[k]?.top);
-				if (Number.isInteger(top) && top >= 1) {
-					base[k] = { ...base[k], top: top + 1 };
-					nextTop = Math.max(nextTop, top + 2);
-				}
-			}
-			base.name = { ...base.name, left: '0%', top: 0, width: '40%', height: 1 };
-			base[`child:${pipChildNoun}:rating`] = { left: '40%', top: 0, width: '10%', height: 1 };
-			base.rating = { ...base.rating, left: '50%', top: 0, width: '50%', height: 1 };
-			base[`child:${pipChildNoun}:label`] = { left: '0%', top: nextTop, width: '100%', height: 1 };
-		}
-		return base;
-	}
-
-	type PartCellEdit = { key: string; left: number; width: number; top: number; height: number };
-
-	// Explicit part cells in stable part order. Absent = generated layout.
-	const partCells = computed((): PartCellEdit[] => {
-		const rawParts = getView(traitSet.value)?.parts;
-		if (!rawParts || typeof rawParts !== 'object') return [];
-		const parts = normalizeEffectiveParts(rawParts);
-		const out: PartCellEdit[] = [];
-		const orderedKeys = [
-			...(KNOWN_PARTS as readonly string[]),
-			...Object.keys(parts).filter((k) => !(KNOWN_PARTS as readonly string[]).includes(k)),
-		];
-		for (const key of orderedKeys) {
-			const cell = parts[key];
-			if (!cell || typeof cell !== 'object') continue;
-			const left = parsePct(cell.left);
-			const width = parsePct(cell.width);
-			out.push({
-				key,
-				left: left === null ? 0 : Math.round(left * 1000) / 1000,
-				width: width === null ? 100 : Math.round(width * 1000) / 1000,
-				top: Number.isInteger(cell.top) && cell.top >= 0 ? cell.top : 0,
-				height: Number.isInteger(cell.height) && cell.height >= 1 ? cell.height : 1,
-			});
-		}
-		return out;
-	});
-
-	// Explicit part cells: hand-tuning shows whenever a parts layout
-	// exists (generated or hand-tuned); Reset restores the default.
-	const hasParts = computed(() => {
-		const parts = getView(traitSet.value)?.parts;
-		return Boolean(parts && typeof parts === 'object' && Object.keys(parts).length);
-	});
-
-	// Style presets fall into three kinds: dedicated flex renderers (the
-	// list below), non-row bodies with no trait rows at all, and everything
-	// else, which the list renderer draws from the parts grid. The grid
-	// never takes over a bespoke body: arranging one writes only what
-	// that body can render (branch shares for subtrait-columns).
-	// Ladders keep view.ladder (no parts form).
-	const FLEX_BODIES = ['pips', 'subtrait-columns', 'die-rows', 'dice-count'];
-	const NON_ROW_BODIES = ['pips'];
-	function isPartsDriven() {
-		const body = getView(traitSet.value)?.style?.body;
-		if (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body)) return false;
-		if (body === 'image') {
-			const hasTraits = Boolean(traitSet.value?.traits?.length) || Number(getView(traitSet.value)?.reservedSlots) > 0;
-			return hasTraits || hasParts.value;
-		}
-		return true;
-	}
-	function isRowBody() {
-		const body = getView(traitSet.value)?.style?.body;
-		if (typeof body === 'string' && (NON_ROW_BODIES as readonly string[]).includes(body)) return false;
-		return true;
-	}
-
-	// Effective part cells: stored cells, or — for grid-driven sets with
-	// no stored layout — the generated preview, marked implicit. The row
-	// miniature shows both; the first drag on an implicit box writes the
-	// generated map (the seed setPartCell uses) plus the change, so the
-	// sheet switches from flex to the grid it previews.
-	const effectivePartCells = computed((): (PartCellEdit & { implicit: boolean })[] => {
-		const rawParts = getView(traitSet.value)?.parts;
-		if (rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts)) {
-			return partCells.value.map((c) => ({ ...c, implicit: false }));
-		}
-		if (!isPartsDriven()) return [];
-		const gen = normalizeEffectiveParts(null);
-		const out: (PartCellEdit & { implicit: boolean })[] = [];
-		const orderedKeys = [
-			...(KNOWN_PARTS as readonly string[]),
-			...Object.keys(gen).filter((k) => !(KNOWN_PARTS as readonly string[]).includes(k)),
-		];
-		for (const key of orderedKeys) {
-			const cell = gen[key];
-			if (!cell || typeof cell !== 'object') continue;
-			const left = parsePct(cell.left);
-			const width = parsePct(cell.width);
-			out.push({
-				key,
-				left: left === null ? 0 : Math.round(left * 1000) / 1000,
-				width: width === null ? 100 : Math.round(width * 1000) / 1000,
-				top: Number.isInteger(cell.top) && cell.top >= 0 ? cell.top : 0,
-				height: Number.isInteger(cell.height) && cell.height >= 1 ? cell.height : 1,
-				implicit: true,
-			});
-		}
-		return out;
-	});
-
-	// Generated preview on screen (no stored layout yet).
-	const isPartsPreview = computed(() => partCells.value.length === 0 && effectivePartCells.value.length > 0);
-
-	// Non-default explicit parts: Reset restores the generated layout.
-	// (No stored parts means nothing custom, however the preview reads.)
-	const hasCustomParts = computed(() => {
-		const parts = getView(traitSet.value)?.parts;
-		if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return false;
-		if (
-			styleBody.value === 'image' &&
-			!traitSet.value?.traits?.length &&
-			!(Number(getView(traitSet.value)?.reservedSlots) > 0)
-		) {
-			return Object.keys(parts).length > 0;
-		}
-		const canon = (o: Record<string, unknown>) => {
-			const out: Record<string, unknown> = {};
-			Object.keys(o)
-				.sort()
-				.forEach((k) => {
-					out[k] = o[k];
-				});
-			return JSON.stringify(out);
-		};
-		return canon(parts as Record<string, unknown>) !== canon(buildParts(partsSpec()) as Record<string, unknown>);
-	});
-
-	function editablePartCells(seedEmptyOnBlankImage = false): Record<string, PartCellRecord> {
-		const blankImage = seedEmptyOnBlankImage && styleBody.value === 'image' && !isPartsDriven();
-		const view = ensureView(traitSet.value);
-		view.parts = blankImage ? {} : normalizeEffectiveParts(view.parts as Record<string, PartCellRecord> | undefined);
-		return view.parts as Record<string, PartCellRecord>;
-	}
-
-	function setPartCell(key: string, field: 'left' | 'width' | 'top' | 'height', val: number) {
-		const cells = editablePartCells();
-		if (!cells[key] || typeof cells[key] !== 'object') {
-			cells[key] = { left: '0%', top: 0, width: '100%', height: 1 };
-		}
-		const cell = cells[key];
-		if (field === 'left') {
-			const n = Number.isFinite(Number(val)) ? Math.max(0, Math.min(100, Number(val))) : 0;
-			cell.left = formatPct(Math.round(n * 10) / 10);
-		} else if (field === 'width') {
-			const n = Number.isFinite(Number(val)) ? Math.max(1, Math.min(100, Number(val))) : 100;
-			cell.width = formatPct(Math.round(n * 10) / 10);
-		} else if (field === 'top') {
-			cell.top = Number.isInteger(Number(val)) ? Math.max(0, Number(val)) : 0;
-		} else {
-			cell.height = Number.isInteger(Number(val)) ? Math.max(1, Number(val)) : 1;
-		}
-		updateCharacter(props.character);
-	}
-
-	function removePartCell(key: string) {
-		const view = ensureView(traitSet.value);
-		const cells = editablePartCells();
-		if (!cells[key]) return;
-		delete cells[key];
-		if (styleBody.value === 'image' && Object.keys(cells).length === 0) {
-			delete (view as Record<string, unknown>).parts;
-		}
-		updateCharacter(props.character);
-	}
-
-	const activePartKeys = computed(() => new Set(effectivePartCells.value.map((c) => c.key)));
-
-	function togglePartCell(partKey: string) {
-		if (!traitSet.value) return;
-		if (partKey === 'track') {
+	const {
+		partsSpec,
+		isRingFrame,
+		normalizeEffectiveParts,
+		partCells,
+		hasParts,
+		isPartsDriven,
+		isRowBody,
+		effectivePartCells,
+		isPartsPreview,
+		hasCustomParts,
+		editablePartCells,
+		setPartCell,
+		removePartCell,
+		activePartKeys,
+		togglePartCell,
+		getPartMarker,
+		setPartMarker,
+		addChildPartSlot,
+		branchShares,
+		setBranchShare,
+		hasCustomBranch,
+		resetParts,
+	} = useTraitSetParts({
+		character,
+		traitSet,
+		styleBody,
+		getRatingLadder: () => ratingLadder.value,
+		toggleTrackPart: () => {
 			hasTrackPart.value = !hasTrackPart.value;
-			return;
-		}
-		const view = ensureView(traitSet.value);
-		const cells = editablePartCells(true);
-		if (cells[partKey]) {
-			if (Object.keys(cells).length <= 1) {
-				if (styleBody.value === 'image') {
-					delete (view as Record<string, unknown>).parts;
-					updateCharacter(props.character);
-				}
-				return;
-			}
-			delete cells[partKey];
-			updateCharacter(props.character);
-			return;
-		}
-		const maxTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1);
-		if (partKey === 'rating' && cells.name && Number(cells.name.top || 0) === 0 && parsePct(cells.name.width) === 100) {
-			cells.name.width = '65%';
-			cells.rating = {
-				left: '65%',
-				top: 0,
-				width: '35%',
-				height: 1,
-				ratingType: 'Die',
-				range: ratingLadder.value,
-			};
-		} else {
-			const cell: PartCellRecord = { left: '0%', top: maxTop + 1, width: '100%', height: 1 };
-			if (partKey === 'name' || partKey === 'badge') {
-				cell.marker = 'L';
-			} else if (partKey === 'description' || partKey === 'block') {
-				cell.marker = 'T';
-			} else if (partKey === 'rating') {
-				cell.ratingType = 'Die';
-				cell.range = ratingLadder.value;
-			}
-			cells[partKey] = cell;
-		}
-		updateCharacter(props.character);
-	}
-
-	function getPartMarker(key: string): 'L' | 'T' | null {
-		if (!key) return null;
-		const textCapable =
-			key === 'name' ||
-			key === 'description' ||
-			key === 'block' ||
-			key === 'badge' ||
-			key === 'trackLabel' ||
-			(key.startsWith('child:') && !key.endsWith(':rating'));
-		if (!textCapable) return null;
-		const rawParts = getView(traitSet.value)?.parts as Record<string, PartCellRecord> | undefined;
-		const cell = rawParts?.[key];
-		if (cell?.marker === 'L' || cell?.marker === 'T') return cell.marker;
-		return key === 'description' || key === 'block' || key.startsWith('child:') ? 'T' : 'L';
-	}
-
-	function setPartMarker(key: string, marker: 'L' | 'T') {
-		if (!traitSet.value || !key) return;
-		const cells = editablePartCells();
-		if (!cells[key]) return;
-		cells[key].marker = marker;
-		updateCharacter(props.character);
-	}
-
-	function addChildPartSlot(
-		rawNoun: string,
-		kind: 'both' | 'label' | 'rating' = 'both',
-		ratingType: 'Pip' | 'Die' | 'Counter' = 'Pip',
-	) {
-		if (!traitSet.value) return;
-		const noun = String(rawNoun || '')
-			.trim()
-			.replace(/:/g, '');
-		if (!noun) return;
-		const cells = editablePartCells(true);
-		const nextTop = Object.values(cells).reduce((m: number, c) => Math.max(m, Number(c?.top) || 0), -1) + 1;
-		if (kind === 'both') {
-			cells[`child:${noun}:label`] = { left: '0%', top: nextTop, width: '75%', height: 1, marker: 'T' };
-			cells[`child:${noun}:rating`] = { left: '75%', top: nextTop, width: '25%', height: 1, ratingType };
-		} else if (kind === 'label') {
-			cells[`child:${noun}:label`] = { left: '0%', top: nextTop, width: '100%', height: 1, marker: 'T' };
-		} else {
-			cells[`child:${noun}:rating`] = { left: '0%', top: nextTop, width: '100%', height: 1, ratingType };
-		}
-		if (Array.isArray(traitSet.value.traits)) {
-			const lower = noun.toLowerCase();
-			for (const tr of traitSet.value.traits) {
-				if (!tr || typeof tr !== 'object') continue;
-				if (!Array.isArray(tr.traits)) tr.traits = [];
-				const hasMatch = tr.traits.some(
-					(st) =>
-						st &&
-						typeof st === 'object' &&
-						(String(st.noun || '')
-							.trim()
-							.toLowerCase() === lower ||
-							String(st.name || '')
-								.trim()
-								.toLowerCase() === lower),
-				);
-				if (!hasMatch) {
-					const defaultRating: Trait['rating'] =
-						ratingType === 'Pip'
-							? { type: 'Pip', value: [false] }
-							: ratingType === 'Counter'
-								? { type: 'Counter', value: [0] }
-								: { type: 'Die', value: [8], range: ratingLadder.value };
-					tr.traits.push({ name: '', noun, rating: defaultRating });
-				}
-			}
-		}
-		updateCharacter(props.character);
-	}
-
-	// Branch column shares (subtrait-columns split rows): the three fr
-	// shares around the fixed 2rem link column. Absent means the CSS
-	// default (1.4 / 1 / 1.4); stored shares render wherever a split
-	// row does, sheet and print alike.
-	function branchShares() {
-		const resolved = resolveBranchShares(getView(traitSet.value)?.branch);
-		if (!resolved) {
-			return { left: 1.4, center: 1, right: 1.4, implicit: true };
-		}
-		return { ...resolved, implicit: false };
-	}
-
-	function setBranchShare(key: 'left' | 'center' | 'right', val: number) {
-		const view = ensureView(traitSet.value);
-		const cur = branchShares();
-		const next = {
-			left: key === 'left' ? val : cur.left,
-			center: key === 'center' ? val : cur.center,
-			right: key === 'right' ? val : cur.right,
-		};
-		(view as Record<string, unknown>).branch = {
-			left: Math.round(Math.max(0, Number(next.left) || 0) * 100) / 100,
-			center: Math.round(Math.max(0, Number(next.center) || 0) * 100) / 100,
-			right: Math.round(Math.max(0, Number(next.right) || 0) * 100) / 100,
-		};
-		updateCharacter(props.character);
-	}
-
-	const hasCustomBranch = computed(() => {
-		const branch = getView(traitSet.value)?.branch;
-		return Boolean(branch && typeof branch === 'object' && !Array.isArray(branch));
+		},
+		partsHaveTrack,
+		currentPartRatingPlacement,
+		rebuildParts,
+		updateCharacter,
 	});
-
-	function resetParts() {
-		const view = getView(traitSet.value);
-		if (view && typeof view === 'object') {
-			delete (view as Record<string, unknown>).branch;
-		}
-		const body = getView(traitSet.value)?.style?.body;
-		const emptyImageSet =
-			body === 'image' && !traitSet.value?.traits?.length && !(Number(getView(traitSet.value)?.reservedSlots) > 0);
-		if (emptyImageSet || (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body))) {
-			// Flex layouts author their own rows: reset means no stored
-			// geometry at all, not a generated map they would ignore.
-			if (view && typeof view === 'object') {
-				delete (view as Record<string, unknown>).parts;
-				updateCharacter(props.character);
-			}
-			return;
-		}
-		if (isRingFrame() && partsHaveTrack()) {
-			rebuildParts('below');
-			return;
-		}
-		rebuildParts(currentPartRatingPlacement());
-		const refreshed = ensureView(traitSet.value);
-		refreshed.parts = normalizeEffectiveParts(refreshed.parts as Record<string, PartCellRecord> | undefined);
-		updateCharacter(props.character);
-	}
 
 	const templateEntry = computed(() => {
 		const root = inst?.proxy?.$root as { sheetTemplates?: SheetTemplate[] } | null | undefined;
@@ -719,181 +247,73 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEdit
 		characterCurioFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID),
 	);
 
-	function getFrameRing(view: CharacterCurioCustom | undefined): RingConfig | null {
-		const f = view?.frame;
-		if (!f || typeof f !== 'object') return null;
-		return f.ring ?? null;
-	}
-
-	function syncArcTraitsSpan(ctk: CharacterCurioCustom, angle: number, spread: number) {
-		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as MutableFrameConfig) : null;
-		if (!frameObj || frameObj.array !== 'arc') return;
-		const centerClock = angle + 180;
-		const totalSpan = Math.max(15, (spread / 100) * 360);
-		const nextSpan: [number, number] = [
-			Math.round(centerClock - totalSpan / 2),
-			Math.round(centerClock + totalSpan / 2),
-		];
-		frameObj.traitsSpan = nextSpan;
-		if (Array.isArray(frameObj.span) && Math.abs((frameObj.span[1] ?? 360) - (frameObj.span[0] ?? 0)) < 360) {
-			frameObj.span = [...nextSpan];
-		}
-	}
-
-	const ringSpread = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			if (res?.array === 'arc' && res.traitsSpan) {
-				const raw = ((res.traitsSpan[1] - res.traitsSpan[0]) / 360) * 100;
-				return Math.max(10, Math.min(100, Math.round(raw)));
-			}
-			return getFrameRing(getView(traitSet.value))?.arcSpread ?? 100;
-		},
-		set: (val: number) => {
-			const num = Number(val);
-			setRingConfig('arcSpread', num);
-			const ctk = ctkFor(props.traitSetID);
-			syncArcTraitsSpan(ctk, ringAngle.value, num);
-			updateCharacter(structuredClone(toRaw(props.character)));
-		},
-	});
-
-	const ringDistance = computed({
-		get: () => getFrameRing(getView(traitSet.value))?.arcDistance ?? 0,
-		set: (val: number) => {
-			setRingConfig('arcDistance', Number(val));
-		},
-	});
-
-	const ringAngle = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			if (res?.array === 'arc' && res.traitsSpan) {
-				let a = Math.round((res.traitsSpan[0] + res.traitsSpan[1]) / 2 - 180);
-				while (a > 180) a -= 360;
-				while (a < -180) a += 360;
-				return a;
-			}
-			const cfg = getFrameRing(getView(traitSet.value));
-			return cfg?.arcAngle ?? -90;
-		},
-		set: (val: number) => {
-			const num = Number(val);
-			setRingConfig('arcAngle', num);
-			const ctk = ctkFor(props.traitSetID);
-			syncArcTraitsSpan(ctk, num, ringSpread.value);
-			updateCharacter(structuredClone(toRaw(props.character)));
-		},
-	});
-
-	const ringAngleLabel = computed(() => {
-		const a = ringAngle.value;
-		if (a === 0) return 'Bottom';
-		if (a === -90) return 'Right';
-		if (a === 90) return 'Left';
-		if (a === 180 || a === -180) return 'Top';
-		return (a > 0 ? '+' + a : a) + '°';
-	});
-
-	const scaleAngle = computed({
-		get: () => getFrameRing(getView(traitSet.value))?.scaleAngle ?? 0,
-		set: (val: number) => {
-			setRingConfig('scaleAngle', Number(val));
-		},
-	});
-
-	const scaleAngleLabel = computed(() => {
-		const a = scaleAngle.value;
-		if (a === 0) return 'Bottom';
-		if (a === -90) return 'Right';
-		if (a === 90) return 'Left';
-		if (a === 180 || a === -180) return 'Top';
-		return (a > 0 ? '+' + a : a) + '°';
-	});
-
-	const scaleDistance = computed({
-		get: () => getFrameRing(getView(traitSet.value))?.scaleDistance ?? 0,
-		set: (val: number) => {
-			setRingConfig('scaleDistance', Number(val));
-		},
-	});
-
-	const ringScaleY = computed({
-		get: () => getFrameRing(getView(traitSet.value))?.scaleDieY ?? 0,
-		set: (val: number) => {
-			setRingConfig('scaleDieY', Number(val));
-		},
-	});
-
-	const ringScaleX = computed({
-		get: () => getFrameRing(getView(traitSet.value))?.scaleDieX ?? 0,
-		set: (val: number) => {
-			setRingConfig('scaleDieX', Number(val));
-		},
-	});
-
-	const scaleDieValue = computed({
-		get: () => getRingBadgeDie(traitSet.value),
-		set: (val: number) => {
-			if (!traitSet.value) return;
-			setRingBadgeDie(traitSet.value, val);
-			updateCharacter(props.character);
-		},
-	});
-
-	const imageURL = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.url ?? '',
-		set: (val: string) => {
-			setImageConfig('url', val);
-		},
-	});
-
-	const imageAlignment = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.alignment ?? 'center',
-		set: (val: string) => {
-			setImageConfig('alignment', val);
-		},
-	});
-
-	const imageHeight = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.height ?? 'auto',
-		set: (val: string) => {
-			setImageConfig('height', val);
-		},
-	});
-
-	const imageWidth = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.width ?? '100%',
-		set: (val: string) => {
-			setImageConfig('width', val);
-		},
-	});
-
-	const imageCaption = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.caption ?? '',
-		set: (val: string) => {
-			setImageConfig('caption', val);
-		},
-	});
-
-	const imageZoom = computed({
-		get: () => {
-			const cfgZoom = normalizeZoom(getView(traitSet.value)?.imageConfig?.zoom);
-			return typeof cfgZoom === 'number' ? cfgZoom : 1;
-		},
-		set: (val: number) => {
-			setImageConfig('zoom', Number(val));
-		},
-	});
-
-	const imageLayout = computed<ImageLayoutMode>({
-		get: () => {
-			const l = getView(traitSet.value)?.imageConfig?.layout;
-			return l === 'above' || l === 'below' ? l : 'overlay';
-		},
-		set: (val: ImageLayoutMode) => {
-			setImageConfig('layout', val === 'overlay' ? undefined : val);
-		},
+	const {
+		ringSpread,
+		ringDistance,
+		ringAngle,
+		ringAngleLabel,
+		scaleAngle,
+		scaleAngleLabel,
+		scaleDistance,
+		ringScaleY,
+		ringScaleX,
+		scaleDieValue,
+		setRingConfig,
+		resetRingPlacement,
+		imageURL,
+		imageAlignment,
+		imageHeight,
+		imageWidth,
+		imageCaption,
+		imageZoom,
+		imageLayout,
+		setImageConfig,
+		uploadImageStart,
+		uploadImageProcess,
+		removeImage,
+		normalizedFrameBase,
+		frameImageUrl,
+		frameImageAlignment,
+		frameImageZoom,
+		setFrameImage,
+		uploadPortraitImageProcess,
+		frameColorTokens,
+		borderOptions,
+		resolvedBorder,
+		borderShape,
+		setBorderShape,
+		borderWidth,
+		borderColor,
+		borderCorner,
+		borderDash,
+		setBorderProp,
+		frameTint,
+		setFrameTint,
+		portraitFrameOptions,
+		traitArrayOptions,
+		portraitFrameShape,
+		traitArrayMode,
+		arcStrokeMode,
+		frameWidth,
+		setFrameWidth,
+		frameColor,
+		setFrameColor,
+		frameDash,
+		setFrameDash,
+		frameSize,
+		setFrameSize,
+		framePosition,
+		setFramePosition,
+		hasPortraitOrArray,
+	} = useTraitSetFrame({
+		character,
+		traitSetID,
+		traitSet,
+		styleBody,
+		imageFileInput,
+		uploadError,
+		ctkFor,
+		updateCharacter,
 	});
 
 	function addTraitInEditor() {
@@ -925,111 +345,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEdit
 		}
 		updateCharacter(props.character);
 		selectElement(['trait', props.traitSetID, ts.traits.length - 1]);
-	}
-
-	function normalizedFrameBase(): MutableFrameConfig {
-		const raw = getView(traitSet.value)?.frame;
-		const res = resolveFrame(traitSet.value);
-		if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
-			const copy = structuredClone(toRaw(raw)) as MutableFrameConfig;
-			if (res) {
-				copy.shape = res.portraitShape;
-				copy.array = res.array;
-			}
-			return copy;
-		}
-		if (res) {
-			return {
-				shape: res.portraitShape,
-				array: res.array,
-				span: [...res.span],
-				...(res.traitsSpan ? { traitsSpan: [...res.traitsSpan] } : {}),
-				color: res.color,
-				stroke: res.stroke,
-				...(res.size !== undefined ? { size: res.size } : {}),
-				...(res.position ? { position: res.position } : {}),
-				...(res.image ? { image: structuredClone(res.image) } : {}),
-				...(res.ring ? { ring: structuredClone(res.ring) } : {}),
-			};
-		}
-		return {
-			shape: 'none',
-			array: 'none',
-			span: [0, 360],
-			color: 'primary',
-			stroke: '2px',
-		};
-	}
-
-	const frameImageUrl = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.image?.url || getView(traitSet.value)?.imageConfig?.url || '';
-		},
-		set: (val: string) => {
-			setFrameImage('url', val);
-		},
-	});
-
-	const frameImageAlignment = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.image?.alignment || getView(traitSet.value)?.imageConfig?.alignment || 'center';
-		},
-		set: (val: string) => {
-			setFrameImage('alignment', val);
-		},
-	});
-
-	const frameImageZoom = computed({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			const z = normalizeZoom(res?.image?.zoom ?? getView(traitSet.value)?.imageConfig?.zoom);
-			return typeof z === 'number' ? z : 1;
-		},
-		set: (val: number) => {
-			setFrameImage('zoom', Number(val));
-		},
-	});
-
-	function setFrameImage(key: 'url' | 'alignment' | 'zoom', value: string | number | undefined) {
-		const s = props.traitSetID;
-		const ctk = ctkFor(s);
-		const frameObj = normalizedFrameBase();
-		if (key === 'url' && value && (!frameObj.shape || frameObj.shape === 'none')) {
-			frameObj.shape = 'circle';
-		}
-		frameObj.image ??= {};
-		if (value === '' || value === undefined) {
-			delete frameObj.image[key];
-			if (key === 'url' && ctk.imageConfig && typeof ctk.imageConfig === 'object') {
-				delete ctk.imageConfig.url;
-			}
-			if (Object.keys(frameObj.image).length === 0) {
-				delete frameObj.image;
-			}
-		} else {
-			(frameObj.image as Record<string, unknown>)[key] = value;
-		}
-		ctk.frame = frameObj;
-		updateCharacter(props.character);
-	}
-
-	function uploadPortraitImageProcess(event: Event) {
-		uploadError.value = '';
-		const input = event.target as HTMLInputElement | null;
-		const files = input?.files;
-		if (!files || !files.length) return;
-		characterCurioFunctions.processImageFile(files[0], 1280, 0.85).then(
-			(dataURL: string) => {
-				frameImageUrl.value = dataURL;
-				if (input) input.value = '';
-			},
-			(error: unknown) => {
-				uploadError.value = error instanceof Error ? error.message : 'Could not process that image.';
-				if (input) input.value = '';
-			},
-		);
 	}
 
 	// Generic Out indicator (default off).
@@ -1626,288 +941,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEdit
 		},
 	});
 
-	const frameColorTokens = computed(() => getCharacterColorTokens(props.character, 'frame'));
-
-	// ---------- Section Border (None | Block | Line) ----------
-	const borderOptions = [
-		{ id: 'none', label: 'None' },
-		{ id: 'block', label: 'Block' },
-		{ id: 'line', label: 'Line' },
-	];
-
-	const resolvedBorder = computed(() => resolveBorder(traitSet.value));
-
-	const borderShape = computed<BorderShape>({
-		get: () => resolvedBorder.value.shape,
-		set: (shape: BorderShape) => setBorderShape(shape),
-	});
-
-	function normalizedBorderObj(defaultShape: BorderShape): MutableBorderConfig {
-		const cur = resolveBorder(props.character.traitSets[props.traitSetID]);
-		const obj: MutableBorderConfig = {
-			shape: defaultShape,
-			color: cur.color || (defaultShape === 'line' ? 'strong' : 'primary'),
-			stroke: cur.stroke || '2px',
-		};
-		if (defaultShape === 'block') {
-			obj.corner = cur.corner === 'cut' ? 'cut' : cur.corner === 0 ? 0 : 8;
-		}
-		if (cur.dash) {
-			obj.dash = cur.dash;
-		}
-		return obj;
-	}
-
-	function setBorderShape(shape: BorderShape) {
-		const ctk = ctkFor(props.traitSetID);
-		ctk.border = shape === 'none' ? 'none' : normalizedBorderObj(shape);
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const borderWidth = computed({
-		get: () => resolvedBorder.value.stroke || '2px',
-		set: (stroke: string) => setBorderProp('stroke', stroke && stroke.trim() ? stroke.trim() : '2px'),
-	});
-
-	const borderColor = computed({
-		get: () => resolvedBorder.value.color || 'primary',
-		set: (color: string) => setBorderProp('color', color || 'primary'),
-	});
-
-	const borderCorner = computed<'square' | 'round' | 'cut'>({
-		get: () => {
-			const c = resolvedBorder.value.corner;
-			if (c === 'cut') return 'cut';
-			if (c === 0) return 'square';
-			return 'round';
-		},
-		set: (val: 'square' | 'round' | 'cut') => {
-			const mapped = val === 'cut' ? 'cut' : val === 'square' ? 0 : 8;
-			setBorderProp('corner', mapped);
-		},
-	});
-
-	const borderDash = computed({
-		get: () => resolvedBorder.value.dash || '',
-		set: (dash: string) => setBorderProp('dash', dash.trim() || undefined),
-	});
-
-	function setBorderProp(key: string, value: unknown) {
-		const ctk = ctkFor(props.traitSetID);
-		const shape = resolvedBorder.value.shape === 'none' ? 'block' : resolvedBorder.value.shape;
-		const obj = normalizedBorderObj(shape);
-		if (value === undefined || value === '') {
-			delete obj[key];
-		} else {
-			obj[key] = value;
-		}
-		ctk.border = obj;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const frameTint = computed<string>({
-		get: () => {
-			const t = getView(traitSet.value)?.tint;
-			return typeof t === 'string' ? t : '';
-		},
-		set: (tint: string) => {
-			setFrameTint(tint);
-		},
-	});
-
-	function setFrameTint(tint: string) {
-		const ctk = ctkFor(props.traitSetID);
-		const trimmed = String(tint || '').trim();
-		if (trimmed) {
-			ctk.tint = trimmed;
-		} else {
-			delete ctk.tint;
-		}
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	// ---------- Portrait & Portrait Frame + Trait Array ----------
-	const portraitFrameOptions = [
-		{ id: 'none', label: 'None' },
-		{ id: 'circle', label: 'Circle' },
-		{ id: 'square', label: 'Square' },
-		{ id: 'round', label: 'Round' },
-		{ id: 'cut', label: 'Cut' },
-	];
-
-	const traitArrayOptions = [
-		{ id: 'none', label: 'None' },
-		{ id: 'ring', label: 'Ring' },
-		{ id: 'arc', label: 'Arc' },
-	];
-
-	const portraitFrameShape = computed<PortraitFrameShape>({
-		get: () => resolveFrame(traitSet.value)?.portraitShape ?? 'none',
-		set: (shape: PortraitFrameShape) => {
-			const ctk = ctkFor(props.traitSetID);
-			const f = normalizedFrameBase();
-			f.shape = shape;
-			if (!f.array) f.array = 'none';
-			ctk.frame = f;
-			updateCharacter(structuredClone(toRaw(props.character)));
-		},
-	});
-
-	const traitArrayMode = computed<TraitArrayMode>({
-		get: () => resolveFrame(traitSet.value)?.array ?? 'none',
-		set: (mode: TraitArrayMode) => {
-			const ctk = ctkFor(props.traitSetID);
-			const f = normalizedFrameBase();
-			f.array = mode;
-			if (mode === 'ring') {
-				if (!f.shape || (f.shape as string) === 'block' || (f.shape as string) === 'line') {
-					f.shape = 'circle';
-				}
-				f.span = [0, 360];
-				delete f.traitsSpan;
-			} else if (mode === 'arc') {
-				if (!f.shape || (f.shape as string) === 'block' || (f.shape as string) === 'line') {
-					f.shape = 'circle';
-				}
-				if (!Array.isArray(f.traitsSpan) || f.traitsSpan.length < 2) {
-					f.traitsSpan = [45, 135];
-				}
-				f.ring ??= {};
-				let a = Math.round((f.traitsSpan[0] + f.traitsSpan[1]) / 2 - 180);
-				while (a > 180) a -= 360;
-				while (a < -180) a += 360;
-				f.ring.arcAngle = a;
-				f.ring.arcSpread = Math.max(10, Math.min(100, Math.round(((f.traitsSpan[1] - f.traitsSpan[0]) / 360) * 100)));
-				f.span ??= [0, 360];
-			} else {
-				if (f.shape === 'ring' || f.shape === 'arc') {
-					f.shape = 'circle';
-				}
-			}
-			ctk.frame = f;
-			updateCharacter(structuredClone(toRaw(props.character)));
-		},
-	});
-
-	const arcStrokeMode = computed<'full' | 'arc'>({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res && Math.abs((res.span?.[1] ?? 360) - (res.span?.[0] ?? 0)) < 360 ? 'arc' : 'full';
-		},
-		set: (val: 'full' | 'arc') => {
-			const ctk = ctkFor(props.traitSetID);
-			const f = normalizedFrameBase();
-			if (val === 'arc') {
-				const tSpan = Array.isArray(f.traitsSpan) && f.traitsSpan.length >= 2 ? f.traitsSpan : [45, 135];
-				f.span = [Number(tSpan[0]) || 45, Number(tSpan[1]) || 135];
-			} else {
-				f.span = [0, 360];
-			}
-			ctk.frame = f;
-			updateCharacter(structuredClone(toRaw(props.character)));
-		},
-	});
-
-	const frameWidth = computed({
-		get: () => resolveFrame(traitSet.value)?.stroke ?? '2px',
-		set: (stroke: string) => setFrameWidth(stroke),
-	});
-
-	function setFrameWidth(stroke: string) {
-		const ctk = ctkFor(props.traitSetID);
-		const f = normalizedFrameBase();
-		if (stroke && stroke.trim() && stroke.trim() !== '2px') {
-			f.stroke = stroke.trim();
-		} else {
-			delete f.stroke;
-		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const frameColor = computed({
-		get: () => resolveFrame(traitSet.value)?.color ?? 'primary',
-		set: (color: string) => setFrameColor(color),
-	});
-
-	function setFrameColor(color: string) {
-		const ctk = ctkFor(props.traitSetID);
-		const f = normalizedFrameBase();
-		if (color && color !== 'primary') {
-			f.color = color;
-		} else {
-			delete f.color;
-		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const frameDash = computed({
-		get: () => resolveFrame(traitSet.value)?.dash ?? '',
-		set: (dash: string) => setFrameDash(dash),
-	});
-
-	function setFrameDash(dash: string) {
-		const ctk = ctkFor(props.traitSetID);
-		const f = normalizedFrameBase();
-		if (dash && dash.trim()) {
-			f.dash = dash.trim();
-		} else {
-			delete f.dash;
-		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const frameSize = computed<number | null>({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return typeof res?.size === 'number' ? res.size : null;
-		},
-		set: (size: number | null) => setFrameSize(size),
-	});
-
-	function setFrameSize(size: number | null) {
-		const ctk = ctkFor(props.traitSetID);
-		const f = normalizedFrameBase();
-		const normalized = size === null ? undefined : normalizeRingSize(size);
-		if (normalized !== undefined) {
-			f.size = normalized;
-		} else {
-			delete f.size;
-		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const framePosition = computed<'left' | 'center' | 'right'>({
-		get: () => {
-			const res = resolveFrame(traitSet.value);
-			return res?.position === 'center' || res?.position === 'right' ? res.position : 'left';
-		},
-		set: (pos: 'left' | 'center' | 'right') => setFramePosition(pos),
-	});
-
-	function setFramePosition(pos: 'left' | 'center' | 'right') {
-		const ctk = ctkFor(props.traitSetID);
-		const f = normalizedFrameBase();
-		if (pos === 'center' || pos === 'right') {
-			f.position = pos;
-		} else {
-			delete f.position;
-		}
-		ctk.frame = f;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	const hasPortraitOrArray = computed(
-		() =>
-			portraitFrameShape.value !== 'none' ||
-			Boolean(frameImageUrl.value) ||
-			traitArrayMode.value !== 'none' ||
-			styleBody.value === 'portrait-ring',
-	);
-
 	const pipsFilled = computed({
 		get: () => {
 			const rating = getRating(traitSet.value);
@@ -2073,40 +1106,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEdit
 		}
 	}
 
-	function setRingConfig<K extends keyof RingConfig>(key: K, value: RingConfig[K]) {
-		const ctk = ctkFor(props.traitSetID);
-		const frameObj = normalizedFrameBase();
-		const existingRing = frameObj.ring;
-		frameObj.ring ??= {
-			arcAngle: existingRing?.arcAngle ?? -90,
-			arcSpread: existingRing?.arcSpread ?? 100,
-			arcDistance: existingRing?.arcDistance ?? 0,
-			scaleAngle: existingRing?.scaleAngle ?? 0,
-			scaleDistance: existingRing?.scaleDistance ?? 0,
-			scaleDieX: existingRing?.scaleDieX ?? 0,
-			scaleDieY: existingRing?.scaleDieY ?? 0,
-		};
-		frameObj.ring[key] = value;
-		ctk.frame = frameObj;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
-	function resetRingPlacement() {
-		const ctk = ctkFor(props.traitSetID);
-		const frameObj = normalizedFrameBase();
-		frameObj.ring = {
-			arcAngle: -90,
-			arcSpread: 100,
-			arcDistance: 0,
-			scaleAngle: 0,
-			scaleDistance: 0,
-			scaleDieX: 0,
-			scaleDieY: 0,
-		};
-		ctk.frame = frameObj;
-		updateCharacter(structuredClone(toRaw(props.character)));
-	}
-
 	function setCustomProperty(key: string, value: unknown) {
 		let s = props.traitSetID;
 		ctkFor(s)[key] = value;
@@ -2155,47 +1154,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: TraitSetEdit
 		}
 		return body !== 'pips' && body !== 'name';
 	});
-
-	function setImageConfig<K extends keyof ImageConfig>(key: K, value: ImageConfig[K]) {
-		let s = props.traitSetID;
-		const ctk = ctkFor(s);
-		ctk.imageConfig ??= {};
-		if (value === undefined) {
-			delete ctk.imageConfig[key];
-		} else {
-			ctk.imageConfig[key] = value;
-		}
-		updateCharacter(props.character);
-	}
-
-	function uploadImageStart() {
-		if (imageFileInput.value) {
-			imageFileInput.value.click();
-		}
-	}
-
-	function uploadImageProcess(event: Event) {
-		uploadError.value = '';
-		const input = event.target as HTMLInputElement | null;
-		if (!input?.files || !input.files.length) {
-			imageURL.value = '';
-			return;
-		}
-		characterCurioFunctions.processImageFile(input.files[0], 1280, 0.85).then(
-			(dataURL: string) => {
-				imageURL.value = dataURL;
-				input.value = '';
-			},
-			(error: unknown) => {
-				uploadError.value = error instanceof Error ? error.message : 'Could not process that image.';
-				input.value = '';
-			},
-		);
-	}
-
-	function removeImage() {
-		imageURL.value = '';
-	}
 
 	function isRatingIncluded(size: number) {
 		return ratingLadder.value.includes(size);

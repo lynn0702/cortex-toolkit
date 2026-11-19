@@ -38,37 +38,26 @@ import {
 } from './model.ts';
 import { KNOWN_PARTS, isKnownPart, buildParts, partsGrid, partCellStyle, partsGridStyle } from './sheet-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
+import { useTraitSetPips } from './use-trait-set-pips.ts';
+import {
+	branchSubs,
+	getBranchGroups,
+	getBranchRole,
+	getBranchSide,
+	getFlankColumns,
+	getImageSetContainerStyle,
+	getImageSetGraphicStyle,
+	getSetRatingDie,
+	hasBranchFlank,
+	hasBranchSplit,
+	type BranchGroup,
+	type BranchSubEntry,
+	type RenderedTraitItem,
+} from './trait-set-layout.ts';
+
+export type { BranchGroup, BranchSubEntry, RenderedTraitItem };
 
 export type TraitSetApi = ReturnType<typeof useTraitSet>;
-
-export interface RenderedTraitItem {
-	trait: Trait;
-	originalIndex: number | null;
-	isPlaceholder: boolean;
-}
-
-export type BranchSubEntry =
-	| {
-			kind: 'sub';
-			sub: Trait;
-			u: number;
-			traitIndex?: number | null;
-			traitItem?: RenderedTraitItem | null;
-			_lid?: string;
-	  }
-	| {
-			kind: 'flat';
-			item: RenderedTraitItem;
-			traitIndex?: number | null;
-			traitItem?: RenderedTraitItem | null;
-			_lid?: string;
-	  };
-
-export interface BranchGroup {
-	traitItem: RenderedTraitItem | null;
-	subs: BranchSubEntry[];
-	split?: boolean;
-}
 
 export interface StagedDiePayload {
 	size: number;
@@ -1624,424 +1613,44 @@ export function useTraitSet(props: TraitSetProps, emit: TraitSetEmit) {
 		updateCharacter(props.character);
 	}
 
-	function getPipConfig(traitSetArg: TraitSet) {
-		const ctk = getView(traitSetArg);
-		const p = ctk?.pips && typeof ctk.pips === 'object' ? ctk.pips : undefined;
-		const perRow = p?.perRow ?? 5;
-		const connected = p?.connected !== false;
-		return {
-			perRow: Math.max(1, perRow),
-			connected,
-			labels: p?.labels === true,
-		};
-	}
-
-	function getPipRowCount(traitSetArg: TraitSet) {
-		const cfg = getPipConfig(traitSetArg);
-		return Math.ceil(getPipTrack(traitSetArg).count / cfg.perRow);
-	}
-
-	function getPipRowCols(traitSetArg: TraitSet, rowIdx: number) {
-		const cfg = getPipConfig(traitSetArg);
-		const remaining = getPipTrack(traitSetArg).count - (rowIdx - 1) * cfg.perRow;
-		return Math.min(cfg.perRow, Math.max(0, remaining));
-	}
-
-	function getPipIndex(traitSetArg: TraitSet, rowIdx: number, colIdx: number) {
-		const cfg = getPipConfig(traitSetArg);
-		return (rowIdx - 1) * cfg.perRow + (colIdx - 1);
-	}
-
-	// Pure-track state lives on the set node's own Pip rating: value is
-	// the list of bubbles, range[0] the bubble count.
-	function getPipTrack(traitSetArg: TraitSet): { count: number; filled: number } {
-		const rating = getRating(traitSetArg);
-		let count = 5;
-		let filled = 0;
-		if (rating && rating.type === 'Pip') {
-			if (Array.isArray(rating.range) && typeof rating.range[0] === 'number' && rating.range[0] > 0) {
-				count = Math.floor(rating.range[0]);
-			} else if (Array.isArray(rating.value) && rating.value.length > 0) {
-				count = rating.value.length;
-			}
-			if (Array.isArray(rating.value)) {
-				filled = rating.value.filter((v) => v === true).length;
-			}
-		}
-		return { count, filled };
-	}
-
-	function setPipTrack(traitSetIndex: number, count: number, filled: number) {
-		const ts = traitSets.value[traitSetIndex];
-		if (!ts) return;
-		const bubbles: boolean[] = [];
-		for (let i = 0; i < count; i++) bubbles.push(i < filled);
-		ts.rating = { type: 'Pip', value: bubbles };
-		updateCharacter(props.character);
-	}
-
-	function isPipFilled(traitSetArg: TraitSet, pipIdx: number) {
-		if (props.printBlank) return false;
-		return pipIdx < getPipTrack(traitSetArg).filled;
-	}
-
-	function handlePipClick(traitSetIndex: number, pipIdx: number) {
-		if (props.submode === 'print') return;
-		const ts = traitSets.value[traitSetIndex];
-		if (!ts) return;
-		const track = getPipTrack(ts);
-		const curFilled = track.filled;
-		const next = curFilled === pipIdx + 1 ? pipIdx : pipIdx + 1;
-		setPipTrack(traitSetIndex, track.count, next);
-	}
-
-	// Pip-with-label rows (the unified pips style): row i pairs the count
-	// grid with the i-th trait, if any. Named traits render beside their
-	// bubble; blank rows render bare. Filled prefers the trait's own Pip
-	// rating, then its checked flag, then the filled count.
-	function isPipLabels(traitSetArg: TraitSet) {
-		return getPipConfig(traitSetArg).labels === true;
-	}
-
-	function pipRowFilled(t: unknown, index: number, filledCount: number): boolean {
-		if (t && typeof t === 'object') {
-			const rating = resolveTraitRating(t);
-			if (rating && rating.type === 'Pip' && Array.isArray(rating.value) && rating.value.length) {
-				return rating.value[0] === true;
-			}
-		}
-		return !props.printBlank && index < filledCount;
-	}
-
-	function pipRows(traitSetArg: TraitSet) {
-		const track = getPipTrack(traitSetArg);
-		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
-		const n = Math.max(track.count, traits.length);
-		const rows: { index: number; trait: Trait | null; filled: boolean; name: string }[] = [];
-		for (let i = 0; i < n; i++) {
-			const t = traits[i];
-			const named = t && typeof t === 'object' && typeof t.name === 'string' && t.name.length ? t : null;
-			rows.push({
-				index: i,
-				trait: named,
-				filled: pipRowFilled(t, i, track.filled),
-				name: named ? named.name || '' : '',
-			});
-		}
-		return rows;
-	}
-
-	function resolvePipBubbleCount(
-		trait: Trait | undefined,
-		r: { value: Array<number | boolean>; range?: number[] },
-	): number {
-		if (Array.isArray(r.range) && r.range[0]) return r.range[0];
-		const setR = getRating(traitSet.value);
-		const inheritedSetCount =
-			setR?.type === 'Pip' ? (Array.isArray(setR.range) && setR.range[0] ? setR.range[0] : setR.value.length) : 0;
-		if (getRating(trait)?.type === 'Pip') {
-			return r.value.length || inheritedSetCount || 5;
-		}
-		return inheritedSetCount || r.value.length || 1;
-	}
-
-	function getTraitPipBubbles(trait: Trait | undefined): boolean[] {
-		const r = resolveTraitRating(trait);
-		if (r && r.type === 'Pip' && Array.isArray(r.value)) {
-			const count = resolvePipBubbleCount(trait, r);
-			const bubbles: boolean[] = [];
-			for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
-			return bubbles;
-		}
-		return [];
-	}
-
-	function toggleTraitPipBubble(trait: Trait | undefined, pipIndex: number) {
-		if (props.submode === 'print' || !trait) return;
-		const r = resolveTraitRating(trait);
-		if (!r || r.type !== 'Pip') return;
-		const count = resolvePipBubbleCount(trait, r);
-		const bubbles: boolean[] = [];
-		for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
-		bubbles[pipIndex] = !bubbles[pipIndex];
-		const hasExplicitType = getRating(trait)?.type === 'Pip';
-		trait.rating = {
-			...(hasExplicitType ? { type: 'Pip' as const } : {}),
-			value: bubbles,
-			...(Array.isArray(r.range) && r.range.length ? { range: [...r.range] } : {}),
-		} as Trait['rating'];
-		updateCharacter(props.character);
-	}
-
-	function getDynamicChildParts(traitSetArg: TraitSet): string[] {
-		const parts = getParts(traitSetArg) || {};
-		return Object.keys(parts).filter((k) => k.startsWith('child:') || k.startsWith('child_'));
-	}
-
-	function parseChildPartKey(partKey: string): { noun: string; kind: 'label' | 'rating' } {
-		if (partKey.startsWith('child:')) {
-			const segs = partKey.slice(6).split(':');
-			return { noun: segs[0] || 'Child', kind: segs[1] === 'rating' ? 'rating' : 'label' };
-		}
-		if (partKey.startsWith('child_')) {
-			const rest = partKey.slice(6);
-			if (rest.endsWith('_rating')) {
-				return { noun: rest.slice(0, -7), kind: 'rating' };
-			}
-			if (rest.endsWith('_text') || rest.endsWith('_label')) {
-				return { noun: rest.slice(0, -5), kind: 'label' };
-			}
-			return { noun: rest, kind: 'label' };
-		}
-		return { noun: partKey, kind: 'label' };
-	}
-
-	function pipChildNouns(traitSetArg?: TraitSet): Set<string> {
-		const nouns = new Set<string>(['pip']);
-		const vLabel = getView(traitSetArg)?.labels?.pip;
-		if (typeof vLabel === 'string' && vLabel.trim()) nouns.add(vLabel.trim().toLowerCase());
-		const checkList = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
-		for (const t of checkList) {
-			const child = getPipChild(t);
-			if (!child) continue;
-			if (typeof child.noun === 'string' && child.noun.trim()) nouns.add(child.noun.trim().toLowerCase());
-			if (typeof child.name === 'string' && child.name.trim()) nouns.add(child.name.trim().toLowerCase());
-		}
-		return nouns;
-	}
-
-	function isPipChildPart(partKey: string, traitSetArg?: TraitSet): boolean {
-		const n = parseChildPartKey(partKey).noun.toLowerCase();
-		return pipChildNouns(traitSetArg || traitSet.value).has(n);
-	}
-
-	function hasChildPartCell(traitSetArg: TraitSet, noun: string, kind?: 'label' | 'rating'): boolean {
-		const grid = partsGridFor(traitSetArg);
-		if (!grid?.cells) return false;
-		const n = noun.toLowerCase();
-		const pipNouns = n === 'pip' ? pipChildNouns(traitSetArg) : null;
-		return Object.keys(grid.cells).some((k) => {
-			const parsed = parseChildPartKey(k);
-			const cellNoun = parsed.noun.toLowerCase();
-			if (cellNoun !== n && !(pipNouns && pipNouns.has(cellNoun))) return false;
-			if (kind && parsed.kind !== kind) return false;
-			return true;
-		});
-	}
-
-	function getChildTraitByNoun(trait: Trait | undefined, noun: string): Trait | undefined {
-		if (!trait || !Array.isArray(trait.traits)) return undefined;
-		const n = noun.trim().toLowerCase();
-		const matches = trait.traits.filter((t: Trait) => {
-			if (!t || typeof t !== 'object') return false;
-			const tNoun = typeof t.noun === 'string' ? t.noun.trim().toLowerCase() : '';
-			const tName = typeof t.name === 'string' ? t.name.trim().toLowerCase() : '';
-			return tNoun === n || tName === n;
-		});
-		if (matches.length) {
-			return matches.find((e: Trait) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll) || matches[0];
-		}
-		const blocks = characterCurioFunctions.blockChildren(trait, traitSet.value);
-		return blocks.find((e) => resolvePpDelta(e) <= 0 && !getView(e)?.altRoll);
-	}
-
-	function blankPipTrait(): Trait {
-		return { name: '', description: '', traits: [], tags: [], custom: {} };
-	}
-
-	function ensurePipTrait(traitSetIndex: number, itemIndex: number) {
-		const ts = traitSets.value[traitSetIndex];
-		if (!ts) return null;
-		if (!ts.traits) ts.traits = [];
-		while (ts.traits.length <= itemIndex) {
-			ts.traits.push(blankPipTrait());
-		}
-		return ts.traits[itemIndex];
-	}
-
-	function togglePipRow(traitSetIndex: number, itemIndex: number) {
-		if (props.submode === 'print') return;
-		const ts = traitSets.value[traitSetIndex];
-		if (!ts) return;
-		if (!isPipLabels(ts)) return handlePipClick(traitSetIndex, itemIndex);
-		const trait = ensurePipTrait(traitSetIndex, itemIndex);
-		if (!trait) return;
-		const next = !pipRowFilled(trait, itemIndex, 0);
-		trait.rating = { type: 'Pip', value: [next] };
-		updateCharacter(props.character);
-	}
-
-	function openPipRow(traitSetIndex: number, itemIndex: number) {
-		if (props.submode === 'print') return;
-		ensurePipTrait(traitSetIndex, itemIndex);
-		updateCharacter(props.character);
-		selectElement(['trait', traitSetIndex, itemIndex]);
-	}
-
-	// Inline rename for labeled rows: the name is a write-in line on the
-	// row itself. Position (and the Pip rating) is untouched.
-	function setPipRowName(traitSetIndex: number, itemIndex: number, name: string) {
-		if (props.submode === 'print') return;
-		const trait = ensurePipTrait(traitSetIndex, itemIndex);
-		if (!trait) return;
-		const clean = typeof name === 'string' ? name.trim() : '';
-		if (trait.name === clean) return;
-		trait.name = clean;
-		updateCharacter(props.character);
-	}
-
-	function addPipRow(traitSetIndex: number) {
-		const ts = traitSets.value[traitSetIndex];
-		if (!ts) return;
-		if (!ts.traits) ts.traits = [];
-		ts.traits.push(blankPipTrait());
-		const track = getPipTrack(ts);
-		if (track.count < ts.traits.length) {
-			setPipTrack(traitSetIndex, ts.traits.length, track.filled);
-			const view = ensureView(ts);
-			view.reservedSlots = ts.traits.length;
-		}
-		updateCharacter(props.character);
-	}
-
-	function getImageSetContainerStyle(traitSetArg: TraitSet) {
-		const view = getView(traitSetArg);
-		const cfg = view?.imageConfig;
-		const h = cfg?.height;
-		const w = cfg?.width;
-		const widthStyle = w && w !== '100%' ? { width: w, marginInline: 'auto' } : {};
-		const layout = cfg?.layout || 'overlay';
-		const parts = view?.parts;
-		const hasParts = Boolean(
-			parts && typeof parts === 'object' && !Array.isArray(parts) && Object.keys(parts).length > 0,
-		);
-		const hasTraitContent = Boolean(traitSetArg?.traits?.length) || Number(view?.reservedSlots) > 0 || hasParts;
-		if (h && h !== 'auto') {
-			const hVal = typeof h === 'number' ? `${h}px` : h;
-			if (layout === 'overlay' && hasTraitContent) {
-				return { minHeight: hVal, height: 'auto', ...widthStyle };
-			}
-			return { height: hVal, ...widthStyle };
-		}
-		return { minHeight: '8.75rem', height: 'auto', ...widthStyle };
-	}
-
-	function getImageSetGraphicStyle(traitSetArg: TraitSet) {
-		const cfg = getView(traitSetArg)?.imageConfig;
-		const rawUrl = cfg?.url || '';
-		const url = characterCurioFunctions.safeImageUrl(rawUrl);
-		if (!url) return {};
-		const rawZoom = normalizeZoom(cfg?.zoom) ?? 1;
-		const bgSize = rawZoom !== 1 ? `${Math.round(rawZoom * 100)}%` : 'cover';
-		const style: Record<string, string> = {
-			backgroundImage: `url("${url}")`,
-			backgroundSize: bgSize,
-			backgroundRepeat: 'no-repeat',
-		};
-		const align = cfg?.alignment;
-		if (typeof align === 'string' && align.includes('%') && /^[0-9.%\s-]+$/.test(align)) {
-			style.backgroundPosition = align.trim();
-		}
-		return style;
-	}
-
-	function getBranchGroups(traitSetArg: TraitSet, items: RenderedTraitItem[]): BranchGroup[] {
-		const list = items || [];
-		const parents = list.filter((it) => getBranchRole(it.trait) !== 'specialty');
-		const flats = list.filter((it) => !it.isPlaceholder && getBranchRole(it.trait) === 'specialty');
-		const parentIdx = new Set(
-			parents
-				.filter((p): p is RenderedTraitItem & { originalIndex: number } => typeof p.originalIndex === 'number')
-				.map((p) => p.originalIndex),
-		);
-		const groups: BranchGroup[] = parents.map((traitItem) => {
-			const tIdx = traitItem.originalIndex;
-			const nested: BranchSubEntry[] = (traitItem.trait?.traits || [])
-				.filter((sub) => resolveRating(sub, [traitItem.trait, traitSetArg])?.type !== 'Pip')
-				.map((sub, u) => ({ kind: 'sub' as const, sub, u }));
-			const linked: BranchSubEntry[] = flats
-				.filter((f) => getView(f.trait)?.linkTo === tIdx)
-				.map((f) => ({ kind: 'flat' as const, item: f }));
-			return { traitItem, subs: [...nested, ...linked] };
-		});
-		const orphans: BranchSubEntry[] = flats
-			.filter((f) => {
-				const lt = getView(f.trait)?.linkTo;
-				return !(typeof lt === 'number' && parentIdx.has(lt));
-			})
-			.map((f) => ({ kind: 'flat' as const, item: f }));
-		if (orphans.length) {
-			groups.push({ traitItem: null, subs: orphans });
-		}
-		const split = groups.some((g) => {
-			const hasLeftSub = (g.subs || []).some((e) => {
-				const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
-				return t ? getBranchSide(t) === 'left' : false;
-			});
-			if (hasLeftSub) return true;
-			const slots = (g.traitItem?.trait as Record<string, unknown> | undefined)?.slots;
-			if (slots && typeof slots === 'object' && !Array.isArray(slots)) {
-				return Object.values(slots as Record<string, unknown>).some((sl) => getBranchSide(sl as Trait) === 'left');
-			}
-			return false;
-		});
-		groups.forEach((g) => {
-			g.split = split;
-		});
-		return groups;
-	}
-
-	function hasBranchSplit(traitSetArg: TraitSet, items: RenderedTraitItem[]) {
-		if (getView(traitSetArg)?.style?.body !== 'subtrait-columns') return false;
-		return getBranchGroups(traitSetArg, items).some((g) => g.split);
-	}
-
-	// Flank layout: a subtrait-columns set with traitColumns 2 spreads
-	// parent traits across outer columns with subtraits down the middle.
-	// Explicit left-side subtraits (split) win over it.
-	function hasBranchFlank(traitSetArg: TraitSet, items: RenderedTraitItem[]) {
-		if (getView(traitSetArg)?.style?.body !== 'subtrait-columns') return false;
-		if (Number(getView(traitSetArg)?.traitColumns) !== 2) return false;
-		return !hasBranchSplit(traitSetArg, items);
-	}
-
-	function getFlankColumns(traitSetArg: TraitSet, items: RenderedTraitItem[]) {
-		const groups = getBranchGroups(traitSetArg, items);
-		const parents = groups.filter((g) => g.traitItem);
-		const mid = Math.ceil(parents.length / 2);
-		const center: BranchSubEntry[] = [];
-		groups.forEach((g) => {
-			const tIdx = g.traitItem ? g.traitItem.originalIndex : null;
-			(g.subs || []).forEach((e) => {
-				center.push({ ...e, traitIndex: tIdx, traitItem: g.traitItem });
-			});
-		});
-		return { left: parents.slice(0, mid), right: parents.slice(mid), center: center };
-	}
-
-	function getBranchRole(trait: Trait) {
-		return getView(trait)?.branchRole === 'specialty' ? 'specialty' : 'skill';
-	}
-
-	// The set-level die is the set node's own Rating; traits without a
-	// rating of their own fall through to it.
-	function getSetRatingDie(traitSetArg: TraitSet) {
-		const dice = ratingDice(getRating(traitSetArg));
-		if (dice.length) return dice[0];
-		return null;
-	}
-
-	function getBranchSide(trait: Trait | null | undefined) {
-		return trait && getView(trait)?.branchSide === 'left' ? 'left' : 'right';
-	}
-
-	function branchSubs(subs: BranchSubEntry[], side: string) {
-		return (subs || []).filter((e) => {
-			const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
-			const sd = getBranchSide(t);
-			return side === 'left' ? sd === 'left' : sd !== 'left';
-		});
-	}
+	const {
+		getPipConfig,
+		getPipRowCount,
+		getPipRowCols,
+		getPipIndex,
+		getPipTrack,
+		setPipTrack,
+		isPipFilled,
+		handlePipClick,
+		isPipLabels,
+		pipRowFilled,
+		pipRows,
+		getTraitPipBubbles,
+		toggleTraitPipBubble,
+		getDynamicChildParts,
+		parseChildPartKey,
+		pipChildNouns,
+		isPipChildPart,
+		hasChildPartCell,
+		getChildTraitByNoun,
+		ensurePipTrait,
+		togglePipRow,
+		openPipRow,
+		setPipRowName,
+		addPipRow,
+	} = useTraitSetPips({
+		character,
+		traitSet,
+		traitSets,
+		submode,
+		printBlank,
+		resolveTraitRating,
+		getParts,
+		partsGridFor,
+		getPipChild,
+		selectElement,
+		updateCharacter,
+	});
 
 	function handleBranchFlatClick(sArg: number, t: number | null | undefined, trait: Trait) {
 		if (props.submode === 'play') {
