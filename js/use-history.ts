@@ -1,13 +1,16 @@
 import { computed, nextTick, ref } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
+import type { Character, Trait } from './model.ts';
+
+export type EditingPath = Array<string | number>;
 
 export interface HistoryDeps {
 	mode: Ref<string>;
-	character: ComputedRef<any>;
-	characters: Ref<any[]>;
+	character: ComputedRef<Character | null>;
+	characters: Ref<Character[]>;
 	characterIndex: ComputedRef<number>;
-	restoreCharacter?: (restored: any) => void;
-	editing: Ref<any>;
+	restoreCharacter?: (restored: Character) => void;
+	editing: Ref<EditingPath>;
 	isNavigatingHistory: Ref<boolean>;
 	history: Ref<string[]>;
 	historyIndex: Ref<number>;
@@ -91,9 +94,10 @@ export function useHistory(deps: HistoryDeps) {
 		}
 	}
 
-	function validateEditing(characterData: any) {
+	function validateEditing(characterData: Character | null | undefined) {
 		if (!editing.value || !editing.value.length || !characterData) return;
-		const [type, s, ...rest] = editing.value;
+		const [type, rawSetIdx, ...rest] = editing.value;
+		const s = Number(rawSetIdx);
 		if (type === 'traitSet' && !characterData.traitSets?.[s]) {
 			editing.value = [];
 		} else if (type === 'trait' || type === 'subtrait') {
@@ -103,7 +107,7 @@ export function useHistory(deps: HistoryDeps) {
 				return;
 			}
 			const indices = type === 'subtrait' && rest.length === 1 ? [0, Number(rest[0])] : rest.map(Number);
-			let list: any[] | undefined = set.traits;
+			let list: Trait[] | undefined = set.traits;
 			for (const idx of indices) {
 				if (!Array.isArray(list) || !list[idx]) {
 					editing.value = [];

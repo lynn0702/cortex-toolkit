@@ -6,12 +6,26 @@ function discoverSelfHostedFonts(): string[] {
 	}
 	// Node test runner fallback (reads css/fonts.css directly when not bundled by Vite)
 	try {
-		const proc = (globalThis as any).process;
+		const proc = (
+			globalThis as {
+				process?: {
+					getBuiltinModule?: (id: string) => unknown;
+				};
+			}
+		).process;
 		const getBuiltin = proc && typeof proc.getBuiltinModule === 'function' ? proc.getBuiltinModule : undefined;
 		if (typeof getBuiltin === 'function') {
-			const fs = getBuiltin('node:fs');
-			const path = getBuiltin('node:path');
-			const url = getBuiltin('node:url');
+			const fs = getBuiltin('node:fs') as {
+				existsSync(p: string): boolean;
+				readFileSync(p: string, enc: string): string;
+			};
+			const path = getBuiltin('node:path') as {
+				dirname(p: string): string;
+				resolve(...parts: string[]): string;
+			};
+			const url = getBuiltin('node:url') as {
+				fileURLToPath(u: string): string;
+			};
 			const dir = path.dirname(url.fileURLToPath(import.meta.url));
 			const cssPath = path.resolve(dir, '..', 'css', 'fonts.css');
 			if (fs.existsSync(cssPath)) {

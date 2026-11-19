@@ -82,7 +82,15 @@ export function normalizeRingSize(value: unknown): number | undefined {
 	return Math.min(520, Math.max(80, Math.round(value)));
 }
 
-function parseFrameStrokeAndColor(raw: any): { color: FrameColor; stroke: string; dash?: string } {
+function asRecord(value: unknown): Record<string, unknown> | null {
+	return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function parseFrameStrokeAndColor(raw: Record<string, unknown> | null | undefined): {
+	color: FrameColor;
+	stroke: string;
+	dash?: string;
+} {
 	let color: FrameColor = 'primary';
 	let stroke = '2px';
 	let dash = typeof raw?.dash === 'string' && raw.dash.trim() ? raw.dash.trim() : undefined;
@@ -124,17 +132,18 @@ function parseCorner(rawCorner: unknown, fallback = 8): number | 'cut' {
  * Preserves classic card borders for Library sets without explicit `view.border`
  * or portrait/radial frame declarations.
  */
-export function resolveBorder(traitSetOrView: any): BorderConfig {
+export function resolveBorder(traitSetOrView: unknown): BorderConfig {
 	const fallbackClassic: BorderConfig = { shape: 'block', explicit: false, stroke: '2px', color: 'strong', corner: 0 };
-	if (!traitSetOrView || typeof traitSetOrView !== 'object') return fallbackClassic;
-	const isName = traitSetOrView.id === 'name';
-	const view = traitSetOrView.view !== undefined ? getView(traitSetOrView) : traitSetOrView;
-	if (!view || typeof view !== 'object') {
+	const target = asRecord(traitSetOrView);
+	if (!target) return fallbackClassic;
+	const isName = target.id === 'name';
+	const view = asRecord(target.view !== undefined ? getView(target) : target);
+	if (!view) {
 		return isName ? { shape: 'none', explicit: false, stroke: '2px', color: 'primary', corner: 8 } : fallbackClassic;
 	}
 
 	const viewTint = typeof view.tint === 'string' && view.tint.trim() ? view.tint.trim() : undefined;
-	const rawBorder = (view as any).border;
+	const rawBorder = view.border;
 	if (typeof rawBorder === 'string' && rawBorder.trim()) {
 		const shape = rawBorder.trim() as BorderShape;
 		if (shape === 'none' || shape === 'block' || shape === 'line') {
@@ -148,29 +157,33 @@ export function resolveBorder(traitSetOrView: any): BorderConfig {
 			};
 		}
 	}
-	if (rawBorder && typeof rawBorder === 'object' && !Array.isArray(rawBorder)) {
+	const rawBorderObj = asRecord(rawBorder);
+	if (rawBorderObj) {
 		const shape: BorderShape =
-			rawBorder.shape === 'none' || rawBorder.shape === 'line' || rawBorder.shape === 'block'
-				? rawBorder.shape
+			rawBorderObj.shape === 'none' || rawBorderObj.shape === 'line' || rawBorderObj.shape === 'block'
+				? rawBorderObj.shape
 				: 'block';
-		const sc = parseFrameStrokeAndColor(rawBorder);
-		const tint = typeof rawBorder.tint === 'string' && rawBorder.tint.trim() ? rawBorder.tint.trim() : viewTint;
+		const sc = parseFrameStrokeAndColor(rawBorderObj);
+		const tint =
+			typeof rawBorderObj.tint === 'string' && rawBorderObj.tint.trim() ? rawBorderObj.tint.trim() : viewTint;
 		return {
 			shape,
 			explicit: true,
 			stroke: sc.stroke,
 			color: sc.color,
-			corner: parseCorner(rawBorder.corner, 8),
+			corner: parseCorner(rawBorderObj.corner, 8),
 			...(sc.dash ? { dash: sc.dash } : {}),
 			...(tint ? { tint } : {}),
 		};
 	}
 
-	const rawFrame = view.frame as any;
-	if (isName || view.style?.body === 'name' || view.style?.body === 'portrait-ring') {
+	const rawFrame = view.frame;
+	const styleBody = asRecord(view.style)?.body;
+	if (isName || styleBody === 'name' || styleBody === 'portrait-ring') {
 		return { shape: 'none', explicit: false, stroke: '2px', color: 'primary', corner: 8 };
 	}
-	if (rawFrame && typeof rawFrame === 'object' && rawFrame.shape && rawFrame.shape !== 'none') {
+	const rawFrameObj = asRecord(rawFrame);
+	if (rawFrameObj && rawFrameObj.shape && rawFrameObj.shape !== 'none') {
 		return { shape: 'none', explicit: false, stroke: '2px', color: 'primary', corner: 8 };
 	}
 	if (typeof rawFrame === 'string' && rawFrame && rawFrame !== 'none') {
@@ -192,52 +205,74 @@ function toPortraitShape(shape: string | undefined): PortraitFrameShape {
 /**
  * Normalizes traitSet.view.frame (or direct frame config / shorthand) to full FrameConfig.
  */
-export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
+export function resolveFrame(traitSetOrFrame: unknown): FrameConfig | null {
 	if (!traitSetOrFrame) return null;
-	const view = traitSetOrFrame.view !== undefined ? getView(traitSetOrFrame) : traitSetOrFrame;
+	if (typeof traitSetOrFrame === 'string') {
+		if (traitSetOrFrame === 'none' || !traitSetOrFrame.trim()) return null;
+		const normalized = traitSetOrFrame.trim() === 'ellipse' ? 'circle' : traitSetOrFrame.trim();
+		const shape = normalized as FrameShape;
+		const portraitShape = toPortraitShape(shape);
+		const array: TraitArrayMode = shape === 'arc' ? 'arc' : shape === 'ring' ? 'ring' : 'none';
+		return {
+			shape,
+			portraitShape,
+			array,
+			span: shape === 'arc' ? [45, 135] : [0, 360],
+			corner: 8,
+			stroke: '2px',
+			color: 'primary',
+			path: null,
+			ring: null,
+		};
+	}
+	const target = asRecord(traitSetOrFrame);
+	if (!target) return null;
+	const view = asRecord(target.view !== undefined ? getView(target) : target);
 	const raw =
-		traitSetOrFrame.view !== undefined
+		target.view !== undefined
 			? view?.frame
-			: traitSetOrFrame.frame !== undefined
-				? traitSetOrFrame.frame
-				: traitSetOrFrame.traits !== undefined || traitSetOrFrame.name !== undefined || traitSetOrFrame.id !== undefined
+			: target.frame !== undefined
+				? target.frame
+				: target.traits !== undefined || target.name !== undefined || target.id !== undefined
 					? null
-					: traitSetOrFrame;
+					: target;
 
-	const rawObj = typeof raw === 'object' && raw ? (raw as any) : null;
-	const ringSize = normalizeRingSize(rawObj?.size ?? (view?.frame as any)?.size);
-	const rawImage = rawObj?.image || (view?.frame as any)?.image;
+	const rawObj = asRecord(raw);
+	const viewFrameObj = asRecord(view?.frame);
+	const ringSize = normalizeRingSize(rawObj?.size ?? viewFrameObj?.size);
+	const rawImage = asRecord(rawObj?.image ?? viewFrameObj?.image);
 	const imageZoom = normalizeZoom(rawImage?.zoom);
 	const frameImage: FrameImageConfig | null =
-		rawImage && typeof rawImage === 'object' && (rawImage.url || rawImage.alignment || rawImage.zoom !== undefined)
+		rawImage && (rawImage.url || rawImage.alignment || rawImage.zoom !== undefined)
 			? {
 					...(rawImage.url ? { url: String(rawImage.url).trim() } : {}),
 					...(rawImage.alignment ? { alignment: String(rawImage.alignment).trim() } : {}),
 					...(imageZoom !== undefined ? { zoom: imageZoom } : {}),
 				}
 			: null;
-	const rawRingCfg = rawObj?.ring || (view?.frame as any)?.ring;
+	const rawRingCfg = asRecord(rawObj?.ring ?? viewFrameObj?.ring);
 	const ringConfig: RingConfig | null = rawRingCfg
 		? {
-				arcAngle: rawRingCfg.arcAngle ?? -90,
-				arcSpread: rawRingCfg.arcSpread ?? 100,
-				arcDistance: rawRingCfg.arcDistance ?? 0,
-				scaleAngle: rawRingCfg.scaleAngle ?? 0,
-				scaleDistance: rawRingCfg.scaleDistance ?? 0,
-				scaleDieX: rawRingCfg.scaleDieX ?? 0,
-				scaleDieY: rawRingCfg.scaleDieY ?? 0,
+				arcAngle: typeof rawRingCfg.arcAngle === 'number' ? rawRingCfg.arcAngle : -90,
+				arcSpread: typeof rawRingCfg.arcSpread === 'number' ? rawRingCfg.arcSpread : 100,
+				arcDistance: typeof rawRingCfg.arcDistance === 'number' ? rawRingCfg.arcDistance : 0,
+				scaleAngle: typeof rawRingCfg.scaleAngle === 'number' ? rawRingCfg.scaleAngle : 0,
+				scaleDistance: typeof rawRingCfg.scaleDistance === 'number' ? rawRingCfg.scaleDistance : 0,
+				scaleDieX: typeof rawRingCfg.scaleDieX === 'number' ? rawRingCfg.scaleDieX : 0,
+				scaleDieY: typeof rawRingCfg.scaleDieY === 'number' ? rawRingCfg.scaleDieY : 0,
 			}
 		: null;
 
 	const hasExplicitRingTraits =
-		Array.isArray(traitSetOrFrame?.traits) && traitSetOrFrame.traits.some((t: any) => Boolean(getView(t)?.ring));
+		Array.isArray(target.traits) && target.traits.some((t: unknown) => Boolean(getView(t)?.ring));
+	const targetRating = asRecord(target.rating);
 	const setRatingType =
-		Array.isArray(traitSetOrFrame?.rating?.value) && traitSetOrFrame.rating.value.length > 0
-			? traitSetOrFrame?.rating?.type
-			: undefined;
+		Array.isArray(targetRating?.value) && targetRating.value.length > 0 ? targetRating.type : undefined;
+	const styleBody = asRecord(view?.style)?.body;
+	const imageConfig = asRecord(view?.imageConfig);
 
 	if (!raw) {
-		if (view?.style?.body === 'portrait-ring') {
+		if (styleBody === 'portrait-ring') {
 			return {
 				shape: 'circle',
 				portraitShape: 'circle',
@@ -252,7 +287,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 				ring: ringConfig,
 			};
 		}
-		if (view?.style?.body !== 'image' && view?.style?.body !== 'name' && view?.imageConfig?.url) {
+		if (styleBody !== 'image' && styleBody !== 'name' && imageConfig?.url) {
 			return {
 				shape: 'circle',
 				portraitShape: 'circle',
@@ -264,9 +299,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 				color: 'primary',
 				path: null,
 				image: {
-					url: String(view.imageConfig.url).trim(),
-					...(view.imageConfig.alignment ? { alignment: String(view.imageConfig.alignment) } : {}),
-					...(normalizeZoom(view.imageConfig.zoom) !== undefined ? { zoom: normalizeZoom(view.imageConfig.zoom) } : {}),
+					url: String(imageConfig.url).trim(),
+					...(imageConfig.alignment ? { alignment: String(imageConfig.alignment) } : {}),
+					...(normalizeZoom(imageConfig.zoom) !== undefined ? { zoom: normalizeZoom(imageConfig.zoom) } : {}),
 				},
 				ring: null,
 			};
@@ -294,13 +329,15 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		};
 	}
 
-	if (typeof raw === 'object' && !Array.isArray(raw)) {
-		const rawShape = raw.shape === 'ellipse' ? 'circle' : raw.shape;
-		const shape = (rawShape || 'none') as FrameShape;
+	if (rawObj) {
+		const rawShape = rawObj.shape === 'ellipse' ? 'circle' : rawObj.shape;
+		const shape = (typeof rawShape === 'string' && rawShape ? rawShape : 'none') as FrameShape;
 		const explicitArray: TraitArrayMode | undefined =
-			raw.array === 'none' || raw.array === 'ring' || raw.array === 'arc' ? raw.array : undefined;
+			rawObj.array === 'none' || rawObj.array === 'ring' || rawObj.array === 'arc' ? rawObj.array : undefined;
 		const position =
-			raw.position === 'left' || raw.position === 'right' || raw.position === 'center' ? raw.position : undefined;
+			rawObj.position === 'left' || rawObj.position === 'right' || rawObj.position === 'center'
+				? rawObj.position
+				: undefined;
 
 		if (
 			shape === 'none' &&
@@ -313,17 +350,17 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		}
 
 		const defaultSpan: [number, number] = shape === 'arc' || explicitArray === 'arc' ? [45, 135] : [0, 360];
-		const parseNum = (val: any, fallback: number): number => {
+		const parseNum = (val: unknown, fallback: number): number => {
 			const n = Number(val);
 			return Number.isFinite(n) ? n : fallback;
 		};
 		const rawSpan =
-			Array.isArray(raw.span) && raw.span.length >= 2
-				? [parseNum(raw.span[0], defaultSpan[0]), parseNum(raw.span[1], defaultSpan[1])]
+			Array.isArray(rawObj.span) && rawObj.span.length >= 2
+				? [parseNum(rawObj.span[0], defaultSpan[0]), parseNum(rawObj.span[1], defaultSpan[1])]
 				: defaultSpan;
 		const traitsSpan: [number, number] | undefined =
-			Array.isArray(raw.traitsSpan) && raw.traitsSpan.length >= 2
-				? [parseNum(raw.traitsSpan[0], defaultSpan[0]), parseNum(raw.traitsSpan[1], defaultSpan[1])]
+			Array.isArray(rawObj.traitsSpan) && rawObj.traitsSpan.length >= 2
+				? [parseNum(rawObj.traitsSpan[0], defaultSpan[0]), parseNum(rawObj.traitsSpan[1], defaultSpan[1])]
 				: undefined;
 		const isDomeSpan =
 			shape === 'arc' &&
@@ -338,8 +375,8 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			array = explicitArray;
 		} else if (traitsSpan || shape === 'arc') {
 			array = 'arc';
-		} else if (shape === 'ring' || view?.style?.body === 'portrait-ring') {
-			if (frameImage?.url && !raw.ring && !hasExplicitRingTraits && setRatingType !== 'Dice') {
+		} else if (shape === 'ring' || styleBody === 'portrait-ring') {
+			if (frameImage?.url && !rawObj.ring && !hasExplicitRingTraits && setRatingType !== 'Dice') {
 				array = 'none';
 			} else {
 				array = 'ring';
@@ -350,7 +387,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 
 		const portraitShape: PortraitFrameShape = toPortraitShape(shape);
 		const effectiveRingConfig = array !== 'none' ? ringConfig : null;
-		const sc = parseFrameStrokeAndColor(raw);
+		const sc = parseFrameStrokeAndColor(rawObj);
 
 		return {
 			shape,
@@ -359,11 +396,11 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			span,
 			...(traitsSpan ? { traitsSpan } : {}),
 			...(ringSize !== undefined ? { size: ringSize } : {}),
-			corner: parseCorner(raw.corner, 8),
+			corner: parseCorner(rawObj.corner, 8),
 			stroke: sc.stroke,
 			color: sc.color,
 			...(sc.dash ? { dash: sc.dash } : {}),
-			path: typeof raw.path === 'string' && raw.path.trim() ? raw.path.trim() : null,
+			path: typeof rawObj.path === 'string' && rawObj.path.trim() ? rawObj.path.trim() : null,
 			...(frameImage ? { image: frameImage } : {}),
 			...(position ? { position } : {}),
 			ring: effectiveRingConfig,

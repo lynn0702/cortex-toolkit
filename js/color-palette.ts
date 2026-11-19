@@ -239,7 +239,7 @@ export function resolveFrameColorPresentation(rawColor: string | undefined | nul
 /**
  * Builds semantic token swatches resolved from the active character's theme tokens.
  */
-export function getCharacterColorTokens(character: any, mode: 'frame' | 'badge'): ColorTokenOption[] {
+export function getCharacterColorTokens(character: unknown, mode: 'frame' | 'badge'): ColorTokenOption[] {
 	const ctk = getView(character) || {};
 	const primary = ctk.primaryColor || ctk.accentColor || '#e11d48';
 	const accent = ctk.accentColor || '#0ea5e9';

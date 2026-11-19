@@ -202,13 +202,16 @@ export function ratingDice(rating: Rating | undefined): number[] {
 }
 
 /** Write dice onto a node as a Die/Dice rating. Empty clears to unrated. Range options (out) survive the rewrite. */
-export function setRatingDice(node: Record<string, any>, dice: number[], range?: number[]): void {
+export function setRatingDice(node: { rating?: unknown }, dice: number[], range?: number[]): void {
 	const clean = Array.isArray(dice) ? dice.filter((d) => typeof d === 'number' && d > 0) : [];
 	if (clean.length === 0) {
 		delete node.rating;
 		return;
 	}
-	const prev = node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating) ? node.rating : {};
+	const prev =
+		node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating)
+			? (node.rating as Record<string, unknown>)
+			: {};
 	const nextRange =
 		Array.isArray(range) && range.length
 			? [...range]
@@ -224,9 +227,12 @@ export function setRatingDice(node: Record<string, any>, dice: number[], range?:
 }
 
 /** Step a single-die rating to a size (or clear when size is null/0). Never touches siblings. Range options (out) survive the rewrite. */
-export function setRatingDie(node: Record<string, any>, size: number | null, range?: number[]): void {
+export function setRatingDie(node: { rating?: unknown }, size: number | null, range?: number[]): void {
 	if (typeof size === 'number' && size > 0) {
-		const prev = node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating) ? node.rating : {};
+		const prev =
+			node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating)
+				? (node.rating as Record<string, unknown>)
+				: {};
 		const nextRange =
 			Array.isArray(range) && range.length
 				? [...range]
@@ -312,7 +318,7 @@ export function getRingBadgeDie(setNode: unknown): number {
 /** Create, update, or remove a set's `ringBadge` die trait (`dieSize <= 0` removes it). */
 export function setRingBadgeDie(setNode: unknown, dieSize: number): void {
 	if (!setNode || typeof setNode !== 'object') return;
-	const rec = setNode as { traits?: Record<string, any>[] };
+	const rec = setNode as { traits?: Record<string, unknown>[] };
 	if (!Array.isArray(rec.traits)) rec.traits = [];
 	const num = Number(dieSize) || 0;
 	const idx = rec.traits.findIndex((t) => isRingBadgeTrait(t));
@@ -401,7 +407,7 @@ export interface AltRollOption {
  * to `trait.view.altRoll` or `traitSet.view.altRoll`.
  */
 export function resolveAltRoll(trait: unknown, traitSet?: unknown): AltRollOption | null {
-	const rec = (trait && typeof trait === 'object' ? trait : undefined) as Record<string, any> | undefined;
+	const rec = (trait && typeof trait === 'object' ? trait : undefined) as Record<string, unknown> | undefined;
 	if (rec && Array.isArray(rec.traits)) {
 		for (const child of rec.traits) {
 			if (!child || typeof child !== 'object') continue;
@@ -410,10 +416,11 @@ export function resolveAltRoll(trait: unknown, traitSet?: unknown): AltRollOptio
 			if (ppDelta === 0) continue;
 			const dice = ratingDice(resolveRating(child, [rec, traitSet]));
 			if (dice.length > 0 && dice[0] > 0) {
+				const childRec = child as Record<string, unknown>;
 				return {
 					die: dice[0],
 					ppDelta,
-					label: String(child.name || child.noun || '').trim(),
+					label: String(childRec.name || childRec.noun || '').trim(),
 					child: child as Trait,
 				};
 			}
@@ -508,34 +515,37 @@ export function isOutDie(node: unknown, fallbacks?: Array<unknown>): boolean {
  * preserved verbatim, subtraits included). No-op for Pip, unrated
  * sources, or Die/Dice sources that state no range of their own.
  */
-export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
-	if (!traitSet || !sourceTrait) return;
-	const sourceRating = resolveRating(sourceTrait, [traitSet]);
+export function applyTypeScopedRange(traitSet: unknown, sourceTrait: unknown): void {
+	if (!traitSet || typeof traitSet !== 'object' || !sourceTrait || typeof sourceTrait !== 'object') return;
+	const ts = traitSet as Record<string, unknown>;
+	const src = sourceTrait as Record<string, unknown>;
+	const sourceRating = resolveRating(src, [ts]);
 	if (!sourceRating || !sourceRating.type) return;
 	const sourceType = sourceRating.type;
 	const sourceRange = Array.isArray(sourceRating.range) ? sourceRating.range.filter((x) => typeof x === 'number') : [];
 
 	if (sourceType === 'Counter') {
 		const bounds = sourceRange.length >= 2 ? [...sourceRange] : [0, 20];
-		function walk(targetTrait: any, parents: Array<unknown>) {
+		function walk(targetTrait: unknown, parents: Array<unknown>) {
 			if (!targetTrait || typeof targetTrait !== 'object') return;
-			const targetRating = resolveRating(targetTrait, parents);
+			const targetRec = targetTrait as Record<string, unknown>;
+			const targetRating = resolveRating(targetRec, parents);
 			if (targetRating && targetRating.type === 'Counter') {
-				targetTrait.rating = {
+				targetRec.rating = {
 					type: 'Counter',
 					value: Array.isArray(targetRating.value) ? [...targetRating.value] : targetRating.value,
 					range: [...bounds],
 				};
 			}
-			if (Array.isArray(targetTrait.traits)) {
-				for (const child of targetTrait.traits) {
-					walk(child, [targetTrait, ...parents]);
+			if (Array.isArray(targetRec.traits)) {
+				for (const child of targetRec.traits) {
+					walk(child, [targetRec, ...parents]);
 				}
 			}
 		}
-		if (Array.isArray(traitSet.traits)) {
-			for (const rootTrait of traitSet.traits) {
-				walk(rootTrait, [traitSet]);
+		if (Array.isArray(ts.traits)) {
+			for (const rootTrait of ts.traits) {
+				walk(rootTrait, [ts]);
 			}
 		}
 		return;
@@ -544,42 +554,47 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 	if (sourceType !== 'Die' && sourceType !== 'Dice') return;
 	if (sourceRange.length === 0) return;
 
-	const setRating = getRating(traitSet);
+	const setRating = getRating(ts);
 	if (
 		setRating &&
 		(setRating.type === 'Die' || setRating.type === 'Dice') &&
 		setRating.type === sourceType &&
-		traitSet.rating &&
-		typeof traitSet.rating === 'object'
+		ts.rating &&
+		typeof ts.rating === 'object' &&
+		!Array.isArray(ts.rating)
 	) {
-		traitSet.rating.range = [...sourceRange];
+		(ts.rating as Record<string, unknown>).range = [...sourceRange];
 	} else {
-		ensureView(traitSet).ratingLadder = [...sourceRange];
+		ensureView(ts).ratingLadder = [...sourceRange];
 	}
-	delete sourceTrait.rating.range;
+	if (src.rating && typeof src.rating === 'object' && !Array.isArray(src.rating)) {
+		delete (src.rating as Record<string, unknown>).range;
+	}
 }
 
 /** Resolves the display noun for a child trait / subtrait definition. */
-export function resolveSubtraitNoun(sub: any, traitSet?: unknown): string {
+export function resolveSubtraitNoun(sub: unknown, traitSet?: unknown): string {
 	if (!sub || typeof sub !== 'object') return 'Subtrait';
-	if (typeof sub.noun === 'string' && sub.noun.trim().length > 0) return sub.noun.trim();
-	const v = getView(sub);
+	const rec = sub as Record<string, unknown>;
+	if (typeof rec.noun === 'string' && rec.noun.trim().length > 0) return rec.noun.trim();
+	const v = getView(rec);
 	if (typeof v?.noun === 'string' && v.noun.trim().length > 0) return v.noun.trim();
 	const setLabel = getView(traitSet)?.labels?.subtrait;
 	if (typeof setLabel === 'string' && setLabel.trim().length > 0) return setLabel.trim();
-	const name = String(sub.name || '').trim();
+	const name = String(rec.name || '').trim();
 	return name || 'Subtrait';
 }
 
 /** Resolves the plural noun for a child trait / subtrait definition. */
-export function resolveSubtraitPlural(sub: any, traitSet?: unknown): string {
+export function resolveSubtraitPlural(sub: unknown, traitSet?: unknown): string {
 	if (!sub || typeof sub !== 'object') return 'Subtraits';
-	if (typeof sub.plural === 'string' && sub.plural.trim().length > 0) return sub.plural.trim();
-	const v = getView(sub);
+	const rec = sub as Record<string, unknown>;
+	if (typeof rec.plural === 'string' && rec.plural.trim().length > 0) return rec.plural.trim();
+	const v = getView(rec);
 	if (typeof v?.plural === 'string' && v.plural.trim().length > 0) return v.plural.trim();
 	const setPlural = getView(traitSet)?.labels?.subtraits;
 	if (typeof setPlural === 'string' && setPlural.trim().length > 0) return setPlural.trim();
-	const n = resolveSubtraitNoun(sub, traitSet);
+	const n = resolveSubtraitNoun(rec, traitSet);
 	if (!n) return 'Subtraits';
 	const trackLabel = getView(traitSet)?.labels?.track;
 	if (typeof trackLabel === 'string' && n.toLowerCase() === trackLabel.trim().toLowerCase()) return n;
@@ -650,7 +665,7 @@ export function resolveSetPillar(traitSet: unknown): string {
 export function getPillarLabel(character: unknown, pillarKey: string): string {
 	const key = String(pillarKey || '').trim();
 	if (!key) return '';
-	const labels = getView(character)?.labels as Record<string, any> | undefined;
+	const labels = getView(character)?.labels;
 	if (labels && typeof labels === 'object') {
 		const map = labels.pillars;
 		if (map && typeof map === 'object' && !Array.isArray(map)) {
@@ -658,12 +673,10 @@ export function getPillarLabel(character: unknown, pillarKey: string): string {
 			if (typeof custom === 'string' && custom.trim().length > 0) return custom.trim();
 		}
 	}
-	const sets =
-		character && typeof character === 'object' && Array.isArray((character as any).traitSets)
-			? (character as any).traitSets
-			: [];
+	const charRec = character && typeof character === 'object' ? (character as { traitSets?: unknown[] }) : undefined;
+	const sets = Array.isArray(charRec?.traitSets) ? charRec.traitSets : [];
 	for (const ts of sets) {
-		const tsLabels = getView(ts)?.labels as Record<string, any> | undefined;
+		const tsLabels = getView(ts)?.labels;
 		if (tsLabels && typeof tsLabels === 'object') {
 			const tsMap = tsLabels.pillars;
 			if (tsMap && typeof tsMap === 'object' && !Array.isArray(tsMap)) {
@@ -801,7 +814,19 @@ export interface CharacterCurioCustom {
 	imageConfig?: ImageConfig;
 	/** Generic Out indicator for any stepped track; default off. */
 	outIndicator?: boolean;
-	labels?: { [k: string]: any; pillars?: Record<string, string> };
+	labels?: {
+		[k: string]: unknown;
+		pp?: string;
+		subtrait?: string;
+		subtraits?: string;
+		track?: string;
+		out?: string;
+		counter?: string;
+		col1?: string;
+		col2?: string;
+		col3?: string;
+		pillars?: Record<string, string>;
+	};
 	/** Open permissive pillar key for the 2D mobile Play carousel. */
 	pillar?: string;
 	notes?: string;
@@ -930,7 +955,7 @@ export type ViewConfig = CharacterCurioCustom;
  */
 export function isNameSet(set: unknown): boolean {
 	if (!set || typeof set !== 'object') return false;
-	if ((set as any).id === 'name') return true;
+	if ((set as Record<string, unknown>).id === 'name') return true;
 	const v = getView(set);
 	return Boolean(v && typeof v === 'object' && v.style?.body === 'name');
 }
@@ -966,7 +991,7 @@ export function isNameIdentitySlotTrait(trait: unknown): boolean {
  */
 export function getView<T = ViewBag>(obj: unknown): T | undefined {
 	if (!obj || typeof obj !== 'object') return undefined;
-	const record = obj as Record<string, any>;
+	const record = obj as Record<string, unknown>;
 	return record[VIEW_KEY] as T | undefined;
 }
 
@@ -977,7 +1002,7 @@ export function ensureView<T = ViewBag>(obj: unknown): T {
 	if (!obj || typeof obj !== 'object') {
 		throw new TypeError('ensureView called on non-object');
 	}
-	const record = obj as Record<string, any>;
+	const record = obj as Record<string, unknown>;
 	if (!record[VIEW_KEY]) {
 		record[VIEW_KEY] = {};
 	}
@@ -1017,6 +1042,8 @@ export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits'> & {
 	traits?: Trait[];
 	/** App-only: stress "out" marker (rendered as the 💥 OUT badge). */
 	isOut?: boolean;
+	/** App-only: single-use spent toggle (e.g. Plot-Point resource or asset). */
+	spent?: boolean;
 	/** App-only: attached-stress value (mirrors `custom.stress`). */
 	stress?: number;
 	/** App-only: template trait names removed from this trait (D19 restore). */
@@ -1059,17 +1086,17 @@ export type CharacterCurio = CharacterCurioCustom;
 export type IdentityFieldKey = 'pronouns' | 'player' | 'game' | 'nickname' | 'notes' | 'description';
 
 /** Locate the primary `Name` (`body: 'name'` or `id: 'name'`) set on a render or layered curiosity. */
-export function getNameSet(curiosity: unknown): Record<string, any> | undefined {
+export function getNameSet(curiosity: unknown): Record<string, unknown> | undefined {
 	if (!curiosity || typeof curiosity !== 'object' || Array.isArray(curiosity)) return undefined;
-	const rec = curiosity as Record<string, any>;
+	const rec = curiosity as Record<string, unknown>;
 	if (Array.isArray(rec.traitSets)) {
 		const hit = rec.traitSets.find((ts: unknown) => isNameSet(ts));
-		if (hit) return hit as Record<string, any>;
+		if (hit && typeof hit === 'object') return hit as Record<string, unknown>;
 	}
 	if (rec.sets && typeof rec.sets === 'object' && !Array.isArray(rec.sets)) {
 		for (const [key, val] of Object.entries(rec.sets as Record<string, unknown>)) {
 			if (!val || typeof val !== 'object' || Array.isArray(val)) continue;
-			if (isNameSet(val) || key === 'Name') return val as Record<string, any>;
+			if (isNameSet(val) || key === 'Name') return val as Record<string, unknown>;
 		}
 	}
 	return undefined;
@@ -1080,29 +1107,30 @@ export function getIdentityTrait(
 	curiosityOrSet: unknown,
 	key: string,
 	targetSet?: unknown,
-): Record<string, any> | undefined {
+): Record<string, unknown> | undefined {
 	const ns =
 		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
-			? (targetSet as Record<string, any>)
+			? (targetSet as Record<string, unknown>)
 			: isNameSet(curiosityOrSet)
-				? (curiosityOrSet as Record<string, any>)
+				? (curiosityOrSet as Record<string, unknown>)
 				: getNameSet(curiosityOrSet);
 	if (!ns) return undefined;
 	const needle = key.trim().toLowerCase();
 	if (Array.isArray(ns.traits)) {
-		return ns.traits.find(
-			(t: any) =>
+		const hit = ns.traits.find(
+			(t: unknown) =>
 				t &&
 				typeof t === 'object' &&
-				String(t.name || '')
+				String((t as Record<string, unknown>).name || '')
 					.trim()
 					.toLowerCase() === needle,
 		);
+		return hit && typeof hit === 'object' ? (hit as Record<string, unknown>) : undefined;
 	}
 	if (ns.traits && typeof ns.traits === 'object') {
 		for (const [k, v] of Object.entries(ns.traits as Record<string, unknown>)) {
 			if (k.trim().toLowerCase() === needle && v && typeof v === 'object' && !Array.isArray(v)) {
-				return v as Record<string, any>;
+				return v as Record<string, unknown>;
 			}
 		}
 	}
@@ -1112,10 +1140,10 @@ export function getIdentityTrait(
 /** Read an identity text value from the `Name` set (falling back to root `description` when `key === 'description'`). */
 export function getIdentityText(curiosity: unknown, key: IdentityFieldKey, targetSet?: unknown): string {
 	if (!curiosity || typeof curiosity !== 'object') return '';
-	const rec = curiosity as Record<string, any>;
+	const rec = curiosity as Record<string, unknown>;
 	const ns =
 		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
-			? (targetSet as Record<string, any>)
+			? (targetSet as Record<string, unknown>)
 			: getNameSet(rec);
 	const tr = getIdentityTrait(rec, key, ns);
 	if (tr && typeof tr.description === 'string' && tr.description.length > 0) {
@@ -1129,27 +1157,31 @@ export function getIdentityText(curiosity: unknown, key: IdentityFieldKey, targe
 }
 
 /** Write an identity text value into the `Name` set (creating the child trait on demand). */
-export function setIdentityText(curiosity: any, key: IdentityFieldKey, val: string, targetSet?: any): void {
+export function setIdentityText(curiosity: unknown, key: IdentityFieldKey, val: string, targetSet?: unknown): void {
 	if (!curiosity || typeof curiosity !== 'object') return;
-	const ns = targetSet && typeof targetSet === 'object' ? targetSet : getNameSet(curiosity);
+	const curRec = curiosity as Record<string, unknown>;
+	const ns =
+		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
+			? (targetSet as Record<string, unknown>)
+			: getNameSet(curRec);
 	if (key === 'description') {
 		if (ns) {
 			ns.description = val;
-			const tr = getIdentityTrait(curiosity, 'description', ns);
+			const tr = getIdentityTrait(curRec, 'description', ns);
 			if (tr && typeof tr.description === 'string') delete tr.description;
-			if (typeof curiosity.description === 'string') delete curiosity.description;
+			if (typeof curRec.description === 'string') delete curRec.description;
 		} else {
-			curiosity.description = val;
+			curRec.description = val;
 		}
 		return;
 	}
 	if (!ns) return;
-	let tr = getIdentityTrait(curiosity, key, ns);
+	let tr = getIdentityTrait(curRec, key, ns);
 	if (!tr) {
 		if (!val) return;
 		if (!Array.isArray(ns.traits)) ns.traits = [];
 		tr = { name: key, description: val, traits: [] };
-		ns.traits.push(tr);
+		(ns.traits as Record<string, unknown>[]).push(tr);
 		return;
 	}
 	tr.description = val;
@@ -1159,9 +1191,9 @@ export function setIdentityText(curiosity: any, key: IdentityFieldKey, val: stri
 export function getCuriosityPortrait(curiosity: unknown, targetSet?: unknown): Portrait | undefined {
 	const ns =
 		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
-			? (targetSet as Record<string, any>)
+			? (targetSet as Record<string, unknown>)
 			: isNameSet(curiosity)
-				? (curiosity as Record<string, any>)
+				? (curiosity as Record<string, unknown>)
 				: getNameSet(curiosity);
 	if (ns?.portrait && typeof ns.portrait === 'object' && !Array.isArray(ns.portrait)) {
 		return ns.portrait as Portrait;
@@ -1170,16 +1202,20 @@ export function getCuriosityPortrait(curiosity: unknown, targetSet?: unknown): P
 }
 
 /** Ensure and return a mutable `portrait` object on the `Name` set. */
-export function ensureCuriosityPortrait(curiosity: any, targetSet?: any): Portrait | undefined {
-	const ns = targetSet && typeof targetSet === 'object' ? targetSet : getNameSet(curiosity);
+export function ensureCuriosityPortrait(curiosity: unknown, targetSet?: unknown): Portrait | undefined {
+	const ns =
+		targetSet && typeof targetSet === 'object' && !Array.isArray(targetSet)
+			? (targetSet as Record<string, unknown>)
+			: getNameSet(curiosity);
 	if (!ns) return undefined;
 	if (!ns.portrait || typeof ns.portrait !== 'object' || Array.isArray(ns.portrait)) {
 		ns.portrait = { url: '', alt: '', tags: [] };
 	}
-	ns.portrait.url ??= '';
-	ns.portrait.alt ??= '';
-	ns.portrait.tags ??= [];
-	return ns.portrait as Portrait;
+	const p = ns.portrait as Portrait;
+	p.url ??= '';
+	p.alt ??= '';
+	p.tags ??= [];
+	return p;
 }
 
 /** Resolve the best available thumbnail image URL for Roster / Navigation cards. */
@@ -1189,11 +1225,11 @@ export function getCuriosityThumbnailUrl(curiosity: unknown): string {
 	if (typeof p?.url === 'string' && p.url.trim().length > 0) return p.url.trim();
 	const listingImg = getView(curiosity)?.listing?.image;
 	if (typeof listingImg === 'string' && listingImg.trim().length > 0) return listingImg.trim();
-	const rec = curiosity as Record<string, any>;
+	const rec = curiosity as Record<string, unknown>;
 	const sets = Array.isArray(rec.traitSets)
 		? rec.traitSets
 		: rec.sets && typeof rec.sets === 'object'
-			? Object.values(rec.sets)
+			? Object.values(rec.sets as Record<string, unknown>)
 			: [];
 	for (const ts of sets) {
 		if (!ts || typeof ts !== 'object') continue;

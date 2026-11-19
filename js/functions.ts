@@ -36,7 +36,7 @@ import type {
 	TemplateListing,
 } from './model.ts';
 
-declare const characterCurioLibraryTemplates: any;
+declare const characterCurioLibraryTemplates: SheetTemplate[] | undefined;
 
 const DIECON_FONT_FAMILY = "'Open Sans', sans-serif";
 const DIECON_CACHE_LIMIT = 256;
@@ -197,7 +197,7 @@ function resolveDieconPaint(dieValue: number, isFilled: boolean, extraClass: str
 		diceConfig !== undefined
 			? diceConfig
 			: typeof window !== 'undefined'
-				? (window as any).__characterCurioActiveDiceConfig
+				? (window as Window & { __characterCurioActiveDiceConfig?: DiceConfig | null }).__characterCurioActiveDiceConfig
 				: null;
 	const isCustom = Boolean(cfg && cfg.style === 'custom');
 	const cls = `diecon diecon-d${s} ${filledClass}${isCustom ? ' diecon-custom' : ''}${safeExtra ? ' ' + safeExtra : ''}`;
@@ -424,7 +424,7 @@ export const characterCurioFunctions = {
 	// Structural check for whether a set's trait names are treated as fixed
 	// system labels (printed on blank sheets). Data-driven via view.fixedNames
 	// or multi-column / die-track / track-part / portrait-ring layouts.
-	isFixedTraitNamesSet: function (traitSetArg: any): boolean {
+	isFixedTraitNamesSet: function (traitSetArg: unknown): boolean {
 		if (!traitSetArg || typeof traitSetArg !== 'object') return false;
 		const v = getView(traitSetArg);
 		if (v?.fixedNames) return true;
@@ -435,13 +435,13 @@ export const characterCurioFunctions = {
 		return false;
 	},
 
-	isPlayMutableSet: function (traitSetArg: any): boolean {
+	isPlayMutableSet: function (traitSetArg: unknown): boolean {
 		if (!traitSetArg) return false;
 		const view = getView(traitSetArg);
 		return view?.playMutable === true;
 	},
 
-	setPlotPoints: function (char: any, val: number | null) {
+	setPlotPoints: function (char: { plotPoints?: number | null } | null | undefined, val: number | null) {
 		if (!char) return;
 		if (val === null || val === undefined) {
 			char.plotPoints = null;
@@ -451,17 +451,17 @@ export const characterCurioFunctions = {
 		char.plotPoints = n;
 	},
 
-	hasTrackPart: function (traitSetArg: any): boolean {
+	hasTrackPart: function (traitSetArg: unknown): boolean {
 		if (!traitSetArg) return false;
 		const view = getView(traitSetArg);
 		const parts = view?.parts;
 		if (parts && typeof parts === 'object' && !Array.isArray(parts)) {
-			if ((parts as any).track) return true;
+			if (parts.track) return true;
 		}
 		return false;
 	},
 
-	getTrackLabel: function (traitSetArg: any): string {
+	getTrackLabel: function (traitSetArg: unknown): string {
 		if (!traitSetArg) return 'Track';
 		const view = getView(traitSetArg);
 		const labels = view?.labels;
@@ -469,27 +469,30 @@ export const characterCurioFunctions = {
 		return 'Track';
 	},
 
-	getTrackScale: function (traitSetArg: any): number[] {
-		if (!traitSetArg) return [4, 6, 8, 10, 12];
+	getTrackScale: function (traitSetArg: unknown): number[] {
+		if (!traitSetArg || typeof traitSetArg !== 'object') return [4, 6, 8, 10, 12];
 		const view = getView(traitSetArg);
 		if (Array.isArray(view?.subtraitRatingLadder) && view.subtraitRatingLadder.length > 0) {
-			return view.subtraitRatingLadder.toSorted((a, b) => a - b);
+			return (view.subtraitRatingLadder as number[]).toSorted((a, b) => a - b);
 		}
 		const explicitLabel = typeof view?.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
-		const rawTraits = traitSetArg?.traits;
+		const rawTraits = (traitSetArg as Record<string, unknown>).traits;
 		const traits = Array.isArray(rawTraits)
 			? rawTraits
 			: rawTraits && typeof rawTraits === 'object'
-				? Object.values(rawTraits)
+				? Object.values(rawTraits as Record<string, unknown>)
 				: [];
 		let firstAnyRange: number[] | null = null;
 		for (const tr of traits) {
 			if (!tr || typeof tr !== 'object') continue;
-			const rawSubs = (tr as any).traits;
+			const rawSubs = (tr as Record<string, unknown>).traits;
 			const subs = Array.isArray(rawSubs)
 				? rawSubs
 				: rawSubs && typeof rawSubs === 'object'
-					? Object.entries(rawSubs).map(([k, v]) => ({ ...(v as any), name: (v as any)?.name || k }))
+					? Object.entries(rawSubs as Record<string, unknown>).map(([k, v]) => {
+							const vr = v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
+							return { ...vr, name: vr.name || k };
+						})
 					: [];
 			for (const st of subs) {
 				if (!st || typeof st !== 'object') continue;
@@ -497,7 +500,8 @@ export const characterCurioFunctions = {
 				if (!r || r.type === 'Pip' || resolvePpDelta(st) !== 0 || getView(st)?.part === 'block') continue;
 				if (Array.isArray(r.range) && r.range.length) {
 					if (!firstAnyRange) firstAnyRange = r.range.slice();
-					const stKey = String((st as any).noun || (st as any).name || '')
+					const stRec = st as Record<string, unknown>;
+					const stKey = String(stRec.noun || stRec.name || '')
 						.trim()
 						.toLowerCase();
 					if (explicitLabel && stKey === explicitLabel) {
@@ -510,7 +514,7 @@ export const characterCurioFunctions = {
 	},
 
 	// Lowercase child nouns claimed by explicit `child:<Noun>` part cells on a set.
-	childPartClaimedNouns: function (traitSetArg: any): Set<string> {
+	childPartClaimedNouns: function (traitSetArg: unknown): Set<string> {
 		const out = new Set<string>();
 		const parts = getView(traitSetArg)?.parts;
 		if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return out;
@@ -533,16 +537,19 @@ export const characterCurioFunctions = {
 
 	// Resolve the track-companion child trait for a parent trait when a set
 	// uses `parts.track` or specifies `view.labels.track`.
-	getTrackCompanion: function (traitSetArg: any, trait: any): any {
-		if (!trait || typeof trait !== 'object' || !Array.isArray(trait.traits)) return undefined;
-		const explicitPart = trait.traits.find((c: any) => c && typeof c === 'object' && getView(c)?.part === 'track');
+	getTrackCompanion: function (traitSetArg: unknown, trait: unknown): Trait | undefined {
+		if (!trait || typeof trait !== 'object') return undefined;
+		const traitTraits = (trait as { traits?: Trait[] }).traits;
+		if (!Array.isArray(traitTraits)) return undefined;
+		const explicitPart = traitTraits.find((c) => c && typeof c === 'object' && getView(c)?.part === 'track');
 		if (explicitPart) return explicitPart;
 		const view = getView(traitSetArg);
 		const explicitLabel = typeof view?.labels?.track === 'string' ? view.labels.track.trim().toLowerCase() : '';
 		if (explicitLabel) {
-			const exact = trait.traits.find((c: any) => {
+			const exact = traitTraits.find((c) => {
 				if (!c || typeof c !== 'object') return false;
-				const key = String(c.noun || c.name || '')
+				const rec = c as Record<string, unknown>;
+				const key = String(rec.noun || rec.name || '')
 					.trim()
 					.toLowerCase();
 				return key === explicitLabel;
@@ -550,7 +557,7 @@ export const characterCurioFunctions = {
 			if (exact) return exact;
 		}
 		if (!this.hasTrackPart(traitSetArg)) return undefined;
-		return trait.traits.find((c: any) => {
+		return traitTraits.find((c) => {
 			if (!c || typeof c !== 'object') return false;
 			if (getView(c)?.part === 'block' || resolvePpDelta(c) !== 0) return false;
 			const r = resolveRating(c, [trait, traitSetArg]);
@@ -558,23 +565,24 @@ export const characterCurioFunctions = {
 		});
 	},
 
-	isTrackCompanion: function (traitSetArg: any, child: any, trait: any): boolean {
+	isTrackCompanion: function (traitSetArg: unknown, child: unknown, trait: unknown): boolean {
 		return Boolean(child && trait && this.getTrackCompanion(traitSetArg, trait) === child);
 	},
 
 	// Direct child traits rendered as rule/SFX/limit bullets inside `block`:
 	// unrated children, PP-delta modifiers, or children marked `view.part === 'block'`,
 	// excluding track companions and nouns claimed by dedicated `child:<Noun>` cells.
-	blockChildren: function (node: any, traitSetArg?: any): any[] {
-		const subs = node && typeof node === 'object' ? node.traits : undefined;
+	blockChildren: function (node: unknown, traitSetArg?: unknown): Trait[] {
+		const subs = node && typeof node === 'object' ? (node as { traits?: Trait[] }).traits : undefined;
 		if (!Array.isArray(subs)) return [];
 		const comp = traitSetArg ? this.getTrackCompanion(traitSetArg, node) : undefined;
 		const claimed = traitSetArg ? this.childPartClaimedNouns(traitSetArg) : new Set<string>();
-		return subs.filter((c: any) => {
+		return subs.filter((c) => {
 			if (!c || typeof c !== 'object') return false;
 			if (c === comp) return false;
 			if (getView(c)?.part === 'block') return true;
-			const cname = String(c.noun || c.name || '')
+			const rec = c as Record<string, unknown>;
+			const cname = String(rec.noun || rec.name || '')
 				.trim()
 				.toLowerCase();
 			if (cname && claimed.has(cname)) return false;
@@ -586,17 +594,18 @@ export const characterCurioFunctions = {
 	// Direct child traits rendered as rated subtraits (Die/Dice/Counter, excluding
 	// Pip children, PP-delta modifiers, track companions, block children, and
 	// nouns claimed by dedicated `child:<Noun>` cells).
-	ratedSubtraits: function (node: any, traitSetArg?: any): any[] {
-		const subs = node && typeof node === 'object' ? node.traits : undefined;
+	ratedSubtraits: function (node: unknown, traitSetArg?: unknown): Trait[] {
+		const subs = node && typeof node === 'object' ? (node as { traits?: Trait[] }).traits : undefined;
 		if (!Array.isArray(subs)) return [];
 		const comp = traitSetArg ? this.getTrackCompanion(traitSetArg, node) : undefined;
 		const claimed = traitSetArg ? this.childPartClaimedNouns(traitSetArg) : new Set<string>();
-		return subs.filter((c: any) => {
+		return subs.filter((c) => {
 			if (!c || typeof c !== 'object') return false;
 			if (c === comp) return false;
 			if (getView(c)?.part === 'block') return false;
 			if (resolvePpDelta(c) !== 0) return false;
-			const cname = String(c.noun || c.name || '')
+			const rec = c as Record<string, unknown>;
+			const cname = String(rec.noun || rec.name || '')
 				.trim()
 				.toLowerCase();
 			if (cname && claimed.has(cname)) return false;
@@ -632,16 +641,19 @@ export const characterCurioFunctions = {
 	} as Record<string, string>,
 
 	// The name block is the first trait set — see model.isNameSet.
-	isNameSet: function (set: any) {
+	isNameSet: function (set: unknown) {
 		return isNameSetModel(set);
 	},
 
 	// Read a name-set trait without creating anything (render path).
-	getNameTrait: function (character: any, key: string) {
-		const sets = character && Array.isArray(character.traitSets) ? character.traitSets : [];
-		const set = sets.find((s: any) => isNameSetModel(s));
+	getNameTrait: function (character: unknown, key: string): Trait | undefined {
+		const sets =
+			character && typeof character === 'object' && Array.isArray((character as { traitSets?: TraitSet[] }).traitSets)
+				? (character as { traitSets: TraitSet[] }).traitSets
+				: [];
+		const set = sets.find((s) => isNameSetModel(s));
 		if (!set || !Array.isArray(set.traits)) return undefined;
-		return set.traits.find((t: any) => t && typeof t === 'object' && t.name === key);
+		return set.traits.find((t) => t && typeof t === 'object' && t.name === key);
 	},
 
 	// Resolve a name-set trait for editing, creating the set and trait
@@ -649,15 +661,15 @@ export const characterCurioFunctions = {
 	// character fields; only label/hidden live here. Created traits hide
 	// only where the style renders no zone for them (game/PP/notes in
 	// sheet layout); shown is absence, never a stored word.
-	ensureNameTrait: function (character: any, key: string) {
+	ensureNameTrait: function (character: { traitSets?: TraitSet[] } | null | undefined, key: string): Trait | null {
 		if (!character || !Array.isArray(character.traitSets)) return null;
-		let set = character.traitSets.find((s: any) => isNameSetModel(s));
+		let set = character.traitSets.find((s) => isNameSetModel(s));
 		if (!set) {
 			set = { id: 'name', name: 'Name', traits: [] };
 			character.traitSets.unshift(set);
 		}
 		if (!Array.isArray(set.traits)) set.traits = [];
-		let trait = set.traits.find((t: any) => t && typeof t === 'object' && t.name === key);
+		let trait = set.traits.find((t) => t && typeof t === 'object' && t.name === key);
 		if (!trait) {
 			trait = { name: key };
 			set.traits.push(trait);
@@ -674,7 +686,7 @@ export const characterCurioFunctions = {
 
 	setTraitDice: function (trait: Trait, diceArray: number[]) {
 		if (!trait) return;
-		setRatingDice(trait as unknown as Record<string, any>, diceArray);
+		setRatingDice(trait, diceArray);
 	},
 
 	renderDate(timestamp: string | number | Date) {
@@ -814,7 +826,7 @@ export const characterCurioFunctions = {
 		if (Array.isArray(sets)) {
 			for (const ts of sets) {
 				if (!ts || typeof ts !== 'object') return false;
-				const body = (ts as any).view?.style?.body;
+				const body = getView(ts)?.style?.body;
 				if (typeof body === 'string' && !allowedBodies.has(body)) return false;
 			}
 		}
@@ -825,7 +837,7 @@ export const characterCurioFunctions = {
 			for (const ts of Object.values(layeredSets as Record<string, unknown>)) {
 				if (ts === null) continue;
 				if (!ts || typeof ts !== 'object' || Array.isArray(ts)) return false;
-				const body = (ts as any).view?.style?.body;
+				const body = getView(ts)?.style?.body;
 				if (typeof body === 'string' && !allowedBodies.has(body)) return false;
 			}
 		}
@@ -842,9 +854,9 @@ export const characterCurioFunctions = {
 	// the inner payload is imported as a NEW character (fresh UUID when the
 	// inner payload has none, so it can never overwrite an existing entry
 	// by accident). Unknown inner shapes are still safely defaulted below.
-	sanitizeImportedCharacter: function (data: any) {
+	sanitizeImportedCharacter: function (data: unknown): (Partial<Character> & Record<string, unknown>) | null {
 		if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
-		let inner = data;
+		let inner = data as Record<string, unknown>;
 		let unwrapped = false;
 		if (
 			(typeof inner.id !== 'string' || !inner.id.length) &&
@@ -852,7 +864,7 @@ export const characterCurioFunctions = {
 			typeof inner.data === 'object' &&
 			!Array.isArray(inner.data)
 		) {
-			inner = inner.data;
+			inner = inner.data as Record<string, unknown>;
 			unwrapped = true;
 		}
 		if (typeof inner.id !== 'string' || !inner.id.length) {
@@ -870,21 +882,22 @@ export const characterCurioFunctions = {
 		// as empty. Only identity (set ids) is ensured below.
 		// D8: no duplicate non-blank trait/subtrait names (ambiguous join).
 		// Blank slots are positional and exempt.
-		const dupes = (traits: any) => {
+		const dupes = (traits: unknown): boolean => {
 			if (!Array.isArray(traits)) return false;
-			const seen = new Set();
+			const seen = new Set<string>();
 			for (const tr of traits) {
 				if (!tr || typeof tr !== 'object') continue;
-				if (typeof tr.name === 'string' && tr.name.length) {
-					if (seen.has(tr.name)) return true;
-					seen.add(tr.name);
+				const rec = tr as { name?: unknown; traits?: unknown };
+				if (typeof rec.name === 'string' && rec.name.length) {
+					if (seen.has(rec.name)) return true;
+					seen.add(rec.name);
 				}
-				if (dupes(tr.traits)) return true;
+				if (dupes(rec.traits)) return true;
 			}
 			return false;
 		};
 		for (const ts of Array.isArray(clean.traitSets) ? clean.traitSets : []) {
-			if (ts && dupes(ts.traits)) return null;
+			if (ts && typeof ts === 'object' && dupes((ts as { traits?: unknown }).traits)) return null;
 		}
 		this.ensureTraitSetIds(clean);
 		return clean;
@@ -951,9 +964,10 @@ export const characterCurioFunctions = {
 	// exported (stripped with the layout deltas). Assigned at creation and
 	// import; load fills gaps only — existing ids are never rewritten.
 	// Structural mutators over loose character-like objects (defaults, drafts,
-	// templates): params stay `any` on purpose — the shape is not yet a Character.
-	assignLids: function (character: any) {
+	// templates): generic over T so callers preserve their exact shape.
+	assignLids: function <T>(character: T): T {
 		if (!character || typeof character !== 'object') return character;
+		const rec = character as Record<string, unknown>;
 		const lid = () =>
 			typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
 				? crypto.randomUUID()
@@ -966,13 +980,13 @@ export const characterCurioFunctions = {
 				walk(tr.traits);
 			});
 		};
-		if (Array.isArray(character.traitSets)) {
-			character.traitSets.forEach((ts: any) => {
-				if (ts) walk(ts.traits);
+		if (Array.isArray(rec.traitSets)) {
+			rec.traitSets.forEach((ts: unknown) => {
+				if (ts && typeof ts === 'object') walk((ts as { traits?: Trait[] }).traits);
 			});
 		}
-		if (character.curiosities && typeof character.curiosities === 'object' && !Array.isArray(character.curiosities)) {
-			Object.values(character.curiosities).forEach((sub: any) => {
+		if (rec.curiosities && typeof rec.curiosities === 'object' && !Array.isArray(rec.curiosities)) {
+			Object.values(rec.curiosities as Record<string, unknown>).forEach((sub) => {
 				if (sub && typeof sub === 'object') this.assignLids(sub);
 			});
 		}
@@ -985,7 +999,11 @@ export const characterCurioFunctions = {
 	// merge joins sets by id, and the layered materializer heals renames by
 	// id (name is the address, id the identity — rename the name freely,
 	// never the id).
-	stripInternalIds: function (node: { traitSets?: TraitSet[]; traits?: Trait[]; curiosities?: Record<string, any> }) {
+	stripInternalIds: function (node: {
+		traitSets?: TraitSet[];
+		traits?: Trait[];
+		curiosities?: Record<string, unknown> | null;
+	}) {
 		const walkTraits = (traits: Trait[] | undefined) => {
 			if (!Array.isArray(traits)) return;
 			traits.forEach((tr) => {
@@ -1003,45 +1021,56 @@ export const characterCurioFunctions = {
 		}
 		if (Array.isArray(node.traits)) walkTraits(node.traits);
 		if (node.curiosities && typeof node.curiosities === 'object' && !Array.isArray(node.curiosities)) {
-			Object.values(node.curiosities).forEach((sub: any) => {
-				if (sub && typeof sub === 'object') this.stripInternalIds(sub);
+			Object.values(node.curiosities).forEach((sub) => {
+				if (sub && typeof sub === 'object') {
+					this.stripInternalIds(
+						sub as { traitSets?: TraitSet[]; traits?: Trait[]; curiosities?: Record<string, unknown> | null },
+					);
+				}
 			});
 		}
 	},
 
 	// Stable per-set ids are the join key between a character and its sheet
 	// template. Slugs stay readable in raw JSON; uniqueness is per character.
-	ensureTraitSetIds: function (character: any) {
+	ensureTraitSetIds: function <T>(character: T): T {
 		if (!character || typeof character !== 'object') return character;
-		if (Array.isArray(character.traitSets)) {
+		const rec = character as Record<string, unknown>;
+		if (Array.isArray(rec.traitSets)) {
 			// 'name' is reserved for the name block (identity fallback when a
 			// stored set's view bag prunes away); never assign it elsewhere.
 			const taken = new Set<string>(['name']);
-			character.traitSets.forEach((ts: any) => {
-				if (ts && typeof ts.id === 'string' && ts.id.length) taken.add(ts.id);
+			rec.traitSets.forEach((ts: unknown) => {
+				if (ts && typeof ts === 'object') {
+					const id = (ts as { id?: unknown }).id;
+					if (typeof id === 'string' && id.length) taken.add(id);
+				}
 			});
-			character.traitSets.forEach((ts: any) => {
-				if (ts && (typeof ts.id !== 'string' || !ts.id.length)) {
-					ts.id = this.isNameSet(ts) ? 'name' : this.slugifySetId(ts.name, taken);
+			rec.traitSets.forEach((ts: unknown) => {
+				if (ts && typeof ts === 'object') {
+					const tsRec = ts as { id?: unknown; name?: unknown };
+					if (typeof tsRec.id !== 'string' || !tsRec.id.length) {
+						tsRec.id = this.isNameSet(tsRec) ? 'name' : this.slugifySetId(String(tsRec.name || ''), taken);
+					}
 				}
 			});
 		}
-		if (character.curiosities && typeof character.curiosities === 'object' && !Array.isArray(character.curiosities)) {
-			Object.values(character.curiosities).forEach((sub: any) => {
+		if (rec.curiosities && typeof rec.curiosities === 'object' && !Array.isArray(rec.curiosities)) {
+			Object.values(rec.curiosities as Record<string, unknown>).forEach((sub) => {
 				if (sub && typeof sub === 'object') this.ensureTraitSetIds(sub);
 			});
 		}
 		return character;
 	},
 
-	findLibraryTemplate: function (id: string) {
+	findLibraryTemplate: function (id: string): SheetTemplate | null {
 		if (!id) return null;
 		if (typeof characterCurioLibraryTemplates !== 'undefined' && Array.isArray(characterCurioLibraryTemplates)) {
-			const found = characterCurioLibraryTemplates.find((t: any) => t.id === id);
+			const found = characterCurioLibraryTemplates.find((t) => t.id === id);
 			if (found) return found;
 		}
-		if (id === DREAMER_ARCHITECT_SHOWCASE.id) return DREAMER_ARCHITECT_SHOWCASE as any;
-		return (SHOWCASE_TEMPLATES.find((t: any) => t.id === id) as any) || null;
+		if (id === DREAMER_ARCHITECT_SHOWCASE.id) return DREAMER_ARCHITECT_SHOWCASE as unknown as SheetTemplate;
+		return (SHOWCASE_TEMPLATES.find((t) => t.id === id) as unknown as SheetTemplate | undefined) || null;
 	},
 
 	// Resolve the template entry for a character: live store array first
@@ -1331,14 +1360,18 @@ export const characterCurioFunctions = {
 	// positionally; character-only names append; template-only names are
 	// inherited unless listed in removedNames. Rename unlinks by design
 	// (old name reappears as inherited — D7).
-	mergeTraitArrays: function (tBase: any, tOver: any, removedNames: any) {
+	mergeTraitArrays: function (tBase: unknown, tOver: unknown, removedNames: unknown): unknown[] {
 		const base = Array.isArray(tBase) ? tBase : [];
 		const over = Array.isArray(tOver) ? tOver : [];
 		if (!over.length && base.length) return []; // Present-but-empty clears.
-		const rem = new Set((removedNames || []).filter((n: any) => typeof n === 'string' && n.length));
-		const consumed = new Set();
-		const result: any[] = [];
-		const mergeOne = (b: any, o: any) => {
+		const rem = new Set<string>(
+			(Array.isArray(removedNames) ? removedNames : []).filter(
+				(n): n is string => typeof n === 'string' && n.length > 0,
+			),
+		);
+		const consumed = new Set<number>();
+		const result: unknown[] = [];
+		const mergeOne = (b: unknown, o: unknown) => {
 			const c = cloneDeep(b);
 			this.applyOverrides(c, o, false);
 			return c;
@@ -1354,13 +1387,14 @@ export const characterCurioFunctions = {
 				result.push(cloneDeep(b));
 				continue;
 			}
-			if (!this.isBlankName(b.name) && rem.has(b.name)) continue; // D6 removal wins.
+			const bName = (b as Record<string, unknown>).name;
+			if (!this.isBlankName(bName) && typeof bName === 'string' && rem.has(bName)) continue; // D6 removal wins.
 			let m = -1;
-			if (!this.isBlankName(b.name)) {
+			if (!this.isBlankName(bName)) {
 				for (let j = 0; j < over.length; j++) {
 					if (consumed.has(j)) continue;
 					const o = over[j];
-					if (o && typeof o === 'object' && o.name === b.name) {
+					if (o && typeof o === 'object' && (o as Record<string, unknown>).name === bName) {
 						m = j;
 						break;
 					}
@@ -1368,8 +1402,9 @@ export const characterCurioFunctions = {
 			} else if (i < over.length && !consumed.has(i)) {
 				const o = over[i];
 				if (o && typeof o === 'object') {
-					if (this.isBlankName(o.name)) m = i;
-					else if (this.findTraitByName(base, o.name) === -1) m = i; // positional slot fill
+					const oName = (o as Record<string, unknown>).name;
+					if (this.isBlankName(oName)) m = i;
+					else if (this.findTraitByName(base, oName) === -1) m = i; // positional slot fill
 				}
 			}
 			if (m >= 0) {
@@ -1384,8 +1419,9 @@ export const characterCurioFunctions = {
 				result.push(cloneDeep(o));
 				continue;
 			}
-			if (!this.isBlankName(o.name)) {
-				if (this.findTraitByName(base, o.name) === -1) result.push(cloneDeep(o));
+			const oName = (o as Record<string, unknown>).name;
+			if (!this.isBlankName(oName)) {
+				if (this.findTraitByName(base, oName) === -1) result.push(cloneDeep(o));
 			} else if (j >= base.length) {
 				result.push(cloneDeep(o)); // genuinely extra blank slot
 			}
@@ -1396,24 +1432,32 @@ export const characterCurioFunctions = {
 	// Set arrays join by stable id (D2). Template-only ids are inherited
 	// (so template additions propagate); character-only ids append; ids in
 	// removedSetIds stay deleted (set-level removal analog of D6).
-	mergeSetArrays: function (bSets: any, oSets: any, removedSetIds: any) {
+	mergeSetArrays: function (bSets: unknown, oSets: unknown, removedSetIds: unknown): unknown[] {
 		const base = Array.isArray(bSets) ? bSets : [];
 		const over = Array.isArray(oSets) ? oSets : [];
 		if (!over.length && base.length) return []; // Present-but-empty clears.
-		const rem = new Set((removedSetIds || []).filter((x: any) => typeof x === 'string' && x.length));
-		const byId = new Map();
-		over.forEach((o: any, j: number) => {
-			if (o && typeof o === 'object' && typeof o.id === 'string' && o.id.length && !byId.has(o.id)) byId.set(o.id, j);
+		const rem = new Set<string>(
+			(Array.isArray(removedSetIds) ? removedSetIds : []).filter(
+				(x): x is string => typeof x === 'string' && x.length > 0,
+			),
+		);
+		const byId = new Map<string, number>();
+		over.forEach((o: unknown, j: number) => {
+			if (o && typeof o === 'object') {
+				const id = (o as Record<string, unknown>).id;
+				if (typeof id === 'string' && id.length && !byId.has(id)) byId.set(id, j);
+			}
 		});
-		const consumed = new Set();
-		const result: any[] = [];
+		const consumed = new Set<number>();
+		const result: unknown[] = [];
 		for (const b of base) {
 			if (!b || typeof b !== 'object') {
 				result.push(cloneDeep(b));
 				continue;
 			}
-			if (typeof b.id === 'string' && b.id.length && rem.has(b.id)) continue;
-			const j = typeof b.id === 'string' && b.id.length && byId.has(b.id) ? byId.get(b.id) : -1;
+			const bId = (b as Record<string, unknown>).id;
+			if (typeof bId === 'string' && bId.length && rem.has(bId)) continue;
+			const j = typeof bId === 'string' && bId.length && byId.has(bId) ? (byId.get(bId) ?? -1) : -1;
 			if (j >= 0) {
 				consumed.add(j);
 				const c = cloneDeep(b);
@@ -1435,46 +1479,56 @@ export const characterCurioFunctions = {
 	// character-local and replace wholesale (D6). The sheet guard is
 	// root-only so a nested key literally named `sheet` (view.style.sheet)
 	// still merges.
-	applyOverrides: function (base: any, over: any, isRoot?: boolean) {
+	applyOverrides: function <T>(base: T, over: unknown, isRoot?: boolean): T {
 		if (!over || typeof over !== 'object' || Array.isArray(over)) return base;
 		if (!base || typeof base !== 'object' || Array.isArray(base)) return base;
+		const bRec = base as Record<string, unknown>;
+		const oRec = over as Record<string, unknown>;
 		// Removals apply even when the array itself is absent from the
 		// overlay (fully pruned): a missing array with a removal list means
 		// "everything except these", not "everything".
 		if (
-			!Array.isArray(over.traitSets) &&
-			Array.isArray(over.removedSets) &&
-			over.removedSets.length &&
-			Array.isArray(base.traitSets)
+			!Array.isArray(oRec.traitSets) &&
+			Array.isArray(oRec.removedSets) &&
+			oRec.removedSets.length &&
+			Array.isArray(bRec.traitSets)
 		) {
-			base.traitSets = base.traitSets.filter((ts: any) => !(ts && ts.id && over.removedSets.includes(ts.id)));
+			const remSets = oRec.removedSets;
+			bRec.traitSets = bRec.traitSets.filter((ts: unknown) => {
+				const id = ts && typeof ts === 'object' ? (ts as Record<string, unknown>).id : undefined;
+				return !(id && remSets.includes(id));
+			});
 		}
 		if (
-			!Array.isArray(over.traits) &&
-			Array.isArray(over.removedTraits) &&
-			over.removedTraits.length &&
-			Array.isArray(base.traits)
+			!Array.isArray(oRec.traits) &&
+			Array.isArray(oRec.removedTraits) &&
+			oRec.removedTraits.length &&
+			Array.isArray(bRec.traits)
 		) {
-			base.traits = base.traits.filter((tr: any) => !(tr && tr.name && over.removedTraits.includes(tr.name)));
+			const remTraits = oRec.removedTraits;
+			bRec.traits = bRec.traits.filter((tr: unknown) => {
+				const name = tr && typeof tr === 'object' ? (tr as Record<string, unknown>).name : undefined;
+				return !(name && remTraits.includes(name));
+			});
 		}
-		for (const key of Object.keys(over)) {
+		for (const key of Object.keys(oRec)) {
 			if (key === 'sheet' && isRoot !== false) continue;
-			const val = over[key];
+			const val = oRec[key];
 			if (val === null) {
-				base[key] = null;
+				bRec[key] = null;
 				continue;
 			}
 			if (key === 'removedTraits' || key === 'removedSets') {
-				base[key] = cloneDeep(val);
+				bRec[key] = cloneDeep(val);
 				continue;
 			}
-			const bval = base[key];
+			const bval = bRec[key];
 			if (key === 'traitSets' && Array.isArray(val) && Array.isArray(bval)) {
-				base[key] = this.mergeSetArrays(bval, val, over.removedSets || []);
+				bRec[key] = this.mergeSetArrays(bval, val, oRec.removedSets || []);
 			} else if (key === 'traits' && Array.isArray(val) && Array.isArray(bval)) {
-				base[key] = this.mergeTraitArrays(bval, val, over.removedTraits || []);
+				bRec[key] = this.mergeTraitArrays(bval, val, oRec.removedTraits || []);
 			} else if (key === 'tags' && Array.isArray(val) && Array.isArray(bval)) {
-				base[key] = val.length ? this.unionArrays(bval, val) : [];
+				bRec[key] = val.length ? this.unionArrays(bval, val) : [];
 			} else if (
 				val &&
 				typeof val === 'object' &&
@@ -1485,7 +1539,7 @@ export const characterCurioFunctions = {
 			) {
 				this.applyOverrides(bval, val, false);
 			} else {
-				base[key] = cloneDeep(val);
+				bRec[key] = cloneDeep(val);
 			}
 		}
 		return base;
@@ -1494,22 +1548,29 @@ export const characterCurioFunctions = {
 	// Full merge: character sparse overlay onto template base (brief merge
 	// pseudocode). No template → character as-is (D9/D17). Live form keeps
 	// a pinned { id, version } reference in sheet.template.
-	mergeTemplateIntoCharacter: function (charData: any, templateEntry: any) {
-		const base = this.findTemplateCharacter(templateEntry);
-		if (!base) return cloneDeep(charData);
-		const out = this.applyOverrides(cloneDeep(base), charData || {});
+	mergeTemplateIntoCharacter: function (charData: unknown, templateEntry: unknown): Character {
+		const base = this.findTemplateCharacter(templateEntry as SheetTemplate | null);
+		if (!base) return cloneDeep(charData) as Character;
+		const out = this.applyOverrides(cloneDeep(base), charData || {}) as Character;
+		const charView = charData && typeof charData === 'object' ? (charData as Record<string, unknown>).view : undefined;
 		const charHasListing = Boolean(
-			charData &&
-			charData.view &&
-			typeof charData.view === 'object' &&
-			!Array.isArray(charData.view) &&
-			charData.view.listing !== undefined,
+			charView &&
+			typeof charView === 'object' &&
+			!Array.isArray(charView) &&
+			(charView as Record<string, unknown>).listing !== undefined,
 		);
 		if (!out.isTemplate && !charHasListing && out.view && typeof out.view === 'object' && !Array.isArray(out.view)) {
 			delete out.view.listing;
 		}
-		if (templateEntry.id) {
-			out.sheet = { template: { id: templateEntry.id, version: templateEntry.version || 1 } };
+		const tmplRec =
+			templateEntry && typeof templateEntry === 'object' ? (templateEntry as Record<string, unknown>) : null;
+		if (tmplRec && typeof tmplRec.id === 'string' && tmplRec.id) {
+			out.sheet = {
+				template: {
+					id: tmplRec.id,
+					version: typeof tmplRec.version === 'number' ? tmplRec.version : 1,
+				},
+			};
 		}
 		this.ensureTraitSetIds(out);
 		return out;
@@ -1518,7 +1579,10 @@ export const characterCurioFunctions = {
 	// Snapshot a character into a standalone template entry (static id
 	// assigned once at creation, never regenerated). Same shape as the
 	// template library so all tooling applies unchanged.
-	extractSheetTemplate: function (character: any, meta: any) {
+	extractSheetTemplate: function (
+		character: Character,
+		meta?: { id?: string; title?: string; version?: number } | null,
+	): SheetTemplate {
 		this.ensureTraitSetIds(character);
 		const id = meta && meta.id ? String(meta.id) : 'custom-' + this.generateUUID().slice(0, 8);
 		const snapshot = cloneDeep(character);
@@ -1555,27 +1619,28 @@ export const characterCurioFunctions = {
 		// character-local (they would otherwise infect every character) and
 		// _lid is app-local bookkeeping. Blank slots (reserved print rows)
 		// are structural and are always kept.
-		const cleanNode = (node: any) => {
+		const cleanNode = (node: unknown) => {
 			if (Array.isArray(node)) {
 				node.forEach(cleanNode);
 				return;
 			}
 			if (!node || typeof node !== 'object') return;
-			delete node.removedTraits;
-			delete node.removedSets;
-			delete node._lid;
-			if (Array.isArray(node.traitSets)) node.traitSets.forEach(cleanNode);
-			if (Array.isArray(node.traits)) node.traits.forEach(cleanNode);
+			const rec = node as Record<string, unknown>;
+			delete rec.removedTraits;
+			delete rec.removedSets;
+			delete rec._lid;
+			if (Array.isArray(rec.traitSets)) rec.traitSets.forEach(cleanNode);
+			if (Array.isArray(rec.traits)) rec.traits.forEach(cleanNode);
 		};
 		cleanNode(snapshot);
 		this.pruneEmptyScaffolding(snapshot);
 		return orderTemplateKeys({
 			id: id,
-			character: orderCharacterKeys(snapshot),
+			character: orderCharacterKeys(snapshot as unknown as Record<string, unknown>) as unknown as Character,
 			updatedAt: new Date().toISOString(),
 			version: meta && typeof meta.version === 'number' ? meta.version : this.TEMPLATE_FORMAT_VERSION,
 			$schema: this.TEMPLATE_SCHEMA_URL,
-		});
+		}) as SheetTemplate;
 	},
 
 	// Pruner: inverse of the merge. Drops every value deep-equal to the
@@ -1585,7 +1650,12 @@ export const characterCurioFunctions = {
 	// the sheet link are character-local and never pruned. Blank traits
 	// survive only where they hold alignment (leading/interior) — trailing
 	// fully-inherited blanks are dropped.
-	pruneValue: function (bval: any, oval: any, removed: any) {
+	pruneValue: function (
+		bval: unknown,
+		oval: unknown,
+		removed: unknown,
+	): { drop: true } | { drop?: false; keep: unknown } {
+		void removed;
 		if (this.deepEqualClean(bval, oval)) return { drop: true };
 		if (oval === null || oval === undefined) {
 			return bval === null || bval === undefined ? { drop: true } : { keep: null };
@@ -1598,39 +1668,43 @@ export const characterCurioFunctions = {
 			typeof bval === 'object' &&
 			!Array.isArray(bval)
 		) {
-			let out: any = {};
-			for (const k of Object.keys(oval)) {
+			const bRec = bval as Record<string, unknown>;
+			const oRec = oval as Record<string, unknown>;
+			const out: Record<string, unknown> = {};
+			for (const k of Object.keys(oRec)) {
 				if (k === 'sheet' || k === 'removedTraits' || k === 'removedSets' || k === 'id' || k === 'name') {
-					out[k] = cloneDeep(oval[k]);
+					out[k] = cloneDeep(oRec[k]);
 					continue;
 				}
-				if (k === 'traitSets' && Array.isArray(oval[k]) && Array.isArray(bval[k])) {
-					const s = this.pruneSetArrays(bval[k], oval[k]);
+				const oField = oRec[k];
+				const bField = bRec[k];
+				if (k === 'traitSets' && Array.isArray(oField) && Array.isArray(bField)) {
+					const s = this.pruneSetArrays(bField, oField);
 					if (s.length) out[k] = s;
-					else if (oval[k].length === 0 && bval[k].length > 0) out[k] = [];
+					else if (oField.length === 0 && bField.length > 0) out[k] = [];
 					// else: fully inherited → dropped (absent = inherit whole)
 					continue;
 				}
-				if (k === 'traits' && Array.isArray(oval[k]) && Array.isArray(bval[k])) {
-					const t = this.pruneTraitArrays(bval[k], oval[k], oval.removedTraits);
+				if (k === 'traits' && Array.isArray(oField) && Array.isArray(bField)) {
+					const t = this.pruneTraitArrays(bField, oField, oRec.removedTraits);
 					if (t.length) out[k] = t;
-					else if (oval[k].length === 0 && bval[k].length > 0) out[k] = [];
+					else if (oField.length === 0 && bField.length > 0) out[k] = [];
 					continue;
 				}
-				if (k === 'tags' && Array.isArray(oval[k]) && Array.isArray(bval[k])) {
-					const kept = oval[k].filter((el: any) => !bval[k].some((be: any) => this.deepEqualClean(be, el)));
+				if (k === 'tags' && Array.isArray(oField) && Array.isArray(bField)) {
+					const kept = oField.filter((el) => !bField.some((be) => this.deepEqualClean(be, el)));
 					if (kept.length) out[k] = kept;
-					else if (oval[k].length === 0 && bval[k].length > 0) out[k] = [];
+					else if (oField.length === 0 && bField.length > 0) out[k] = [];
 					continue;
 				}
-				const r = this.pruneValue(bval[k], oval[k], null);
+				const r = this.pruneValue(bField, oField, null);
 				if (!r.drop) out[k] = r.keep;
 			}
 			if (!Object.keys(out).length) return { drop: true };
 			if (Object.keys(out).every((kk) => kk === 'id' || kk === 'name')) {
 				// Join keys + name alone still drop — unless the name moved. A
 				// rename is display truth, not inheritance, and must survive.
-				const bName = bval && typeof bval === 'object' && !Array.isArray(bval) ? (bval as any).name : undefined;
+				const bName = bRec.name;
 				if (out.name !== undefined && bName !== undefined && out.name !== bName) return { keep: out };
 				return { drop: true };
 			}
@@ -1639,128 +1713,144 @@ export const characterCurioFunctions = {
 		return { keep: cloneDeep(oval) };
 	},
 
-	pruneTraitArrays: function (bTraits: any, oTraits: any, removed: any) {
+	pruneTraitArrays: function (bTraits: unknown, oTraits: unknown, removed: unknown): unknown[] {
 		const base = Array.isArray(bTraits) ? bTraits : [];
 		const over = Array.isArray(oTraits) ? oTraits : [];
 		void removed;
-		const sparse: any[] = [];
-		const baseByName = new Map();
-		base.forEach((b: any) => {
-			if (b && typeof b === 'object' && !this.isBlankName(b.name) && !baseByName.has(b.name)) baseByName.set(b.name, b);
+		const sparse: unknown[] = [];
+		const baseByName = new Map<string, Record<string, unknown>>();
+		base.forEach((b: unknown) => {
+			if (b && typeof b === 'object') {
+				const bRec = b as Record<string, unknown>;
+				if (!this.isBlankName(bRec.name) && typeof bRec.name === 'string' && !baseByName.has(bRec.name)) {
+					baseByName.set(bRec.name, bRec);
+				}
+			}
 		});
-		over.forEach((o: any, i: number) => {
+		over.forEach((o: unknown, i: number) => {
 			if (!o || typeof o !== 'object') {
 				sparse.push(cloneDeep(o));
 				return;
 			}
-			if (!this.isBlankName(o.name)) {
-				const b = baseByName.get(o.name);
+			const oRec = o as Record<string, unknown>;
+			if (!this.isBlankName(oRec.name) && typeof oRec.name === 'string') {
+				const b = baseByName.get(oRec.name);
 				if (!b) {
-					sparse.push(cloneDeep(o));
+					sparse.push(cloneDeep(oRec));
 					return;
 				} // char-only
 				// Shape-preserving: fully-inherited named traits stay as
 				// {name} stubs so live indices survive the round-trip.
-				const r = this.pruneValue(b, o, null);
-				const pruned = r.drop ? { name: o.name } : r.keep;
-				pruned.name = o.name;
+				const r = this.pruneValue(b, oRec, null);
+				const pruned = (r.drop ? { name: oRec.name } : r.keep) as Record<string, unknown>;
+				pruned.name = oRec.name;
 				sparse.push(pruned);
 			} else {
 				// Blank traits are positional print slots: always kept so
 				// index alignment (and reserved print rows) survives the
 				// round-trip. Fully-inherited ones prune to a bare stub.
+				const baseAt = i < base.length ? base[i] : null;
 				const b =
-					i < base.length && base[i] && typeof base[i] === 'object' && this.isBlankName(base[i].name) ? base[i] : null;
+					baseAt && typeof baseAt === 'object' && this.isBlankName((baseAt as Record<string, unknown>).name)
+						? baseAt
+						: null;
 				if (!b) {
-					sparse.push(cloneDeep(o));
+					sparse.push(cloneDeep(oRec));
 					return;
 				} // extra blank slot
-				const r = this.pruneValue(b, o, null);
-				sparse.push(r.drop ? { name: typeof o.name === 'string' ? o.name : '' } : r.keep);
+				const r = this.pruneValue(b, oRec, null);
+				sparse.push(r.drop ? { name: typeof oRec.name === 'string' ? oRec.name : '' } : r.keep);
 			}
 		});
 		return sparse;
 	},
 
-	pruneSetArrays: function (bSets: any, oSets: any) {
+	pruneSetArrays: function (bSets: unknown, oSets: unknown): unknown[] {
 		const base = Array.isArray(bSets) ? bSets : [];
 		const over = Array.isArray(oSets) ? oSets : [];
-		const baseById = new Map();
-		base.forEach((b: any) => {
-			if (b && typeof b === 'object' && typeof b.id === 'string' && b.id.length && !baseById.has(b.id))
-				baseById.set(b.id, b);
+		const baseById = new Map<string, Record<string, unknown>>();
+		base.forEach((b: unknown) => {
+			if (b && typeof b === 'object') {
+				const bRec = b as Record<string, unknown>;
+				if (typeof bRec.id === 'string' && bRec.id.length && !baseById.has(bRec.id)) {
+					baseById.set(bRec.id, bRec);
+				}
+			}
 		});
-		const sparse: any[] = [];
+		const sparse: unknown[] = [];
 		// Recursively bare = join keys + name-only stubs all the way down.
 		// Fully-inherited subtrees drop entirely (absent = inherit whole).
-		const bare = (t: any): boolean => {
+		const bare = (t: unknown): boolean => {
 			if (!t || typeof t !== 'object') return true;
 			if (Array.isArray(t)) return t.every(bare);
-			return Object.keys(t).every((k) => {
+			const tRec = t as Record<string, unknown>;
+			return Object.keys(tRec).every((k) => {
 				if (k === 'id' || k === 'name') return true;
-				if (k === 'traits' && Array.isArray(t[k])) return t[k].every(bare);
+				if (k === 'traits' && Array.isArray(tRec[k])) return (tRec[k] as unknown[]).every(bare);
 				return false;
 			});
 		};
-		const stubOnly = (p: any) => bare(p);
-		over.forEach((o: any) => {
+		const stubOnly = (p: unknown) => bare(p);
+		over.forEach((o: unknown) => {
 			if (!o || typeof o !== 'object') {
 				sparse.push(cloneDeep(o));
 				return;
 			}
-			const b = typeof o.id === 'string' && o.id.length ? baseById.get(o.id) : null;
+			const oRec = o as Record<string, unknown>;
+			const b = typeof oRec.id === 'string' && oRec.id.length ? baseById.get(oRec.id) : null;
 			if (!b) {
-				sparse.push(cloneDeep(o));
+				sparse.push(cloneDeep(oRec));
 				return;
 			} // custom set: whole
-			const r = this.pruneValue(b, o, null);
-			const pruned = r.drop ? { id: o.id } : r.keep;
-			pruned.id = o.id;
+			const r = this.pruneValue(b, oRec, null);
+			const pruned = (r.drop ? { id: oRec.id } : r.keep) as Record<string, unknown>;
+			pruned.id = oRec.id;
 			// Fully-inherited sets (join keys + bare name stubs only) drop
 			// entirely — absent means inherit whole. Arrangement order lives
 			// in the preference layer, not here. A renamed set is never bare:
 			// the name is display truth and must survive even with no other
 			// overrides, or the rename silently vanishes on save.
-			if (!stubOnly(pruned) || o.name !== b.name) sparse.push(pruned);
+			if (!stubOnly(pruned) || oRec.name !== b.name) sparse.push(pruned);
 		});
 		return sparse;
 	},
 
 	// Strip a (cloned) character to its sparse overlay against a template
 	// entry's character base.
-	stripCharacterToDeltas: function (character: any, templateEntry: any) {
-		const base = this.findTemplateCharacter(templateEntry);
-		if (!base) return cloneDeep(character);
+	stripCharacterToDeltas: function (character: unknown, templateEntry: unknown): Record<string, unknown> {
+		const base = this.findTemplateCharacter(templateEntry as SheetTemplate | null);
+		if (!base) return cloneDeep(character) as Record<string, unknown>;
 		const r = this.pruneValue(base, cloneDeep(character), null);
-		return r.drop ? {} : r.keep;
+		return (r.drop ? {} : r.keep) as Record<string, unknown>;
 	},
 
 	// Canonical file emit: drop empty custom/tags/traits/description
 	// everywhere in a tree. Absence means no children / no description
 	// (or inherit in a delta); explicit nulls clear inherited values and
 	// are kept alongside join keys and name stubs.
-	pruneEmptyScaffolding: function (node: any) {
+	pruneEmptyScaffolding: function <T>(node: T): T {
 		if (!node || typeof node !== 'object') return node;
 		if (Array.isArray(node)) {
-			node.forEach((el: any) => this.pruneEmptyScaffolding(el));
+			node.forEach((el: unknown) => this.pruneEmptyScaffolding(el));
 			return node;
 		}
+		const rec = node as Record<string, unknown>;
 		if (
-			node.custom &&
-			typeof node.custom === 'object' &&
-			!Array.isArray(node.custom) &&
-			!Object.keys(node.custom).length
+			rec.custom &&
+			typeof rec.custom === 'object' &&
+			!Array.isArray(rec.custom) &&
+			!Object.keys(rec.custom as Record<string, unknown>).length
 		) {
-			delete node.custom;
+			delete rec.custom;
 		}
-		if (Array.isArray(node.tags) && !node.tags.length) delete node.tags;
-		if (node.description === '') delete node.description;
-		if (Array.isArray(node.traits)) {
-			this.pruneEmptyScaffolding(node.traits);
-			if (!node.traits.length) delete node.traits;
+		if (Array.isArray(rec.tags) && !rec.tags.length) delete rec.tags;
+		if (rec.description === '') delete rec.description;
+		if (Array.isArray(rec.traits)) {
+			this.pruneEmptyScaffolding(rec.traits);
+			if (!rec.traits.length) delete rec.traits;
 		}
-		Object.keys(node).forEach((k: string) => {
-			if (k !== 'traits' && node[k] && typeof node[k] === 'object') this.pruneEmptyScaffolding(node[k]);
+		Object.keys(rec).forEach((k: string) => {
+			if (k !== 'traits' && rec[k] && typeof rec[k] === 'object') this.pruneEmptyScaffolding(rec[k]);
 		});
 		return node;
 	},
@@ -1768,17 +1858,24 @@ export const characterCurioFunctions = {
 	// Export form: sparse character (overrides only) + embedded full
 	// template object, so the file is self-contained and hand-editable.
 	// Without a resolvable template the character exports exactly as today.
-	stripCharacterForExport: function (character: any, templateEntry: any) {
+	stripCharacterForExport: function (
+		character: unknown,
+		templateEntry: unknown,
+	): Partial<Character> & Record<string, unknown> {
 		const clean = this.stripCharacterToDeltas(character, templateEntry);
-		this.stripInternalIds(clean);
+		this.stripInternalIds(
+			clean as { traitSets?: TraitSet[]; traits?: Trait[]; curiosities?: Record<string, unknown> | null },
+		);
 		this.pruneEmptyScaffolding(clean);
-		if (templateEntry && templateEntry.id) {
+		const tmplRec =
+			templateEntry && typeof templateEntry === 'object' ? (templateEntry as Record<string, unknown>) : null;
+		if (tmplRec && tmplRec.id) {
 			clean.sheet = { template: cloneDeep(templateEntry) };
 		}
 		return orderCharacterKeys(clean);
 	},
 
-	renderInlineMarkdown: function (text: any) {
+	renderInlineMarkdown: function (text: unknown): string {
 		if (!text || typeof text !== 'string') return '';
 		// Escape user HTML first: everything below re-adds only our own safe tags.
 		let str = this.escapeHtml(text);
@@ -1809,7 +1906,7 @@ export const characterCurioFunctions = {
 		return str;
 	},
 
-	renderMarkdownLinks: function (str: any) {
+	renderMarkdownLinks: function (str: string): string {
 		let out = '';
 		let i = 0;
 		while (i < str.length) {
@@ -1850,7 +1947,7 @@ export const characterCurioFunctions = {
 		return out;
 	},
 
-	renderMarkdown: function (text: any) {
+	renderMarkdown: function (text: unknown): string {
 		if (!text || typeof text !== 'string') return '';
 		let lines = text.split(/\r?\n/);
 		let output = [];
@@ -2172,12 +2269,10 @@ export const characterCurioFunctions = {
 				},
 			},
 		},
-	} as Record<string, { id: string; label: string; blurb?: string; preset: any }>,
+	} as Record<string, SetPresetEntry>,
 
-	_customSetPresets: [] as { id: string; label: string; blurb?: string; preset: any }[],
-	_customSetPresetsListeners: new Set<
-		(presets: { id: string; label: string; blurb?: string; preset: any }[]) => void
-	>(),
+	_customSetPresets: [] as SetPresetEntry[],
+	_customSetPresetsListeners: new Set<(presets: SetPresetEntry[]) => void>(),
 
 	derivePresetId: function (label: string): string {
 		return String(label || '')
@@ -2210,9 +2305,7 @@ export const characterCurioFunctions = {
 		});
 	},
 
-	onCustomSetPresetsChange: function (
-		listener: (presets: { id: string; label: string; blurb?: string; preset: any }[]) => void,
-	): () => void {
+	onCustomSetPresetsChange: function (listener: (presets: SetPresetEntry[]) => void): () => void {
 		this._customSetPresetsListeners.add(listener);
 		return () => {
 			this._customSetPresetsListeners.delete(listener);
@@ -2227,10 +2320,12 @@ export const characterCurioFunctions = {
 		}
 	},
 
-	_sanitizeCustomPresetPayload: function (traitSet: any): any | null {
+	_sanitizeCustomPresetPayload: function (traitSet: unknown): Record<string, unknown> | null {
 		if (!traitSet || typeof traitSet !== 'object' || Array.isArray(traitSet)) return null;
-		const cloned = cloneDeep(traitSet);
-		this.stripInternalIds(cloned);
+		const cloned = cloneDeep(traitSet) as Record<string, unknown>;
+		this.stripInternalIds(
+			cloned as { traitSets?: TraitSet[]; traits?: Trait[]; curiosities?: Record<string, unknown> | null },
+		);
 		delete cloned.id;
 		const v = ensureView(cloned);
 		delete v.place;
@@ -2240,22 +2335,20 @@ export const characterCurioFunctions = {
 		return cloned;
 	},
 
-	setCustomSetPresets: function (
-		presets: any[],
-		options?: { notify?: boolean },
-	): { id: string; label: string; blurb?: string; preset: any }[] {
-		const next: { id: string; label: string; blurb?: string; preset: any }[] = [];
+	setCustomSetPresets: function (presets: unknown[], options?: { notify?: boolean }): SetPresetEntry[] {
+		const next: SetPresetEntry[] = [];
 		const seen = new Set<string>();
 		for (const entry of Array.isArray(presets) ? presets : []) {
 			if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
-			const rawLabel = typeof entry.label === 'string' ? entry.label.trim() : '';
-			const rawId = typeof entry.id === 'string' && entry.id.trim().length ? entry.id : rawLabel;
+			const rec = entry as Record<string, unknown>;
+			const rawLabel = typeof rec.label === 'string' ? rec.label.trim() : '';
+			const rawId = typeof rec.id === 'string' && rec.id.trim().length ? rec.id : rawLabel;
 			const id = this.derivePresetId(rawId);
 			if (!id || !rawLabel.length || seen.has(id) || this.isBuiltInPresetCollision(id)) continue;
-			const sanitized = this._sanitizeCustomPresetPayload(entry.preset);
+			const sanitized = this._sanitizeCustomPresetPayload(rec.preset);
 			if (!sanitized) continue;
 			seen.add(id);
-			const rawBlurb = typeof entry.blurb === 'string' ? entry.blurb.trim() : '';
+			const rawBlurb = typeof rec.blurb === 'string' ? rec.blurb.trim() : '';
 			next.push({
 				id,
 				label: rawLabel,
@@ -2270,12 +2363,12 @@ export const characterCurioFunctions = {
 		return this.getCustomSetPresets();
 	},
 
-	getCustomSetPresets: function (): { id: string; label: string; blurb?: string; preset: any }[] {
+	getCustomSetPresets: function (): SetPresetEntry[] {
 		return cloneDeep(this._customSetPresets);
 	},
 
 	saveCustomSetPreset: function (
-		traitSet: any,
+		traitSet: unknown,
 		options?: {
 			label?: string;
 			blurb?: string;
@@ -2283,7 +2376,7 @@ export const characterCurioFunctions = {
 			overwriteExistingCustom?: boolean;
 			disambiguateBuiltIn?: boolean;
 		},
-	): { id: string; label: string; blurb?: string; preset: any } | null {
+	): SetPresetEntry | null {
 		const cloned = this._sanitizeCustomPresetPayload(traitSet);
 		if (!cloned) return null;
 		let rawLabel =
@@ -2326,7 +2419,7 @@ export const characterCurioFunctions = {
 			delete clonedView.presetBlurb;
 		}
 
-		const entry: { id: string; label: string; blurb?: string; preset: any } = {
+		const entry: SetPresetEntry = {
 			id,
 			label: rawLabel,
 			...(rawBlurb.length ? { blurb: rawBlurb } : {}),
@@ -2342,23 +2435,24 @@ export const characterCurioFunctions = {
 	},
 
 	upsertCustomSetPresets: function (
-		entries: any[],
+		entries: unknown[],
 		options?: { notify?: boolean },
-	): { presets: { id: string; label: string; blurb?: string; preset: any }[]; importedCount: number } {
+	): { presets: SetPresetEntry[]; importedCount: number } {
 		let importedCount = 0;
 		for (const item of Array.isArray(entries) ? entries : []) {
 			if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+			const rec = item as Record<string, unknown>;
 			const rawSet =
-				item.traitSet && typeof item.traitSet === 'object' && !Array.isArray(item.traitSet)
-					? item.traitSet
-					: item.preset && typeof item.preset === 'object' && !Array.isArray(item.preset)
-						? item.preset
+				rec.traitSet && typeof rec.traitSet === 'object' && !Array.isArray(rec.traitSet)
+					? (rec.traitSet as Record<string, unknown>)
+					: rec.preset && typeof rec.preset === 'object' && !Array.isArray(rec.preset)
+						? (rec.preset as Record<string, unknown>)
 						: null;
 			if (!rawSet) continue;
 			const rawView = getView(rawSet);
 			const rawLabel =
-				typeof item.label === 'string' && item.label.trim().length
-					? item.label.trim()
+				typeof rec.label === 'string' && rec.label.trim().length
+					? rec.label.trim()
 					: typeof rawView?.presetLabel === 'string' && rawView.presetLabel.trim().length
 						? rawView.presetLabel.trim()
 						: typeof rawSet.name === 'string'
@@ -2366,8 +2460,8 @@ export const characterCurioFunctions = {
 							: '';
 			if (!rawLabel.length) continue;
 			const rawId =
-				typeof item.id === 'string' && item.id.trim().length
-					? item.id
+				typeof rec.id === 'string' && rec.id.trim().length
+					? rec.id
 					: typeof rawView?.presetId === 'string' && rawView.presetId.trim().length
 						? rawView.presetId
 						: rawLabel;
@@ -2376,12 +2470,12 @@ export const characterCurioFunctions = {
 			const sanitized = this._sanitizeCustomPresetPayload(rawSet);
 			if (!sanitized) continue;
 			const rawBlurb =
-				typeof item.blurb === 'string'
-					? item.blurb.trim()
+				typeof rec.blurb === 'string'
+					? rec.blurb.trim()
 					: typeof rawView?.presetBlurb === 'string'
 						? rawView.presetBlurb.trim()
 						: '';
-			const cleanEntry: { id: string; label: string; blurb?: string; preset: any } = {
+			const cleanEntry: SetPresetEntry = {
 				id,
 				label: rawLabel,
 				...(rawBlurb.length ? { blurb: rawBlurb } : {}),
@@ -2401,7 +2495,7 @@ export const characterCurioFunctions = {
 		return { presets: this.getCustomSetPresets(), importedCount };
 	},
 
-	deleteCustomSetPreset: function (presetId: string): { id: string; label: string; blurb?: string; preset: any }[] {
+	deleteCustomSetPreset: function (presetId: string): SetPresetEntry[] {
 		const prevLen = this._customSetPresets.length;
 		this._customSetPresets = this._customSetPresets.filter((p) => p.id !== presetId);
 		if (this._customSetPresets.length !== prevLen) {
@@ -2410,12 +2504,20 @@ export const characterCurioFunctions = {
 		return this.getCustomSetPresets();
 	},
 
-	instantiateSetPreset: function (presetOrEntry: any, character: any, page = 1): any {
+	instantiateSetPreset: function (
+		presetOrEntry: unknown,
+		character: { traitSets?: TraitSet[] } | null | undefined,
+		page = 1,
+	): TraitSet {
 		const rawSet =
-			presetOrEntry && typeof presetOrEntry === 'object' && presetOrEntry.preset ? presetOrEntry.preset : presetOrEntry;
-		const traitSet = cloneDeep(rawSet);
+			presetOrEntry &&
+			typeof presetOrEntry === 'object' &&
+			(presetOrEntry as Record<string, unknown>).preset !== undefined
+				? (presetOrEntry as Record<string, unknown>).preset
+				: presetOrEntry;
+		const traitSet = cloneDeep(rawSet) as TraitSet;
 		this.stripInternalIds(traitSet);
-		delete traitSet.id;
+		delete (traitSet as { id?: string }).id;
 		const v = ensureView(traitSet);
 		delete v.place;
 		delete (v as Record<string, unknown>).location;
@@ -2438,7 +2540,7 @@ export const characterCurioFunctions = {
 		v.page = page || 1;
 		if (typeof traitSet.name === 'string' && traitSet.name.trim().length > 0 && character?.traitSets?.length) {
 			traitSet.name = this.nextUniqueName(
-				(character.traitSets || []).map((ts: any) => ts?.name),
+				(character.traitSets || []).map((ts) => ts?.name ?? ''),
 				traitSet.name,
 			);
 		}
@@ -2447,8 +2549,9 @@ export const characterCurioFunctions = {
 		return traitSet;
 	},
 
-	collectCharacterTags: function (character: any): string[] {
+	collectCharacterTags: function (character: unknown): string[] {
 		if (!character || typeof character !== 'object') return [];
+		const charRec = character as { tags?: unknown; traitSets?: unknown };
 		const seen = new Set<string>();
 		const out: string[] = [];
 		const addList = (list: unknown) => {
@@ -2467,24 +2570,26 @@ export const characterCurioFunctions = {
 			if (!Array.isArray(traits)) return;
 			for (const tr of traits) {
 				if (!tr || typeof tr !== 'object') continue;
-				addList((tr as any).tags);
-				walkTraits((tr as any).traits);
+				const rec = tr as { tags?: unknown; traits?: unknown };
+				addList(rec.tags);
+				walkTraits(rec.traits);
 			}
 		};
-		addList(character.tags);
-		addList(getCuriosityPortrait(character)?.tags);
-		if (Array.isArray(character.traitSets)) {
-			for (const ts of character.traitSets) {
+		addList(charRec.tags);
+		addList(getCuriosityPortrait(charRec)?.tags);
+		if (Array.isArray(charRec.traitSets)) {
+			for (const ts of charRec.traitSets) {
 				if (!ts || typeof ts !== 'object') continue;
-				addList(ts.tags);
-				addList(ts.portrait?.tags);
-				walkTraits(ts.traits);
+				const tsRec = ts as { tags?: unknown; portrait?: { tags?: unknown } | null; traits?: unknown };
+				addList(tsRec.tags);
+				addList(tsRec.portrait?.tags);
+				walkTraits(tsRec.traits);
 			}
 		}
 		return out;
 	},
 
-	characterMatchesTagQuery: function (character: any, query: string): boolean {
+	characterMatchesTagQuery: function (character: unknown, query: string): boolean {
 		const q = String(query || '')
 			.trim()
 			.toLowerCase();
@@ -2497,7 +2602,7 @@ export interface SetPresetEntry {
 	id: string;
 	label: string;
 	blurb?: string;
-	preset: any;
+	preset: Partial<TraitSet> & Record<string, unknown>;
 }
 
 export const characterCurioSetPresets = characterCurioFunctions.characterCurioSetPresets;

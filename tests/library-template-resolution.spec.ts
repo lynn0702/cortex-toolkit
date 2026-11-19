@@ -116,16 +116,17 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
 		const imported = characterCurioFunctions.sanitizeImportedCharacter(raw);
 		expect(imported).not.toBeNull();
+		if (!imported || !Array.isArray(imported.traitSets)) throw new Error('expected imported character');
 		expect(imported.name).toBe('The Dreamer & the Architect');
 		expect(imported.traitSets).toHaveLength(4);
 
 		const [architect, archDistinctions, values, dreamer] = imported.traitSets;
 		expect(architect.name).toBe('The Architect');
-		expect(architect.rating.type).toBe('Dice');
-		expect(architect.rating.value).toEqual([10, 10, 10]);
+		expect((architect.rating as { type?: string; value?: number[] } | undefined)?.type).toBe('Dice');
+		expect((architect.rating as { type?: string; value?: number[] } | undefined)?.value).toEqual([10, 10, 10]);
 		expect(architect.traits ?? []).toHaveLength(0);
-		expect(architect.view.ringNoun).toBe('Boss Die');
-		expect(architect.view.border).toBe('none');
+		expect(architect.view?.ringNoun).toBe('Boss Die');
+		expect(architect.view?.border).toBe('none');
 
 		// Architect Distinctions are full phrases without Pip children
 		expect(archDistinctions.name).toBe('Architect Distinctions');
@@ -140,7 +141,8 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		// Values have descriptions
 		expect(values.name).toBe('Values');
 		expect(values.traits).toHaveLength(3);
-		expect(values.view.border?.shape ?? values.view.border).toBe('line');
+		const valuesBorder = values.view?.border;
+		expect(typeof valuesBorder === 'object' ? valuesBorder?.shape : valuesBorder).toBe('line');
 		expect(values.traits[0].name).toBe('Data');
 		expect(values.traits[0].description).toBe('belongs to the people, not the builders');
 		expect(values.traits[0].traits ?? []).toHaveLength(0);
@@ -148,8 +150,8 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		// Dreamer distinctions are also simple label traits
 		expect(dreamer.name).toBe('The Dreamer');
 		expect(dreamer.traits).toHaveLength(3);
-		expect(dreamer.view.border).toBe('none');
-		expect(dreamer.view.header).toBe('bottom');
+		expect(dreamer.view?.border).toBe('none');
+		expect(dreamer.view?.header).toBe('bottom');
 		expect(dreamer.traits[0].name).toBe('Beauty is all around us');
 		expect(dreamer.traits[0].traits ?? []).toHaveLength(0);
 		expect(dreamer.traits[1].name).toBe("I'll have another slice");
@@ -158,26 +160,30 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(dreamer.traits[2].traits ?? []).toHaveLength(0);
 
 		// place
-		expect(architect.view.place).toEqual({ height: 3, left: '0%', top: 0, width: '50%' });
-		expect(archDistinctions.view.place).toEqual({ height: 3, left: '50%', top: 0, width: '50%' });
-		expect(values.view.place).toEqual({ height: 2, left: '0%', top: 3, width: '100%' });
-		expect(dreamer.view.place).toEqual({ height: 3, left: '0%', top: 5, width: '100%' });
+		expect(architect.view?.place).toEqual({ height: 3, left: '0%', top: 0, width: '50%' });
+		expect(archDistinctions.view?.place).toEqual({ height: 3, left: '50%', top: 0, width: '50%' });
+		expect(values.view?.place).toEqual({ height: 2, left: '0%', top: 3, width: '100%' });
+		expect(dreamer.view?.place).toEqual({ height: 3, left: '0%', top: 5, width: '100%' });
 
 		// frame
-		expect(architect.view.frame.stroke).toBe('2px');
-		expect(architect.view.frame.traitsSpan).toEqual([45, 135]);
-		expect(architect.view.frame.image.zoom).toBe(1);
-		expect(architect.view.frame.size).toBe(190);
-		expect(dreamer.view.frame.stroke).toBe('2px');
-		expect(dreamer.view.frame.position).toBe('right');
-		expect(dreamer.view.frame.image.zoom).toBe(1.25);
-		expect(dreamer.view.frame.image.alignment).toBe('top-center');
-		expect(dreamer.view.frame.size).toBe(290);
-		expect(dreamer.view.frame.size).toBeGreaterThan(architect.view.frame.size);
+		const archFrame = architect.view?.frame as
+			{ stroke?: string; traitsSpan?: number[]; image?: { zoom?: number }; size?: number } | undefined;
+		const dreamerFrame = dreamer.view?.frame as
+			{ stroke?: string; position?: string; image?: { zoom?: number; alignment?: string }; size?: number } | undefined;
+		expect(archFrame?.stroke).toBe('2px');
+		expect(archFrame?.traitsSpan).toEqual([45, 135]);
+		expect(archFrame?.image?.zoom).toBe(1);
+		expect(archFrame?.size).toBe(190);
+		expect(dreamerFrame?.stroke).toBe('2px');
+		expect(dreamerFrame?.position).toBe('right');
+		expect(dreamerFrame?.image?.zoom).toBe(1.25);
+		expect(dreamerFrame?.image?.alignment).toBe('top-center');
+		expect(dreamerFrame?.size).toBe(290);
+		expect(dreamerFrame?.size).toBeGreaterThan(archFrame?.size ?? 0);
 
 		// header
-		expect(architect.view.header).toBe('top');
-		expect(values.view.header).toBe('top');
+		expect(architect.view?.header).toBe('top');
+		expect(values.view?.header).toBe('top');
 	});
 
 	it('surfaces Dreamer & Architect as showcase template without invented Setting/Prep/Complexity ratings', () => {

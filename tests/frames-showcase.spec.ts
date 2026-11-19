@@ -20,15 +20,17 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	it('verifies characterCurioSetPresets contains Framed Ring & Divider Line presets and retires cut-corner-block', () => {
 		const ringPreset = characterCurioSetPresets['framed-ring'];
 		expect(ringPreset, 'framed-ring preset must exist').toBeDefined();
-		expect(ringPreset?.preset?.view?.frame?.shape).toBe('circle');
-		expect(ringPreset?.preset?.view?.frame?.array).toBe('ring');
-		expect(ringPreset?.preset?.traits?.every((t: any) => t.name === '')).toBe(true);
+		const ringFrame = ringPreset?.preset?.view?.frame as Record<string, unknown> | undefined;
+		expect(ringFrame?.shape).toBe('circle');
+		expect(ringFrame?.array).toBe('ring');
+		expect(ringPreset?.preset?.traits?.every((t) => t.name === '')).toBe(true);
 
 		expect(characterCurioSetPresets['cut-corner-block']).toBeUndefined();
 
 		const linePreset = characterCurioSetPresets['divider-line'];
 		expect(linePreset, 'divider-line preset must exist').toBeDefined();
-		expect(linePreset?.preset?.view?.border?.shape).toBe('line');
+		const lineBorder = linePreset?.preset?.view?.border as Record<string, unknown> | undefined;
+		expect(lineBorder?.shape).toBe('line');
 	});
 
 	it('F4: verifies span normalization preserves explicit 0 and anchors maintain >= 0.01 precision', () => {

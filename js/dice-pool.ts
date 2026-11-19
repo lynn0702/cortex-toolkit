@@ -119,6 +119,15 @@ export interface SeparateGroup {
 	bonus: number;
 }
 
+export interface PoolResultSummary {
+	total: number;
+	formula: string;
+	effect: string;
+	actionTotal?: number;
+	separateBonus?: number;
+	isBotch?: boolean;
+}
+
 export interface PoolEvaluation {
 	poolId?: string;
 	side: 'player' | 'opposition';
@@ -128,8 +137,8 @@ export interface PoolEvaluation {
 	results: RollResult[];
 	actionResults: RollResult[];
 	separateGroups: SeparateGroup[];
-	bestTotalInfo: any;
-	bestEffectInfo: any;
+	bestTotalInfo: PoolResultSummary | null;
+	bestEffectInfo: PoolResultSummary | null;
 	manualTotal: number;
 	manualActionTotal: number;
 	manualSeparateBonus: number;
@@ -208,37 +217,59 @@ export function parseTraitShorthand(input: string): ShorthandParseResult {
 	return { label, dice: { count, size } };
 }
 
-function extractValidDice(rating: any): number[] {
+function extractValidDice(rating: { type?: unknown; value?: unknown } | null | undefined): number[] {
 	if (!rating || rating.type === 'Counter' || rating.type === 'Empty') return [];
 	if (!Array.isArray(rating.value)) return [];
-	return rating.value.map((v: any) => Number(v)).filter((n: number) => DIE_SIZES.includes(n));
+	return rating.value.map((v: unknown) => Number(v)).filter((n: number) => DIE_SIZES.includes(n));
 }
 
-function resolveNumericHitches(node: any, fallback = 1): number {
+function resolveNumericHitches(node: { hitches?: unknown } | null | undefined, fallback = 1): number {
 	if (node && typeof node.hitches === 'number' && Number.isFinite(node.hitches) && node.hitches >= 0) {
 		return Math.floor(node.hitches);
 	}
 	return fallback;
 }
 
-function resolveNumericKeepsExtra(node: any, fallback = 0): number {
+function resolveNumericKeepsExtra(node: { keepsExtra?: unknown } | null | undefined, fallback = 0): number {
 	if (node && typeof node.keepsExtra === 'number' && Number.isFinite(node.keepsExtra) && node.keepsExtra > 0) {
 		return Math.floor(node.keepsExtra);
 	}
 	return fallback;
 }
 
-export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion[] {
-	if (!character || !Array.isArray(character.traitSets)) return [];
+interface TraitLikeNode {
+	id?: unknown;
+	name?: unknown;
+	noun?: unknown;
+	description?: unknown;
+	spent?: unknown;
+	hitches?: unknown;
+	keepsExtra?: unknown;
+	view?: { style?: { body?: unknown } } | null;
+	traits?: unknown;
+	[key: string]: unknown;
+}
+
+interface CharacterLikeNode {
+	id?: unknown;
+	name?: unknown;
+	traitSets?: unknown;
+	[key: string]: unknown;
+}
+
+export function flattenCharacterTraits(character: unknown): FlattenedTraitSuggestion[] {
+	if (!character || typeof character !== 'object') return [];
+	const charNode = character as CharacterLikeNode;
+	if (!Array.isArray(charNode.traitSets)) return [];
 	const results: FlattenedTraitSuggestion[] = [];
 
-	for (let sIdx = 0; sIdx < character.traitSets.length; sIdx++) {
-		const ts = character.traitSets[sIdx];
-		if (!ts) continue;
+	for (let sIdx = 0; sIdx < charNode.traitSets.length; sIdx++) {
+		const ts = charNode.traitSets[sIdx] as TraitLikeNode | null | undefined;
+		if (!ts || typeof ts !== 'object') continue;
 		const styleBody = ts.view?.style?.body;
 		if (ts.id === 'name' || styleBody === 'name') continue;
 
-		const setKey = ts.id || `set-${sIdx}`;
+		const setKey = String(ts.id || `set-${sIdx}`);
 		const setNoun = String(ts.noun || '').trim();
 		const setHitches = resolveNumericHitches(ts, 1);
 		const setKeepsExtra = resolveNumericKeepsExtra(ts, 0);
@@ -288,13 +319,13 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 			}
 		}
 
-		const traits = Array.isArray(ts.traits) ? ts.traits : [];
+		const traits = Array.isArray(ts.traits) ? (ts.traits as TraitLikeNode[]) : [];
 		for (let tIdx = 0; tIdx < traits.length; tIdx++) {
 			const tr = traits[tIdx];
-			if (!tr || tr.spent === true || tr.id === 'plotPoints') continue;
+			if (!tr || typeof tr !== 'object' || tr.spent === true || tr.id === 'plotPoints') continue;
 
 			const trDice = extractValidDice(resolveRating(tr, [ts]));
-			const children = Array.isArray(tr.traits) ? tr.traits : [];
+			const children = Array.isArray(tr.traits) ? (tr.traits as TraitLikeNode[]) : [];
 			const trAltRoll = resolveAltRoll(tr, ts);
 			const canHinder = Boolean(trAltRoll);
 			const trHitches = resolveNumericHitches(tr, setHitches);
@@ -302,7 +333,7 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 
 			if (trDice.length > 0 && tr.name) {
 				results.push({
-					key: `${setKey}-t-${tr.id || tIdx}`,
+					key: `${setKey}-t-${String(tr.id || tIdx)}`,
 					name: String(tr.name).trim(),
 					noun: setNoun,
 					description: String(tr.description || '').trim(),
@@ -317,13 +348,13 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 
 			for (let subIdx = 0; subIdx < children.length; subIdx++) {
 				const sub = children[subIdx];
-				if (!sub || sub.spent === true) continue;
+				if (!sub || typeof sub !== 'object' || sub.spent === true) continue;
 				const subName = String(sub.name || '').trim();
 				if (!subName || resolvePpDelta(sub) !== 0) continue;
 				const subDice = extractValidDice(resolveRating(sub, [tr, ts]));
 				if (subDice.length === 0) continue;
 				results.push({
-					key: `${setKey}-t-${tr.id || tIdx}-sub-${sub.id || subIdx}`,
+					key: `${setKey}-t-${String(tr.id || tIdx)}-sub-${String(sub.id || subIdx)}`,
 					name: subName,
 					noun: setNoun,
 					description: String(sub.description || '').trim(),
@@ -341,16 +372,17 @@ export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion
 	return results;
 }
 
-export function flattenGraphTraits(curiosities: any[]): FlattenedTraitSuggestion[] {
+export function flattenGraphTraits(curiosities: unknown[]): FlattenedTraitSuggestion[] {
 	if (!Array.isArray(curiosities) || curiosities.length === 0) return [];
-	const seen = new Set<any>();
-	const unique: any[] = [];
+	const seen = new Set<unknown>();
+	const unique: CharacterLikeNode[] = [];
 	for (const c of curiosities) {
 		if (!c || typeof c !== 'object') continue;
-		const key = c.id ?? c;
+		const node = c as CharacterLikeNode;
+		const key = node.id ?? node;
 		if (seen.has(key)) continue;
 		seen.add(key);
-		unique.push(c);
+		unique.push(node);
 	}
 	if (unique.length === 1) {
 		return flattenCharacterTraits(unique[0]);
@@ -764,16 +796,16 @@ function defaultRollLogStorage(): RollLogStorage | null {
 	return typeof localStorage !== 'undefined' ? localStorage : null;
 }
 
-function isValidSideSummary(s: any): s is RollLogSideSummary {
+function isValidSideSummary(s: unknown): s is RollLogSideSummary {
+	if (!s || typeof s !== 'object') return false;
+	const rec = s as Record<string, unknown>;
 	return Boolean(
-		s &&
-		typeof s === 'object' &&
-		typeof s.total === 'number' &&
-		typeof s.effectDie === 'string' &&
-		typeof s.hitches === 'number' &&
-		typeof s.isBotch === 'boolean' &&
-		typeof s.diceSummary === 'string' &&
-		typeof s.log === 'string',
+		typeof rec.total === 'number' &&
+		typeof rec.effectDie === 'string' &&
+		typeof rec.hitches === 'number' &&
+		typeof rec.isBotch === 'boolean' &&
+		typeof rec.diceSummary === 'string' &&
+		typeof rec.log === 'string',
 	);
 }
 

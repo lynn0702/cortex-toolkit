@@ -1,5 +1,5 @@
 import { computed, inject, type ComputedRef, type InjectionKey } from 'vue';
-import { DIE_LADDER, getIdentityText, setRatingDice } from './model.ts';
+import { DIE_LADDER, getIdentityText, setRatingDice, type Curiosity, type TraitSet } from './model.ts';
 
 function fallbackUuid(): string {
 	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -13,8 +13,8 @@ function fallbackUuid(): string {
 }
 
 export interface FoundCuriosity {
-	node: any;
-	hostRoot: any | null;
+	node: Curiosity;
+	hostRoot: Curiosity | null;
 }
 
 export interface GraphLinkEdge {
@@ -27,15 +27,15 @@ export interface SpawnCuriosityOptions {
 	name: string;
 	die?: number | null;
 	dice?: number[];
-	onCreated?: (newId: string, node: any) => void;
+	onCreated?: (newId: string, node: Curiosity) => void;
 	navigate?: boolean;
 }
 
 export interface CuriosityGraphContext {
-	activeNode: ComputedRef<any | null>;
-	activeHostRoot: ComputedRef<any | null>;
-	resolveCuriosity: (refOrName: string | null | undefined) => any | null;
-	linkableCuriosities: ComputedRef<any[]>;
+	activeNode: ComputedRef<Curiosity | null>;
+	activeHostRoot: ComputedRef<Curiosity | null>;
+	resolveCuriosity: (refOrName: string | null | undefined) => Curiosity | null;
+	linkableCuriosities: ComputedRef<Curiosity[]>;
 	exploreCuriosity: (targetIdOrName: string) => boolean;
 	spawnCuriosity: (opts: SpawnCuriosityOptions) => string | null;
 	popOutCuriosity: (curiosityId: string) => boolean;
@@ -46,14 +46,14 @@ export const CURIOSITY_GRAPH_KEY: InjectionKey<CuriosityGraphContext> = Symbol('
 
 export function findCuriosityEverywhere(
 	idOrName: string | null | undefined,
-	topCuriosities: any[] = [],
-	preview?: any,
+	topCuriosities: Curiosity[] = [],
+	preview?: Curiosity | null,
 	allowNameMatch = false,
 ): FoundCuriosity | null {
 	const raw = String(idOrName || '').trim();
 	if (!raw) return null;
 
-	const roots: Array<{ root: any; isPreview: boolean }> = [];
+	const roots: Array<{ root: Curiosity; isPreview: boolean }> = [];
 	if (preview && typeof preview === 'object') {
 		roots.push({ root: preview, isPreview: true });
 	}
@@ -74,7 +74,7 @@ export function findCuriosityEverywhere(
 			if (root.curiosities[raw] && typeof root.curiosities[raw] === 'object') {
 				return { node: root.curiosities[raw], hostRoot: root };
 			}
-			for (const child of Object.values(root.curiosities) as any[]) {
+			for (const child of Object.values(root.curiosities)) {
 				if (child && typeof child === 'object' && String(child.id || '') === raw) {
 					return { node: child, hostRoot: root };
 				}
@@ -95,7 +95,7 @@ export function findCuriosityEverywhere(
 				return { node: root, hostRoot: null };
 			}
 			if (root.curiosities && typeof root.curiosities === 'object' && !Array.isArray(root.curiosities)) {
-				for (const child of Object.values(root.curiosities) as any[]) {
+				for (const child of Object.values(root.curiosities)) {
 					if (
 						child &&
 						typeof child === 'object' &&
@@ -113,10 +113,14 @@ export function findCuriosityEverywhere(
 	return null;
 }
 
-export function collectAllGraphNodes(activeNode: any, hostRoot: any | null, topCuriosities: any[] = []): any[] {
+export function collectAllGraphNodes(
+	activeNode: Curiosity | null | undefined,
+	hostRoot: Curiosity | null | undefined,
+	topCuriosities: Curiosity[] = [],
+): Curiosity[] {
 	const seen = new Set<string>();
-	const result: any[] = [];
-	const push = (n: any) => {
+	const result: Curiosity[] = [];
+	const push = (n: Curiosity | null | undefined) => {
 		if (!n || typeof n !== 'object' || n.isTemplate) return;
 		const id = String(n.id || '');
 		if (id && seen.has(id)) return;
@@ -165,7 +169,7 @@ export function extractWikiLinks(text: unknown): Array<{ target: string; label: 
 	return matches;
 }
 
-function collectWikiTextsFromNode(node: any): string[] {
+function collectWikiTextsFromNode(node: Curiosity | null | undefined): string[] {
 	const texts: string[] = [];
 	if (!node || typeof node !== 'object') return texts;
 	if (typeof node.description === 'string' && node.description) texts.push(node.description);
@@ -178,8 +182,9 @@ function collectWikiTextsFromNode(node: any): string[] {
 		if (!Array.isArray(traits)) return;
 		for (const tr of traits) {
 			if (!tr || typeof tr !== 'object') continue;
-			if (typeof tr.description === 'string' && tr.description) texts.push(tr.description);
-			walkTraits(tr.traits);
+			const rec = tr as { description?: unknown; traits?: unknown };
+			if (typeof rec.description === 'string' && rec.description) texts.push(rec.description);
+			walkTraits(rec.traits);
 		}
 	};
 
@@ -193,13 +198,16 @@ function collectWikiTextsFromNode(node: any): string[] {
 	return texts;
 }
 
-export function collectOutgoingLinks(node: any, resolveFn: (refOrName: string) => any | null): GraphLinkEdge[] {
+export function collectOutgoingLinks(
+	node: Curiosity | null | undefined,
+	resolveFn: (refOrName: string) => Curiosity | null,
+): GraphLinkEdge[] {
 	if (!node || typeof node !== 'object') return [];
 	const seen = new Set<string>();
 	const edges: GraphLinkEdge[] = [];
 	const selfId = String(node.id || '');
 
-	const addEdge = (target: any, via: GraphLinkEdge['via']) => {
+	const addEdge = (target: Curiosity | null | undefined, via: GraphLinkEdge['via']) => {
 		if (!target || typeof target !== 'object') return;
 		const tid = String(target.id || '');
 		if (!tid || tid === selfId || seen.has(tid)) return;
@@ -215,10 +223,11 @@ export function collectOutgoingLinks(node: any, resolveFn: (refOrName: string) =
 		if (!Array.isArray(traits)) return;
 		for (const tr of traits) {
 			if (!tr || typeof tr !== 'object') continue;
-			if (typeof tr.ref === 'string' && tr.ref.trim()) {
-				addEdge(resolveFn(tr.ref.trim()), 'trait');
+			const rec = tr as { ref?: unknown; traits?: unknown };
+			if (typeof rec.ref === 'string' && rec.ref.trim()) {
+				addEdge(resolveFn(rec.ref.trim()), 'trait');
 			}
-			walkTraits(tr.traits);
+			walkTraits(rec.traits);
 		}
 	};
 
@@ -249,9 +258,9 @@ export function collectOutgoingLinks(node: any, resolveFn: (refOrName: string) =
 }
 
 export function collectIncomingBacklinks(
-	targetNode: any,
-	allNodes: any[],
-	resolveFn: (refOrName: string) => any | null,
+	targetNode: Curiosity | null | undefined,
+	allNodes: Curiosity[],
+	resolveFn: (refOrName: string) => Curiosity | null,
 ): GraphLinkEdge[] {
 	if (!targetNode || !targetNode.id || !Array.isArray(allNodes)) return [];
 	const targetId = String(targetNode.id);
@@ -282,11 +291,11 @@ export function createBlankEmbeddedCuriosity(seed: {
 	name: string;
 	die?: number | null;
 	dice?: number[];
-}): any {
+}): Curiosity {
 	const now = new Date().toISOString();
 	const id = seed.id || fallbackUuid();
 	const cleanName = String(seed.name || '').trim();
-	const nameSet: Record<string, any> = {
+	const nameSet: TraitSet = {
 		id: 'name',
 		name: cleanName || 'Name',
 		view: { style: { header: 'default', body: 'name' } },
@@ -315,7 +324,11 @@ export function createBlankEmbeddedCuriosity(seed: {
 	};
 }
 
-export function popOutFromRoot(hostRoot: any, curiosityId: string, topCuriosities: any[]): any | null {
+export function popOutFromRoot(
+	hostRoot: Curiosity | null | undefined,
+	curiosityId: string,
+	topCuriosities: Curiosity[],
+): Curiosity | null {
 	if (!hostRoot || !hostRoot.curiosities || typeof hostRoot.curiosities !== 'object') return null;
 	const id = String(curiosityId || '').trim();
 	const target = hostRoot.curiosities[id];
@@ -334,7 +347,11 @@ export function popOutFromRoot(hostRoot: any, curiosityId: string, topCuriositie
 	return target;
 }
 
-export function pullInToRoot(hostRoot: any, curiosityId: string, topCuriosities: any[]): any | null {
+export function pullInToRoot(
+	hostRoot: Curiosity | null | undefined,
+	curiosityId: string,
+	topCuriosities: Curiosity[],
+): Curiosity | null {
 	if (!hostRoot || !curiosityId || String(hostRoot.id) === String(curiosityId)) return null;
 	const id = String(curiosityId).trim();
 	const idx = topCuriosities.findIndex((c) => c && String(c.id) === id);
@@ -359,22 +376,22 @@ export function pullInToRoot(hostRoot: any, curiosityId: string, topCuriosities:
 }
 
 export function useCuriosityGraph(
-	localCharacterGetter?: () => any,
-	onLocalMutate?: (ch: any) => void,
+	localCharacterGetter?: () => Curiosity | null | undefined,
+	onLocalMutate?: (ch: Curiosity) => void,
 ): CuriosityGraphContext {
 	const injected = inject(CURIOSITY_GRAPH_KEY, null);
 	if (injected) return injected;
 
-	const activeNode = computed(() => (localCharacterGetter ? localCharacterGetter() : null));
-	const activeHostRoot = computed(() => null);
+	const activeNode = computed<Curiosity | null>(() => (localCharacterGetter ? (localCharacterGetter() ?? null) : null));
+	const activeHostRoot = computed<Curiosity | null>(() => null);
 
-	const resolveCuriosity = (refOrName: string | null | undefined) => {
+	const resolveCuriosity = (refOrName: string | null | undefined): Curiosity | null => {
 		const root = activeNode.value;
 		if (!root) return null;
 		return findCuriosityEverywhere(refOrName, [root], null, true)?.node || null;
 	};
 
-	const linkableCuriosities = computed(() => {
+	const linkableCuriosities = computed<Curiosity[]>(() => {
 		const root = activeNode.value;
 		if (!root) return [];
 		const all = collectAllGraphNodes(root, null, [root]);

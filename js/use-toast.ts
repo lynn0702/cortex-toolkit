@@ -13,7 +13,7 @@ export function useToast() {
 	const toastMessage = ref<string | null>(null);
 	const toastActionLabel = ref<string | null>(null);
 	const toastTone = ref<ToastTone>('info');
-	const toastTimeout = ref<any>(null);
+	const toastTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 	let pendingAction: (() => void) | null = null;
 	let currentDurationMs = 2500;
 	let isPaused = false;
