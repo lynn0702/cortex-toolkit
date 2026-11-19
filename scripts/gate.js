@@ -26,8 +26,37 @@ run('1. Production Build (vite + asset versioning)', 'npm run build');
 // 2. Code Style
 run('2. Code Style (prettier)', 'npx prettier --check --cache .');
 
-// 3. Type Check
+// 3. Type Check (+ zero-any ratchet on js/)
 run('3. Type Check (vue-tsc)', 'npm run check');
+{
+	const anyRe = /(?::\s*any\b|\bas\s+any\b|<any>|any\[\]|Record<[^,>]+,\s*any>)/;
+	const violations = [];
+	function checkNoAny(dir) {
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			const full = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				if (entry.name === 'chunks') continue;
+				checkNoAny(full);
+			} else if (/\.(ts|vue)$/.test(entry.name) && entry.name !== 'model.generated.ts') {
+				const lines = fs.readFileSync(full, 'utf8').split(/\r?\n/);
+				lines.forEach((line, idx) => {
+					const trimmed = line.trim();
+					if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('<!--')) return;
+					if (anyRe.test(line)) {
+						violations.push(`${path.relative(root, full)}:${idx + 1}: ${trimmed}`);
+					}
+				});
+			}
+		}
+	}
+	checkNoAny(path.join(root, 'js'));
+	if (violations.length > 0) {
+		console.error(`[FAIL] Explicit TypeScript 'any' found in js/ (${violations.length}):`);
+		violations.slice(0, 20).forEach((v) => console.error(`  ${v}`));
+		process.exit(1);
+	}
+	console.log('[PASS] TypeScript zero-any ratchet: 0 explicit any annotations in js/');
+}
 
 // 4. Test Suites
 run('4. Test Suites (vitest + 8 node suites)', 'npm test');

@@ -4,17 +4,17 @@ import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import { materializeCharacter } from '../js/layered-materialize.ts';
-import type { Character } from '../js/model.ts';
+import type { Character, TraitSet } from '../js/model.ts';
 import kitchenSinkRaw from '../data/templates/kitchen-sink.template.layered.json';
 import retiredCrystallineRaw from '../data/templates/retired-crystalline.template.layered.json';
 import alienUsRaw from '../data/templates/alien-us.template.layered.json';
 import solarpunkCitizenRaw from '../data/templates/solarpunk-citizen.template.layered.json';
 
 function materializeTemplateChar(raw: { character: Record<string, unknown> }): Character {
-	return reactive(materializeCharacter(raw.character as any) as Character) as Character;
+	return reactive(materializeCharacter(raw.character) as unknown as Character) as Character;
 }
 
-function findSetIndex(character: Character, predicate: (set: any) => boolean): number {
+function findSetIndex(character: Character, predicate: (set: TraitSet) => boolean): number {
 	return (character.traitSets || []).findIndex(predicate);
 }
 
@@ -91,9 +91,9 @@ describe('subtrait-columns layout, connectors & print parity', () => {
 		const s = findSetIndex(character, (set) => set.view?.style?.body === 'subtrait-columns');
 		expect(s).toBeGreaterThanOrEqual(0);
 
-		const flyTrait = (character.traitSets[s].traits || []).find((t) => t.name === 'Fly') as any;
+		const flyTrait = (character.traitSets[s].traits || []).find((t) => t.name === 'Fly');
 		expect(flyTrait).toBeDefined();
-		flyTrait.traits = [{ name: 'Roc', rating: { type: 'Die', value: [8], range: [8, 10, 12] } }];
+		flyTrait!.traits = [{ name: 'Roc', rating: { type: 'Die', value: [8], range: [8, 10, 12] } }];
 
 		const printFilled = mount(TraitSetBlock, {
 			props: { character, traitSetID: s, submode: 'print', editing: [], printBlank: false },
@@ -133,11 +133,11 @@ describe('subtrait-columns layout, connectors & print parity', () => {
 		const s = findSetIndex(character, (set) => set.view?.style?.body === 'subtrait-columns');
 		expect(s).toBeGreaterThanOrEqual(0);
 
-		const targetSet = character.traitSets[s] as any;
+		const targetSet = character.traitSets[s];
 		targetSet.view = { ...(targetSet.view || {}), branch: { left: 2, center: 1, right: 2 } };
 
 		// Pre-seeded empty specialty entries alongside a rated right-side specialty
-		const traits = targetSet.traits as any[];
+		const traits = targetSet.traits;
 		traits[0].traits = [
 			{ name: '', view: { branchSide: 'left' } },
 			{ name: '', view: { branchSide: 'right' } },

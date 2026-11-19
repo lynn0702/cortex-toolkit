@@ -14,7 +14,6 @@ import {
 import { characterCurioFunctions, type SetPresetEntry } from './functions.ts';
 import { characterCurioStorage, type PreferencesRecord } from './storage.ts';
 import { cloneDeep } from './clone-deep.ts';
-import { dicePool as dicePoolModel, type DiceItem, type NamedPool } from './dice-pool.ts';
 import {
 	CURIOSITY_GRAPH_KEY,
 	collectAllGraphNodes,
@@ -36,6 +35,8 @@ import ModalDialog from './modal-dialog.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory, type EditingPath } from './use-history.ts';
 import { usePersistence } from './use-persistence.ts';
+import { useSheetTemplates, downloadJson } from './use-sheet-templates.ts';
+import { useSessionPools } from './use-session-pools.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
 
 const Roster = defineAsyncComponent(() => import('./roster.vue'));
@@ -44,18 +45,11 @@ const CommandPalette = defineAsyncComponent(() => import('./command-palette.vue'
 import {
 	getView,
 	getTemplateTitle,
-	hasPlotPoints,
-	resolveCurrencyLabel,
-	resolvePlotPoints,
 	getCuriosityGame,
 	getCuriosityThumbnailUrl,
 	type Character as CharacterModel,
 	type SheetTemplate,
-	type Trait,
-	type TraitSet,
 } from './model.ts';
-
-declare const characterCurioLibraryTemplates: SheetTemplate[] | undefined;
 
 type CharacterComponentInstance = InstanceType<typeof Character> & {
 	openPlayPresetPicker?: () => void;
@@ -90,13 +84,6 @@ const mode = ref('roster');
 const submode = ref<string | null>(null);
 const editing = ref<EditingPath>([]);
 const viewY = ref<number | null>(null);
-const fallbackDicePool = ref(new dicePoolModel.DicePool());
-const oppositionPool = ref(new dicePoolModel.DicePool());
-const activeRollerSide = ref<'player' | 'opposition'>('player');
-const namedPools = ref<NamedPool[]>([]);
-const activePoolId = ref<string>('');
-const explicitlyAddedPoolIds = new Set<string>();
-const manuallyRemovedPoolKeys = new Set<string>();
 const isStudioPanelOpen = ref(true);
 const studioPanelTab = ref<'properties' | 'roller' | 'json'>('properties');
 const mobileDrawerState = ref<'staged' | 'split' | 'full'>('staged');
@@ -122,8 +109,6 @@ const { toastMessage, toastActionLabel, toastTone, showToast, triggerToastAction
 provide('showToast', showToast);
 
 const main = ref<HTMLElement | null>(null);
-
-let _libraryLoading: Promise<boolean> | null = null;
 
 // ---- dark mode state ----
 const storedColorScheme =
@@ -217,82 +202,6 @@ const character = computed<CharacterModel | null>(() => {
 });
 const activeHostRoot = computed(() => activeFound.value?.hostRoot ?? null);
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
-
-function resolveOwnerCuriosity(ownerId: string | null | undefined): CharacterModel | null {
-	if (!ownerId) return null;
-	const targetId = String(ownerId);
-	if (previewCharacter.value) {
-		if (String(previewCharacter.value.id) === targetId) return previewCharacter.value;
-		if (previewCharacter.value.curiosities?.[targetId]) return previewCharacter.value.curiosities[targetId];
-	}
-	for (const c of characters.value) {
-		if (!c) continue;
-		if (String(c.id) === targetId) return c;
-		if (c.curiosities && typeof c.curiosities === 'object' && c.curiosities[targetId]) {
-			return c.curiosities[targetId];
-		}
-	}
-	return null;
-}
-
-const activeNamedPool = computed<NamedPool | null>(
-	() => namedPools.value.find((p) => p.id === activePoolId.value) || namedPools.value[0] || null,
-);
-
-const dicePool = computed(() => activeNamedPool.value?.pool || fallbackDicePool.value);
-
-const totalStagedDiceCount = computed(() =>
-	namedPools.value.reduce((sum, entry) => sum + (entry.pool?.items?.length || 0), 0),
-);
-
-const nonEmptyNamedPools = computed(() => namedPools.value.filter((entry) => (entry.pool?.items?.length || 0) > 0));
-
-const activePlayPlotPoints = computed(() => {
-	if (submode.value === 'play' && activeNamedPool.value) {
-		const owner = resolveOwnerCuriosity(activeNamedPool.value.ownerId);
-		if (owner) return resolvePlotPoints(owner);
-		if (typeof activeNamedPool.value.plotPoints === 'number') {
-			return Math.max(0, Math.floor(activeNamedPool.value.plotPoints));
-		}
-		return 0;
-	}
-	return character.value ? resolvePlotPoints(character.value) : 0;
-});
-
-function resolveEntityPpBaseLabel(entity: CharacterModel | null | undefined): string {
-	return resolveCurrencyLabel(entity);
-}
-
-const activePlayPlotPointsLabel = computed(() => {
-	if (submode.value === 'play' && activeNamedPool.value) {
-		const owner = resolveOwnerCuriosity(activeNamedPool.value.ownerId);
-		const base = resolveEntityPpBaseLabel(owner);
-		const isSingleMatchingOwner =
-			owner &&
-			character.value &&
-			String(owner.id) === String(character.value.id) &&
-			namedPools.value.filter((p) => p.id !== 'opposition').length <= 1;
-		if (isSingleMatchingOwner) return base;
-		const resolvedOwnerName = owner
-			? String(owner.name || 'Unnamed').trim() || 'Unnamed'
-			: activeNamedPool.value.ownerName;
-		return `${resolvedOwnerName} ${base}`;
-	}
-	return resolveEntityPpBaseLabel(character.value);
-});
-
-const showPlayPlotPoints = computed(() => {
-	if (mode.value !== 'character' || (submode.value !== 'play' && submode.value !== 'edit')) {
-		return false;
-	}
-	if (submode.value === 'play') {
-		if (!activeNamedPool.value) return Boolean(character.value && hasPlotPoints(character.value));
-		const owner = resolveOwnerCuriosity(activeNamedPool.value.ownerId);
-		if (owner) return hasPlotPoints(owner);
-		return typeof activeNamedPool.value.plotPoints === 'number' && Number.isFinite(activeNamedPool.value.plotPoints);
-	}
-	return Boolean(character.value && hasPlotPoints(character.value));
-});
 
 function restoreCharacterForHistory(restored: CharacterModel) {
 	if (!restored || !restored.id) return;
@@ -411,107 +320,81 @@ const showCuriosityWebBar = computed(() => {
 	);
 });
 
-const rollerCuriosities = computed(() => {
-	const seen = new Set<string>();
-	const list: CharacterModel[] = [];
-	const add = (c: CharacterModel | null | undefined) => {
-		if (!c || typeof c !== 'object' || c.isTemplate) return;
-		const id = String(c.id || '');
-		if (id && seen.has(id)) return;
-		if (id) seen.add(id);
-		list.push(c);
-		if (c.curiosities && typeof c.curiosities === 'object') {
-			for (const sub of Object.values(c.curiosities)) add(sub);
-		}
-	};
-	for (const oc of openCharacters.value) add(oc);
-	for (const c of characters.value) add(c);
-	return list;
+const {
+	fallbackDicePool,
+	oppositionPool,
+	activeRollerSide,
+	namedPools,
+	activePoolId,
+	manuallyRemovedPoolKeys,
+	activeNamedPool,
+	dicePool,
+	totalStagedDiceCount,
+	nonEmptyNamedPools,
+	activePlayPlotPoints,
+	activePlayPlotPointsLabel,
+	showPlayPlotPoints,
+	rollerCuriosities,
+	syncSessionPools,
+	selectActivePoolId,
+	handleActivePoolSideChange,
+	cycleActiveNamedPool,
+	handleAddNamedPool,
+	handleRemoveNamedPool,
+	handleTogglePoolPP,
+	addDieToRoller,
+	removeDieFromRoller,
+	clearDicePool,
+	clearOppositionPool,
+	handleSettlePP,
+} = useSessionPools({
+	mode,
+	submode,
+	character,
+	characters,
+	previewCharacter,
+	openCharacters,
+	isStudioPanelOpen,
+	studioPanelTab,
+	isNarrowViewport,
+	updateCharacter: (c) => {
+		updateCharacter(c);
+	},
+	persist: () => {
+		persist();
+	},
+	showToast,
 });
 
-function syncSessionPools(preferCharacterId?: string | null) {
-	const targets = openCharacters.value;
-	const targetIds = new Set(targets.map((c) => String(c?.id || '')).filter(Boolean));
-	const next: NamedPool[] = [];
-
-	// Keep existing pools unless they are empty session pools for closed sheets
-	for (const entry of namedPools.value) {
-		if (entry.ownerId) {
-			const owner = resolveOwnerCuriosity(entry.ownerId);
-			if (owner) {
-				entry.ownerName = String(owner.name || 'Unnamed').trim() || 'Unnamed';
-			}
-			const isEmpty = (entry.pool?.items?.length || 0) === 0 && (entry.pool?.wordBank?.length || 0) === 0;
-			if (!owner || (!targetIds.has(String(entry.ownerId)) && isEmpty && !explicitlyAddedPoolIds.has(entry.id))) {
-				continue;
-			}
-		}
-		next.push(entry);
-	}
-
-	// Ensure every open sheet in the session has a NamedPool (inserted before Opposition)
-	for (const c of targets) {
-		if (!c || !c.id) continue;
-		const cid = String(c.id);
-		if (manuallyRemovedPoolKeys.has('owner:' + cid)) continue;
-		if (!next.some((p) => p.ownerId && String(p.ownerId) === cid)) {
-			const created = dicePoolModel.createNamedPool(String(c.name || 'Unnamed').trim() || 'Unnamed', cid);
-			const oppIdx = next.findIndex((p) => p.id === 'opposition');
-			if (oppIdx !== -1) {
-				next.splice(oppIdx, 0, created);
-			} else {
-				next.push(created);
-			}
-		}
-	}
-
-	// Ensure default Opposition pool exists unless manually removed
-	if (!manuallyRemovedPoolKeys.has('opposition') && !next.some((p) => p.id === 'opposition')) {
-		next.push({
-			id: 'opposition',
-			ownerId: null,
-			ownerName: 'Opposition',
-			pool: oppositionPool.value,
-		});
-	}
-
-	// Fallback if everything was removed
-	if (next.length === 0) {
-		next.push({
-			id: 'opposition',
-			ownerId: null,
-			ownerName: 'Opposition',
-			pool: oppositionPool.value,
-		});
-	}
-
-	namedPools.value = next;
-
-	if (preferCharacterId) {
-		const preferred = next.find((p) => p.ownerId && String(p.ownerId) === String(preferCharacterId));
-		if (preferred) {
-			activePoolId.value = preferred.id;
-			activeRollerSide.value = 'player';
-			return;
-		}
-	}
-
-	if (!activePoolId.value || !next.some((p) => p.id === activePoolId.value)) {
-		const forCurrent =
-			character.value && next.find((p) => p.ownerId && String(p.ownerId) === String(character.value?.id));
-		const chosen = forCurrent || next[0];
-		activePoolId.value = chosen?.id || '';
-		activeRollerSide.value = chosen?.id === 'opposition' ? 'opposition' : 'player';
-	}
-}
-
-watch(
-	[openCharacters, character, () => character.value?.name],
-	() => {
-		syncSessionPools();
+const {
+	ensureLibraryTemplates,
+	resolveTemplateEntry,
+	charPrefs,
+	applyPrefs,
+	recordCharOrder,
+	resolveStoredCharacter,
+	pendingTemplateUpdate,
+	importSheetTemplate,
+	deleteSheetTemplate,
+	applyTemplateUpdate,
+	stayOnTemplateSnapshot,
+	sheetTemplateForExport,
+	fallbackTemplateTitle,
+	saveSheetTemplate,
+	exportSheetTemplate,
+} = useSheetTemplates({
+	mode,
+	character,
+	characters,
+	characterIndex,
+	sheetTemplates,
+	prefs,
+	initHistory,
+	saveLocalData: () => {
+		saveLocalData();
 	},
-	{ immediate: true },
-);
+	showToast,
+});
 
 const availableToOpen = computed(() => {
 	const q = (sessionCharacterSearch.value || '').toLowerCase().trim();
@@ -527,27 +410,6 @@ const availableToOpen = computed(() => {
 			return false;
 		return true;
 	});
-});
-
-// Template version switch prompt (D16): the bundle moved on but
-// this character still resolves against its pinned snapshot.
-const pendingTemplateUpdate = computed(() => {
-	if (mode.value !== 'character' || !character.value) return null;
-	const t = character.value.sheet && character.value.sheet.template;
-	const id = t && typeof t === 'object' ? t.id : null;
-	if (!id) return null;
-	const pinned = (t && typeof t === 'object' && t.version) || 1;
-	if (typeof characterCurioLibraryTemplates === 'undefined') return null;
-	const builtin = characterCurioFunctions.findLibraryTemplate(id);
-	if (!builtin) return null;
-	const current = builtin.version || 1;
-	if (current <= pinned) return null;
-	const declined =
-		prefs.value && prefs.value.characters && prefs.value.characters[character.value.id]
-			? prefs.value.characters[character.value.id].declinedTemplateVersions
-			: null;
-	if (declined && declined[id] && declined[id] >= current) return null;
-	return { id: id, pinned: pinned, current: current };
 });
 
 watch(mode, () => {
@@ -893,157 +755,6 @@ function isNarrowViewport() {
 	return Boolean(window.matchMedia && window.matchMedia('(max-width: 1399px)').matches);
 }
 
-function selectActivePoolId(poolId: string) {
-	if (!poolId) return;
-	activePoolId.value = poolId;
-	activeRollerSide.value = poolId === 'opposition' ? 'opposition' : 'player';
-}
-
-function handleActivePoolSideChange(side: 'player' | 'opposition') {
-	activeRollerSide.value = side;
-	if (side === 'opposition') {
-		const opp = namedPools.value.find((p) => p.id === 'opposition') || namedPools.value[1];
-		if (opp) activePoolId.value = opp.id;
-	} else if (activePoolId.value === 'opposition') {
-		const primary = namedPools.value.find((p) => p.id !== 'opposition') || namedPools.value[0];
-		if (primary) activePoolId.value = primary.id;
-	}
-}
-
-function cycleActiveNamedPool() {
-	if (namedPools.value.length <= 1) return;
-	const idx = Math.max(
-		0,
-		namedPools.value.findIndex((p) => p.id === activePoolId.value),
-	);
-	const next = namedPools.value[(idx + 1) % namedPools.value.length];
-	if (next) selectActivePoolId(next.id);
-}
-
-function handleAddNamedPool(payload: { ownerId: string | null; ownerName: string; withPP?: boolean }) {
-	if (payload.ownerId) {
-		const cid = String(payload.ownerId);
-		manuallyRemovedPoolKeys.delete('owner:' + cid);
-		const existing = namedPools.value.find((p) => p.ownerId && String(p.ownerId) === cid);
-		if (existing) {
-			selectActivePoolId(existing.id);
-			return;
-		}
-		const owner = resolveOwnerCuriosity(cid);
-		const created = dicePoolModel.createNamedPool(
-			String(owner?.name || payload.ownerName || 'Unnamed').trim() || 'Unnamed',
-			cid,
-		);
-		explicitlyAddedPoolIds.add(created.id);
-		const oppIdx = namedPools.value.findIndex((p) => p.id === 'opposition');
-		if (oppIdx !== -1) {
-			namedPools.value.splice(oppIdx, 0, created);
-		} else {
-			namedPools.value.push(created);
-		}
-		selectActivePoolId(created.id);
-		return;
-	}
-
-	const cleanName = String(payload.ownerName || '').trim();
-	if (!cleanName) return;
-	if (cleanName.toLowerCase() === 'opposition' && !namedPools.value.some((p) => p.id === 'opposition')) {
-		manuallyRemovedPoolKeys.delete('opposition');
-		const oppEntry: NamedPool = {
-			id: 'opposition',
-			ownerId: null,
-			ownerName: 'Opposition',
-			pool: oppositionPool.value,
-			...(payload.withPP ? { plotPoints: 1 } : {}),
-		};
-		namedPools.value.push(oppEntry);
-		selectActivePoolId(oppEntry.id);
-		return;
-	}
-	const created = dicePoolModel.createNamedPool(cleanName, null, payload.withPP ? 1 : undefined);
-	explicitlyAddedPoolIds.add(created.id);
-	namedPools.value.push(created);
-	selectActivePoolId(created.id);
-}
-
-function handleRemoveNamedPool(poolId: string) {
-	if (namedPools.value.length <= 1) return;
-	const idx = namedPools.value.findIndex((p) => p.id === poolId);
-	if (idx === -1) return;
-	const removed = namedPools.value[idx];
-	explicitlyAddedPoolIds.delete(removed.id);
-	if (removed.id === 'opposition') {
-		manuallyRemovedPoolKeys.add('opposition');
-	} else if (removed.ownerId) {
-		manuallyRemovedPoolKeys.add('owner:' + String(removed.ownerId));
-	}
-	removed.pool?.clear?.();
-	namedPools.value.splice(idx, 1);
-	if (activePoolId.value === poolId) {
-		const fallback = namedPools.value[Math.max(0, idx - 1)] || namedPools.value[0];
-		if (fallback) selectActivePoolId(fallback.id);
-	}
-}
-
-function persistOwnerMutation(owner: CharacterModel | null | undefined) {
-	if (!owner) return;
-	if (character.value && String(character.value.id) === String(owner.id)) {
-		updateCharacter(owner);
-		return;
-	}
-	const topIdx = characters.value.findIndex((c) => c && String(c.id) === String(owner.id));
-	if (topIdx !== -1) {
-		owner.dateModified = new Date().toISOString();
-		characters.value[topIdx] = characterCurioFunctions.orderCharacterKeys(owner);
-		persist();
-		return;
-	}
-	// Nested curiosity inside a parent root
-	for (let i = 0; i < characters.value.length; i++) {
-		const parent = characters.value[i];
-		if (parent?.curiosities && parent.curiosities[owner.id]) {
-			parent.dateModified = new Date().toISOString();
-			persist();
-			return;
-		}
-	}
-	persist();
-}
-
-function handleTogglePoolPP(poolId: string) {
-	const entry = namedPools.value.find((p) => p.id === poolId);
-	if (!entry) return;
-	const owner = resolveOwnerCuriosity(entry.ownerId);
-	if (owner) {
-		characterCurioFunctions.setPlotPoints(owner, hasPlotPoints(owner) ? null : 1);
-		persistOwnerMutation(owner);
-	} else {
-		entry.plotPoints = typeof entry.plotPoints === 'number' ? null : 1;
-	}
-}
-
-function addDieToRoller(dieData: Partial<DiceItem> | Partial<DiceItem>[]) {
-	if (namedPools.value.length === 0) {
-		syncSessionPools();
-	}
-	const targetEntry = activeNamedPool.value;
-	const targetPool = targetEntry ? targetEntry.pool : dicePool.value;
-	targetPool.add(dieData);
-	if (submode.value === 'play' && !isNarrowViewport()) {
-		isStudioPanelOpen.value = true;
-		studioPanelTab.value = 'roller';
-	}
-	let label;
-	if (Array.isArray(dieData)) {
-		const poolName = dieData[0]?.source || 'Pool';
-		label = `${dieData.length} dice (${poolName})`;
-	} else {
-		label = dieData.source ? dieData.source : `d${dieData.size}`;
-	}
-	const ownerTag = targetEntry ? `${targetEntry.ownerName} pool` : 'dice pool';
-	showToast(`Added ${label} to ${ownerTag}`);
-}
-
 const studioPanelRef = ref<StudioPanelInstance | null>(null);
 const showPlaySaveConfirm = ref(false);
 let pendingNavigation: (() => void) | null = null;
@@ -1070,47 +781,6 @@ function hasUncommittedSessionChanges(): boolean {
 		}
 	}
 	return false;
-}
-
-function removeDieFromRoller(index: number) {
-	const target = activeNamedPool.value?.pool || dicePool.value;
-	target.removeAt(index);
-}
-
-function clearDicePool() {
-	for (const entry of namedPools.value) {
-		entry.pool.clear();
-	}
-	fallbackDicePool.value.clear();
-}
-
-function clearOppositionPool() {
-	oppositionPool.value.clear();
-}
-
-function handleSettlePP(delta: number, poolId?: string) {
-	if (delta === 0) return;
-	if (submode.value === 'play' || poolId) {
-		const target = (poolId ? namedPools.value.find((p) => p.id === poolId) : activeNamedPool.value) || null;
-		if (target) {
-			const owner = resolveOwnerCuriosity(target.ownerId);
-			if (owner) {
-				const currentPP = characterCurioFunctions.resolvePlotPoints(owner);
-				characterCurioFunctions.setPlotPoints(owner, Math.max(0, currentPP + delta));
-				persistOwnerMutation(owner);
-				return;
-			}
-			if (typeof target.plotPoints === 'number') {
-				target.plotPoints = Math.max(0, target.plotPoints + delta);
-				return;
-			}
-		}
-	}
-	if (character.value) {
-		const currentPP = characterCurioFunctions.resolvePlotPoints(character.value);
-		characterCurioFunctions.setPlotPoints(character.value, Math.max(0, currentPP + delta));
-		updateCharacter(character.value);
-	}
 }
 
 function triggerRollFromPill() {
@@ -1266,186 +936,6 @@ function cancelPlaySave() {
 
 function safeImageUrl(url: string | null | undefined) {
 	return characterCurioFunctions.safeImageUrl(url);
-}
-
-// ---------- Sheet template layer ----------
-// Templates resolve store-first, then the built-in library
-// library. Static ids dedupe: re-imports replace, never append.
-function ensureLibraryTemplates(): Promise<boolean> {
-	if (typeof characterCurioLibraryTemplates !== 'undefined') return Promise.resolve(true);
-	if (_libraryLoading) return _libraryLoading;
-	_libraryLoading = new Promise<boolean>((resolve) => {
-		const script = document.createElement('script');
-		// `?v=` is rewritten to the content hash of js/templates.bundle.js by
-		// scripts/version-assets.js during `npm run build`.
-		script.src = 'js/templates.bundle.js?v=33';
-		script.onload = () => resolve(true);
-		script.onerror = () => resolve(false);
-		document.head.appendChild(script);
-	});
-	return _libraryLoading;
-}
-
-function resolveTemplateEntry(id: string | null, version?: number | null): SheetTemplate | null {
-	if (!id) return null;
-	const store = sheetTemplates.value || [];
-	if (version) {
-		const snap = store.find((t) => t.id === id && (t.version || 1) === version);
-		if (snap) return snap;
-		const builtin = characterCurioFunctions.findLibraryTemplate(id);
-		if (builtin && (builtin.version || 1) === version) return builtin;
-		if (builtin) return builtin; // degraded: snapshot lost, use current
-		const matches = store.filter((t) => t.id === id).sort((a, b) => (b.version || 1) - (a.version || 1));
-		return matches[0] || null;
-	}
-	const matches = store.filter((t) => t.id === id).sort((a, b) => (b.version || 1) - (a.version || 1));
-	if (matches.length) return matches[0];
-	const builtin = characterCurioFunctions.findLibraryTemplate(id);
-	if (builtin) return builtin;
-	return null;
-}
-
-// Preference layer (brief D11): arrangement lives here, applied
-// after every merge so user arrangement always wins.
-function charPrefs(charId: string) {
-	if (!prefs.value) prefs.value = { version: 1, global: {}, characters: {} };
-	if (!prefs.value.characters[charId]) prefs.value.characters[charId] = {};
-	return prefs.value.characters[charId];
-}
-
-function applyPrefs(characterData: CharacterModel): CharacterModel {
-	if (!characterData || !characterData.id) return characterData;
-	const cp = prefs.value && prefs.value.characters ? prefs.value.characters[characterData.id] : null;
-	if (!cp) return characterData;
-	if (Array.isArray(cp.setOrder) && cp.setOrder.length && Array.isArray(characterData.traitSets)) {
-		const byId = new Map<string, TraitSet>();
-		characterData.traitSets.forEach((ts) => {
-			if (ts && ts.id && !byId.has(ts.id)) byId.set(ts.id, ts);
-		});
-		const ordered: TraitSet[] = [];
-		cp.setOrder.forEach((id) => {
-			const match = byId.get(id);
-			if (match) {
-				ordered.push(match);
-				byId.delete(id);
-			}
-		});
-		byId.forEach((ts) => ordered.push(ts));
-		characterData.traitSets.forEach((ts) => {
-			if (!ordered.includes(ts)) ordered.push(ts);
-		});
-		characterData.traitSets = ordered;
-	}
-	if (cp.traitOrders && Array.isArray(characterData.traitSets)) {
-		characterData.traitSets.forEach((ts) => {
-			const order = ts && ts.id ? cp.traitOrders?.[ts.id] : null;
-			if (!Array.isArray(order) || !order.length || !Array.isArray(ts.traits)) return;
-			const byLid = new Map<string, Trait>();
-			ts.traits.forEach((tr) => {
-				if (tr && tr._lid && !byLid.has(tr._lid)) byLid.set(tr._lid, tr);
-			});
-			const ordered: Trait[] = [];
-			order.forEach((lid) => {
-				const match = byLid.get(lid);
-				if (match) {
-					ordered.push(match);
-					byLid.delete(lid);
-				}
-			});
-			byLid.forEach((tr) => ordered.push(tr));
-			ts.traits.forEach((tr) => {
-				if (!ordered.includes(tr)) ordered.push(tr);
-			});
-			ts.traits = ordered;
-		});
-	}
-	return characterData;
-}
-
-function recordCharOrder(characterData: CharacterModel) {
-	if (!characterData || !characterData.id) return;
-	const cp = charPrefs(characterData.id);
-	if (!Array.isArray(characterData.traitSets)) return;
-	cp.setOrder = characterData.traitSets.map((ts) => ts && ts.id).filter((id): id is string => Boolean(id));
-	cp.traitOrders = cp.traitOrders || {};
-	characterData.traitSets.forEach((ts) => {
-		if (ts && ts.id && Array.isArray(ts.traits)) {
-			cp.traitOrders![ts.id] = ts.traits.map((tr) => tr && tr._lid).filter((lid): lid is string => Boolean(lid));
-		}
-	});
-}
-
-// Normalize one stored character: stable set ids, sheet.template
-// forms (full embed -> upsert + collapse to a pinned { id, version }),
-// snapshot-on-first-see for unversioned refs (D16), then merge +
-// internal ids + preferences.
-function resolveStoredCharacter(raw: unknown): CharacterModel {
-	if (!raw || typeof raw !== 'object') return raw as CharacterModel;
-	let c = raw as CharacterModel;
-	characterCurioFunctions.ensureTraitSetIds(c);
-	let ref: { id: string; version: number | null } | null = null;
-	const t = c.sheet && c.sheet.template;
-	if (t && typeof t === 'object') {
-		if ('character' in t && t.character && t.id) {
-			sheetTemplates.value = characterCurioStorage.upsertTemplate(
-				sheetTemplates.value,
-				t,
-			) as unknown as SheetTemplate[];
-			ref = { id: t.id, version: t.version || 1 };
-			c.sheet = { template: { id: t.id, version: t.version || 1 } };
-		} else if (t.id) {
-			ref = { id: t.id, version: t.version || null };
-			c.sheet = { template: t.version ? { id: t.id, version: t.version } : { id: t.id } };
-		}
-	}
-	if (ref) {
-		let entry = resolveTemplateEntry(ref.id, ref.version);
-		if (entry) {
-			const ver = ref.version || entry.version || 1;
-			// Snapshot the exact pinned base into the store (D16):
-			// a later bundle update must never move existing
-			// characters until the user accepts the switch.
-			const inStore = (sheetTemplates.value || []).some((s) => s.id === entry!.id && (s.version || 1) === ver);
-			if (!inStore && characterCurioFunctions.findLibraryTemplate(entry.id) === entry) {
-				sheetTemplates.value = characterCurioStorage.upsertTemplate(
-					sheetTemplates.value,
-					entry,
-				) as unknown as SheetTemplate[];
-			}
-			ref = { id: ref.id, version: ver };
-			c.sheet = { template: { id: ref.id, version: ver } };
-			entry = resolveTemplateEntry(ref.id, ref.version) || entry;
-		}
-		if (entry) {
-			const templateChar = characterCurioFunctions.findTemplateCharacter(entry);
-			if (templateChar && c.sets) {
-				// Layered storage form: fold content onto the template.
-				c = characterCurioFunctions.materializeCharacter(c, templateChar) as CharacterModel;
-				c.sheet = ref.version ? { template: { id: ref.id, version: ref.version } } : { template: { id: ref.id } };
-			} else {
-				c = characterCurioFunctions.mergeTemplateIntoCharacter(c, entry);
-			}
-		} else if (c.sets) {
-			c = characterCurioFunctions.materializeCharacter(c, null) as CharacterModel;
-		}
-	} else if (c.sets && !Array.isArray(c.traitSets)) {
-		c = characterCurioFunctions.materializeCharacter(c, null) as CharacterModel;
-	}
-	if (c.curiosities && typeof c.curiosities === 'object' && !Array.isArray(c.curiosities)) {
-		for (const [cid, sub] of Object.entries(c.curiosities)) {
-			const subObj = sub as CharacterModel | null | undefined;
-			if (subObj && typeof subObj === 'object') {
-				if (subObj.sets && !Array.isArray(subObj.traitSets)) {
-					c.curiosities[cid] = characterCurioFunctions.materializeCharacter(subObj, null) as CharacterModel;
-				}
-				if (!c.curiosities[cid].id) c.curiosities[cid].id = cid;
-			}
-		}
-	}
-	characterCurioFunctions.ensureTraitSetIds(c);
-	characterCurioFunctions.assignLids(c);
-	applyPrefs(c);
-	return c;
 }
 
 function setViewY() {
@@ -1918,76 +1408,6 @@ function loadCharacter(id: string, targetSubmode?: string | null) {
 	setMode('character', targetSubmode ?? submode.value ?? 'edit', true);
 }
 
-function importSheetTemplate(entry: SheetTemplate | null | undefined) {
-	if (!entry || !entry.id) return;
-	if (!characterCurioFunctions.isValidCurrentCharacter(entry)) {
-		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE, { tone: 'error' });
-		return;
-	}
-	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
-		...cloneDeep(entry),
-		userSaved: true,
-	}) as unknown as SheetTemplate[];
-	saveLocalData();
-	showToast(`Saved layout template “${getTemplateTitle(entry) || entry.id}”`);
-}
-
-function deleteSheetTemplate(id: string) {
-	if (!id) return;
-	const removed = (sheetTemplates.value || []).find((t) => t?.id === id);
-	sheetTemplates.value = (sheetTemplates.value || []).filter((t) => t?.id !== id);
-	saveLocalData();
-	showToast(
-		'Removed saved template',
-		removed
-			? {
-					actionLabel: 'Undo',
-					onAction: () => {
-						sheetTemplates.value = characterCurioStorage.upsertTemplate(
-							sheetTemplates.value,
-							removed,
-						) as unknown as SheetTemplate[];
-						saveLocalData();
-					},
-				}
-			: undefined,
-	);
-}
-
-// D16 switch: rebase pure overrides (strip vs pinned snapshot)
-// onto the newer bundle version, then re-merge and re-apply
-// preferences. Stay records a decline so it stops nagging.
-async function applyTemplateUpdate() {
-	const u = pendingTemplateUpdate.value;
-	if (!u || !character.value) return;
-	await ensureLibraryTemplates();
-	const oldEntry = resolveTemplateEntry(u.id, u.pinned);
-	const newEntry = characterCurioFunctions.findLibraryTemplate(u.id);
-	if (!newEntry) return;
-	const stripped = oldEntry
-		? characterCurioFunctions.stripCharacterToDeltas(character.value, oldEntry)
-		: cloneDeep(character.value);
-	const rebased = characterCurioFunctions.mergeTemplateIntoCharacter(stripped, newEntry);
-	rebased.sheet = { template: { id: u.id, version: newEntry.version || 1 } };
-	characterCurioFunctions.assignLids(rebased);
-	characters.value[characterIndex.value] = rebased;
-	applyPrefs(rebased);
-	recordCharOrder(rebased);
-	initHistory();
-	saveLocalData();
-	showToast('Layout updated — your content and arrangement were kept');
-}
-
-function stayOnTemplateSnapshot() {
-	const u = pendingTemplateUpdate.value;
-	if (!u || !character.value) return;
-	const cp = charPrefs(character.value.id);
-	cp.declinedTemplateVersions = cp.declinedTemplateVersions || {};
-	cp.declinedTemplateVersions[u.id] = u.current;
-	saveLocalData();
-	showToast('Staying on your saved layout version');
-}
-
 function importCharacter(characterData: unknown) {
 	if (!characterCurioFunctions.isValidCurrentCharacter(characterData)) {
 		showToast(characterCurioFunctions.INVALID_FILE_MESSAGE, { tone: 'error' });
@@ -2109,26 +1529,6 @@ function importCharacter(characterData: unknown) {
 	showToast(`Imported ${incoming.name || 'character'}`);
 }
 
-function downloadJson(filename: string, payload: unknown) {
-	const uri = encodeURI('data:application/json;charset=utf-8,' + JSON.stringify(payload, null, 2)).replace(/#/g, '%23');
-
-	const link = document.createElement('a');
-	document.body.appendChild(link); // Required for Firefox
-	link.setAttribute('href', uri);
-	link.setAttribute('download', filename);
-	link.click();
-	link.remove();
-}
-
-function sheetTemplateForExport(characterData: CharacterModel | null | undefined): SheetTemplate | null {
-	if (!characterData) return null;
-	const t = characterData.sheet && characterData.sheet.template;
-	const ref = t && typeof t === 'object' ? { id: t.id, version: t.version || null } : null;
-	if (!ref || !ref.id) return null;
-	if (t && typeof t === 'object' && 'character' in t && t.character) return t as SheetTemplate;
-	return resolveTemplateEntry(ref.id, ref.version);
-}
-
 async function exportCharacter(id: string) {
 	const characterData = characters.value.find((c) => c.id === id);
 	if (!characterData) return;
@@ -2150,58 +1550,6 @@ async function exportCharacter(id: string) {
 	const filename = `${name}_${timestamp}.curio.json`;
 
 	downloadJson(filename, out);
-}
-
-function fallbackTemplateTitle(characterData: CharacterModel) {
-	return (
-		getView(characterData)?.listing?.title ||
-		(getCuriosityGame(characterData)
-			? undefined
-			: characterData.name
-				? `${characterData.name} Layout`
-				: 'Custom Layout')
-	);
-}
-
-function saveSheetTemplate() {
-	const characterData = character.value;
-	if (!characterData) return;
-	const currentRef =
-		characterData.sheet && characterData.sheet.template && typeof characterData.sheet.template === 'object'
-			? characterData.sheet.template.id
-			: null;
-	// Re-saving a custom template updates it in place (version bump);
-	// forking off a built-in (or nothing) mints a fresh static id.
-	const reuse = currentRef && !characterCurioFunctions.findLibraryTemplate(currentRef) ? currentRef : null;
-	const prev = reuse ? resolveTemplateEntry(reuse) : null;
-	const entry = characterCurioFunctions.extractSheetTemplate(characterData, {
-		id: reuse || undefined,
-		version: reuse ? ((prev && prev.version) || 1) + 1 : 1,
-		title: fallbackTemplateTitle(characterData),
-	});
-	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, {
-		...cloneDeep(entry),
-		userSaved: true,
-	}) as unknown as SheetTemplate[];
-	characterData.sheet = { template: { id: entry.id, version: entry.version } };
-	saveLocalData();
-	showToast(`Saved layout as reusable template`);
-}
-
-function exportSheetTemplate() {
-	const characterData = character.value;
-	if (!characterData) return;
-	const ref =
-		characterData.sheet && characterData.sheet.template && typeof characterData.sheet.template === 'object'
-			? characterData.sheet.template.id
-			: null;
-	let entry = ref ? resolveTemplateEntry(ref) : null;
-	if (!entry)
-		entry = characterCurioFunctions.extractSheetTemplate(characterData, {
-			title: fallbackTemplateTitle(characterData),
-		});
-	const slug = String(getTemplateTitle(entry) || entry.id || 'template').replace(/\s+/g, '_');
-	downloadJson(`${slug}.curio-template.json`, entry);
 }
 
 function importSetPresets(entries: SetPresetEntry[]) {

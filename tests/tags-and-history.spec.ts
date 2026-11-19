@@ -3,8 +3,10 @@ import { mount } from '@vue/test-utils';
 import { computed, nextTick, ref } from 'vue';
 import axe from 'axe-core';
 import TagEditor from '../js/tag-editor.vue';
-import { useHistory } from '../js/use-history.ts';
+import { useHistory, type EditingPath } from '../js/use-history.ts';
 import { characterCurioFunctions } from '../js/functions.ts';
+import type { Character } from '../js/model.ts';
+import { makeCharacter } from './fixtures.ts';
 
 describe('TagEditor, tag search, and edit-mode history snapshots', () => {
 	afterEach(() => {
@@ -61,7 +63,7 @@ describe('TagEditor, tag search, and edit-mode history snapshots', () => {
 	});
 
 	it('characterMatchesTagQuery searches character, portrait, traitSet, trait, and nested subtrait tags', () => {
-		const sample: any = {
+		const sample = makeCharacter({
 			name: 'Dreamer',
 			tags: ['solo'],
 			portrait: { url: '', alt: '', tags: ['portrait'] },
@@ -79,7 +81,7 @@ describe('TagEditor, tag search, and edit-mode history snapshots', () => {
 					],
 				},
 			],
-		};
+		});
 
 		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'solo')).toBe(true);
 		expect(characterCurioFunctions.characterMatchesTagQuery(sample, 'core-set')).toBe(true);
@@ -91,10 +93,10 @@ describe('TagEditor, tag search, and edit-mode history snapshots', () => {
 	it('useHistory scheduleHistorySnapshot records debounced steps while editing is non-empty', async () => {
 		vi.useFakeTimers();
 		const mode = ref('character');
-		const characters = ref<any[]>([{ id: 'c1', name: 'Original', traitSets: [] }]);
+		const characters = ref<Character[]>([makeCharacter({ id: 'c1', name: 'Original', traitSets: [] })]);
 		const characterIndex = computed(() => 0);
 		const character = computed(() => characters.value[characterIndex.value]);
-		const editing = ref<any[]>(['name']);
+		const editing = ref<EditingPath>(['name']);
 		const isNavigatingHistory = ref(false);
 		const history = ref<string[]>([]);
 		const historyIndex = ref(-1);

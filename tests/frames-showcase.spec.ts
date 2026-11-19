@@ -5,7 +5,8 @@ import TraitSetBlock from '../js/trait-set-block.vue';
 import { VANGUARD_FRAME_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
 import { characterCurioSetPresets, characterCurioFunctions } from '../js/functions.ts';
 import { computeFrameAnchors, resolveFrame } from '../js/frame-geometry.ts';
-import { getTemplateTitle, isHiddenIn } from '../js/model.ts';
+import { getTemplateTitle, isHiddenIn, type Character, type FrameConfig } from '../js/model.ts';
+import { asRecord } from './fixtures.ts';
 
 describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', () => {
 	it('verifies SHOWCASE_TEMPLATES exposes the Vanguard Frame Showcase at index 0', () => {
@@ -13,7 +14,7 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		const tmpl = SHOWCASE_TEMPLATES[0];
 		expect(tmpl.id).toBe('vanguard-frame-showcase');
 		expect(getTemplateTitle(tmpl)).toBe('Vanguard Frame Showcase');
-		expect((tmpl as any).blurb).toBeUndefined();
+		expect(asRecord(tmpl).blurb).toBeUndefined();
 		expect(tmpl.character.traitSets.length).toBe(8);
 	});
 
@@ -54,25 +55,25 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	it('F5: verifies dead fields are stripped from showcase template and presets', () => {
 		const char = VANGUARD_FRAME_SHOWCASE.character;
 		for (const s of char.traitSets) {
-			expect((s.view as any)?.headerAlign, 'headerAlign must be stripped').toBeUndefined();
-			expect((s.view as any)?.sharedHinder, 'sharedHinder must be stripped').toBeUndefined();
+			expect(asRecord(s.view).headerAlign, 'headerAlign must be stripped').toBeUndefined();
+			expect(asRecord(s.view).sharedHinder, 'sharedHinder must be stripped').toBeUndefined();
 		}
 
 		// Values set
 		const valuesSet = char.traitSets[4];
 		expect(valuesSet.name).toBe('Values');
-		for (const t of valuesSet.traits as any[]) {
-			expect((t as any).statement, 'trait-level statement must be stripped').toBeUndefined();
-			expect((t as any).questioned, 'trait-level questioned must be stripped').toBeUndefined();
+		for (const t of valuesSet.traits) {
+			expect(asRecord(t).statement, 'trait-level statement must be stripped').toBeUndefined();
+			expect(asRecord(t).questioned, 'trait-level questioned must be stripped').toBeUndefined();
 			expect(t.traits?.length).toBe(1);
 			expect(t.traits?.[0].name).toBeTruthy();
 		}
 		// Glory questioned pip
-		const glory = (valuesSet.traits as any[]).find((t) => t.name === 'Glory');
+		const glory = valuesSet.traits.find((t) => t.name === 'Glory');
 		expect(glory?.traits?.[0]?.rating?.value).toEqual([true]);
 
 		// Session notes does not reference JSON tab
-		const sessionNotes = char.traitSets[7] as any;
+		const sessionNotes = asRecord(char.traitSets[7]);
 		expect(sessionNotes.notes).not.toContain('JSON tab');
 		expect(sessionNotes.notes).toContain('Set Editor');
 	});
@@ -80,9 +81,9 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	it('F6: verifies stroke tokens (strong, dashed) and unrecognized fallback to primary with warning', () => {
 		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as any;
+		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as Character;
 		// Test unrecognized color fallback
-		character.traitSets[0].view.frame = {
+		character.traitSets[0].view!.frame = {
 			shape: 'circle',
 			array: 'ring',
 			color: 'unknown-neon',
@@ -99,10 +100,10 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	});
 
 	it('F8: verifies line divider set renders as a bare rule with no header or card chrome', () => {
-		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as any;
+		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as Character;
 		const lineSet = character.traitSets[1];
 		expect(lineSet.name).toBe('');
-		expect(lineSet.view.border.shape).toBe('line');
+		expect(asRecord(lineSet.view?.border).shape).toBe('line');
 
 		const wrapper = mount(TraitSetBlock, {
 			props: { character, traitSetID: 1, submode: 'edit', editing: [] },
@@ -184,12 +185,13 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 	});
 
 	it('morphs circle+ring -> circle+arc -> block preserving all 6 traits in exact index order 0..5', async () => {
-		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as any;
+		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character) as Character;
 		const set = character.traitSets[0];
+		const initialFrame = set.view?.frame as FrameConfig;
 
 		// 1. Initial circle + ring array
-		expect(set.view.frame.shape).toBe('circle');
-		expect(set.view.frame.array).toBe('ring');
+		expect(initialFrame.shape).toBe('circle');
+		expect(initialFrame.array).toBe('ring');
 		const wrapper = mount(TraitSetBlock, {
 			props: {
 				character,
@@ -206,8 +208,9 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 
 		// 2. Morph to circle + arc array (all 6 traits preserved on radial arc)
 		const characterArc = structuredClone(character);
-		characterArc.traitSets[0].view.frame.array = 'arc';
-		characterArc.traitSets[0].view.frame.span = [45, 135];
+		const arcFrame = characterArc.traitSets[0].view!.frame as FrameConfig;
+		arcFrame.array = 'arc';
+		arcFrame.span = [45, 135];
 		await wrapper.setProps({ character: characterArc });
 		await nextTick();
 
@@ -217,13 +220,13 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 
 		// 3. Morph to block border with array disabled (list layout preserves traits)
 		const characterBlock = structuredClone(character);
-		characterBlock.traitSets[0].view.border = {
+		characterBlock.traitSets[0].view!.border = {
 			shape: 'block',
 			corner: 'cut',
 			stroke: '2px',
 			color: 'primary',
 		};
-		characterBlock.traitSets[0].view.frame = {
+		characterBlock.traitSets[0].view!.frame = {
 			shape: 'none',
 			array: 'none',
 		};
@@ -257,7 +260,7 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 
 		// Mount with 7 traits
 		const character7 = structuredClone(character);
-		(character7.traitSets[0].traits as any[]).push({
+		character7.traitSets[0].traits.push({
 			name: 'Resolve',
 			rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 		});
@@ -333,13 +336,13 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 
 	it('regression guard: Vanguard Attributes set keeps its explicit frame and distributes 360° across all quadrants', () => {
 		const clone = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-		const attrSet = (clone.traitSets as any[]).find((s: any) => s.name === 'Attributes');
+		const attrSet = clone.traitSets.find((s) => s.name === 'Attributes');
 		expect(attrSet).toBeDefined();
 
 		const resolved = resolveFrame(attrSet);
 		expect(resolved).not.toBeNull();
 
-		const anchors = computeFrameAnchors(attrSet.traits.length, resolved!);
+		const anchors = computeFrameAnchors(attrSet!.traits.length, resolved!);
 		expect(anchors.length).toBe(6);
 		const docks = new Set(anchors.map((a) => a.dock));
 		expect(docks.size, 'Anchors must span multiple quadrants (not stacked on one side)').toBe(4);

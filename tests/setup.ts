@@ -26,8 +26,8 @@ if (typeof HTMLCanvasElement !== 'undefined') {
 			transform: () => {},
 			rect: () => {},
 			clip: () => {},
-		} as any;
-	};
+		};
+	} as unknown as typeof HTMLCanvasElement.prototype.getContext;
 }
 
 if (typeof HTMLDialogElement !== 'undefined') {

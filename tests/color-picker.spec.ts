@@ -17,9 +17,10 @@ import {
 import { normalizeRingSize, resolveFrame } from '../js/frame-geometry.ts';
 import { DREAMER_ARCHITECT_SHOWCASE, VANGUARD_FRAME_SHOWCASE } from '../js/showcase-templates.ts';
 import { inferFontFamilyFromUrl, parseExternalFontUrl, sanitizeFontFamilyName } from '../js/font-url.ts';
+import type { Character, FrameConfig } from '../js/model.ts';
 
-function cloneSampleCharacter(): any {
-	return structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+function cloneSampleCharacter(): Character {
+	return structuredClone(VANGUARD_FRAME_SHOWCASE.character) as Character;
 }
 
 async function runAxeAudit(container: HTMLElement) {
@@ -186,18 +187,18 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		});
 
 		await wrapper.findAll('.sheet-palette-btn')[1].trigger('click');
-		expect(character.view.primaryColor).toBe(SHEET_THEME_PRESETS[1].primary);
-		expect(character.view.accentColor).toBe(SHEET_THEME_PRESETS[1].accent);
-		expect(character.view.secondaryColor).toBe(SHEET_THEME_PRESETS[1].secondary);
+		expect(character.view?.primaryColor).toBe(SHEET_THEME_PRESETS[1].primary);
+		expect(character.view?.accentColor).toBe(SHEET_THEME_PRESETS[1].accent);
+		expect(character.view?.secondaryColor).toBe(SHEET_THEME_PRESETS[1].secondary);
 
 		await presetBtns[2].trigger('click');
-		expect(character.view.diceConfig.backgroundType).toBe('solid');
-		expect(character.view.diceConfig.backgroundColor1).toBe(DICE_PRESETS[2].backgroundColor1);
+		expect(character.view?.diceConfig?.backgroundType).toBe('solid');
+		expect(character.view?.diceConfig?.backgroundColor1).toBe(DICE_PRESETS[2].backgroundColor1);
 		expect(presetBtns[2].attributes('aria-pressed')).toBe('true');
 
 		await modeBtns[1].trigger('click');
 		expect(modeBtns[1].attributes('aria-pressed')).toBe('true');
-		expect(character.view.diceConfig.backgroundType).toBe('gradient');
+		expect(character.view?.diceConfig?.backgroundType).toBe('gradient');
 		expect(presetBtns[2].attributes('aria-pressed')).toBe('true');
 		wrapper.findAll('.editor-dice-preset-btn').forEach((btn) => {
 			expect(btn.html()).toContain('linearGradient');
@@ -206,7 +207,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		const unfilledHex = wrapper.find('#char-field-dice-unfilled-border-hex');
 		await unfilledHex.setValue('#be123c');
 		await unfilledHex.trigger('change');
-		expect(character.view.diceConfig.unfilledBorder).toBe('#be123c');
+		expect(character.view?.diceConfig?.unfilledBorder).toBe('#be123c');
 
 		await runAxeAudit(wrapper.element as HTMLElement);
 		wrapper.unmount();
@@ -229,7 +230,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		const primaryBadgeChip = wrapper.findAll('.color-token-chip').find((btn) => btn.text().includes('Primary'));
 		expect(primaryBadgeChip).toBeDefined();
 		await primaryBadgeChip!.trigger('click');
-		expect(character.traitSets[0].traits[0].view.badge.color).toBe('primary');
+		expect(character.traitSets[0].traits[0].view?.badge?.color).toBe('primary');
 		expect(wrapper.find('#trait-0-0-badge-color-picker').exists()).toBe(false);
 
 		wrapper.unmount();
@@ -277,7 +278,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(cinOptions.some((o) => o.text().includes('Cinzel'))).toBe(true);
 		const cinzelOpt = cinOptions.find((o) => o.text().includes('Cinzel'));
 		await cinzelOpt!.trigger('mousedown');
-		expect(character.view.theme.fonts.primary).toBe('Cinzel');
+		expect(character.view?.theme?.fonts?.primary).toBe('Cinzel');
 		expect((bodyInput.element as HTMLInputElement).value).toBe('Cinzel');
 		expect(bodyInput.attributes('aria-expanded')).toBe('false');
 
@@ -285,14 +286,14 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		await bodyInput.trigger('focus');
 		await bodyInput.setValue('MedievalSharp');
 		await bodyInput.trigger('keydown', { key: 'Enter', isComposing: false });
-		expect(character.view.theme.fonts.primary).toBe('MedievalSharp');
+		expect(character.view?.theme?.fonts?.primary).toBe('MedievalSharp');
 		expect((bodyInput.element as HTMLInputElement).value).toBe('MedievalSharp');
 
 		// Reset button restores the default font and clears theme.fonts.primary
 		const resetBtn = wrapper.find('button[aria-label="Reset Body Font to Open Sans"]');
 		expect(resetBtn.exists()).toBe(true);
 		await resetBtn.trigger('click');
-		expect(character.view.theme.fonts.primary).toBeUndefined();
+		expect(character.view?.theme?.fonts?.primary).toBeUndefined();
 		expect((bodyInput.element as HTMLInputElement).value).toBe('Open Sans');
 
 		await runAxeAudit(wrapper.element as HTMLElement);
@@ -361,7 +362,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect((nameInput.element as HTMLInputElement).value).toBe('Beleren Bold');
 		await addBtn.trigger('click');
 
-		expect(character.view.customFonts).toEqual([
+		expect(character.view?.customFonts).toEqual([
 			{ name: 'Beleren Bold', url: 'https://cdn.example.com/fonts/Beleren-Bold.woff2' },
 		]);
 		const styleEl = document.head.querySelector('#cfont-beleren-bold');
@@ -387,7 +388,7 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(clashOpt).toBeDefined();
 		expect(clashOpt!.text()).toContain('URL');
 		await clashOpt!.trigger('mousedown');
-		expect(character.view.theme.fonts.heading).toBe('Clash Display');
+		expect(character.view?.theme?.fonts?.heading).toBe('Clash Display');
 		expect(document.head.querySelector('#gfont-clash-display')).toBeNull();
 
 		// Pasting an HTTPS URL directly into a FontPicker combobox and pressing Enter registers & applies it
@@ -395,17 +396,17 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		await bodyInput.trigger('focus');
 		await bodyInput.setValue('https://fonts.bunny.net/css?family=alegreya:400,700');
 		await bodyInput.trigger('keydown', { key: 'Enter', isComposing: false });
-		expect(character.view.theme.fonts.primary).toBe('Alegreya');
-		expect(character.view.customFonts.some((f: any) => f.name === 'Alegreya')).toBe(true);
+		expect(character.view?.theme?.fonts?.primary).toBe('Alegreya');
+		expect(character.view?.customFonts?.some((f) => f.name === 'Alegreya')).toBe(true);
 
 		await runAxeAudit(wrapper.element as HTMLElement);
 
 		// Removing Clash Display removes view.customFonts entry, head <link>, and resets Heading Font slot
 		const removeClashBtn = wrapper.find('button[aria-label="Remove external font Clash Display"]');
 		await removeClashBtn.trigger('click');
-		expect(character.view.customFonts.some((f: any) => f.name === 'Clash Display')).toBe(false);
+		expect(character.view?.customFonts?.some((f) => f.name === 'Clash Display')).toBe(false);
 		expect(document.head.querySelector('#cfont-clash-display')).toBeNull();
-		expect(character.view.theme.fonts.heading).toBeUndefined();
+		expect(character.view?.theme?.fonts?.heading).toBeUndefined();
 
 		wrapper.unmount();
 		document.head
@@ -420,9 +421,9 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(normalizeRingSize('bad')).toBeUndefined();
 		expect(normalizeRingSize(null)).toBeUndefined();
 
-		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
-		const architectIdx = character.traitSets.findIndex((s: any) => s.name === 'The Architect');
-		const dreamerIdx = character.traitSets.findIndex((s: any) => s.name === 'The Dreamer');
+		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as Character;
+		const architectIdx = character.traitSets.findIndex((s) => s.name === 'The Architect');
+		const dreamerIdx = character.traitSets.findIndex((s) => s.name === 'The Dreamer');
 		expect(resolveFrame(character.traitSets[architectIdx])?.size).toBe(190);
 		expect(resolveFrame(character.traitSets[dreamerIdx])?.size).toBe(290);
 
@@ -440,8 +441,8 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 	});
 
 	it('exposes Portrait Size, Portrait Position, Bookmark without .editor-close, filled/unfilled die chips, and passes axe-core in TraitSetEditor', async () => {
-		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
-		const dreamerIdx = character.traitSets.findIndex((s: any) => s.name === 'The Dreamer');
+		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as Character;
+		const dreamerIdx = character.traitSets.findIndex((s) => s.name === 'The Dreamer');
 
 		const wrapper = mount(TraitSetEditor, {
 			props: { character, traitSetID: dreamerIdx, open: true },
@@ -472,12 +473,12 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(sizeInput.exists()).toBe(true);
 		await sizeInput.setValue('310');
 		await sizeInput.trigger('input');
-		expect(character.traitSets[dreamerIdx].view.frame.size).toBe(310);
+		expect((character.traitSets[dreamerIdx].view?.frame as FrameConfig | undefined)?.size).toBe(310);
 
 		const autoResetBtn = wrapper.find('button[aria-label="Reset portrait size"]');
 		expect(autoResetBtn.exists()).toBe(true);
 		await autoResetBtn.trigger('click');
-		expect(character.traitSets[dreamerIdx].view.frame.size).toBeUndefined();
+		expect((character.traitSets[dreamerIdx].view?.frame as FrameConfig | undefined)?.size).toBeUndefined();
 
 		// Portrait Position switches between Left, Center, Right with aria-pressed
 		const ringPosField = wrapper
@@ -492,10 +493,10 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 		expect(centerPosBtn).toBeDefined();
 		expect(rightPosBtn?.attributes('aria-pressed')).toBe('true');
 		await centerPosBtn!.trigger('click');
-		expect(character.traitSets[dreamerIdx].view.frame.position).toBe('center');
+		expect((character.traitSets[dreamerIdx].view?.frame as FrameConfig | undefined)?.position).toBe('center');
 		expect(centerPosBtn!.attributes('aria-pressed')).toBe('true');
 		await leftPosBtn!.trigger('click');
-		expect(character.traitSets[dreamerIdx].view.frame.position).toBeUndefined();
+		expect((character.traitSets[dreamerIdx].view?.frame as FrameConfig | undefined)?.position).toBeUndefined();
 		expect(leftPosBtn!.attributes('aria-pressed')).toBe('true');
 
 		await runAxeAudit(wrapper.element as HTMLElement);
@@ -503,8 +504,8 @@ describe('Color Choice Glow-Up & Frame Custom Colors', () => {
 	});
 
 	it('renders multi-die pool tray, compact rows, and portrait ring controls on The Architect', async () => {
-		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as any;
-		const architectIdx = character.traitSets.findIndex((s: any) => s.name === 'The Architect');
+		const character = structuredClone(DREAMER_ARCHITECT_SHOWCASE.character) as Character;
+		const architectIdx = character.traitSets.findIndex((s) => s.name === 'The Architect');
 		const wrapper = mount(TraitSetEditor, {
 			props: { character, traitSetID: architectIdx, open: true, viewY: 0 },
 		});

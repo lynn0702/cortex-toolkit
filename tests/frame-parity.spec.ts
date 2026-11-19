@@ -426,7 +426,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			distWrapper.unmount();
 
 			// Multi-die TRAIT on a ring also spreads all of its dice across the arc without repeating labels
-			const multiDieTraitChar: any = structuredClone(raw);
+			const multiDieTraitChar = structuredClone(raw) as unknown as Character;
 			delete multiDieTraitChar.traitSets[0].rating;
 			multiDieTraitChar.traitSets[0].traits = [
 				{

@@ -15,6 +15,7 @@ import AppHeader from '../js/app-header.vue';
 import App from '../js/app.vue';
 import { useToast } from '../js/use-toast.ts';
 import { characterCurioFunctions, characterCurioSetPresets } from '../js/functions.ts';
+import { asRecord, makePool, makeTraitSet } from './fixtures.ts';
 import {
 	getRating,
 	getView,
@@ -332,39 +333,41 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		const layered = characterCurioFunctions.toLayeredEntity(ch);
 		const rematerialized = characterCurioFunctions.materializeCharacter(layered, null);
 		expect(rematerialized.name).toBe('Jimmy the Snitch');
-		const rematNameSet = (rematerialized.traitSets ?? []).find((s: any) => isNameSet(s));
+		const rematNameSet = (rematerialized.traitSets ?? []).find((s) => isNameSet(s));
 		expect(getRating(rematNameSet)).toEqual({
 			type: 'Die',
 			value: [8],
 			range: [],
 		});
-		expect((rematNameSet?.traits ?? []).some((t: any) => t.name === 'New Trait')).toBe(true);
-		const rematTraitsSet = (rematerialized.traitSets ?? []).find((s: any) => s.name === 'New Set');
-		expect((rematTraitsSet?.traits ?? []).map((t: any) => t.name)).toEqual(['New Trait', 'New Trait 2']);
+		expect((rematNameSet?.traits ?? []).some((t) => t.name === 'New Trait')).toBe(true);
+		const rematTraitsSet = (rematerialized.traitSets ?? []).find((s) => s.name === 'New Set');
+		expect((rematTraitsSet?.traits ?? []).map((t) => t.name)).toEqual(['New Trait', 'New Trait 2']);
 
 		wrapper.unmount();
 	});
 
 	it('defaults unconfigured sets to Single Die display and treats OUT as a range step without extra badge in single-die mode', async () => {
 		const ch = reactive(freshBlankCharacter('out-step-test'));
-		ch.traitSets.push({
-			id: 'traits',
-			name: 'Traits',
-			noun: 'Trait',
-			plural: 'Traits',
-			tags: [],
-			// Deliberately omit view.ratingDisplay to test default behavior
-			view: { outIndicator: true, style: { header: 'default', body: 'default' } },
-			traits: [
-				{
-					name: 'New Trait 2',
-					description: '',
-					tags: [],
-					traits: [],
-					rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-				},
-			],
-		} as any);
+		ch.traitSets.push(
+			makeTraitSet({
+				id: 'traits',
+				name: 'Traits',
+				noun: 'Trait',
+				plural: 'Traits',
+				tags: [],
+				// Deliberately omit view.ratingDisplay to test default behavior
+				view: { outIndicator: true, style: { header: 'default', body: 'default' } },
+				traits: [
+					{
+						name: 'New Trait 2',
+						description: '',
+						tags: [],
+						traits: [],
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
+					},
+				],
+			}),
+		);
 
 		const wrapper = mount(CharacterView, {
 			attachTo: document.body,
@@ -388,7 +391,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		await outInlineBtn.trigger('click');
 
 		// Once stepped to OUT, OUT replaces the die in single-die mode (0 die glyphs, 1 active OUT badge)
-		expect((ch.traitSets[1].traits![0] as any).isOut).toBe(true);
+		expect(ch.traitSets[1].traits![0].isOut).toBe(true);
 		expect(traitValue.findAll('.diecon')).toHaveLength(0);
 		expect(traitValue.findAll('.out-badge.active')).toHaveLength(1);
 
@@ -433,7 +436,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		const ch = reactive(freshBlankCharacter('unified-play-test'));
 		ch.name = 'Jimmy the Snitch';
 		ch.traitSets.push(
-			{
+			makeTraitSet({
 				id: 'traits',
 				name: 'Traits',
 				noun: 'Trait',
@@ -441,8 +444,8 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 				tags: [],
 				view: { ratingDisplay: 'rating', style: { header: 'default', body: 'default' } },
 				traits: [{ name: 'Streetwise', description: '', tags: [], traits: [], rating: { type: 'Die', value: [8] } }],
-			} as any,
-			{
+			}),
+			makeTraitSet({
 				id: 'new-set',
 				name: 'New Set',
 				noun: 'Trait',
@@ -450,7 +453,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 				tags: [],
 				view: { ratingDisplay: 'rating', style: { header: 'default', body: 'default' } },
 				traits: [],
-			} as any,
+			}),
 		);
 
 		const wrapper = mount(CharacterView, {
@@ -500,23 +503,25 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 
 	it('defaults Rating Dice to Pool, forces type Dice when Pool is enabled, and clears child overrides when set Rating switches to Pip', async () => {
 		const ch = reactive(freshBlankCharacter('dice-pool-invariants'));
-		ch.traitSets.push({
-			id: 'traits',
-			name: 'Traits',
-			noun: 'Trait',
-			plural: 'Traits',
-			tags: [],
-			view: { ratingDisplay: 'rating', style: { header: 'default', body: 'default' } },
-			traits: [
-				{
-					name: 'New Trait',
-					description: '',
-					tags: [],
-					traits: [],
-					rating: { type: 'Die', value: [8] },
-				},
-			],
-		} as any);
+		ch.traitSets.push(
+			makeTraitSet({
+				id: 'traits',
+				name: 'Traits',
+				noun: 'Trait',
+				plural: 'Traits',
+				tags: [],
+				view: { ratingDisplay: 'rating', style: { header: 'default', body: 'default' } },
+				traits: [
+					{
+						name: 'New Trait',
+						description: '',
+						tags: [],
+						traits: [],
+						rating: { type: 'Die', value: [8] },
+					},
+				],
+			}),
+		);
 
 		const wrapper = mount(CharacterView, {
 			attachTo: document.body,
@@ -534,7 +539,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			.find((b) => b.text().trim() === 'Dice')!;
 		await diceModeBtn.trigger('click');
 		expect(ch.traitSets[1].traits![0].rating?.type).toBe('Dice');
-		expect((ch.traitSets[1].traits![0] as any).pool).toBe(true);
+		expect(ch.traitSets[1].traits![0].pool).toBe(true);
 		expect(
 			wrapper
 				.findAll('.inline-dice-option-chip')
@@ -547,7 +552,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 			.find((b) => b.text().trim() === 'Die')!;
 		await dieModeBtn.trigger('click');
 		expect(ch.traitSets[1].traits![0].rating?.type).toBe('Die');
-		expect((ch.traitSets[1].traits![0] as any).pool).toBeUndefined();
+		expect(ch.traitSets[1].traits![0].pool).toBeUndefined();
 
 		// 2. TraitEditor: enabling Pool on a Die trait forces type: 'Dice'
 		const traitEditor = mount(TraitEditor, {
@@ -562,7 +567,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		});
 		const traitPoolCheckbox = traitEditor.find('input[type="checkbox"][id$="-pool"]');
 		await traitPoolCheckbox.setValue(true);
-		expect((ch.traitSets[1].traits![0] as any).pool).toBe(true);
+		expect(ch.traitSets[1].traits![0].pool).toBe(true);
 		expect(ch.traitSets[1].traits![0].rating?.type).toBe('Dice');
 		traitEditor.unmount();
 
@@ -614,7 +619,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 
 		const setPoolCheckbox = setEditor.find('input[type="checkbox"][id$="-pool"]');
 		await setPoolCheckbox.setValue(true);
-		expect((ch.traitSets[1] as any).pool).toBe(true);
+		expect(ch.traitSets[1].pool).toBe(true);
 		expect(ch.traitSets[1].rating?.type).toBe('Dice');
 		expect(setEditor.find('[role="group"][aria-label="Range"]').exists()).toBe(true);
 
@@ -675,8 +680,8 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(viewWrapper.find('.sheet-meta-pronoun-cell').exists()).toBe(true);
 		await pronounsChip().trigger('click');
 		expect(viewWrapper.find('.sheet-meta-pronoun-cell').exists()).toBe(false);
-		const afterToggleLayered = characterCurioFunctions.toLayeredEntity(ch) as Record<string, any>;
-		expect(afterToggleLayered.sets.Name.traits).toBeUndefined();
+		const afterToggleLayered = characterCurioFunctions.toLayeredEntity(ch);
+		expect(asRecord(asRecord(afterToggleLayered.sets).Name).traits).toBeUndefined();
 		viewWrapper.unmount();
 
 		// JsonEditor shows clean JSON and accepts hand-edited minimal/null-valued JSON (preserving open id if omitted)
@@ -725,7 +730,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		const applyBtn = jsonWrapper.findAll('.editor-button').find((b) => b.text().includes('Apply'))!;
 		await applyBtn.trigger('click');
 
-		const applied = jsonWrapper.emitted('applyJson')?.[0]?.[0] as Record<string, any>;
+		const applied = jsonWrapper.emitted('applyJson')?.[0]?.[0] as Record<string, unknown>;
 		expect(applied.id).toBe('minimal-json-1');
 		expect(characterCurioFunctions.isValidCurrentCharacter(applied)).toBe(true);
 
@@ -745,7 +750,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 	it('renders Name Pip bubbles interactively in Edit and Play and unifies Name controls in NameEditor / StudioPanel', async () => {
 		const ch = freshBlankCharacter('name-pip-1');
 		ch.name = 'Pip Hero';
-		(ch.traitSets[0] as any).rating = { type: 'Pip', value: [true, false, false] };
+		ch.traitSets[0].rating = { type: 'Pip', value: [true, false, false] };
 
 		const editWrap = mount(CharacterView, {
 			attachTo: document.body,
@@ -761,7 +766,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(pipButtons).toHaveLength(3);
 		expect(pipButtons[0].find('.pip-bubble.filled').exists()).toBe(true);
 		await pipButtons[2].trigger('click');
-		expect((ch.traitSets[0] as any).rating.value).toEqual([true, false, true]);
+		expect(ch.traitSets[0].rating?.value).toEqual([true, false, true]);
 		expect(editWrap.find('button.sheet-name-rating-trigger').exists()).toBe(true);
 		editWrap.unmount();
 
@@ -786,7 +791,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		expect(nameEd.text()).not.toContain('Configure Name Set');
 		expect(nameEd.find('.pip-editor-row').exists()).toBe(true);
 		await nameEd.find('button[aria-label="Increase sheet pip count"]').trigger('click');
-		expect((ch.traitSets[0] as any).rating.value).toHaveLength(4);
+		expect(ch.traitSets[0].rating?.value).toHaveLength(4);
 		const lineBtn = nameEd.findAll('.editor-group-btn').find((b) => b.text().trim() === 'Line')!;
 		await lineBtn.trigger('click');
 		expect(getView(ch.traitSets[0])?.border).toBe('line');
@@ -799,7 +804,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 				submode: 'edit',
 				character: ch,
 				editing: ['traitSet', 0],
-				dicePool: { dice: [null, null, null, null, null], items: [], wordBank: [] } as any,
+				dicePool: makePool(),
 			},
 		});
 		await flushPromises();
@@ -810,7 +815,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 
 	it('supports Edit-mode + Pillar creation, set-header pillar chips, and accessible visual PresetGalleryCards', async () => {
 		const ch = freshBlankCharacter('edit-pillar-1');
-		ch.traitSets.push({ name: 'Roles', noun: 'Role', traits: [] } as any);
+		ch.traitSets.push(makeTraitSet({ name: 'Roles', noun: 'Role', traits: [] }));
 
 		const wrapper = mount(CharacterView, {
 			attachTo: document.body,
@@ -856,11 +861,13 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 	it('places mobile Play pill clear next to dice, Roll on right, and offers Undo recovery on clear', async () => {
 		const ch = freshBlankCharacter('mobile-pill-undo-1');
 		ch.name = 'Jimmy';
-		ch.traitSets.push({
-			name: 'Skills',
-			noun: 'Skill',
-			traits: [{ name: 'Sneak', rating: { type: 'Die', value: [8] } }],
-		} as any);
+		ch.traitSets.push(
+			makeTraitSet({
+				name: 'Skills',
+				noun: 'Skill',
+				traits: [{ name: 'Sneak', rating: { type: 'Die', value: [8] } }],
+			}),
+		);
 		localStorage.setItem(
 			'characterCurioData',
 			JSON.stringify({ '0.1': { characters: [ch], prefs: { version: 1, global: {}, characters: {} } } }),
@@ -868,8 +875,11 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 
 		const app = mount(App, { attachTo: document.body });
 		await flushPromises();
-		const vm = app.vm as any;
-		if (!vm.characters.some((c: any) => c?.id === ch.id)) {
+		const vm = app.vm as unknown as {
+			characters: Character[];
+			loadCharacter: (id: string, submode?: string) => void;
+		};
+		if (!vm.characters.some((c) => c?.id === ch.id)) {
 			vm.characters.push(ch);
 		}
 		vm.loadCharacter(ch.id, 'play');
@@ -906,28 +916,34 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 	});
 
 	it('avoids hidden game defaults (blank Counter header, explicit blank labels, neutral defaults) and keeps per-trait + Part persistent', async () => {
-		const ch = reactive(freshBlankCharacter('slice-1a-defaults')) as any;
-		ch.traitSets.push({
-			name: 'Progress',
-			noun: 'Step',
-			plural: 'Steps',
-			view: { header: 'top', outIndicator: true, style: { header: 'default', body: 'default' } },
-			traits: [
-				{ name: 'Clock', rating: { type: 'Counter', value: [2], range: [0, 10] } },
-				{ name: 'Risk', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
-			],
-		});
-		ch.traitSets.push({
-			name: 'Branches',
-			noun: 'Branch',
-			view: { header: 'top', style: { header: 'default', body: 'subtrait-columns' } },
-			traits: [{ name: 'Craft', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }, traits: [] }],
-		});
-		ch.traitSets.push({
-			name: 'Pips',
-			view: { header: 'top', style: { header: 'default', body: 'pips' } },
-			traits: [],
-		});
+		const ch = reactive(freshBlankCharacter('slice-1a-defaults'));
+		ch.traitSets.push(
+			makeTraitSet({
+				name: 'Progress',
+				noun: 'Step',
+				plural: 'Steps',
+				view: { header: 'top', outIndicator: true, style: { header: 'default', body: 'default' } },
+				traits: [
+					{ name: 'Clock', rating: { type: 'Counter', value: [2], range: [0, 10] } },
+					{ name: 'Risk', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
+				],
+			}),
+		);
+		ch.traitSets.push(
+			makeTraitSet({
+				name: 'Branches',
+				noun: 'Branch',
+				view: { header: 'top', style: { header: 'default', body: 'subtrait-columns' } },
+				traits: [{ name: 'Craft', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }, traits: [] }],
+			}),
+		);
+		ch.traitSets.push(
+			makeTraitSet({
+				name: 'Pips',
+				view: { header: 'top', style: { header: 'default', body: 'pips' } },
+				traits: [],
+			}),
+		);
 
 		const wrapper = mount(CharacterView, {
 			attachTo: document.body,
@@ -986,7 +1002,7 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 		await counterInput.setValue('Marks');
 		await counterInput.trigger('change');
 		expect(getView(ch.traitSets[1])?.labels?.counter).toBe('Marks');
-		expect((ch.traitSets[1] as any).counterLabel).toBeUndefined();
+		expect(asRecord(ch.traitSets[1]).counterLabel).toBeUndefined();
 		await nextTick();
 		expect(wrapper.find('[data-set-index="1"] .trait-set-header-counter').text().trim()).toBe('Marks');
 
@@ -1013,13 +1029,15 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 
 	it('guards populated traitless sets from 1-click deletion and avoids nested interactive buttons on set-header dice in Edit mode', async () => {
 		const ch = freshBlankCharacter('slice-1b-header');
-		ch.traitSets.push({
-			name: 'Showcase Pool',
-			noun: 'Die',
-			rating: { type: 'Dice', value: [10, 10, 10] },
-			view: { header: 'top', style: { header: 'default', body: 'default' } },
-			traits: [],
-		} as any);
+		ch.traitSets.push(
+			makeTraitSet({
+				name: 'Showcase Pool',
+				noun: 'Die',
+				rating: { type: 'Dice', value: [10, 10, 10] },
+				view: { header: 'top', style: { header: 'default', body: 'default' } },
+				traits: [],
+			}),
+		);
 
 		const blockWrap = mount(TraitSetBlock, {
 			attachTo: document.body,
@@ -1047,12 +1065,14 @@ describe('Organic New Sheet ("Jimmy the Snitch d8")', () => {
 	it('saves built-in-named sets cleanly, displays preset blurb + edit-in-place via TraitSetMini, and exposes About in #mobile-sheet-menu', async () => {
 		characterCurioFunctions.setCustomSetPresets([], { notify: false });
 		const ch = freshBlankCharacter('preset-qol-1');
-		ch.traitSets.push({
-			name: 'Pool',
-			noun: 'Pool',
-			traits: [{ name: 'Agility', rating: { type: 'Die', value: [8] } }],
-			view: { header: 'top', style: { header: 'default', body: 'default' } },
-		} as any);
+		ch.traitSets.push(
+			makeTraitSet({
+				name: 'Pool',
+				noun: 'Pool',
+				traits: [{ name: 'Agility', rating: { type: 'Die', value: [8] } }],
+				view: { header: 'top', style: { header: 'default', body: 'default' } },
+			}),
+		);
 
 		const edWrap = mount(TraitSetEditor, {
 			attachTo: document.body,

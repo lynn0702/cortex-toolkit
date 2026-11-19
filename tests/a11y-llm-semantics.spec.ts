@@ -17,8 +17,10 @@ import CuriosityWebBar from '../js/curiosity-web-bar.vue';
 import { CURIOSITY_GRAPH_KEY } from '../js/curiosity-graph.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
 import { characterCurioFunctions, characterCurioSetPresets } from '../js/functions.ts';
-import { dicePool } from '../js/dice-pool.ts';
-import { useTraitSet } from '../js/use-trait-set.ts';
+import { dicePool, type DicePool } from '../js/dice-pool.ts';
+import { useTraitSet, type TraitSetProps } from '../js/use-trait-set.ts';
+import type { Character as CharacterModel, FrameShape, Trait, TraitSet } from '../js/model.ts';
+import { makeCharacter, makePool, makeTrait, makeTraitSet } from './fixtures.ts';
 
 // 1. Axe-core runner configured for JSDOM / Component testing
 async function runAxeAudit(container: HTMLElement) {
@@ -212,18 +214,15 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	it('audits DiceRoller staged chips and live-region output for screen readers & LLM scrapers', async () => {
-		const mockPool = {
-			items: [
-				{ id: 'd1', size: 8, qty: 1, source: 'Agility', hitches: 1 },
-				{ id: 'd2', size: 4, qty: 1, source: 'Distinction', hitches: 1, ppDelta: 1 },
-			],
-			is_empty: () => false,
-		};
+		const mockPool = makePool([
+			{ id: 'd1', size: 8, qty: 1, source: 'Agility', hitches: 1 },
+			{ id: 'd2', size: 4, qty: 1, source: 'Distinction', hitches: 1, ppDelta: 1 },
+		]);
 
 		const wrapper = mount(DiceRoller, {
 			props: {
 				open: true,
-				pool: mockPool as any,
+				pool: mockPool,
 				position: 'right',
 			},
 		});
@@ -249,17 +248,19 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 	it('DiceRoller Word Bank + Scale increments Keep and + Trait pre-search supports Dreamer traits, hinder, and shorthand', async () => {
 		const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
-		const dreamer = reactive(structuredClone(raw));
+		const dreamer = reactive(structuredClone(raw) as unknown as CharacterModel);
 		const pool = new dicePool.DicePool();
 		const wrapper = mount(DiceRoller, {
 			props: {
 				open: true,
 				pool,
 				character: dreamer,
+			},
+			attrs: {
 				onSettlePP: (delta: number) => {
 					dreamer.plotPoints = Math.max(0, (dreamer.plotPoints || 0) + delta);
 				},
-			} as any,
+			},
 		});
 
 		// + Scale adds word pill and increments Keep without staging a die
@@ -334,7 +335,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	it('DiceRoller Dual-Pool Auto-Contest, PP spend, and Hitch activation audit cleanly', async () => {
-		const character = reactive({ plotPoints: 2, traitSets: [] as any[] });
+		const character = reactive(makeCharacter({ plotPoints: 2, traitSets: [] }));
 		const playerPool = new dicePool.DicePool();
 		const oppPool = new dicePool.DicePool();
 		playerPool.add([{ size: 8, qty: 2, source: 'Data' }]);
@@ -346,10 +347,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				pool: playerPool,
 				oppositionPool: oppPool,
 				character,
+			},
+			attrs: {
 				onSettlePP: (delta: number) => {
-					character.plotPoints = Math.max(0, character.plotPoints + delta);
+					character.plotPoints = Math.max(0, (character.plotPoints || 0) + delta);
 				},
-			} as any,
+			},
 		});
 
 		// PP Spend bar: 1 PP: +1 Keep & 1 PP: +d6

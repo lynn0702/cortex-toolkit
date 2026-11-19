@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import axe from 'axe-core';
-import { characterCurioFunctions } from '../js/functions.ts';
+import { characterCurioFunctions, type SetPresetEntry } from '../js/functions.ts';
 import { characterCurioStorage } from '../js/storage.ts';
 import AppFooter from '../js/app-footer.vue';
 import Roster from '../js/roster.vue';
@@ -9,6 +9,21 @@ import App from '../js/app.vue';
 import NameEditor from '../js/name-editor.vue';
 import { DREAMER_ARCHITECT_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
 import { getTemplateListing, getTemplateTitle, getView, type Character, type SheetTemplate } from '../js/model.ts';
+import { asRecord, makeCharacter } from './fixtures.ts';
+
+type GlobalWithLibrary = typeof globalThis & { characterCurioLibraryTemplates?: SheetTemplate[] };
+type RosterVm = { libraryTemplates: SheetTemplate[] };
+type AppVm = {
+	openPreview: (showcase?: SheetTemplate | null) => void;
+	closePreview: () => void;
+	usePreviewTemplate: () => void;
+	isPreview: boolean;
+	previewCharacter: Character | null;
+	characters: Character[];
+	customSetPresets: SetPresetEntry[];
+	exportAllCharacters: () => Promise<void>;
+	importSetPresets: (entries: SetPresetEntry[]) => void;
+};
 
 describe('Character Curio Branding & Resolution Suite', () => {
 	const mockLibrary: SheetTemplate[] = [
@@ -27,15 +42,15 @@ describe('Character Curio Branding & Resolution Suite', () => {
 	];
 
 	beforeEach(() => {
-		(window as any).characterCurioLibraryTemplates = mockLibrary;
-		(globalThis as any).characterCurioLibraryTemplates = mockLibrary;
+		(window as GlobalWithLibrary).characterCurioLibraryTemplates = mockLibrary;
+		(globalThis as GlobalWithLibrary).characterCurioLibraryTemplates = mockLibrary;
 	});
 
 	it('finds library templates via findLibraryTemplate', () => {
 		const found = characterCurioFunctions.findLibraryTemplate('alien-us');
 		expect(found).not.toBeNull();
 		expect(found?.id).toBe('alien-us');
-		expect((found as any)?.game).toBe('Alien, Us');
+		expect(asRecord(found).game).toBe('Alien, Us');
 	});
 
 	it('ensures library template IDs do not have spotlight- prefix', () => {
@@ -192,7 +207,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.image).toBe(
 			'images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg',
 		);
-		expect((DREAMER_ARCHITECT_SHOWCASE as any).blurb).toBeUndefined();
+		expect(asRecord(DREAMER_ARCHITECT_SHOWCASE).blurb).toBeUndefined();
 		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.setting).toBeUndefined();
 		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.prep).toBeUndefined();
 		expect(getTemplateListing(DREAMER_ARCHITECT_SHOWCASE)?.complexity).toBeUndefined();
@@ -201,7 +216,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(DREAMER_ARCHITECT_SHOWCASE.character.traitSets).toHaveLength(4);
 		// Vanguard remains index 0 of SHOWCASE_TEMPLATES and also omits invented ratings
 		expect(SHOWCASE_TEMPLATES[0].id).toBe('vanguard-frame-showcase');
-		expect((SHOWCASE_TEMPLATES[0] as any).blurb).toBeUndefined();
+		expect(asRecord(SHOWCASE_TEMPLATES[0]).blurb).toBeUndefined();
 		expect(getTemplateListing(SHOWCASE_TEMPLATES[0])?.setting).toBeUndefined();
 		expect(getTemplateListing(SHOWCASE_TEMPLATES[0])?.prep).toBeUndefined();
 		expect(getTemplateListing(SHOWCASE_TEMPLATES[0])?.complexity).toBeUndefined();
@@ -213,7 +228,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 				characters: [],
 			},
 		});
-		const vm = wrapper.vm as any;
+		const vm = wrapper.vm as unknown as RosterVm;
 		expect(vm.libraryTemplates).toBeDefined();
 		expect(vm.libraryTemplates.length).toBeGreaterThanOrEqual(2);
 		expect(vm.libraryTemplates[0].id).toBe('dreamer-architect');
@@ -242,7 +257,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 				],
 			},
 		});
-		const vm = wrapper.vm as any;
+		const vm = wrapper.vm as unknown as RosterVm;
 		expect(vm.libraryTemplates).toBeDefined();
 		expect(vm.libraryTemplates[0].id).toBe('dreamer-architect');
 		expect(vm.libraryTemplates[1].id).toBe('vanguard-frame-showcase');
@@ -300,8 +315,8 @@ describe('Character Curio Branding & Resolution Suite', () => {
 				],
 			},
 		} as unknown as SheetTemplate;
-		(window as any).characterCurioLibraryTemplates = [publishedWithRatings];
-		(globalThis as any).characterCurioLibraryTemplates = [publishedWithRatings];
+		(window as GlobalWithLibrary).characterCurioLibraryTemplates = [publishedWithRatings];
+		(globalThis as GlobalWithLibrary).characterCurioLibraryTemplates = [publishedWithRatings];
 
 		const wrapper = mount(Roster, {
 			props: { characters: [] },
@@ -335,12 +350,12 @@ describe('Character Curio Branding & Resolution Suite', () => {
 
 	it('first-run auto-open: App opens Dreamer & Architect as transient preview without saving', async () => {
 		const wrapper = mount(App);
-		const vm = wrapper.vm as any;
+		const vm = wrapper.vm as unknown as AppVm;
 		// Open preview explicitly to simulate first-run branch
 		vm.openPreview();
 		expect(vm.isPreview).toBe(true);
 		expect(vm.previewCharacter).not.toBeNull();
-		expect(vm.previewCharacter.name).toBe('The Dreamer & the Architect');
+		expect(vm.previewCharacter?.name).toBe('The Dreamer & the Architect');
 		// Characters array remains untouched (not saved)
 		expect(vm.characters).toHaveLength(0);
 
@@ -354,7 +369,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 
 	it('preview action: "Use this template" creates a saved character in characters array', async () => {
 		const wrapper = mount(App);
-		const vm = wrapper.vm as any;
+		const vm = wrapper.vm as unknown as AppVm;
 		vm.openPreview();
 		expect(vm.characters).toHaveLength(0);
 
@@ -367,7 +382,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 
 	it('gracefully falls back to roster if template is missing or unparsable', () => {
 		const wrapper = mount(App);
-		const vm = wrapper.vm as any;
+		const vm = wrapper.vm as unknown as AppVm;
 		vm.openPreview(null);
 		expect(vm.isPreview).toBe(false);
 		expect(vm.characters).toHaveLength(0);
@@ -465,7 +480,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		const ch = structuredClone(characterCurioFunctions.defaultCharacter) as unknown as Character;
 		ch.id = 'author-char-1';
 		ch.traitSets[0].traits.push({ name: 'game', description: 'Drift Runner', traits: [] });
-		const updates: any[] = [];
+		const updates: Character[] = [];
 		const wrapper = mount(NameEditor, {
 			props: {
 				character: ch,
@@ -473,7 +488,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 				tab: 'sheet',
 			},
 			attrs: {
-				onUpdateCharacter: (c: any) => updates.push(c),
+				onUpdateCharacter: (c: Character) => updates.push(c),
 			},
 		});
 
@@ -501,9 +516,9 @@ describe('Character Curio Branding & Resolution Suite', () => {
 			setting: 'd10',
 		});
 
-		const extracted = characterCurioFunctions.extractSheetTemplate(ch, {}) as any;
-		expect(extracted.title).toBeUndefined();
-		expect(extracted.character.view.listing).toEqual({
+		const extracted = characterCurioFunctions.extractSheetTemplate(ch, {});
+		expect(asRecord(extracted).title).toBeUndefined();
+		expect(extracted.character.view?.listing).toEqual({
 			title: 'Drift Runner Deluxe',
 			genre: 'Space Opera',
 			url: 'https://example.com/drift',
@@ -536,10 +551,14 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(starterCards[1].text()).toContain('Vanguard Frame Showcase');
 
 		await starterCards[0].find('.roster-starter-btn.secondary').trigger('click');
-		expect((emptyWrapper.emitted('previewTemplate')?.[0]?.[0] as any)?.id).toBe('dreamer-architect');
+		expect((emptyWrapper.emitted('previewTemplate')?.[0]?.[0] as SheetTemplate | undefined)?.id).toBe(
+			'dreamer-architect',
+		);
 
 		await starterCards[1].find('.roster-starter-btn.primary').trigger('click');
-		expect((emptyWrapper.emitted('createFromLibrary')?.[0]?.[0] as any)?.id).toBe('vanguard-frame-showcase');
+		expect((emptyWrapper.emitted('createFromLibrary')?.[0]?.[0] as SheetTemplate | undefined)?.id).toBe(
+			'vanguard-frame-showcase',
+		);
 
 		const emptyAxe = await axe.run(emptyWrapper.element);
 		expect(emptyAxe.violations).toHaveLength(0);
@@ -550,7 +569,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 			props: {
 				openCharacterIDs: ['unnamed-1'],
 				characters: [
-					{
+					makeCharacter({
 						id: 'unnamed-1',
 						name: '',
 						game: 'Solar Drift',
@@ -560,7 +579,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 						dateCreated: '2026-11-14T00:00:00Z',
 						dateModified: '2026-11-14T00:00:00Z',
 						dateTouched: '2026-11-14T00:00:00Z',
-					} as any,
+					}),
 				],
 			},
 		});
@@ -584,7 +603,12 @@ describe('Character Curio Branding & Resolution Suite', () => {
 	it('persists custom set presets in storage, includes them in Export All bundle, and restores via Roster import', async () => {
 		await characterCurioStorage.clear();
 		characterCurioFunctions.setCustomSetPresets([], { notify: false });
-		let capturedBundle: any = null;
+		let capturedBundle: {
+			version?: string;
+			type?: string;
+			characters?: unknown[];
+			presets?: SetPresetEntry[];
+		} | null = null;
 		const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
 			this: HTMLAnchorElement,
 		) {
@@ -598,7 +622,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		const appWrapper = mount(App, { attachTo: document.body });
 		try {
 			await flushPromises();
-			const vm = appWrapper.vm as any;
+			const vm = appWrapper.vm as unknown as AppVm;
 			expect(vm.customSetPresets).toEqual([]);
 
 			const saved = characterCurioFunctions.saveCustomSetPreset(
@@ -617,16 +641,17 @@ describe('Character Curio Branding & Resolution Suite', () => {
 			// Export All emits 0.2 bundle carrying presets even with 0 characters
 			await vm.exportAllCharacters();
 			expect(capturedBundle).not.toBeNull();
-			expect(capturedBundle.version).toBe('0.2');
-			expect(capturedBundle.type).toBe('bundle');
-			expect(capturedBundle.characters).toEqual([]);
-			expect(capturedBundle.presets).toHaveLength(1);
-			expect(capturedBundle.presets[0].id).toBe('voidcraft-systems');
+			const bundle = capturedBundle!;
+			expect(bundle.version).toBe('0.2');
+			expect(bundle.type).toBe('bundle');
+			expect(bundle.characters).toEqual([]);
+			expect(bundle.presets).toHaveLength(1);
+			expect(bundle.presets?.[0].id).toBe('voidcraft-systems');
 
 			// Roster shows Export All when customPresets is populated with 0 characters
 			const emptyRoster = mount(Roster, {
 				attachTo: document.body,
-				props: { characters: [], customPresets: capturedBundle.presets },
+				props: { characters: [], customPresets: bundle.presets },
 			});
 			const exportBtn = emptyRoster.find('.roster-button-export');
 			expect(exportBtn.exists()).toBe(true);
@@ -637,7 +662,7 @@ describe('Character Curio Branding & Resolution Suite', () => {
 			// Reset presets and verify bundle import restores them via App handler + storage
 			characterCurioFunctions.setCustomSetPresets([], { notify: false });
 			await flushPromises();
-			vm.importSetPresets(capturedBundle.presets);
+			vm.importSetPresets(bundle.presets || []);
 			await flushPromises();
 
 			expect(vm.customSetPresets).toHaveLength(1);
