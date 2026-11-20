@@ -1742,8 +1742,14 @@ defineExpose({
 
 				<!-- TEMPLATE PREVIEW BANNER -->
 				<div class="template-update-banner template-preview-banner" v-if="isPreview">
-					<button type="button" class="btn-update-primary" @click.stop="usePreviewTemplate">Use this template</button>
-					<button type="button" class="btn-update-secondary" @click.stop="closePreview">Close preview</button>
+					<span class="template-banner-label">
+						<span class="template-banner-badge">Preview</span>
+						<span class="template-banner-title">{{ previewCharacter?.name || 'Template' }}</span>
+					</span>
+					<div class="template-banner-actions">
+						<button type="button" class="btn-update-primary" @click.stop="usePreviewTemplate">Use this template</button>
+						<button type="button" class="btn-update-secondary" @click.stop="closePreview">Close preview</button>
+					</div>
 				</div>
 
 				<!-- TEMPLATE VERSION SWITCH PROMPT -->

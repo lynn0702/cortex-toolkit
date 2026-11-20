@@ -2,7 +2,7 @@
 
 .print-toolbar {
 	position: sticky;
-	top: var(--header-size);
+	top: 0;
 	z-index: var(--z-toolbar);
 	background: var(--bg-sticky-glass);
 	backdrop-filter: blur(8px);
@@ -2749,8 +2749,12 @@ body:has(.character-sheet.submode-print) {
 }
 
 /* Print tab: horizontal scroll lives on the main area (usable scrollbar). */
-body:has(.character-sheet.submode-print) .main {
-	overflow-x: auto;
+@media screen {
+	body:has(.character-sheet.submode-print) .main {
+		overflow-x: auto;
+		padding-top: var(--header-size);
+		padding-inline: 0;
+	}
 }
 
 /* No separating line between a top header label and its traits (source sheets */
@@ -3902,10 +3906,86 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 .character-sheet:is(.submode-print, .print-sheet) .trait-set-style-two-columns-detailed .single-die-value .diecon,
-.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-subtrait-columns .single-die-value .diecon {
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-subtrait-columns .single-die-value .diecon,
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-dice-count .single-die-value .diecon {
 	width: var(--diecon-scale-size);
 	height: var(--diecon-scale-size);
 	font-size: var(--diecon-scale-size);
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-dice-count .dice-count-row {
+	gap: 0.2rem;
+	padding-block: 0.15rem;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-dice-count .dice-count-pip {
+	width: 0.95rem;
+	height: 0.95rem;
+	font-size: 0.65rem;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-die-rows .die-row {
+	padding-block: 0.1rem;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-die-rows .single-die-value .diecon {
+	width: var(--diecon-scale-size);
+	height: var(--diecon-scale-size);
+	font-size: var(--diecon-scale-size);
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-header-top .trait-set-header-inner {
+	white-space: normal;
+	overflow-wrap: break-word;
+	line-height: 1.1;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .single-die-value {
+	flex-wrap: nowrap;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-list > .trait {
+	padding-bottom: 0.18rem;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-parts {
+	row-gap: 0.02rem;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-parts > .trait-part {
+	line-height: 1.02;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait:has(> .trait-parts) {
+	padding-block: 0.02rem;
+	margin-bottom: 0;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-set-style-die-track .trait {
+	padding-block: 0.15rem;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-inner:has(> .trait-part-badge-fallback) {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	column-gap: 0.35rem;
+	align-items: start;
+}
+
+.character-sheet:is(.submode-print, .print-sheet)
+	.trait-inner:has(> .trait-part-badge-fallback)
+	> :is(.trait-title, .trait-description, .desc-blank-area, ul.subtraits) {
+	grid-column: 1 / -1;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-inner > .trait-part-badge-fallback {
+	grid-column: 1;
+	margin: 0.08rem 0;
+	align-self: stretch;
+}
+
+.character-sheet:is(.submode-print, .print-sheet) .trait-inner:has(> .trait-part-badge-fallback) > .trait-sfx {
+	grid-column: 2;
 }
 
 /* Interactive screen modes (Edit & Play) enforce one uniform diecon tap-target size (2rem) everywhere on the sheet. */

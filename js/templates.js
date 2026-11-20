@@ -1972,30 +1972,30 @@ const characterCurioLibraryTemplates = [
 							name: {
 								left: '0%',
 								top: 0,
-								width: '42%',
+								width: '58%',
 								height: 1,
 							},
 							rating: {
-								left: '42%',
+								left: '58%',
 								top: 0,
-								width: '18%',
-								height: 1,
-							},
-							trackLabel: {
-								left: '60%',
-								top: 0,
-								width: '13%',
-								height: 1,
-							},
-							track: {
-								left: '73%',
-								top: 0,
-								width: '27%',
+								width: '42%',
 								height: 1,
 							},
 							description: {
 								left: '0%',
 								top: 1,
+								width: '100%',
+								height: 1,
+							},
+							trackLabel: {
+								left: '0%',
+								top: 2,
+								width: '100%',
+								height: 1,
+							},
+							track: {
+								left: '0%',
+								top: 3,
 								width: '100%',
 								height: 1,
 							},
@@ -3093,7 +3093,7 @@ const characterCurioLibraryTemplates = [
 							left: '0%',
 							top: 1,
 							width: '36%',
-							height: 1,
+							height: 2,
 						},
 						parts: {
 							name: {
@@ -4204,7 +4204,7 @@ const characterCurioLibraryTemplates = [
 							left: '28%',
 							top: 0,
 							width: '72%',
-							height: 1,
+							height: 2,
 						},
 						pillar: 'prime',
 						altRoll: {
@@ -4432,7 +4432,7 @@ const characterCurioLibraryTemplates = [
 							left: '0%',
 							top: 3,
 							width: '25%',
-							height: 1,
+							height: 3,
 						},
 						pillar: 'prime',
 						fixedNames: true,
@@ -4524,7 +4524,7 @@ const characterCurioLibraryTemplates = [
 							left: '25%',
 							top: 3,
 							width: '50%',
-							height: 1,
+							height: 3,
 						},
 						pillar: 'plus',
 					},
@@ -7076,7 +7076,7 @@ const characterCurioLibraryTemplates = [
 							left: '0%',
 							top: 2,
 							width: '64%',
-							height: 1,
+							height: 2,
 						},
 						parts: {
 							name: {
@@ -7659,7 +7659,7 @@ const characterCurioLibraryTemplates = [
 							left: '38%',
 							top: 2,
 							width: '62%',
-							height: 1,
+							height: 2,
 						},
 						pillar: 'plus',
 					},
@@ -8328,7 +8328,7 @@ const characterCurioLibraryTemplates = [
 							left: '28%',
 							top: 1,
 							width: '72%',
-							height: 1,
+							height: 3,
 						},
 						pillar: 'prime',
 						fixedNames: true,
@@ -8840,7 +8840,7 @@ const characterCurioLibraryTemplates = [
 							left: '28%',
 							top: 1,
 							width: '72%',
-							height: 1,
+							height: 2,
 						},
 						pillar: 'prime',
 						fixedNames: true,
@@ -9166,7 +9166,7 @@ const characterCurioLibraryTemplates = [
 							left: '0%',
 							top: 1,
 							width: '66.663%',
-							height: 1,
+							height: 3,
 						},
 						pillar: 'prime',
 						fixedNames: true,
@@ -11297,7 +11297,7 @@ const characterCurioLibraryTemplates = [
 							left: '0%',
 							top: 4,
 							width: '25%',
-							height: 1,
+							height: 2,
 						},
 						parts: {
 							name: {
@@ -11339,7 +11339,7 @@ const characterCurioLibraryTemplates = [
 					name: 'Milestones',
 					view: {
 						header: 'top',
-						headerAlign: 'center',
+						headerAlign: 'left',
 						features: {
 							description: true,
 							sfx: false,
@@ -11418,7 +11418,7 @@ const characterCurioLibraryTemplates = [
 					name: 'Milestones',
 					view: {
 						header: 'top',
-						headerAlign: 'center',
+						headerAlign: 'left',
 						features: {
 							description: true,
 							sfx: false,
@@ -11514,7 +11514,7 @@ const characterCurioLibraryTemplates = [
 							left: '75%',
 							top: 4,
 							width: '25%',
-							height: 1,
+							height: 2,
 						},
 						pillar: 'play',
 					},
@@ -11780,7 +11780,7 @@ const characterCurioLibraryTemplates = [
 							left: '28%',
 							top: 0,
 							width: '72%',
-							height: 1,
+							height: 2,
 						},
 						pillar: 'prime',
 						altRoll: {
@@ -12859,7 +12859,7 @@ const characterCurioLibraryTemplates = [
 							left: '61%',
 							top: 1,
 							width: '39%',
-							height: 1,
+							height: 2,
 						},
 						parts: {
 							rating: {
@@ -12905,7 +12905,7 @@ const characterCurioLibraryTemplates = [
 						place: {
 							left: '0%',
 							top: 2,
-							width: '100%',
+							width: '61%',
 							height: 1,
 						},
 						parts: {
@@ -13907,7 +13907,7 @@ const characterCurioLibraryTemplates = [
 							left: '28%',
 							top: 1,
 							width: '72%',
-							height: 1,
+							height: 2,
 						},
 						pillar: 'prime',
 						fixedNames: true,
@@ -14014,7 +14014,7 @@ const characterCurioLibraryTemplates = [
 						place: {
 							left: '0%',
 							top: 2,
-							width: '50%',
+							width: '14%',
 							height: 1,
 						},
 						pillar: 'plus',
@@ -14042,9 +14042,9 @@ const characterCurioLibraryTemplates = [
 						labelPosition: 'vertical',
 						reservedSlots: 1,
 						place: {
-							left: '0%',
-							top: 3,
-							width: '50%',
+							left: '14%',
+							top: 2,
+							width: '14%',
 							height: 1,
 						},
 						pillar: 'plus',

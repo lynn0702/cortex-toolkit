@@ -107,6 +107,7 @@ const activeLogEntryId = ref<string | null>(null);
 const copiedEntryId = ref<string | null>(null);
 const localWordsByPool = ref<Record<string, WordBankItem[]>>({});
 const poolTablistRef = ref<HTMLElement | null>(null);
+const inlineOutcomeRef = ref<HTMLElement | null>(null);
 
 const isMultiPoolMode = computed(() => Array.isArray(props.namedPools) && props.namedPools.length > 0);
 
@@ -1319,6 +1320,8 @@ function roll(opts?: { forceDialog?: boolean }) {
 
 	if (opts?.forceDialog || isMobileViewport()) {
 		nextTick(() => openOutcomeDialog());
+	} else {
+		nextTick(() => inlineOutcomeRef.value?.scrollIntoView?.({ behavior: 'smooth', block: 'end' }));
 	}
 }
 
@@ -1973,7 +1976,11 @@ defineExpose({
 			</button>
 
 			<!-- DESKTOP INLINE RESULTS -->
-			<div v-if="isRolled && orderedEvaluations.length > 0" class="roller-results roller-inline-outcome">
+			<div
+				ref="inlineOutcomeRef"
+				v-if="isRolled && orderedEvaluations.length > 0"
+				class="roller-results roller-inline-outcome"
+			>
 				<RollerOutcome
 					:isContest="isContestRoll"
 					:playerEval="playerEvaluation"

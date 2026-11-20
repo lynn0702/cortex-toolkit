@@ -562,7 +562,7 @@
 						"left": "0%",
 						"top": 4,
 						"width": "25%",
-						"height": 1
+						"height": 2
 					},
 					"parts": {
 						"name": {
@@ -597,7 +597,7 @@
 				"id": "milestones",
 				"view": {
 					"header": "top",
-					"headerAlign": "center",
+					"headerAlign": "left",
 					"features": {
 						"description": true,
 						"sfx": false,
@@ -675,7 +675,7 @@
 				"id": "milestones-b",
 				"view": {
 					"header": "top",
-					"headerAlign": "center",
+					"headerAlign": "left",
 					"features": {
 						"description": true,
 						"sfx": false,
@@ -771,7 +771,7 @@
 						"left": "75%",
 						"top": 4,
 						"width": "25%",
-						"height": 1
+						"height": 2
 					},
 					"pillar": "play"
 				},

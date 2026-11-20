@@ -82,6 +82,22 @@ function formatAltRollTitle(tr: Trait | null | undefined, ts: TraitSet | null | 
 	return `Take d${die} (${ppDelta > 0 ? '+' : ''}${ppDelta} ${currencyLabel.value})`;
 }
 
+function hasExplicitScale(ts: TraitSet | null | undefined): boolean {
+	const v = getView(ts);
+	if (Array.isArray(v?.ratingLadder) && v.ratingLadder.length > 1) return true;
+	const r = ts?.rating;
+	if (r && Array.isArray(r.range) && r.range.length > 1) return true;
+	return false;
+}
+
+const showPrintBlankScale = computed(() => {
+	if (submode.value !== 'print') return false;
+	if (!hasExplicitScale(traitSet.value)) return false;
+	if (printBlank.value) return true;
+	if (props.item.isPlaceholder) return true;
+	return !resolveTraitRating(props.item.trait) && !getSetRatingDie(traitSet.value);
+});
+
 function canMutateItem(item: RenderedTraitItem): boolean {
 	return !printBlank.value && !item.isPlaceholder;
 }
@@ -235,7 +251,8 @@ function activatePipBubble(trait: Trait, pIdx: number) {
 			canMutateItem(item) &&
 			!resolveTraitRating(item.trait) &&
 			!getSetRatingDie(traitSet) &&
-			getRatingDisplay(traitSet) === 'rating'
+			getRatingDisplay(traitSet) === 'rating' &&
+			!showPrintBlankScale
 		"
 		class="trait-value unrated-value"
 	>
@@ -344,6 +361,17 @@ function activatePipBubble(trait: Trait, pIdx: number) {
 	</div>
 
 	<div
+		v-else-if="
+			(props.placementAbove || item.isPlaceholder) &&
+			submode === 'print' &&
+			!resolveTraitRating(item.trait) &&
+			!getSetRatingDie(traitSet) &&
+			!hasExplicitScale(traitSet)
+		"
+		class="trait-value unrated-value"
+	></div>
+
+	<div
 		v-else
 		class="trait-value single-die-value"
 		:class="{
@@ -361,7 +389,9 @@ function activatePipBubble(trait: Trait, pIdx: number) {
 				: null
 		"
 	>
-		<template v-if="(props.placementAbove || !printBlank) && getRatingDisplay(traitSet) === 'rating'">
+		<template
+			v-if="!showPrintBlankScale && (props.placementAbove || !printBlank) && getRatingDisplay(traitSet) === 'rating'"
+		>
 			<span
 				v-if="!props.placementAbove && !item.isPlaceholder && isTraitOut(item.trait, traitSet)"
 				class="out-badge active"

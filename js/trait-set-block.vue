@@ -185,7 +185,11 @@ const showRingActions = computed(() => {
 	return Boolean(traitSet.value?.traits?.some((t) => Boolean(getView(t)?.ring)));
 });
 
-const setSfxEntries = computed(() => characterCurioFunctions.blockChildren(traitSet.value));
+const setSfxEntries = computed(() => {
+	const subs = traitSet.value?.traits;
+	if (!Array.isArray(subs)) return [];
+	return subs.filter((c) => Boolean(c && typeof c === 'object' && getView(c)?.part === 'block'));
+});
 
 const isSetTrulyEmpty = computed(() => {
 	const setNode = traitSet.value;

@@ -385,7 +385,7 @@
 						"left": "61%",
 						"top": 1,
 						"width": "39%",
-						"height": 1
+						"height": 2
 					},
 					"parts": {
 						"rating": {
@@ -435,7 +435,7 @@
 					"place": {
 						"left": "0%",
 						"top": 2,
-						"width": "100%",
+						"width": "61%",
 						"height": 1
 					},
 					"parts": {
